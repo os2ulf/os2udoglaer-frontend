@@ -1,8 +1,5 @@
-import { setLocale, localize } from '@vee-validate/i18n';
-import { defineRule, configure } from 'vee-validate';
-
+import { defineRule } from 'vee-validate';
 import rules from '@vee-validate/rules';
-import da from '@vee-validate/i18n/dist/locale/da.json';
 
 const includedRules = [
   'required',
@@ -20,12 +17,4 @@ export default defineNuxtPlugin((nuxtApp) => {
       defineRule(rule, rules[rule]);
     }
   });
-
-  configure({
-    generateMessage: localize({
-      'da-DK': da,
-    }),
-  });
-
-  setLocale('da-DK');
 });

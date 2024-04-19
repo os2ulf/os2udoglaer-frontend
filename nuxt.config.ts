@@ -84,12 +84,7 @@ export default defineNuxtConfig({
     ['@nuxtjs/robots', { configPath: '~/config/robots.config' }],
     '@pinia/nuxt',
     'nuxt-icons',
-    '@nuxtjs/i18n',
   ],
-
-  i18n: {
-    vueI18n: './i18n.config.ts',
-  },
 
   optimization: {
     splitChunks: {

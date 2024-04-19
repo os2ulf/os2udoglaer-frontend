@@ -8,7 +8,7 @@ const props = defineProps({
   },
 });
 
-const loadScript = (url) => {
+const loadScript = (url: any) => {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
@@ -20,9 +20,9 @@ const loadScript = (url) => {
 };
 
 const twitterEmbed = ref(false);
-const twitterIds = [];
+const twitterIds: any = [];
 const instagramEmbed = ref(false);
-const instagramUrls = [];
+const instagramUrls: any = [];
 const codeData = props.blockData.field_code_content;
 
 if (codeData !== null) {
@@ -78,7 +78,7 @@ const handleUpdateConsent = () => {
     </div>
     <div v-else>
       <div class="consent-box">
-        {{ $t('block.video.no-consent-message') }}
+        Please Accept Cookie Consent to view this content.
         <br /><br />
       </div>
     </div>

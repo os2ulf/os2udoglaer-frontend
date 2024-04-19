@@ -92,10 +92,10 @@ const showVideo = () => {
       </template>
       <template v-else>
         <div class="consent-box">
-          {{ $t('block.video.no-consent-message') }}
+          Please Accept Cookie Consent to view this content.
           <br /><br />
           <button class="button" @click="handleUpdateConsent">
-            {{ $t('block.video.update-consent') }}
+            Change Consent
           </button>
         </div>
       </template>
