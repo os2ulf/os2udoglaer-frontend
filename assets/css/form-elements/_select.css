@@ -1,0 +1,57 @@
+.form-select {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-y-base) var(--spacing-x-base);
+  padding-right: 45px;
+  color: var(--form-select-color);
+  font-size: var(--form-input-font-size-base);
+  font-family: var(--form-input-font-family);
+  line-height: var(--form-input-line-height-base);
+  background-color: var(--form-select-background-color);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23363433' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-x-base) center;
+  background-size: 16px 12px;
+  border: var(--form-select-border);
+  border-radius: var(--form-select-border-radius);
+  transition:
+    border 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  appearance: none;
+
+  &.hover,
+  &:hover {
+    color: var(--form-select-color-hover);
+    background-color: var(--form-select-background-color-hover);
+    border: var(--form-select-border-hover);
+    box-shadow: var(--form-select-box-shadow-hover);
+  }
+
+  &.focus,
+  &:focus {
+    color: var(--form-select-color-focus);
+    background-color: var(--form-select-background-color-focus);
+    border: var(--form-select-border-focus);
+    outline: 0;
+    box-shadow: var(--form-select-box-shadow-focus);
+  }
+
+  &[multiple],
+  &[size]:not([size='1']) {
+    padding-right: var(--spacing-x-base);
+    background-image: none;
+  }
+
+  &:disabled {
+    color: var(--form-select-color-disabled);
+    background-color: var(--form-select-background-color-disabled);
+    border: var(--form-select-border-disabled);
+    box-shadow: var(--form-select-box-shadow-disabled);
+  }
+
+  /* Remove outline from select box in FF. */
+  &:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 var(--form-select-color);
+  }
+}

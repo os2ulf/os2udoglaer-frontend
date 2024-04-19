@@ -1,0 +1,36 @@
+:root {
+  /* Fonts | Headings are h1-h6
+    ********************/
+
+  /* --heading-font-family: "BasierSquare"; */
+
+  /* --body-font-family: "BasierSquare"; */
+  --body-font-family: 'Arial';
+  --heading-font-family: 'Arial';
+  --heading-font-weight: 700;
+  --body-font-weight: 400;
+  --body-font-size: 16px;
+  --body-line-height: 1.5;
+
+  /* Font Sizes
+    ********************/
+  --font-size-display: 30px;
+  --font-size-h1: 24px;
+  --font-size-h2: 20px;
+  --font-size-h3: 18px;
+  --font-size-h4: 16px;
+  --font-size-paragraph: 20px;
+  --font-size-paragraph-sm: 16px;
+  --font-size-paragraph-xs: 12px;
+
+  @media (--viewport-sm-min) {
+    --font-size-display: 64px;
+    --font-size-h1: 48px;
+    --font-size-h2: 36px;
+    --font-size-h3: 24px;
+    --font-size-h4: 20px;
+    --font-size-paragraph: 22px;
+    --font-size-paragraph-sm: 18px;
+    --font-size-paragraph-xs: 14px;
+  }
+}

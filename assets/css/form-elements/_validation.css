@@ -1,0 +1,66 @@
+.form-input,
+.form-select,
+.form-check-input {
+  &.form-element-feedback--valid,
+  &.form-element-feedback--valid:focus {
+    border: var(--form-element-feedback-border-valid);
+  }
+
+  &.form-element-feedback--invalid,
+  &.form-element-feedback--invalid:focus {
+    border: var(--form-element-feedback-border-invalid);
+  }
+}
+
+/* Input. */
+.form-input {
+  &.form-element-feedback--valid,
+  &.form-element-feedback--invalid {
+    padding-right: calc(
+      var(--spacing-x-base) + var(--form-input-font-size-base)
+    );
+    background-repeat: no-repeat;
+    background-position: right var(--spacing-x-base) center;
+    background-size: var(--form-input-font-size-base)
+      var(--form-input-font-size-base);
+  }
+
+  &.form-element-feedback--valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  }
+
+  &.form-element-feedback--invalid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  }
+}
+
+/* Textarea. */
+textarea.form-input {
+  &.form-element-feedback--valid,
+  &.form-element-feedback--invalid {
+    padding-right: calc(
+      var(--spacing-x-base) + var(--form-input-font-size-base)
+    );
+    background-position: top calc(var(--spacing-y-base) + 3px) right
+      var(--spacing-x-base);
+  }
+}
+
+/**
+ * Feedback.
+ */
+.form-validation-feedback {
+  display: block;
+  margin-top: 3px;
+  padding-left: var(--spacing-x-base);
+  font-size: 12px;
+  font-style: italic;
+
+  &--valid {
+    color: var(--form-feedback-color-valid);
+  }
+
+  &--invalid {
+    color: var(--form-feedback-color-invalid);
+  }
+}

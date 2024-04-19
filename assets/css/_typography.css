@@ -1,0 +1,44 @@
+/* typography */
+
+/**
+ * @file
+ * Rules for heading/p/ul tags.
+ */
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: var(--heading-font-weight);
+  font-family: var(--heading-font-family);
+  line-height: 1.125;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+}
+
+h4 {
+  font-size: var(--font-size-h4);
+}
+
+p {
+  margin-top: 0;
+  font-weight: var(--body-font-weight);
+  font-size: var(--font-size-paragraph-sm);
+  font-family: var(--body-font-family);
+
+  &.large {
+    font-size: var(--font-size-paragraph-lg);
+  }
+}

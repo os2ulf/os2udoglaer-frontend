@@ -1,0 +1,49 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text);
+  font-weight: var(--body-font-weight);
+  font-size: var(--body-font-size);
+  font-family: var(--body-font-family);
+  line-height: 1.5;
+  background-color: var(--site-background-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  transition:
+    background-color 0.5s,
+    color 0.5s;
+
+  &.no-scroll {
+    height: 100%;
+    overflow: hidden !important;
+  }
+}
+
+/* docking footer at the bottom of the page */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+}
+
+table {
+  max-width: 100%;
+}
+
+img#concept-pixel {
+  display: none;
+}

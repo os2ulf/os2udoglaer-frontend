@@ -1,0 +1,9 @@
+[build]
+  command="npm run build"
+
+[context.develop]
+  publish = "dist/"
+
+[context.maintenance]
+  command = ""
+  publish = "/"

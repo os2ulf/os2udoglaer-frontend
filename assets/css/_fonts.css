@@ -1,0 +1,129 @@
+/* Basier Circle */
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-MediumItalic.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierCircle;
+  src: url('../fonts/BasierCircle-SemiBoldItalic.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+  font-style: italic;
+}
+
+/* Basier Square */
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-MediumItalic.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: BasierSquare;
+  src: url('../fonts/BasierSquare-SemiBoldItalic.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+  font-style: italic;
+}

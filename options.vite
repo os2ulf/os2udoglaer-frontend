@@ -1,0 +1,7 @@
+import ViteCompressionPlugin from "vite-plugin-compression";
+
+export default () => {
+  return {
+    plugins: [ViteCompressionPlugin()],
+  };
+};

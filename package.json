@@ -1,0 +1,48 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "analyze": "nuxt analyze",
+    "eslint": "eslint --ext .js,.vue,.ts --ignore-path .gitignore .",
+    "eslint:fix": "eslint --ext .js,.vue,.ts --ignore-path .gitignore . --fix",
+    "stylelint": "stylelint **/*.{css,vue}",
+    "stylelint:fix": "stylelint **/*.{css,vue} --fix",
+    "build:debug": "npm run build && NODE_OPTIONS=--max-old-space-size=64 node --expose-gc --inspect .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "@novicell/eslint-config-nuxt": "^0.2.5",
+    "@novicell/postcss-config": "^0.4.2",
+    "@novicell/stylelint-config": "^0.2.10",
+    "@nuxt/devtools": "^1.1.5",
+    "@nuxtjs/i18n": "^8.3.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.0.0",
+    "eslint-plugin-vue": "^9.25.0",
+    "nuxt": "^3.11.2",
+    "prettier": "3.2.5",
+    "stylelint": "^16.3.1",
+    "vite-plugin-compression": "^0.5.1"
+  },
+  "dependencies": {
+    "@nuxtjs/robots": "^3.0.0",
+    "@pinia/nuxt": "^0.5.1",
+    "@vee-validate/i18n": "^4.7.3",
+    "@vee-validate/rules": "^4.7.3",
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "nuxt-icons": "^3.2.1",
+    "pinia": "^2.1.7",
+    "sitemap": "^7.1.1",
+    "swiper": "^8.4.6",
+    "uuid": "^9.0.1",
+    "vee-validate": "^4.7.3",
+    "vue-tweet": "^2.2.1"
+  },
+  "overrides": {
+    "vue": "latest"
+  }
+}

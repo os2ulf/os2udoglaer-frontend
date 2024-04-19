@@ -1,0 +1,84 @@
+@import 'swiper/swiper-bundle.min.css';
+
+.swiper {
+  padding: 62px 0 54px;
+}
+
+.swiper-slide {
+  height: auto;
+}
+
+.container--full {
+  @media (--viewport-lg-min) {
+    .swiper-button-prev {
+      right: calc(
+        ((100vw - var(--container-width)) / 2) + 64px + var(--grid-gutter-half)
+      );
+    }
+    .swiper-button-next {
+      right: calc(
+        ((100vw - var(--container-width)) / 2) + var(--grid-gutter-half)
+      );
+    }
+  }
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  top: 10px;
+  margin-top: 0;
+  border: 1px solid var(--color-gray-62);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+
+  @media (--viewport-sm-min) {
+    width: 54px;
+    height: 54px;
+    top: 0;
+  }
+
+  &:after {
+    font-size: 14px;
+    color: var(--color-gray-62);
+  }
+
+  &:hover {
+    transform: translateY(1px);
+  }
+
+  &:active {
+    transform: translateY(2px);
+  }
+}
+
+.swiper-button-next {
+  right: 0;
+
+  &:after {
+    margin-left: 2px;
+  }
+}
+
+.swiper-button-prev {
+  left: auto;
+  right: 54px;
+
+  @media (--viewport-sm-min) {
+    right: 64px;
+  }
+
+  &::after {
+    margin-right: 2px;
+  }
+}
+
+.swiper-scrollbar-drag {
+  background: var(--color-black);
+}
+
+.swiper-horizontal > .swiper-scrollbar,
+.swiper-scrollbar.swiper-scrollbar-horizontal {
+  left: 0;
+  width: 100%;
+}

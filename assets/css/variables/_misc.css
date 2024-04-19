@@ -1,0 +1,15 @@
+:root {
+  /* Navigation Layout
+  ********************/
+  --navigation-height: 68px;
+
+  @media (--viewport-sm-min) {
+    --navigation-height: 100px;
+  }
+
+  --logo-height: 21px;
+
+  @media (--viewport-sm-min) {
+    --logo-height: 26px;
+  }
+}

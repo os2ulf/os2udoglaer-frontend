@@ -1,0 +1,237 @@
+/* stylelint-disable custom-property-empty-line-before */
+/* stylelint-disable max-line-length */
+/* stylelint-disable custom-property-pattern */
+
+:root {
+  /**
+  * Checkbox.
+  */
+
+  /* General. */
+  --form-checkbox-width: 20px;
+
+  /* Default state. */
+  --form-checkbox-background-color: var(--color-gray-11);
+  --form-checkbox-border: 1px solid var(--color-gray-25);
+  --form-checkbox-background-icon: none;
+  --form-checkbox-label-color: var(--color-text);
+
+  /* Hover state. */
+  --form-checkbox-background-color-hover: var(--color-white);
+  --form-checkbox-border-hover: var(--form-checkbox-border);
+  --form-checkbox-background-icon-hover: none;
+  --form-checkbox-label-color-hover: var(--form-checkbox-label-color);
+
+  /* Pressed state. */
+  --form-checkbox-background-color-pressed: var(--color-white);
+  --form-checkbox-border-pressed: 1px solid var(--color-gray-62);
+  --form-checkbox-background-icon-pressed: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%238892b4' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+  --form-checkbox-label-color-pressed: var(--form-checkbox-label-color);
+
+  /* Disabled state. */
+  --form-checkbox-background-color-disabled: var(--color-white);
+  --form-checkbox-border-disabled: 1px solid var(--color-gray-62);
+  --form-checkbox-background-icon-disabled: var(--color-text);
+  --form-checkbox-label-color-disabled: var(--color-gray-62);
+
+  /* Checked state. */
+  --form-checkbox-background-color-checked: var(--color-primary);
+  --form-checkbox-border-checked: 1px solid var(--color-primary);
+  --form-checkbox-background-icon-checked: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+  --form-checkbox-label-color-checked: var(--color-text);
+
+  /**
+  * Radio.
+  */
+
+  /* General. */
+  --form-radio-width: 20px;
+
+  /* Default state. */
+  --form-radio-background-color: var(--color-white);
+  --form-radio-border: 1px solid var(--color-text);
+  --form-radio-background-icon: none;
+  --form-radio-label-color: var(--color-text);
+
+  /* Hover state. */
+  --form-radio-background-color-hover: var(--color-white);
+  --form-radio-border-hover: 1px solid var(--color-text);
+  --form-radio-background-icon-hover: none;
+  --form-radio-label-color-hover: var(--color-text);
+
+  /* Pressed state. */
+  --form-radio-background-color-pressed: var(--color-white);
+  --form-radio-border-pressed: 1px solid var(--color-text);
+  --form-radio-background-icon-pressed: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%238892b4'/%3e%3c/svg%3e");
+  --form-radio-label-color-pressed: var(--color-text);
+
+  /* Disabled state. */
+  --form-radio-background-color-disabled: var(--color-white);
+  --form-radio-border-disabled: 1px solid var(--color-gray-62);
+  --form-radio-background-icon-disabled: none;
+  --form-radio-label-color-disabled: var(--color-gray-62);
+
+  /* Checked state. */
+  --form-radio-background-color-checked: var(--color-white);
+  --form-radio-border-checked: 1px solid var(--color-text);
+  --form-radio-background-icon-checked: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23122568'/%3e%3c/svg%3e");
+  --form-radio-label-color-checked: var(--color-text);
+
+  /**
+  * Select.
+  */
+  --form-select-border-radius: 30px;
+
+  /* Default state. */
+  --form-select-color: var(--color-text);
+  --form-select-placeholder-color: var(--color-text);
+  --form-select-border: 1px solid var(--color-gray-25);
+  --form-select-background-color: var(--color-white);
+  --form-select-box-shadow: none;
+
+  /* Hover state. */
+  --form-select-color-hover: var(--form-select-color);
+  --form-select-border-hover: var(--form-select-border);
+  --form-select-background-color-hover: var(--form-select-background-color);
+  --form-select-box-shadow-hover: none;
+
+  /* Focus state. */
+  --form-select-color-focus: var(--form-select-color);
+  --form-select-border-focus: 1px solid var(--color-text);
+  --form-select-background-color-focus: var(--form-select-background-color);
+  --form-select-box-shadow-focus: none;
+
+  /* Disabled state. */
+  --form-select-color-disabled: var(--color-gray-62);
+  --form-select-border-disabled: 1px solid var(--color-gray-25);
+  --form-select-background-color-disabled: var(--form-select-background-color);
+  --form-select-box-shadow-disabled: none;
+
+  /**
+  * Dropdown select.
+  */
+  --form-dropdown-select-border-radius: 16px;
+
+  /* Default state. */
+  --form-dropdown-select-color: var(--color-text);
+  --form-dropdown-select-placeholder-color: var(--color-text);
+  --form-dropdown-select-border: 1px solid var(--color-white);
+  --form-dropdown-select-background-color: var(--color-white);
+  --form-dropdown-select-box-shadow: none;
+
+  /* Hover state. */
+  --form-dropdown-select-color-hover: var(--color-primary);
+  --form-dropdown-select-border-hover: 1px solid var(--color-primary);
+  --form-dropdown-select-background-color-hover: var(
+    --form-dropdown-select-background-color
+  );
+  --form-dropdown-select-box-shadow-hover: none;
+
+  /* Focus state. */
+  --form-dropdown-select-color-focus: var(--color-primary);
+  --form-dropdown-select-border-focus: 1px solid var(--color-primary);
+  --form-dropdown-select-background-color-focus: var(
+    --form-dropdown-select-background-color
+  );
+  --form-dropdown-select-box-shadow-focus: 0 1px 1px rgba(0, 0, 0, 0.15),
+    0 1px 2px 1px rgba(0, 0, 0, 0.25);
+
+  /* Disabled state. */
+  --form-dropdown-select-color-disabled: var(--color-gray-62);
+  --form-dropdown-select-border-disabled: 1px solid var(--color-gray-25);
+  --form-dropdown-select-background-color-disabled: var(
+    --form-dropdown-select-background-color
+  );
+  --form-dropdown-select-box-shadow-disabled: none;
+
+  /* Open state. */
+  --form-dropdown-select-color-open: var(--color-primary);
+  --form-dropdown-select-border-open: 1px solid var(--color-primary);
+  --form-dropdown-select-background-color-open: var(
+    --form-dropdown-select-background-color
+  );
+  --form-dropdown-select-box-shadow-open: none;
+
+  /* Popup. */
+  --form-dropdown-popup-border: var(--form-dropdown-select-border-open);
+  --form-dropdown-popup-background: var(--color-white);
+  --form-dropdown-popup-item-color: var(--color-text);
+  --form-dropdown-popup-item-border: 1px solid var(--color-gray-30);
+  --form-dropdown-popup-item-color-hover: var(--color-primary);
+  --form-dropdown-popup-item-color-focus: var(--color-primary);
+  --form-dropdown-popup-item-color-active: var(--color-primary);
+
+  /**
+  * Input.
+  */
+  --form-label-distance-bottom: 5px;
+  --form-label-font-weight: var(--font-weight-bold);
+  --form-label-font-size: 12px;
+  --form-input-font-family: var(--body-font-family);
+  --form-input-font-size-base: 18px;
+  --form-input-line-height-base: var(--body-line-height);
+  --form-input-border-radius: 30px;
+
+  /* Default state. */
+  --form-label-color: var(--color-gray-62);
+  --form-input-color: var(--color-text);
+  --form-input-placeholder-color: var(--color-gray-62);
+  --form-input-border: 1px solid var(--color-gray-25);
+  --form-input-background: var(--color-white);
+  --form-input-box-shadow: none;
+
+  /* Hover state. */
+  --form-input-color-hover: var(--form-input-color);
+  --form-input-border-hover: var(--form-input-border);
+  --form-input-background-hover: var(--form-input-background);
+  --form-input-box-shadow-hover: none;
+
+  /* Focus state. */
+  --form-input-color-focus: var(--form-input-color);
+  --form-input-border-focus: 1px solid var(--color-text);
+  --form-input-background-focus: var(--form-input-background);
+  --form-input-box-shadow-focus: none;
+
+  /* Disabled state. */
+  --form-input-color-disabled: var(--color-gray-25);
+  --form-input-border-disabled: var(--form-input-border);
+  --form-input-background-disabled: var(--color-gray-20);
+  --form-input-box-shadow-disabled: none;
+
+  /**
+  * Feedback colourings.
+  */
+  --form-element-feedback-border-invalid: 1px solid var(--color-error-input);
+  --form-element-feedback-border-valid: 1px solid var(--color-success-dark);
+  --form-feedback-color-valid: var(--color-success-dark);
+  --form-feedback-color-invalid: var(--color-error);
+
+  /**
+  * Quantity selector.
+  */
+  --quantity-selector-border-radius: 8px;
+  --quantity-selector-input-font-family: var(--body-font-family);
+  --quantity-selector-input-font-size: var(--font-size-paragraph);
+  --quantity-selector-input-font-weight: var(--font-weight-base);
+  --quantity-selector-button-icon-width: 16px;
+  --quantity-selector-button-icon-height: 16px;
+
+  /* Default state. */
+  --quantity-selector-background: var(--color-white);
+  --quantity-selector-border: 1px solid #d3d3d4;
+  --quantity-selector-input-color: var(--color-text);
+  --quantity-selector-button-icon-color: var(--color-text);
+
+  /* Hover state. */
+  --quantity-selector-button-icon-color-hover: var(
+    --quantity-selector-button-icon-color
+  );
+
+  /* Focus state. */
+  --quantity-selector-button-icon-color-focus: var(
+    --quantity-selector-button-icon-color
+  );
+
+  /* Disabled state. */
+  --quantity-selector-button-icon-color-disabled: var(--color-gray-62);
+}

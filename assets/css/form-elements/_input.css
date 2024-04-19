@@ -1,0 +1,120 @@
+/* stylelint-disable custom-property-empty-line-before */
+/* stylelint-disable max-line-length */
+/* stylelint-disable custom-property-pattern */
+
+.form-input {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-y-base) var(--spacing-x-base);
+  color: var(--form-input-color);
+  font-size: var(--form-input-font-size-base);
+  font-family: var(--form-input-font-family);
+  line-height: var(--form-input-line-height-base);
+  background: var(--form-input-background);
+  background-clip: padding-box;
+  border: var(--form-input-border);
+  border-radius: var(--form-input-border-radius);
+  transition:
+    border 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  appearance: none; /* Fix appearance for date inputs in Safari */
+
+  &.hover,
+  &:hover {
+    color: var(--form-input-color-hover);
+    background: var(--form-input-background-hover);
+    border: var(--form-input-border-hover);
+    box-shadow: var(--form-input-box-shadow-hover);
+  }
+
+  &.focus,
+  &:focus {
+    color: var(--form-input-color-focus);
+    background: var(--form-input-background-focus);
+    border: var(--form-input-border-focus);
+    outline: 0;
+    box-shadow: var(--form-input-box-shadow-focus);
+  }
+
+  &.disabled,
+  &:disabled,
+  &[readonly] {
+    color: var(--form-input-color-disabled);
+    background: var(--form-input-background-disabled);
+    border: var(--form-input-border-disabled);
+    box-shadow: var(--form-input-box-shadow-disabled);
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  /* Unstyle the caret on `<select>`s in IE10+. */
+  &::-ms-expand {
+    background-color: transparent;
+    border: 0;
+  }
+
+  /* Remove select outline from select box in FF */
+  &:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 var(--form-input-color);
+  }
+
+  /* Placeholder */
+  &::placeholder {
+    color: var(--form-input-placeholder-color);
+    opacity: 1;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+
+  /* Firefox */
+  &[type='number'] {
+    appearance: textfield;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:focus {
+    transition:
+      background-color 600000s 0s,
+      color 600000s 0s;
+  }
+
+  &[data-autocompleted] {
+    background-color: transparent !important;
+  }
+}
+
+.form-input--floating-label {
+  padding-inline: var(--spacing-x-base);
+  padding-top: calc(var(--spacing-y-base) + 5px);
+  padding-bottom: calc(var(--spacing-y-base) - 8px);
+
+  &.form-input--up ~ .form-label,
+  &:focus ~ .form-label {
+    top: 4px;
+    font-weight: var(--font-weight-bold);
+    font-size: 13px;
+  }
+
+  & ~ .form-label {
+    position: absolute;
+    top: var(--spacing-y-base);
+    left: var(--spacing-x-base);
+    margin: 0;
+    font-weight: var(--font-weight-base);
+    font-size: 16px;
+    transition:
+      top 0.2s,
+      left 0.2s,
+      font-size 0.2s,
+      opacity 0.2s;
+  }
+}
+
+textarea.form-input {
+  height: auto;
+}
