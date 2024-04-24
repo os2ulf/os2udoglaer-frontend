@@ -11,13 +11,6 @@ export const useFooterDataStore = defineStore('footerData', () => {
     if (!footerData.value) {
       const { data } = await useAsyncData('footer', () => useRegion('footer'));
 
-      // if (!data.value) {
-      //   throw createError({
-      //     statusCode: 404,
-      //     statusMessage: '',
-      //   });
-      // }
-
       footerData.value = data.value;
     }
     loading.value = false;
