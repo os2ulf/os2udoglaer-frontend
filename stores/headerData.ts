@@ -11,12 +11,12 @@ export const useHeaderDataStore = defineStore('headerData', () => {
     if (!headerData.value) {
       const { data } = await useAsyncData('header', () => useRegion('header'));
 
-      if (!data.value) {
-        throw createError({
-          statusCode: 404,
-          statusMessage: '',
-        });
-      }
+      // if (!data.value) {
+      //   throw createError({
+      //     statusCode: 404,
+      //     statusMessage: '',
+      //   });
+      // }
 
       headerData.value = data.value;
     }
