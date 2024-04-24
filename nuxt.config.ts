@@ -18,8 +18,6 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
 
     head: {
-      titleTemplate: '%s | Novicell',
-
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
