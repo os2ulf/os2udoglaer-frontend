@@ -72,11 +72,6 @@ const props = defineProps({
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 calc(var(--grid-gutter-half) * 2);
-
-    @media (--viewport-md-min) {
-      padding: 0 30px 0 46px;
-    }
   }
 
   &__right {
