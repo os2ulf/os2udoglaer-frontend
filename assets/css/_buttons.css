@@ -13,7 +13,7 @@
   text-decoration: none;
   background-color: var(--color-black);
   border: 1px solid var(--color-black);
-  border-radius: 100px;
+  border-radius: 56px;
   cursor: pointer;
   transition:
     background-color 0.2s,
@@ -137,7 +137,7 @@
     font-size: var(--body-font-size);
     background-color: transparent;
     border: 1px solid var(--color-gray-25);
-    border-radius: 100px;
+    border-radius: 56px;
 
     &:hover {
       color: var(--color-white);

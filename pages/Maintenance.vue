@@ -22,6 +22,12 @@ useHead({
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="button-wrapper">
+          <button class="button button--ghost">Læs mere</button>
+          <button class="button button">Læs mere</button>
+          <button class="button button--link">Læs mere</button>
+        </div>
+
         <div class="maintenance__wrapper">
           <h1 class="maintenance__heading">Maintenance in progress</h1>
           <p class="maintenance__subtext">
