@@ -15,6 +15,11 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  iconAfter: {
+    type: String,
+    required: false,
+    default: null,
+  },
   small: {
     type: Boolean,
     required: false,
@@ -24,10 +29,6 @@ const props = defineProps({
     required: false,
   },
   link: {
-    type: Boolean,
-    required: false,
-  },
-  loading: {
     type: Boolean,
     required: false,
   },
@@ -51,11 +52,11 @@ const buttonClasses = computed(() => {
   if (props.icon) {
     classes.push('button--icon');
   }
+  if (props.iconAfter) {
+    classes.push('button--icon-after');
+  }
   if (props.ghost) {
     classes.push('button--ghost');
-  }
-  if (props.loading) {
-    classes.push('button--loading');
   }
   if (props.disabled) {
     classes.push('button--disabled');
@@ -83,12 +84,25 @@ const component = computed(() => {
     :class="buttonClasses"
     :disabled="disabled"
   >
-    <NuxtIcon v-if="icon" class="button__icon" :name="icon" fill />
-    <NuxtIcon v-if="loading" class="button__loading-icon" name="loading" fill />
-    <span class="button__text">
+    <NuxtIcon v-if="icon" class="button__icon" :name="icon" filled />
+    <span class="button__text" v-if="buttonData?.title">
       {{ buttonData?.title }}
     </span>
 
-    <NuxtIcon v-if="link" class="button__icon-after" name="chevron-down" fill />
+    <NuxtIcon
+      v-if="iconAfter"
+      class="button__icon-after"
+      :name="iconAfter"
+      filled
+    />
   </component>
 </template>
+
+<style lang="postcss">
+.button {
+  /* Maybe a solution? - it seems the dynamic class set/conditions of the plugin are off somewhat..? */
+  .nuxt-icon svg path {
+    stroke: currentColor;
+  }
+}
+</style>

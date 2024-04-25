@@ -46,7 +46,9 @@ console.log('data content-type', props.data);
         <div class="col-xs-12 col-sm-12 col-md-6">
           <BaseRte :content="data.body" />
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-2">LEFT</div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-2">
+          <ShareContent />
+        </div>
       </div>
     </div>
   </div>
