@@ -3,16 +3,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 24px;
+  padding: 18px 32px;
   overflow: hidden;
   color: var(--color-white);
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: var(--body-font-size);
   font-family: var(--heading-font-family);
-  line-height: 1em;
-  letter-spacing: 0.05em @(--sm) 0.24em;
   text-align: center;
-  text-transform: uppercase;
   text-decoration: none;
   background-color: var(--color-black);
   border: 1px solid var(--color-black);
@@ -21,6 +18,7 @@
   transition:
     background-color 0.2s,
     transform 0.2s;
+  line-height: 20px;
 
   .nuxt-icon {
     transition: transform 0.2s ease;
@@ -113,7 +111,7 @@
   }
 
   &--small {
-    padding: 8px 22px;
+    padding: 14px 24px;
     font-size: 14px;
   }
 
@@ -133,12 +131,10 @@
   }
 
   &--ghost {
-    padding: 14px 24px;
+    padding: 18px 32px;
     color: var(--color-text);
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
+    font-weight: 700;
+    font-size: var(--body-font-size);
     background-color: transparent;
     border: 1px solid var(--color-gray-25);
     border-radius: 100px;
@@ -181,17 +177,15 @@
   }
 
   &--link {
-    padding-right: 0;
-    padding-bottom: 4px;
-    padding-left: 0;
+    padding: 10px 0;
     color: var(--color-text);
-    font-weight: 200;
-    font-weight: 500;
+    font-weight: 700;
     background-color: transparent;
     border-top: none;
     border-right: none;
     border-left: none;
     border-radius: 0;
+    font-size: var(--body-font-size);
 
     &:hover {
       color: var(--color-text);
