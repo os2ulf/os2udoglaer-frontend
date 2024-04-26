@@ -28,7 +28,10 @@ console.log('data content-type', props.data);
             <div class="course__page-heading-wrapper">
               <h1 class="course__page-title">{{ data?.label }}</h1>
               <div class="course__page-heading-button-container">
-                <button class="button">button</button>
+                <BaseButton
+                  icon-after="arrow-right"
+                  :button-data="{ title: 'Button' }"
+                />
                 <button class="button button--ghost">button</button>
               </div>
             </div>
