@@ -16,8 +16,8 @@
     ********************/
   --font-size-display: 30px;
   --font-size-h1: 24px;
-  --font-size-h2: 20px;
-  --font-size-h3: 18px;
+  --font-size-h2: 22px;
+  --font-size-h3: 20px;
   --font-size-h4: 16px;
   --font-size-paragraph: 20px;
   --font-size-paragraph-sm: 16px;
@@ -27,10 +27,10 @@
     --font-size-display: 64px;
     --font-size-h1: 48px;
     --font-size-h2: 36px;
-    --font-size-h3: 24px;
+    --font-size-h3: 28px;
     --font-size-h4: 20px;
     --font-size-paragraph: 22px;
-    --font-size-paragraph-sm: 18px;
+    --font-size-paragraph-sm: 16px;
     --font-size-paragraph-xs: 14px;
   }
 }
