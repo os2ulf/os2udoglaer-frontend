@@ -17,7 +17,7 @@ jobs:
         with:
           status: ${{ job.status }}
           author_name: ${{ github.actor }}
-          text: "New staging deployment underway on *develop* branch 🚀: ${github.ref}!"
+          text: "New staging deployment underway on *develop* branch 🚀"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
@@ -31,6 +31,6 @@ jobs:
         with:
           status: ${{ job.status }}
           author_name: ${{ github.actor }}
-          text: "New production deployment underway on *master* branch 🎉: ${github.ref}!"
+          text: "New production deployment underway on *master* branch 🎉"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
