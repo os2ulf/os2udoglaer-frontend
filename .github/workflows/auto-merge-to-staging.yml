@@ -1,0 +1,31 @@
+name: Deployment notifications
+
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'master'
+
+jobs:
+  slack-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack on Develop Push
+        if: github.ref == 'refs/heads/develop'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: ${{ github.actor }}
+          text: "New staging deployment underway on *develop* branch 🚀: ${github.ref}!"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on Master Push
+        if: github.ref == 'refs/heads/master'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: ${{ github.actor }}
+          text: "New production deployment underway on *master* branch 🎉: ${github.ref}!"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
