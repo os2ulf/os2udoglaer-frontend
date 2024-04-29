@@ -7,8 +7,9 @@ on:
       - 'master'
 
 jobs:
-  slack-notify:
+  slack-notify-staging:
     runs-on: ubuntu-latest
+    environment: Staging
     steps:
       - name: Notify Slack on Develop Push
         if: github.ref == 'refs/heads/develop'
@@ -20,6 +21,10 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  slack-notify-master:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
       - name: Notify Slack on Master Push
         if: github.ref == 'refs/heads/master'
         uses: 8398a7/action-slack@v3
