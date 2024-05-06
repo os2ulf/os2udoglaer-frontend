@@ -21,7 +21,7 @@ const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
   <div ref="header" class="header__wrapper">
     <div class="header">
       <div class="header__content">
-        <NuxtLink to="/" aria-label="Gå til forsiden">
+        <NuxtLink v-if="siteLogo" to="/" aria-label="Gå til forsiden">
           <BaseLogo :logo="siteLogo" class="header__logo" />
         </NuxtLink>
 
