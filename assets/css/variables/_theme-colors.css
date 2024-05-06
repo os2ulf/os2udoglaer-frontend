@@ -95,6 +95,7 @@
   --color-text: #383838;
   --color-disabled: var(--color-gray-6);
   --color-base-divider: #979797;
+
   /* Layout colors */
   --site-background-color: var(--color-white);
 }
