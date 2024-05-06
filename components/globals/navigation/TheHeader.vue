@@ -1,18 +1,28 @@
 <script setup>
+import { useSettingsDataStore } from '~/stores/settingsData';
+const settingsDataStore = useSettingsDataStore();
+
 const props = defineProps({
   data: {
     type: Object,
     required: true,
   },
 });
+
+if (settingsDataStore.settingsData === null) {
+  settingsDataStore.getSettingsData();
+}
+
+const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
+
 </script>
 
 <template>
   <div ref="header" class="header__wrapper">
     <div class="header">
       <div class="header__content">
-        <NuxtLink to="/" aria-label="Gå til forsiden">
-          <BaseLogo class="header__logo" />
+        <NuxtLink v-if="siteLogo" to="/" aria-label="Gå til forsiden">
+          <BaseLogo :logo="siteLogo" class="header__logo" />
         </NuxtLink>
 
         <nav class="header__right" v-if="data">
@@ -53,7 +63,7 @@ const props = defineProps({
   align-items: center;
   width: 100%;
   height: 100px;
-  background: var(--color-white);
+  background: var(--color-primary-lighten-3);
   border-bottom: 1px solid var(--color-gray-11);
   transform: translateY(0%);
   transition:
