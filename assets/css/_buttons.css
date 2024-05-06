@@ -47,6 +47,25 @@
     }
   }
 
+  /* TODO: Add var for secondary/brown color + text */
+  &--secondary {
+    background-color: #40362e;
+    color: #fef6c2;
+
+    &--ghost {
+      color: #40362e;
+      background-color: transparent;
+      border: 1px solid #40362e;
+      opacity: 1;
+
+      &:hover {
+        color: #fef6c2;
+        background-color: #40362e;
+        opacity: 1;
+      }
+    }
+  }
+
   &--success {
     background-color: var(--color-success);
     border-color: var(--color-success);

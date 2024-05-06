@@ -1,0 +1,155 @@
+<script setup lang="ts">
+const config = useRuntimeConfig().public;
+
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
+    default: null,
+  },
+});
+
+const determineIcon = (cardLink: string) => {
+  if (!cardLink) {
+    return 'link-download';
+  } else if (cardLink.includes('http')) {
+    return 'ext-link';
+  } else {
+    return 'link-download';
+  }
+};
+</script>
+
+<template>
+  <div class="educational-materials">
+    <div class="educational-materials__card-wrapper">
+      <div class="row">
+        <div
+          v-for="card in data.field_materials"
+          class="col-xs-12 col-sm-6 col-md-4 educational-materials__card-item-container"
+        >
+          <div class="educational-materials__card-item">
+            <div class="educational-materials__card-item-title">
+              <h4>{{ card?.field_material_title }}</h4>
+            </div>
+            <div class="educational-materials__card-item-description">
+              <div
+                v-if="card.field_material_description"
+                v-html="card?.field_material_description"
+              ></div>
+            </div>
+            <div class="educational-materials__card-item-button">
+              <NuxtLink
+                class="educational-materials__card-link"
+                :to="
+                  card.field_material_file
+                    ? config.API_BASE_URL + card.field_material_file
+                    : card?.field_material_url?.url
+                "
+              >
+                <span class="educational-materials__card-link-text">
+                  {{ card?.field_material_download_text }}
+                </span>
+              </NuxtLink>
+
+              <!-- icon -->
+              <NuxtIcon
+                class="educational-materials__card-item-button--icon"
+                :name="
+                  determineIcon(
+                    card.field_material_file
+                      ? card.field_material_file
+                      : card?.field_material_url?.url,
+                  )
+                "
+                filled
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="postcss" scoped>
+.educational-materials {
+  margin-bottom: 20px;
+
+  &__card-wrapper {
+    .row {
+      margin-right: -12px;
+      margin-left: -12px;
+    }
+  }
+
+  &__title {
+    margin-bottom: 22px @(--md) 44px;
+  }
+
+  &__card-container-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__card-item-container {
+    padding: 12px;
+  }
+
+  &__card-item {
+    padding: 32px;
+    /* TODO: variables */
+    border: 1px solid #cce0df;
+    border-radius: 4px;
+    box-shadow: 0px 4px 10px 4px #297f781a;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__card-item-button {
+    display: flex;
+    align-items: center;
+
+    a {
+      text-decoration: none;
+      font-weight: 700;
+      /* TODO: add text var color */
+      color: #383838;
+    }
+
+    &--icon {
+      margin-left: 8px;
+
+      :deep(svg) {
+        /* TODO: add vars if make sense */
+        background-color: #fbd800;
+        border-radius: 50%;
+        padding: 8px;
+        height: 40px;
+        width: 40px;
+
+        path {
+          stroke: currentColor;
+        }
+      }
+    }
+  }
+
+  &__card-link:hover {
+    .educational-materials__card-link-text {
+      border-bottom: 1px solid currentColor;
+    }
+  }
+
+  &__card-link-text {
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.3s ease-in-out;
+
+    &:hover {
+      border-bottom: 1px solid currentColor;
+    }
+  }
+}
+</style>
