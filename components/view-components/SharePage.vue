@@ -30,6 +30,7 @@ const handleShareOnSome = (value: string) => {
         @click="copySiteUrl()"
         :class="isSiteUrlCopied ? 'share-page__link-item--link-copied' : ''"
         aria-label="Kopier link"
+        title="Kopier page link"
       >
         <NuxtIcon name="link" filled class="button__icon" />
       </button>
@@ -37,6 +38,7 @@ const handleShareOnSome = (value: string) => {
         class="share-page__link-item"
         @click="handleShareOnSome('linkedIn')"
         aria-label="Share on linkedIn"
+        title="Share on LinkedIn"
       >
         <NuxtIcon name="linkedin" filled />
       </button>
@@ -44,6 +46,7 @@ const handleShareOnSome = (value: string) => {
         class="share-page__link-item"
         @click="handleShareOnSome('facebook')"
         aria-label="Share on FaceBook"
+        title="Share on Facebook"
       >
         <NuxtIcon name="facebook" filled />
       </button>
@@ -54,6 +57,7 @@ const handleShareOnSome = (value: string) => {
 <style lang="postcss" scoped>
 .share-page {
   display: flex;
+  justify-content: space-evenly;
   padding: 9px 15px;
   align-items: center;
   margin-bottom: 24px;
