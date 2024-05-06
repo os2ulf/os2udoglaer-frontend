@@ -81,6 +81,20 @@
   --color-error-dark: #da626a;
   --color-error-darkest: #c2575e;
 
+  /* Greyscale */
+  --color-black: #141414;
+  --color-true-black: #000;
+  --color-gray-82: #3e3e3e;
+  --color-gray-62: #6d6d6d;
+  --color-gray-42: #666;
+  --color-gray-25: #c4c4c4;
+  --color-gray-16: #d9d9d9;
+  --color-gray-11: #e5e5e5;
+  --color-gray-6: #f1f1f1;
+  --color-white: #fff;
+  --color-text: #383838;
+  --color-disabled: var(--color-gray-6);
+  --color-base-divider: #979797;
   /* Layout colors */
   --site-background-color: var(--color-white);
 }
