@@ -20,9 +20,6 @@ const handleUpdateCookieConsent = () => {
     <div class="container">
       <div class="row">
         <div class="footer__socials col-sm-12 col-md-3">
-          <NuxtLink to="/" aria-label="Kino.dk logo">
-            <BaseLogo class="footer__logo" />
-          </NuxtLink>
           <button class="button" @click="handleUpdateCookieConsent">
             Cookies
           </button>
