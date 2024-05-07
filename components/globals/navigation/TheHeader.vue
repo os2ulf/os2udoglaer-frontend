@@ -14,7 +14,7 @@ if (settingsDataStore.settingsData === null) {
 }
 
 const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
-
+console.log('primaernavigation', props.data.primaernavigation);
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
 
         <nav class="header__right" v-if="data">
           <NuxtLink
-            v-for="(item, index) in data.items"
+            v-for="(item, index) in data.primaernavigation.items"
             :key="index"
             :to="item.url"
             class="header__button header__button--left"
@@ -36,6 +36,8 @@ const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
             {{ item.title }}
           </NuxtLink>
         </nav>
+
+        <div class="button header__search">I identify as a search button</div>
       </div>
     </div>
   </div>
