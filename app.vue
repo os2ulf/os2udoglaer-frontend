@@ -19,7 +19,7 @@ let secondaryTextColor = '#000';
 
 if (fontFamily.value) {
   const fontValue = fontFamily.value;
-  const fontUrl = './assets/css/_font-' + fontValue.toLowerCase().replace(' ', '-') + '.css';
+  const fontUrl = '../assets/css/_font-' + fontValue.toLowerCase().replace(' ', '-') + '.css';
   import(fontUrl);
 
   if (fontValue === 'Roboto') {
