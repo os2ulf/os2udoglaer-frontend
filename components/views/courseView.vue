@@ -10,6 +10,94 @@ const props = defineProps({
 useHead({
   title: props.data?.field_meta_tags?.html_head?.title?.atributes?.content,
 });
+
+const practicalInfoData = computed(() => {
+  return [
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Udbyder',
+      content: 'Object needed from BE',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Sted',
+      content: [
+        props.data?.field_location_name,
+        props.data?.field_location_street,
+        props.data?.field_location_zipcode,
+        props.data?.field_location_city,
+      ],
+      description: props.data?.field_location_description,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Forløbstype',
+      content: props.data?.field_course_type,
+    },
+    {
+      title: 'Målgruppe',
+      content: props.data?.field_target_group === 'Grundskole' ? props.data?.field_trgt_grp_primary_school.concat(props.data?.field_primary_school_subject) : props.data?.field_target_group === 'Dagtilbud' ? props.data?.field_trgt_grp_daycare.concat(props.data?.field_curriculum_themes) : props.data?.field_target_group === 'Ungdomsuddannelse' ? props.data?.field_trgt_grp_youth_education.concat(props.data?.field_youth_education_subject) : 'Object needed from BE',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      type: 'price',
+      title: 'Pris',
+      content: props.data?.field_price,
+      description: props.data?.field_description_of_price,
+      free: props.data?.field_is_free,
+    },
+    {
+      title: 'Antal',
+      content: props.data?.field_quantity,
+      description: props.data?.field_quantity_description,
+    },
+    {
+      title: 'Periode',
+      content: props.data?.field_all_year ? 'Hele året' : props.data?.field_period?.start_date + props.data?.field_period?.separator + props.data?.field_period?.end_date,
+      description: props.data?.field_description_of_period,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Varighed',
+      content: props.data?.field_duration + ' ' + props.data?.field_duration_unit,
+      description: props.data?.field_description_of_duration,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Emneområde',
+      content: props.data?.field_subject,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Faciliteter',
+      content: props.data?.field_faciliteter,
+      description: props.data?.field_facilities_description,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      type: 'sunstainability_goals',
+      title: 'Verdensmål',
+      content: props.data?.field_sustainability_goals,
+      description: props.data?.field_sustainability_goals_desc,
+    },
+  ]
+});
 </script>
 
 <template>
@@ -100,43 +188,7 @@ useHead({
         <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-2">
           <SharePage />
           <PracticalInformation
-            :data="{
-              field_author: 'Object needed from BE',
-              field_location_description: data?.field_location_description,
-              field_location_name: data?.field_location_name,
-              field_location_street: data?.field_location_street,
-              field_location_zipcode: data?.field_location_zipcode,
-              field_location_city: data?.field_location_city,
-              field_quantity: data?.field_quantity,
-              field_quantity_description: data?.field_quantity_description,
-              field_price: data?.field_price,
-              field_all_year: data?.field_all_year,
-              field_description_of_price: data?.field_description_of_price,
-              field_period: data?.field_period,
-              field_description_of_period: data?.field_description_of_period,
-              field_duration: data?.field_duration,
-              field_duration_unit: data?.field_duration_unit,
-              field_description_of_duration:
-                data?.field_description_of_duration,
-              field_course_type: data?.field_course_type,
-              field_trgt_grp_primary_school:
-                data?.field_trgt_grp_primary_school,
-              field_subject: data?.field_subject,
-              field_faciliteter: data?.field_faciliteter,
-              field_primary_school_subject: data?.field_primary_school_subject,
-              field_sustainability_goals: data?.field_sustainability_goals,
-              field_sustainability_goals_desc:
-                data?.field_sustainability_goals_desc,
-              field_facilities_description: data?.field_facilities_description,
-              field_is_free: data?.field_is_free,
-              field_target_group: data?.field_target_group,
-              field_curriculum_themes: data?.field_curriculum_themes,
-              field_trgt_grp_daycare: data?.field_trgt_grp_daycare,
-              field_youth_education_subject:
-                data?.field_youth_education_subject,
-              field_trgt_grp_youth_education:
-                data?.field_trgt_grp_youth_education,
-            }"
+            :data="practicalInfoData"
           />
           <div class="course__practical-buttons">
             <BaseButton
