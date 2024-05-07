@@ -2,6 +2,7 @@
 @import '_base.css';
 @import '_variables.css';
 @import 'form-elements/form.css';
+@import '_fonts.css';
 @import '_typography.css';
 @import '_buttons.css';
 @import '_grid.css';
