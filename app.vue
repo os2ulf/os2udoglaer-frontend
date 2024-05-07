@@ -20,7 +20,18 @@ let secondaryTextColor = '#000';
 if (fontFamily.value) {
   const fontValue = fontFamily.value;
   const fontUrl = '../assets/css/_font-' + fontValue.toLowerCase().replace(' ', '-') + '.css';
-  import(fontUrl);
+
+  const cssId = fontValue.replace(' ', '+') + 'Font';  // you could encode the css path itself to generate id..
+  if (!document.getElementById(cssId)) {
+    let head  = document.getElementsByTagName('head')[0];
+    let link  = document.createElement('link');
+    link.id   = cssId;
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = fontUrl;
+    link.media = 'all';
+    head.appendChild(link);
+  }
 
   if (fontValue === 'Roboto') {
     document.documentElement.style.setProperty("--body-font-family", "'Roboto Slab', sans-serif");
