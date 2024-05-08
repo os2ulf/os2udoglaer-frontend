@@ -144,12 +144,10 @@ onBeforeUnmount(() => {
               </button>
               <ClientOnly>
                 <Teleport to=".header-parent">
-                  <Transition name="fade">
-                    <TheOffCanvasDesktopNavigation
-                      v-if="isOpen && activeNavItem === item"
-                      :nested-items-data="item?.below"
-                    />
-                  </Transition>
+                  <TheOffCanvasDesktopNavigation
+                    v-if="isOpen && activeNavItem === item"
+                    :nested-items-data="item?.below"
+                  />
                 </Teleport>
               </ClientOnly>
             </NuxtLink>
