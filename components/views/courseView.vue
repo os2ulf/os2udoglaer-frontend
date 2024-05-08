@@ -293,12 +293,10 @@ const practicalInfoData = computed(() => {
 
 <style lang="postcss" scoped>
 .course {
-  /* TODO: bg var */
-  background-color: #f5f5f5;
+  background-color: var(--color-tertiary-lighten-5);
 
   &__top-section {
-    /* TODO: set var */
-    background-color: #eaf2f2;
+    background-color: var(--color-primary-lighten-5);
     padding-bottom: 64px;
   }
 
@@ -346,14 +344,12 @@ const practicalInfoData = computed(() => {
   }
 
   &__contact-button {
-    /* TODO: use vars */
-    color: #40362e;
-    border-color: #40362e;
+    color: var(--color-tertiary);
+    border-color: var(--color-tertiary);
 
     &:hover {
-      /* TODO: use vars */
-      color: #fff;
-      background-color: #40362e;
+      color: var(--color-white);
+      background-color: var(--color-tertiary);
     }
   }
 

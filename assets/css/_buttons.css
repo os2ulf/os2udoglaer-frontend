@@ -12,7 +12,7 @@
   text-align: center;
   text-decoration: none;
   background-color: var(--color-black);
-  border: 1px solid var(--color-black);
+  border: 2px solid var(--color-black);
   border-radius: 56px;
   cursor: pointer;
   transition:
@@ -49,18 +49,18 @@
 
   /* TODO: Add var for secondary/brown color + text */
   &--secondary {
-    background-color: #40362e;
-    color: #fef6c2;
+    background-color: var(--color-tertiary);
+    color: var(--color-secondary-lighten-4);
 
     &--ghost {
-      color: #40362e;
+      color: var(--color-tertiary);
       background-color: transparent;
-      border: 1px solid #40362e;
+      border: 2px solid var(--color-tertiary);
       opacity: 1;
 
       &:hover {
-        color: #fef6c2;
-        background-color: #40362e;
+        color: var(--color-secondary-lighten-4);
+        background-color: var(--color-tertiary);
         opacity: 1;
       }
     }
@@ -150,18 +150,19 @@
     font-weight: 700;
     font-size: var(--body-font-size);
     background-color: transparent;
-    border: 1px solid var(--color-gray-25);
+    border: 2px solid var(--color-primary-lighten-3);
     border-radius: 56px;
 
     &:hover {
-      color: var(--color-white);
-      background-color: var(--color-text);
+      color: var(--color-primary-darken-2);
+      background-color: var(--color-white);
+      border-color: var(--color-white);
       opacity: 1;
     }
 
     &.button {
       &--primary {
-        color: var(--color-primary);
+        color: var(--color-primary-darken-2);
       }
 
       &--success {
@@ -177,7 +178,7 @@
       }
 
       &:hover {
-        color: var(--color-white);
+        color: var(--color-primary-darken-2);
       }
 
       &--white {

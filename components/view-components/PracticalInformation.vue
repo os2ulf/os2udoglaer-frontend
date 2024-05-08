@@ -77,11 +77,10 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .practical-information {
   padding: 48px 32px;
-  background-color: var(--color-white);
-  /* TODO: use a var for this color accent? */
-  box-shadow: 0 5px 10px 4px #297f781a;
-  border: 1px solid #cce0df;
   color: #40362e;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-primary-lighten-4);
+  box-shadow: 0 5px 10px 4px var(--color-primary-lighten-5);
 
   &__title {
     margin: 0;
@@ -89,8 +88,7 @@ const props = defineProps({
 
   &__divider {
     margin: 22px 0 14px 0;
-    /* TODO: use var */
-    color: #d1cfcd;
+    color: var(--color-tertiary-lighten-4);
   }
 
   &__item-heading {
@@ -111,14 +109,12 @@ const props = defineProps({
     width: 50%;
 
     &--link {
-      /* TODO: use var */
       color: var(--color-primary);
       border-bottom: 1px solid transparent;
       transition: all 0.3s ease-in-out;
 
       &:hover {
         opacity: 0.8;
-        /* TODO: use var */
         border-bottom: 1px solid var(--color-primary);
       }
     }
