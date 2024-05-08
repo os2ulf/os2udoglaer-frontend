@@ -15,7 +15,7 @@ const navigationMenuData = props.nestedItemsData;
     <div class="container">
       <div class="row">
         <HeaderItem
-          class="col-xs-12 col-sm-12 col-md-3"
+          class="col-xs-6 col-sm-4 col-md-3"
           v-for="(node, index) in navigationMenuData"
           :key="index"
           :node="node"
