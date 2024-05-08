@@ -40,24 +40,26 @@ const navigationMenuData = props.data.primaernavigation;
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-xs-12 col-md-12">
-            <div v-if="!showSubItems" class="offcanvas-mobile__menu-wrapper">
-              <li class="offcanvas-mobile__items-wrapper">
-                <NuxtLink
-                  v-for="node in navigationMenuData.items"
-                  :key="node.id"
-                  class="offcanvas-mobile__item-link"
-                  @click="handleItemClick(node)"
-                  :to="node.url"
-                >
-                  {{ node.title }}
-                  <span v-if="node.below.length > 0">
-                    <NuxtIcon filled name="chevron-right"
-                  /></span>
-                </NuxtLink>
-              </li>
-            </div>
+            <Transition name="slide-right">
+              <div v-if="!showSubItems" class="offcanvas-mobile__menu-wrapper">
+                <li class="offcanvas-mobile__items-wrapper">
+                  <NuxtLink
+                    v-for="node in navigationMenuData.items"
+                    :key="node.id"
+                    class="offcanvas-mobile__item-link"
+                    @click="handleItemClick(node)"
+                    :to="node.url"
+                  >
+                    {{ node.title }}
+                    <span v-if="node.below.length > 0">
+                      <NuxtIcon filled name="chevron-right"
+                    /></span>
+                  </NuxtLink>
+                </li>
+              </div>
+            </Transition>
 
-            <transition name="slide">
+            <Transition name="slide">
               <div
                 v-if="showSubItems"
                 class="offcanvas-mobile__menu-wrapper--subitems"
@@ -86,7 +88,7 @@ const navigationMenuData = props.data.primaernavigation;
                   </li>
                 </ul>
               </div>
-            </transition>
+            </Transition>
           </div>
         </div>
       </div>
@@ -160,6 +162,8 @@ const navigationMenuData = props.data.primaernavigation;
         line-height: 18px;
         letter-spacing: 1px;
         text-transform: none;
+        width: 100%;
+        display: block;
       }
     }
   }

@@ -14,7 +14,6 @@ if (settingsDataStore.settingsData === null) {
 }
 
 const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
-console.log('primaernavigation', props.data.primaernavigation);
 
 const isOpen = ref(false);
 const activeNavItem = ref(null);
@@ -76,7 +75,6 @@ const showMobileNavigation = ref(false);
 const handleMobileNavigation = () => {
   document.body.style.overflow = showMobileNavigation.value ? 'auto' : 'hidden';
   showMobileNavigation.value = !showMobileNavigation.value;
-  console.log('showMobileNavigation', showMobileNavigation.value);
 };
 
 const closeMobileNavigation = () => {
@@ -172,10 +170,12 @@ onBeforeUnmount(() => {
 
     <ClientOnly>
       <Teleport to=".header-parent">
-        <TheOffCanvasMobileNavigation
-          v-if="showMobileNavigation"
-          :data="props.data"
-        />
+        <Transition name="slide-left">
+          <TheOffCanvasMobileNavigation
+            v-if="showMobileNavigation"
+            :data="props.data"
+          />
+        </Transition>
       </Teleport>
     </ClientOnly>
   </div>

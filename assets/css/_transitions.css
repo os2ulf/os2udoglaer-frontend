@@ -35,11 +35,11 @@
 
 /* slide in from side */
 .slide-enter-active {
-  animation: slide-in 0.5s;
+  animation: slide-in 0.3s;
 }
 
 .slide-leave-active {
-  animation: slide-in 0.5s reverse;
+  display: none;
 }
 
 @keyframes slide-in {
@@ -132,11 +132,11 @@
 
 /* slide in from right side */
 .slide-right-enter-active {
-  animation: slide-right 0.5s;
+  animation: slide-left 0.3s;
 }
 
 .slide-right-leave-active {
-  animation: slide-right 0.5s reverse;
+  display: none;
 }
 
 @keyframes slide-right {
