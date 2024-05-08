@@ -1,19 +1,19 @@
 :root {
   /* Section Layout
   ********************/
-  --section-spacing: 50px;
+  --section-spacing: 48px;
   --section-spacing-mobile: calc(var(--section-spacing) / 2);
 
   /* Grid Layout
   ********************/
-  --container-width: 1200px;
+  --container-width: 1632px;
   --container-indented-width: 970px;
   --container-narrow-width: 780px;
   --container-wide-width: 1600px;
-  --grid-gutter: 20px;
+  --grid-gutter: 24px;
 
   @media (--viewport-md-min) {
-    --grid-gutter: 44px;
+    --grid-gutter: 48px;
   }
 
   --grid-gutter-half: calc(var(--grid-gutter) / 2);
