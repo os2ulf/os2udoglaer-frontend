@@ -30,19 +30,18 @@ const props = defineProps({
     border-radius: 4px;
     text-transform: uppercase;
     font-weight: 500;
+    font-family: var(--heading-font-family);
     letter-spacing: 2px;
     font-size: 14px;
   }
   &--primary {
-    /* TODO: vars */
-    background-color: #297f78;
-    color: var(--color-white);
+    background-color: var(--color-primary);
+    color: var(--color-primary-text);
   }
 
   &--secondary {
-    /* TODO: vars */
-    background-color: #fbd800;
-    color: #232323;
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-text);
   }
 }
 </style>

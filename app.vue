@@ -23,6 +23,7 @@ if (fontFamily.value) {
   if (fontValue === 'Roboto') {
     document.documentElement.style.setProperty("--body-font-family", "'Roboto Slab', sans-serif");
     document.documentElement.style.setProperty("--heading-font-family", "'Roboto', sans-serif");
+    document.documentElement.style.setProperty("--body-font-weight", "300");
   } else {
     document.documentElement.style.setProperty("--body-font-family", "'" + fontValue + "', sans-serif");
     document.documentElement.style.setProperty("--heading-font-family", "'" + fontValue + "', sans-serif");

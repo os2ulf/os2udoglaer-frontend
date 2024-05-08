@@ -51,18 +51,16 @@ const practicalInfoData = computed(() => {
       type: 'price',
       title: 'Pris',
       content: props.data?.field_price,
-      description: props.data?.field_description_of_price,
       free: props.data?.field_is_free,
     },
     {
       title: 'Antal',
       content: props.data?.field_quantity,
-      description: props.data?.field_quantity_description,
     },
     {
       title: 'Periode',
       content: props.data?.field_all_year ? 'Hele året' : props.data?.field_period?.start_date + props.data?.field_period?.separator + props.data?.field_period?.end_date,
-      description: props.data?.field_description_of_period,
+      description: props.data?.field_description_of_price + props.data?.field_quantity_description + props.data?.field_description_of_period,
     },
     {
       type: 'divider',
@@ -91,7 +89,7 @@ const practicalInfoData = computed(() => {
       type: 'divider',
     },
     {
-      type: 'sunstainability_goals',
+      type: 'sustainability_goals',
       title: 'Verdensmål',
       content: props.data?.field_sustainability_goals,
       description: props.data?.field_sustainability_goals_desc,
@@ -140,7 +138,7 @@ const practicalInfoData = computed(() => {
                 <!-- TODO: connect buttons -->
                 <BaseButton
                   icon-after="arrow-right"
-                  :button-data="{ title: 'Find forløb' }"
+                  :button-data="{ title: 'Tilmelding' }"
                   class="button button--secondary"
                 />
                 <button class="button button--secondary--ghost">
@@ -164,7 +162,7 @@ const practicalInfoData = computed(() => {
 
     <div class="container course__second-section">
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-6">
+        <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
             <BaseRte :content="data.body" />
           </div>
@@ -185,7 +183,7 @@ const practicalInfoData = computed(() => {
             <BaseRte :content="data.field_purpose" />
           </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2">
           <SharePage />
           <PracticalInformation
             :data="practicalInfoData"

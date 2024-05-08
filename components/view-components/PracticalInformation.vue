@@ -11,10 +11,15 @@ const props = defineProps({
 <template>
   <div class="practical-information">
     <h3 class="practical-information__title">Praktisk information</h3>
+
+    <!--Practical information data for loop START -->
     <div v-for="(item, index) in props.data" :key="index">
+
+      <!-- Divider element -->
       <BaseDivider v-if="item.type === 'divider'" class="practical-information__divider" />
 
-      <div v-else-if="item.type === 'sunstainability_goals'">
+      <!-- Sustainability goals element -->
+      <div v-else-if="item.type === 'sustainability_goals'">
         <div class="practical-information__item-container">
           <div class="practical-information__item-heading">{{ item.title }}</div>
         </div>
@@ -31,8 +36,11 @@ const props = defineProps({
         </div>
       </div>
 
+      <!-- Basic element with title, content & description -->
       <div v-else class="practical-information__item-container">
         <div class="practical-information__item-heading">{{ item.title }}</div>
+
+        <!-- Price items inside basic element -->
         <div v-if="item.type === 'price' && !item.free" class="practical-information__item-value">
           <div v-for="(price, index) in item.content" :key="index" class="practical-information__prices">
             <div>{{ price.field_price }} {{ price.field_price_settlement_unit.label }}</div>
@@ -40,6 +48,7 @@ const props = defineProps({
           </div>
         </div>
 
+        <!-- Price free label inside basic element -->
         <div v-else-if="item.type === 'price' && item.free" class="practical-information__item-value">
           <BaseTag
             :data="{ label: 'Gratis' }"
@@ -47,15 +56,18 @@ const props = defineProps({
           />
         </div>
 
+        <!-- Basic element content array loop -->
         <div v-else-if="Array.isArray(item.content)" class="practical-information__item-value">
           <div v-for="(content, index) in item.content" :key="index">
             {{ content }}
           </div>
         </div>
 
+        <!-- Basic element content string -->
         <div v-else class="practical-information__item-value" v-html="item.content"></div>
       </div>
 
+      <!-- Basic description element -->
       <details
         class="practical-information__accordion-container"
         v-if="item.description"
@@ -71,16 +83,18 @@ const props = defineProps({
         </div>
       </details>
     </div>
+    <!-- Practical information data for loop END -->
+
   </div>
 </template>
 
 <style lang="postcss" scoped>
 .practical-information {
   padding: 48px 32px;
-  color: #40362e;
+  color: var(--color-tertiary);
   background-color: var(--color-white);
   border: 2px solid var(--color-primary-lighten-4);
-  box-shadow: 0 5px 10px 4px var(--color-primary-lighten-5);
+  box-shadow: 0 4px 10px 4px #297f781a;
 
   &__title {
     margin: 0;
@@ -93,20 +107,23 @@ const props = defineProps({
 
   &__item-heading {
     width: 50%;
+    font-weight: 700;
+    font-family: var(--heading-font-family);
   }
 
   &__item-container {
     padding-top: 12px;
-    font-weight: 700;
     display: flex;
     justify-content: space-between;
   }
 
   &__item-value {
-    font-weight: 400;
     text-decoration: none;
     line-height: 24px;
     width: 50%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 
     &--link {
       color: var(--color-primary);
@@ -133,6 +150,7 @@ const props = defineProps({
       padding: 0;
       margin: 0;
       justify-content: space-between;
+      font-family: var(--heading-font-family);
     }
 
     p {
@@ -147,6 +165,10 @@ const props = defineProps({
   &__accordion-content {
     padding-top: 12px;
     font-size: 16px;
+
+    :deep(p) {
+      margin-bottom: 12px;
+    }
   }
 
   &__prices {

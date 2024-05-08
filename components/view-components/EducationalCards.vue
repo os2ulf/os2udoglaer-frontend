@@ -98,10 +98,10 @@ const determineIcon = (cardLink: string) => {
 
   &__card-item {
     padding: 32px;
-    /* TODO: variables */
-    border: 1px solid #cce0df;
+    background: var(--color-white);
+    border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
-    box-shadow: 0px 4px 10px 4px #297f781a;
+    box-shadow: 0 4px 10px 4px #297f781a;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -115,23 +115,21 @@ const determineIcon = (cardLink: string) => {
     a {
       text-decoration: none;
       font-weight: 700;
-      /* TODO: add text var color */
-      color: #383838;
+      color: var(--color-tertiary-darken-1);
     }
 
     &--icon {
       margin-left: 8px;
 
       :deep(svg) {
-        /* TODO: add vars if make sense */
-        background-color: #fbd800;
+        background-color: var(--color-secondary);
         border-radius: 50%;
         padding: 8px;
         height: 40px;
         width: 40px;
 
         path {
-          stroke: currentColor;
+          stroke: var(--color-secondary-text);
         }
       }
     }
