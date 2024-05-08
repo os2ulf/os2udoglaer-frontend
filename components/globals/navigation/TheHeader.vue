@@ -72,13 +72,17 @@ const handleScroll = () => {
   lastScrollPosition.value = currentScrollPosition;
 };
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-});
+const showMobileNavigation = ref(false);
+const handleMobileNavigation = () => {
+  document.body.style.overflow = showMobileNavigation.value ? 'auto' : 'hidden';
+  showMobileNavigation.value = !showMobileNavigation.value;
+  console.log('showMobileNavigation', showMobileNavigation.value);
+};
 
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
+const closeMobileNavigation = () => {
+  document.body.style.overflow = 'auto';
+  showMobileNavigation.value = false;
+};
 
 // on route change, close the off-canvas navigation
 const route = useRoute();
@@ -86,8 +90,17 @@ watch(
   () => route.path,
   () => {
     closeOffCanvas();
+    closeMobileNavigation();
   },
 );
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <template>
@@ -142,15 +155,29 @@ watch(
             </NuxtLink>
           </nav>
 
-          <button class="header__search">
-            <NuxtIcon filled name="search" />
-          </button>
-          <button class="header__burger-menu">
-            <NuxtIcon filled name="hamburger" />
-          </button>
+          <div class="header__icon-wrapper">
+            <button class="header__search">
+              <NuxtIcon filled name="search" />
+            </button>
+            <button class="header__burger-menu" @click="handleMobileNavigation">
+              <NuxtIcon
+                filled
+                :name="!showMobileNavigation ? 'hamburger' : 'close'"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <ClientOnly>
+      <Teleport to=".header-parent">
+        <TheOffCanvasMobileNavigation
+          v-if="showMobileNavigation"
+          :data="props.data"
+        />
+      </Teleport>
+    </ClientOnly>
   </div>
 </template>
 
@@ -249,23 +276,34 @@ watch(
 
   &__search {
     margin-left: 10px;
-    padding: 7px;
+    padding: 12px;
     background: none;
     border: 1px solid var(--color-tertiary-lighten-4);
     border-radius: 50%;
     color: var(--color-tertiary);
-    font-size: 24px;
-    line-height: 24px;
+    width: 52px;
+    height: 52px;
   }
 
   &__burger-menu {
     background-color: var(--color-primary);
     color: var(--color-white);
-    padding: 10px;
+    padding: 12px;
     margin-left: 24px;
     border: none;
     border-radius: 50%;
     display: block @(--md) none;
+    width: 52px;
+    height: 52px;
+  }
+
+  &__icon-wrapper {
+    display: flex;
+
+    @media (--viewport-sm-max) {
+      justify-content: flex-end;
+      flex: 1;
+    }
   }
 }
 </style>
