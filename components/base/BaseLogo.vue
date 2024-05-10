@@ -14,8 +14,6 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .base-logo {
-  padding: 10px;
-
   img {
     height: 70px;
   }

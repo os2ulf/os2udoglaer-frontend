@@ -11,7 +11,7 @@
   /* Primary lighten */
   --color-primary-lighten-1: color-mix(in srgb, var(--color-primary), white 20%);
   --color-primary-lighten-2: color-mix(in srgb, var(--color-primary), white 40%);
-  --color-primary-lighten-3: color-mix(in srgb, var(--color-primary), white 60%);
+  --color-primary-lighten-3: color-mix(in srgb, var(--color-primary), white 60%); /* #a3c8c5 */
   --color-primary-lighten-4: color-mix(in srgb, var(--color-primary), white 75%);
   --color-primary-lighten-5: color-mix(in srgb, var(--color-primary), white 90%);
 
@@ -32,33 +32,37 @@
   --color-tertiary: #40362E;
 
   /* Tertiary darken */
-  --color-tertiary-darken-1: color-mix(in srgb, var(--color-tertiary), black 15%);
-  --color-tertiary-darken-2: color-mix(in srgb, var(--color-tertiary), black 30%);
-  --color-tertiary-darken-3: color-mix(in srgb, var(--color-tertiary), black 45%);
-  --color-tertiary-darken-4: color-mix(in srgb, var(--color-tertiary), black 55%);
+  --color-tertiary-darken-1: color-mix(in srgb, var(--color-tertiary), black 15%); /* #362E27 */
+  --color-tertiary-darken-2: color-mix(in srgb, var(--color-tertiary), black 30%); /* #2D2620 */
+  --color-tertiary-darken-3: color-mix(in srgb, var(--color-tertiary), black 45%); /* #231E1A */
+  --color-tertiary-darken-4: color-mix(in srgb, var(--color-tertiary), black 55%); /* #1D1815 */
 
   /* Tertiary lighten */
-  --color-tertiary-lighten-1: color-mix(in srgb, var(--color-tertiary), white 20%);
-  --color-tertiary-lighten-2: color-mix(in srgb, var(--color-tertiary), white 40%);
-  --color-tertiary-lighten-3: color-mix(in srgb, var(--color-tertiary), white 60%);
-  --color-tertiary-lighten-4: color-mix(in srgb, var(--color-tertiary), white 75%);
-  --color-tertiary-lighten-5: color-mix(in srgb, var(--color-tertiary), white 90%);
+  --color-tertiary-lighten-1: color-mix(in srgb, var(--color-tertiary), white 20%); /* #665D58 */
+  --color-tertiary-lighten-2: color-mix(in srgb, var(--color-tertiary), white 40%); /* #8C8781 // #87807b */
+  --color-tertiary-lighten-3: color-mix(in srgb, var(--color-tertiary), white 60%); /* #B2AFAB */
+  --color-tertiary-lighten-4: color-mix(in srgb, var(--color-tertiary), white 75%); /* #CFCDCB */
+  --color-tertiary-lighten-5: color-mix(in srgb, var(--color-tertiary), white 90%); /* #ECEBEA */
+  --color-tertiary-lighten-6: color-mix(in srgb, var(--color-tertiary), white 95%); /* ##F5F5F5 */
 
   /* Quaternary */
   --color-quaternary: #ADA9A5;
 
   /* Quaternary darken */
-  --color-quaternary-darken-1: color-mix(in srgb, var(--color-quaternary), black 15%);
-  --color-quaternary-darken-2: color-mix(in srgb, var(--color-quaternary), black 30%);
-  --color-quaternary-darken-3: color-mix(in srgb, var(--color-quaternary), black 45%);
-  --color-quaternary-darken-4: color-mix(in srgb, var(--color-quaternary), black 55%);
+  --color-quaternary-darken-1: color-mix(in srgb, var(--color-quaternary), black 15%); /* #92908C */
+  --color-quaternary-darken-2: color-mix(in srgb, var(--color-quaternary), black 30%); /* #797674 */
+  --color-quaternary-darken-3: color-mix(in srgb, var(--color-quaternary), black 45%);  /* #5F5D5B */
+  --color-quaternary-darken-4: color-mix(in srgb, var(--color-quaternary), black 55%); /* #4E4C4A */
 
   /* Quaternary lighten */
-  --color-quaternary-lighten-1: color-mix(in srgb, var(--color-quaternary), white 20%);
-  --color-quaternary-lighten-2: color-mix(in srgb, var(--color-quaternary), white 40%);
-  --color-quaternary-lighten-3: color-mix(in srgb, var(--color-quaternary), white 60%);
-  --color-quaternary-lighten-4: color-mix(in srgb, var(--color-quaternary), white 75%);
-  --color-quaternary-lighten-5: color-mix(in srgb, var(--color-quaternary), white 90%);
+  --color-quaternary-lighten-1: color-mix(in srgb, var(--color-quaternary), white 20%); /* #BDBAB6 */
+  --color-quaternary-lighten-2: color-mix(in srgb, var(--color-quaternary), white 40%); /* #CDCBC9 */
+  --color-quaternary-lighten-3: color-mix(in srgb, var(--color-quaternary), white 60%); /* #DEDDDB */
+  --color-quaternary-lighten-4: color-mix(in srgb, var(--color-quaternary), white 75%); /* #EAEAE9 */
+  --color-quaternary-lighten-5: color-mix(in srgb, var(--color-quaternary), white 90%); /* #F7F6F6 */
+
+
+  --color-border: #d1cfcd;
 
   /* Success */
   --color-success: #65c179;
