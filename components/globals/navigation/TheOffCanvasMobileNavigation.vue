@@ -7,8 +7,6 @@ const props = defineProps({
   },
 });
 
-console.log('data', props.data);
-
 const showSubItems = ref(false);
 const subItems = ref([]);
 const selectedParentItem = ref(null);
@@ -16,8 +14,18 @@ const selectedParentItem = ref(null);
 const handleItemClick = (node: any) => {
   if (node.below.length > 0) {
     subItems.value = node.below;
+
     selectedParentItem.value = node;
     showSubItems.value = true;
+
+    if (showSubItems.value) {
+      const offcanvasMobileMenuWrapper = document.querySelector(
+        '.offcanvas-mobile__menu-wrapper',
+      );
+      offcanvasMobileMenuWrapper?.classList.add(
+        'offcanvas-mobile__menu-wrapper--white-bg',
+      );
+    }
   }
 };
 
@@ -25,13 +33,23 @@ const goBack = () => {
   showSubItems.value = false;
   subItems.value = [];
   selectedParentItem.value = null;
+
+  if (!showSubItems.value) {
+    const offcanvasMobileMenuWrapper = document.querySelector(
+      '.offcanvas-mobile__menu-wrapper',
+    );
+    offcanvasMobileMenuWrapper?.classList.remove(
+      'offcanvas-mobile__menu-wrapper--white-bg',
+    );
+  }
 };
 
 const backButtonLabel = computed(() => {
   return `${selectedParentItem?.value?.title}`;
 });
 
-const navigationMenuData = props.data.primaernavigation;
+const navigationMenuData = props.data.primaernavigation_2;
+const metaMenuData = props.data.metamenu;
 </script>
 
 <template>
@@ -39,57 +57,84 @@ const navigationMenuData = props.data.primaernavigation;
     <div class="offcanvas-mobile__menu-wrapper">
       <div class="container">
         <div class="row">
-          <div class="col-sm-12 col-xs-12 col-md-12">
-            <Transition name="slide-right">
-              <div v-if="!showSubItems" class="offcanvas-mobile__menu-wrapper">
-                <li class="offcanvas-mobile__items-wrapper">
-                  <NuxtLink
-                    v-for="node in navigationMenuData.items"
-                    :key="node.id"
-                    class="offcanvas-mobile__item-link"
-                    @click="handleItemClick(node)"
-                    :to="node.url"
-                  >
-                    {{ node.title }}
-                    <span v-if="node.below.length > 0">
-                      <NuxtIcon filled name="chevron-right"
-                    /></span>
-                  </NuxtLink>
-                </li>
-              </div>
-            </Transition>
+          <!-- primary nav -->
+          <Transition name="slide-right">
+            <div v-if="!showSubItems" class="offcanvas-mobile__menu-wrapper">
+              <li class="offcanvas-mobile__items-wrapper">
+                <NuxtLink
+                  v-for="node in navigationMenuData.items"
+                  :key="node.id"
+                  class="offcanvas-mobile__item-link"
+                  @click="handleItemClick(node)"
+                  :to="node.link.url"
+                >
+                  {{ node.title }}
+                  <span v-if="node.below.length > 0">
+                    <NuxtIcon filled name="chevron-right"
+                  /></span>
+                </NuxtLink>
+              </li>
 
-            <Transition name="slide">
-              <div
-                v-if="showSubItems"
-                class="offcanvas-mobile__menu-wrapper--subitems"
+              <!-- Meta menu -->
+              <li
+                class="offcanvas-mobile__items-wrapper offcanvas-mobile__items-wrapper--meta-menu"
               >
-                <NuxtLink class="offcanvas-mobile__back-button" @click="goBack">
-                  <span class="offcanvas-movile__back-button--icon">
-                    <NuxtIcon filled name="chevron-left" />
-                  </span>
-                  <span class="offcanvas-mobile__back-button--text">
-                    {{ backButtonLabel }}
+                <NuxtLink
+                  v-for="metaItem in metaMenuData.items"
+                  :key="metaItem.title"
+                  class="offcanvas-mobile__item-link offcanvas-mobile__item-link--meta-menu"
+                  @click="handleItemClick(metaItem)"
+                  :to="metaItem.url"
+                >
+                  {{ metaItem.title }}
+                  <span v-if="metaItem.below.length > 0">
+                    <NuxtIcon filled name="chevron-right" />
                   </span>
                 </NuxtLink>
+              </li>
+            </div>
+          </Transition>
 
-                <ul class="offcanvas-mobile__menu-items--subitems">
-                  <li
-                    v-for="subNode in subItems"
-                    :key="subNode.id"
-                    class="offcanvas-mobile__items-wrapper--subitems"
+          <!-- level 2 -->
+          <Transition name="slide">
+            <div
+              v-if="showSubItems"
+              class="offcanvas-mobile__menu-wrapper--subitems"
+            >
+              <NuxtLink class="offcanvas-mobile__back-button" @click="goBack">
+                <span class="offcanvas-movile__back-button--icon">
+                  <NuxtIcon filled name="chevron-left" />
+                </span>
+                <span class="offcanvas-mobile__back-button--text">
+                  {{ backButtonLabel }}
+                </span>
+              </NuxtLink>
+
+              <ul class="offcanvas-mobile__menu-items--subitems">
+                <li
+                  v-for="subNode in subItems"
+                  :key="subNode.id"
+                  class="offcanvas-mobile__items-wrapper--subitems"
+                >
+                  <NuxtLink
+                    v-if="subNode.url"
+                    :to="subNode?.url"
+                    class="offcanvas-mobile__item-link--subitems"
                   >
-                    <NuxtLink
-                      :to="subNode?.url"
-                      class="offcanvas-mobile__item-link--subitems"
-                    >
-                      {{ subNode?.title }}
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </div>
-            </Transition>
-          </div>
+                    {{ subNode?.title }}
+                  </NuxtLink>
+
+                  <NuxtLink
+                    v-else
+                    :to="subNode?.link?.url"
+                    class="offcanvas-mobile__item-link--subitems"
+                  >
+                    {{ subNode?.title }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>
@@ -109,12 +154,20 @@ const navigationMenuData = props.data.primaernavigation;
   text-transform: uppercase;
 
   &__menu-wrapper {
+    width: 100%;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: var(--color-tertiary-lighten-6);
+    transition: background-color 0.3s ease-in-out;
+
+    &--white-bg {
+      background-color: var(--color-white);
+    }
 
     &--subitems {
       height: 100%;
+      width: 100%;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -129,7 +182,7 @@ const navigationMenuData = props.data.primaernavigation;
     line-height: 24px;
     width: fit-content;
     cursor: pointer;
-    padding: 16px 0 0 0;
+    padding: 16px 24px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -150,7 +203,7 @@ const navigationMenuData = props.data.primaernavigation;
 
     &--subitems {
       margin: 0;
-      padding: 16px 0;
+      padding: 0;
       list-style: none;
 
       a {
@@ -171,14 +224,20 @@ const navigationMenuData = props.data.primaernavigation;
   &__items-wrapper {
     display: grid;
 
+    &--meta-menu {
+      background: var(--color-tertiary-lighten-6);
+      text-transform: none;
+    }
+
     &--subitems {
       border-top: 1px solid var(--color-tertiary-lighten-4);
-      padding: 16px 0;
+      padding: 16px 24px;
     }
   }
 
   &__item-link {
     color: var(--color-tertiary);
+    background-color: var(--color-white);
     font-family: var(--body-font-family);
     text-decoration: none;
     font-weight: 600;
@@ -186,7 +245,7 @@ const navigationMenuData = props.data.primaernavigation;
     line-height: 24px;
     width: fit-content;
     cursor: pointer;
-    padding: 16px 0;
+    padding: 16px 24px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -194,6 +253,17 @@ const navigationMenuData = props.data.primaernavigation;
 
     &:not(:first-child) {
       border-top: 1px solid var(--color-tertiary-lighten-4);
+    }
+
+    &--meta-menu {
+      letter-spacing: 1px;
+      font-size: 14px;
+      line-height: 18px;
+      background-color: var(--color-tertiary-lighten-6);
+
+      &:first-child {
+        border-top: 1px solid var(--color-tertiary-lighten-4);
+      }
     }
   }
 }

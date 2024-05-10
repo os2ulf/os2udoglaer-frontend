@@ -65,13 +65,11 @@ const handleShareOnSome = (value: string) => {
   &__title {
     font-size: 14px;
     font-weight: 400;
-    /* TODO: add var */
-    color: #87807b;
+    color: var(--color-tertiary-lighten-2);
   }
 
   &__divider {
-    /* TODO: add var */
-    color: #d1cfcd;
+    color: var(--color-border);
     width: 56px;
     margin: 0 16px;
   }
@@ -81,8 +79,7 @@ const handleShareOnSome = (value: string) => {
   }
 
   &__link-item {
-    /* TODO: add var if needed */
-    border: 1px solid #a3c8c5;
+    border: 1px solid var(--color-primary-lighten-3);
     border-radius: 50%;
     padding: 8px;
     display: flex;
@@ -93,13 +90,11 @@ const handleShareOnSome = (value: string) => {
     background-color: transparent;
 
     &--link-copied {
-      /* TODO: add var if needed */
-      background-color: #a3c8c5;
+      background-color: var(--color-primary-lighten-3);
     }
 
     &:hover {
-      /* TODO: add var if needed */
-      background-color: #a3c8c5;
+      background-color: var(--color-primary-lighten-3);
     }
 
     &:active {

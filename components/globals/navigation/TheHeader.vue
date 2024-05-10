@@ -46,17 +46,31 @@ const closeOffCanvas = () => {
 
 const isHeaderFixed = ref(false);
 const lastScrollPosition = ref(0);
-const scrollThreshold = 10;
+const scrollThreshold = 40;
+const isMetaMenuHidden = ref(false);
 
 const handleScroll = () => {
+  const currentScrollPosition = window.pageYOffset;
+  const scrollDifference = lastScrollPosition.value - currentScrollPosition;
+
+  // Meta-menu inclusions for spacing
+  if (currentScrollPosition >= 50) {
+    document.querySelector('.header').classList.remove('header--relative');
+    document.querySelector('.header').classList.add('header--fixed');
+    isMetaMenuHidden.value = true;
+    settingsDataStore.setIsHeaderFixed(true);
+  } else {
+    document.querySelector('.header').classList.remove('header--fixed');
+    document.querySelector('.header').classList.add('header--relative');
+    isMetaMenuHidden.value = false;
+    settingsDataStore.setIsHeaderFixed(false);
+  }
+
   // If off-canvas navigation is open, keep the header fixed
   if (isOpen.value) {
     isHeaderFixed.value = true;
     return;
   }
-
-  const currentScrollPosition = window.pageYOffset;
-  const scrollDifference = lastScrollPosition.value - currentScrollPosition;
 
   if (scrollDifference > scrollThreshold) {
     setTimeout(() => {
@@ -104,9 +118,9 @@ onBeforeUnmount(() => {
 <template>
   <div ref="header" class="header__wrapper">
     <div
-      class="header header--fixed"
+      class="header header--relative"
       :class="{
-        'slide-up': !isHeaderFixed && lastScrollPosition > 0,
+        'slide-up': !isHeaderFixed && lastScrollPosition > 50,
         'slide-down': isHeaderFixed,
       }"
     >
@@ -120,9 +134,9 @@ onBeforeUnmount(() => {
 
           <nav class="header__right-content" v-if="data">
             <NuxtLink
-              v-for="(item, index) in data.primaernavigation.items"
+              v-for="(item, index) in data.primaernavigation_2.items"
               :key="index"
-              :to="item.url ? item.url : 'javascript:void(0)'"
+              :to="item.link.url ? item.link.url : 'javascript:void(0)'"
               class="header__button header__button--left"
               :class="{
                 'header__button--active-text': activeNavItem === item,
@@ -145,7 +159,9 @@ onBeforeUnmount(() => {
               <ClientOnly>
                 <Teleport to=".header-parent">
                   <TheOffCanvasDesktopNavigation
+                    class="header__offcanvas"
                     v-if="isOpen && activeNavItem === item"
+                    :isMetaMenuHidden="isMetaMenuHidden"
                     :nested-items-data="item?.below"
                   />
                 </Teleport>
@@ -200,6 +216,10 @@ onBeforeUnmount(() => {
     right: 0;
   }
 
+  &--relative {
+    position: relative;
+  }
+
   &__content {
     display: flex;
     align-items: center;
@@ -248,11 +268,14 @@ onBeforeUnmount(() => {
     }
 
     &--arrow {
+      margin-left: 4px;
+
       :deep(svg) {
         transition: all 0.3s;
         transform: rotate(0deg);
       }
     }
+
     &--rotate-arrow {
       :deep(svg) {
         transition: all 0.3s;
@@ -272,6 +295,8 @@ onBeforeUnmount(() => {
     color: var(--color-tertiary);
     text-transform: uppercase;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
   }
 
   &__search {

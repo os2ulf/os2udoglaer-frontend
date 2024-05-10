@@ -51,6 +51,25 @@
   }
 }
 
+/* slide in from side */
+.slide-right-full-enter-active {
+  animation: slide-in 0.3s;
+}
+
+.slide-right-full-leave-active {
+  animation: slide-in 0.3s reverse;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
 /* fade out */
 .fade-out-enter-active {
   animation: fade-out 0.5s;

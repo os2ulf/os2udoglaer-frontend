@@ -15,26 +15,33 @@ const hasChildren = computed(() => {
     return true;
   }
 });
+
+const config = useRuntimeConfig().public;
 </script>
 
 <template>
   <li class="header-item">
-    <div class="header-item__item">
-      <div class="header-item__icon">Icon</div>
-      <NuxtLink
-        v-if="node?.url && !hasChildren"
-        :to="node?.url"
-        :target="node?.url_options?.attributes?.target"
-        class="header-item__link"
-        :aria-label="'Gå til' + node?.title"
-      >
-        {{ node?.title }}
-        <p class="header-item__description">
-          Få overblik over alle forløb til grundskole og søg efter relevante
-          forløb for dig
-        </p>
-      </NuxtLink>
-    </div>
+    <NuxtLink
+      v-if="node?.link?.url && !hasChildren"
+      :to="node?.link?.url"
+      :target="node?.url_options?.attributes?.target"
+      class="header-item__link"
+      :aria-label="'Gå til' + node?.title"
+    >
+      <div class="header-item__item">
+        <div class="header-item__icon" v-if="node.field_icon">
+          <!-- TODO: The baseAPI part might need to change once BE delivers absolute paths -->
+          <img :src="config.API_BASE_URL + node?.field_icon" />
+        </div>
+        <div>
+          {{ node?.title }}
+
+          <p v-if="node?.field_description" class="header-item__description">
+            {{ node?.field_description }}
+          </p>
+        </div>
+      </div>
+    </NuxtLink>
   </li>
 </template>
 
@@ -77,6 +84,12 @@ const hasChildren = computed(() => {
     line-height: 22px;
     margin-top: 8px;
     font-weight: 400;
+  }
+
+  img {
+    min-width: 32px;
+    height: 32px;
+    object-fit: cover;
   }
 }
 </style>

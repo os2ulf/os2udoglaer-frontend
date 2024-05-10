@@ -5,13 +5,45 @@ const props = defineProps({
     required: true,
     default: null,
   },
+  isMetaMenuHidden: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const navigationMenuData = props.nestedItemsData;
+
+const currentScrollPosition = ref(0);
+const handleScrollPos = () => {
+  currentScrollPosition.value = window.pageYOffset;
+};
+// this is done to avoid the flickering effect when the user scrolls up when the meta menu is present
+// 49 = height of the metamenu -1px
+const computedMarginTop = computed(() => {
+  if (currentScrollPosition.value <= 49 && !props.isMetaMenuHidden) {
+    return `${-currentScrollPosition.value}px`;
+  } else {
+    return '';
+  }
+});
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScrollPos);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScrollPos);
+});
 </script>
 
 <template>
-  <div v-if="navigationMenuData" class="offcanvas">
+  <div
+    v-if="navigationMenuData"
+    class="offcanvas"
+    :class="props.isMetaMenuHidden ? 'offcanvas__meta-menu--hidden' : ''"
+    :style="{ marginTop: computedMarginTop }"
+  >
     <div class="container">
       <div class="row">
         <HeaderItem
@@ -28,7 +60,13 @@ const navigationMenuData = props.nestedItemsData;
 <style lang="postcss" scoped>
 .offcanvas {
   position: fixed;
-  margin-top: var(--navigation-bar-height);
+
+  &__meta-menu--hidden {
+    margin-top: calc(
+      var(--navigation-bar-height) - var(--meta-navigation-bar-height)
+    );
+  }
+
   background: var(--color-white);
   z-index: 999;
   width: 100%;

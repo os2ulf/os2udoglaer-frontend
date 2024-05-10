@@ -47,7 +47,6 @@
     }
   }
 
-  /* TODO: Add var for secondary/brown color + text */
   &--secondary {
     background-color: var(--color-tertiary);
     color: var(--color-secondary-lighten-4);
