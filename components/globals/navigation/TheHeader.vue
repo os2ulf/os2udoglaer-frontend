@@ -46,7 +46,8 @@ const closeOffCanvas = () => {
 
 const isHeaderFixed = ref(false);
 const lastScrollPosition = ref(0);
-const scrollThreshold = 40;
+const scrollThreshold = ref(window?.innerWidth > 991 ? 40 : 20);
+
 const isMetaMenuHidden = ref(false);
 
 const handleScroll = () => {
@@ -72,11 +73,11 @@ const handleScroll = () => {
     return;
   }
 
-  if (scrollDifference > scrollThreshold) {
+  if (scrollDifference > scrollThreshold.value) {
     setTimeout(() => {
       isHeaderFixed.value = true;
     }, 100);
-  } else if (scrollDifference < -scrollThreshold) {
+  } else if (scrollDifference < -scrollThreshold.value) {
     setTimeout(() => {
       isHeaderFixed.value = false;
     }, 100);
@@ -87,7 +88,6 @@ const handleScroll = () => {
 
 const showMobileNavigation = ref(false);
 const handleMobileNavigation = () => {
-  document.body.style.overflow = showMobileNavigation.value ? 'auto' : 'hidden';
   showMobileNavigation.value = !showMobileNavigation.value;
 };
 

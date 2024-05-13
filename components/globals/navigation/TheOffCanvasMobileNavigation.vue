@@ -50,6 +50,15 @@ const backButtonLabel = computed(() => {
 
 const navigationMenuData = props.data.primaernavigation_2;
 const metaMenuData = props.data.metamenu;
+
+onMounted(() => {
+  document.body.style.overflow = 'hidden';
+});
+
+onUnmounted(() => {
+  // enable scroll on body
+  document.body.style.overflow = 'auto';
+});
 </script>
 
 <template>
