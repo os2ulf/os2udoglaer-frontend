@@ -70,7 +70,7 @@ const handleShareOnSome = (value: string) => {
 
   &__divider {
     color: var(--color-border);
-    width: 56px;
+    width: 300px @(--md) 56px;
     margin: 0 16px;
   }
 

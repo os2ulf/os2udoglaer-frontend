@@ -47,6 +47,7 @@ const closeOffCanvas = () => {
 const isHeaderFixed = ref(false);
 const lastScrollPosition = ref(0);
 const scrollThreshold = ref(window?.innerWidth > 991 ? 40 : 20);
+const metaMenuHeight = ref(window?.innerWidth > 991 ? 50 : 0);
 
 const isMetaMenuHidden = ref(false);
 
@@ -54,8 +55,7 @@ const handleScroll = () => {
   const currentScrollPosition = window.pageYOffset;
   const scrollDifference = lastScrollPosition.value - currentScrollPosition;
 
-  // Meta-menu inclusions for spacing
-  if (currentScrollPosition >= 50) {
+  if (currentScrollPosition >= metaMenuHeight.value) {
     document.querySelector('.header').classList.remove('header--relative');
     document.querySelector('.header').classList.add('header--fixed');
     isMetaMenuHidden.value = true;
@@ -106,7 +106,14 @@ watch(
   },
 );
 
+const initialHeaderClass = ref('');
+const handleWindowResize = () => {
+  initialHeaderClass.value =
+    window?.innerWidth > 991 ? 'header--relative' : 'header--fixed';
+};
+
 onMounted(() => {
+  handleWindowResize();
   window.addEventListener('scroll', handleScroll);
 });
 
@@ -118,11 +125,14 @@ onBeforeUnmount(() => {
 <template>
   <div ref="header" class="header__wrapper">
     <div
-      class="header header--relative"
-      :class="{
-        'slide-up': !isHeaderFixed && lastScrollPosition > 50,
-        'slide-down': isHeaderFixed,
-      }"
+      class="header"
+      :class="[
+        initialHeaderClass,
+        {
+          'slide-up': !isHeaderFixed && lastScrollPosition > 50,
+          'slide-down': isHeaderFixed,
+        },
+      ]"
     >
       <div class="container">
         <div class="header__content">

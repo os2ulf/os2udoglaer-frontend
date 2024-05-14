@@ -343,6 +343,7 @@ const practicalInfoData = computed(() => {
 
   &__page-heading-button-container {
     margin-top: 10px @(--md) 0;
+    display: flex;
 
     .button {
       margin-right: 12px @(--md) 0;

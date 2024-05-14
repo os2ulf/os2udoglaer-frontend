@@ -18,10 +18,14 @@ const currentScrollPosition = ref(0);
 const handleScrollPos = () => {
   currentScrollPosition.value = window.pageYOffset;
 };
-// this is done to avoid the flickering effect when the user scrolls up when the meta menu is present
-// 49 = height of the metamenu -1px
+// this is done to avoid the flickering effect when the user scrolls up when the meta menu is present,
+// and we need to track the scroll position so handle spacing conditions when nav item drawer is open
+const metaMenuHeight = 50;
 const computedMarginTop = computed(() => {
-  if (currentScrollPosition.value <= 49 && !props.isMetaMenuHidden) {
+  if (
+    currentScrollPosition.value <= metaMenuHeight &&
+    !props.isMetaMenuHidden
+  ) {
     return `${-currentScrollPosition.value}px`;
   } else {
     return '';
