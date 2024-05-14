@@ -24,6 +24,58 @@ const practicalInfoData = computed(() => {
       type: 'divider',
     },
     {
+      title: 'Interesseområder',
+      content: props.data?.field_areas_of_interest,
+    },
+    {
+      title: 'Uddannelsesvej',
+      content: props.data?.field_industry,
+      description: props.data?.field_education_path,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Antal',
+      content: props.data?.field_quantity,
+    },
+    {
+      title: 'Periode',
+      description: props.data?.field_description_of_period,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Varighed',
+      content: props.data?.field_duration_rte,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Mødetider',
+      content: props.data?.field_meeting_times,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Huskeliste',
+      content: props.data?.field_meeting_times,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      title: 'Ansøgning',
+      content: props.data?.field_application_deadline?.text,
+      description: props.data?.field_desc_application_procedure,
+    },
+    {
+      type: 'divider',
+    },
+    {
       title: 'Sted',
       content: [
         props.data?.field_location_name,
@@ -33,129 +85,20 @@ const practicalInfoData = computed(() => {
       ],
       description: props.data?.field_location_description,
     },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Forløbstype',
-      content: props.data?.field_course_type,
-    },
-    {
-      title: 'Målgruppe',
-      content:
-        props.data?.field_target_group === 'Grundskole'
-          ? props.data?.field_trgt_grp_primary_school.concat(
-              props.data?.field_primary_school_subject,
-            )
-          : props.data?.field_target_group === 'Dagtilbud'
-            ? props.data?.field_trgt_grp_daycare.concat(
-                props.data?.field_curriculum_themes,
-              )
-            : props.data?.field_target_group === 'Ungdomsuddannelse'
-              ? props.data?.field_trgt_grp_youth_education.concat(
-                  props.data?.field_youth_education_subject,
-                )
-              : 'Object needed from BE',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      type: 'price',
-      title: 'Pris',
-      content: props.data?.field_price,
-      free: props.data?.field_is_free,
-    },
-    {
-      title: 'Antal',
-      content: props.data?.field_quantity,
-    },
-    {
-      title: 'Periode',
-      content: props.data?.field_all_year
-        ? 'Hele året'
-        : props.data?.field_period?.start_date +
-          props.data?.field_period?.separator +
-          props.data?.field_period?.end_date,
-      description:
-        props.data?.field_description_of_price +
-        props.data?.field_quantity_description +
-        props.data?.field_description_of_period,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Varighed',
-      content:
-        props.data?.field_duration + ' ' + props.data?.field_duration_unit,
-      description: props.data?.field_description_of_duration,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Emneområde',
-      content: props.data?.field_subject,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Faciliteter',
-      content: props.data?.field_faciliteter,
-      description: props.data?.field_facilities_description,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      type: 'sustainability_goals',
-      title: 'Verdensmål',
-      content: props.data?.field_sustainability_goals,
-      description: props.data?.field_sustainability_goals_desc,
-    },
   ];
 });
 </script>
 
 <template>
-  <div class="course">
-    <div class="course__top-section">
+  <div class="internship">
+    <div class="internship__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="course__tags-wrapper">
-              <div
-                class="course__tags-item course__tags-item--main"
-                v-if="data?.field_target_group"
-              >
-                <BaseTag
-                  v-if="data?.field_target_group"
-                  :data="{ label: data?.field_target_group }"
-                  color="primary"
-                />
-              </div>
-
-              <div class="course__tags-item" v-if="data?.field_theme">
-                <BaseTag
-                  v-if="data?.field_theme"
-                  :data="{ label: data?.field_theme }"
-                  color="secondary"
-                />
-              </div>
-
-              <div class="course__tags-item" v-if="data?.field_is_free">
-                <BaseTag
-                  v-if="data?.field_is_free"
-                  :data="{ label: 'Gratis' }"
-                  color="secondary"
-                />
-              </div>
-            </div>
-            <div class="course__page-heading-wrapper">
-              <h1 class="course__page-title">{{ data?.label }}</h1>
-              <div class="course__page-heading-button-container">
+            <div class="internship__tags-wrapper"></div>
+            <div class="internship__page-heading-wrapper">
+              <h1 class="internship__page-title">{{ data?.label }}</h1>
+              <div class="internship__page-heading-button-container">
                 <!-- TODO: connect buttons -->
                 <BaseButton
                   icon-after="arrow-right"
@@ -168,7 +111,7 @@ const practicalInfoData = computed(() => {
               </div>
             </div>
 
-            <div class="course__banner-image">
+            <div class="internship__banner-image">
               <!-- TODO: Once BE has proper image styling, change this into img component -->
               <img
                 :src="data.field_image.src"
@@ -181,27 +124,25 @@ const practicalInfoData = computed(() => {
       </div>
     </div>
 
-    <div class="container course__second-section">
+    <div class="container internship__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
             <BaseRte :content="data.body" />
           </div>
 
-          <div class="course__paragraph-item" v-if="data.field_activities">
-            <BaseRte :content="data.field_activities" />
+          <div
+            class="internship__paragraph-item"
+            v-if="data.field_purpose_internship"
+          >
+            <BaseRte :content="data.field_purpose_internship" />
           </div>
 
-          <div class="course__paragraph-item" v-if="data.field_preparation">
-            <BaseRte :content="data.field_preparation" />
-          </div>
-
-          <div class="course__paragraph-item" v-if="data.field_post_processing">
-            <BaseRte :content="data.field_post_processing" />
-          </div>
-
-          <div class="course__paragraph-item" v-if="data.field_purpose">
-            <BaseRte :content="data.field_purpose" />
+          <div
+            class="internship__paragraph-item"
+            v-if="data.field_expectations"
+          >
+            <BaseRte :content="data.field_expectations" />
           </div>
         </div>
         <div
@@ -209,7 +150,7 @@ const practicalInfoData = computed(() => {
         >
           <SharePage />
           <PracticalInformation :data="practicalInfoData" />
-          <div class="course__practical-buttons">
+          <div class="internship__practical-buttons">
             <BaseButton
               v-if="
                 data.field_target_group === 'Grundskole' &&
@@ -221,7 +162,7 @@ const practicalInfoData = computed(() => {
               icon-after="arrow-right"
               class="button--secondary"
             />
-            <button class="button button--ghost course__contact-button">
+            <button class="button button--ghost internship__contact-button">
               Kontakt udbyder
             </button>
             <BaseButton
@@ -251,7 +192,7 @@ const practicalInfoData = computed(() => {
           Video component goes here
           <!-- Broken now  -->
           <!-- <VideoComponent
-            class="course__section-video"
+            class="internship__section-video"
             v-if="
               data.field_video_title ||
               data.field_video_description ||
@@ -269,7 +210,7 @@ const practicalInfoData = computed(() => {
 
         <!-- Section cards -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 course__section-cards"
+          class="col-xs-12 col-sm-12 col-md-12 internship__section-cards"
           v-if="
             data.field_materials.length > 1 ||
             data.field_materials[0].field_literature_suggestion ||
@@ -279,7 +220,7 @@ const practicalInfoData = computed(() => {
             data.field_materials[0].field_material_url
           "
         >
-          <div class="course__educational-cards">
+          <div class="internship__educational-cards">
             <EducationalCards
               :data="{
                 field_materials: data.field_materials,
@@ -288,21 +229,13 @@ const practicalInfoData = computed(() => {
           </div>
         </div>
 
-        <!-- Section calendar -->
-        <div class="col-xs-12 col-sm-12 col-md-12 course__section-calendar">
-          <div class="course__calendar">
-            <h3>Tilmelding</h3>
-            <p>calendar integration goes here</p>
-          </div>
-        </div>
-
         <!-- Section related articles -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 course__section-related-articles"
+          class="col-xs-12 col-sm-12 col-md-12 internship__section-related-articles"
         >
-          <div class="course__related-articles">
+          <div class="internship__related-articles">
             <h3>Relaterede forløb</h3>
-            <div>article cards</div>
+            <div>field_related_courses</div>
           </div>
         </div>
       </div>
@@ -311,7 +244,7 @@ const practicalInfoData = computed(() => {
 </template>
 
 <style lang="postcss" scoped>
-.course {
+.internship {
   background-color: var(--color-tertiary-lighten-5);
 
   &__top-section {

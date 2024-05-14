@@ -14,14 +14,18 @@ const props = defineProps({
 
     <!--Practical information data for loop START -->
     <div v-for="(item, index) in props.data" :key="index">
-
       <!-- Divider element -->
-      <BaseDivider v-if="item.type === 'divider'" class="practical-information__divider" />
+      <BaseDivider
+        v-if="item.type === 'divider'"
+        class="practical-information__divider"
+      />
 
       <!-- Sustainability goals element -->
       <div v-else-if="item.type === 'sustainability_goals'">
         <div class="practical-information__item-container">
-          <div class="practical-information__item-heading">{{ item.title }}</div>
+          <div class="practical-information__item-heading">
+            {{ item.title }}
+          </div>
         </div>
         <div class="practical-information__sdg-wrapper">
           <div
@@ -41,30 +45,55 @@ const props = defineProps({
         <div class="practical-information__item-heading">{{ item.title }}</div>
 
         <!-- Price items inside basic element -->
-        <div v-if="item.type === 'price' && !item.free" class="practical-information__item-value">
-          <div v-for="(price, index) in item.content" :key="index" class="practical-information__prices">
-            <div>{{ price.field_price }} {{ price.field_price_settlement_unit.label }}</div>
+        <div
+          v-if="item.type === 'price' && !item.free"
+          class="practical-information__item-value"
+        >
+          <div
+            v-for="(price, index) in item.content"
+            :key="index"
+            class="practical-information__prices"
+          >
+            <div>
+              {{ price.field_price }}
+              {{ price.field_price_settlement_unit.label }}
+            </div>
             <div>{{ price.field_price_vat.label }}</div>
           </div>
         </div>
 
         <!-- Price free label inside basic element -->
-        <div v-else-if="item.type === 'price' && item.free" class="practical-information__item-value">
-          <BaseTag
-            :data="{ label: 'Gratis' }"
-            color="secondary"
-          />
+        <div
+          v-else-if="item.type === 'price' && item.free"
+          class="practical-information__item-value"
+        >
+          <BaseTag :data="{ label: 'Gratis' }" color="secondary" />
         </div>
 
         <!-- Basic element content array loop -->
-        <div v-else-if="Array.isArray(item.content)" class="practical-information__item-value">
-          <div v-for="(content, index) in item.content" :key="index">
-            {{ content }}
+        <div
+          v-else-if="Array.isArray(item.content)"
+          class="practical-information__item-value"
+        >
+          <!-- IF All elements inside the array are null -->
+          <div v-if="item.content.every((content: string) => content === null)">
+            Ikke angivet
+          </div>
+          <div v-else>
+            <div v-for="(content, index) in item.content" :key="index">
+              {{ content }}
+            </div>
           </div>
         </div>
 
         <!-- Basic element content string -->
-        <div v-else class="practical-information__item-value" v-html="item.content"></div>
+        <div v-else class="practical-information__item-value">
+          <div v-if="item?.content == null && !item.description">
+            Ikke angivet
+          </div>
+          <div v-else-if="!item?.content"></div>
+          <div v-else v-html="item?.content"></div>
+        </div>
       </div>
 
       <!-- Basic description element -->
@@ -73,10 +102,20 @@ const props = defineProps({
         v-if="item.description"
       >
         <summary class="practical-information__accordion-container--cta">
-          <span class="practical-information__see-more-cta collapsed">Se flere detaljer</span>
-          <span class="practical-information__see-more-cta expanded">Skjul detaljer</span>
-          <NuxtIcon class="practical-information__accordion-icon collapsed" name="plus" />
-          <NuxtIcon class="practical-information__accordion-icon expanded" name="minus" />
+          <span class="practical-information__see-more-cta collapsed"
+            >Se flere detaljer</span
+          >
+          <span class="practical-information__see-more-cta expanded"
+            >Skjul detaljer</span
+          >
+          <NuxtIcon
+            class="practical-information__accordion-icon collapsed"
+            name="plus"
+          />
+          <NuxtIcon
+            class="practical-information__accordion-icon expanded"
+            name="minus"
+          />
         </summary>
         <div class="practical-information__accordion-content">
           <span v-html="item.description"> </span>
@@ -84,7 +123,6 @@ const props = defineProps({
       </details>
     </div>
     <!-- Practical information data for loop END -->
-
   </div>
 </template>
 
@@ -134,6 +172,10 @@ const props = defineProps({
         opacity: 0.8;
         border-bottom: 1px solid var(--color-primary);
       }
+    }
+
+    :deep(p) {
+      margin-bottom: 0;
     }
   }
 
