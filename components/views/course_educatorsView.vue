@@ -34,6 +34,14 @@ const practicalInfoData = computed(() => {
       content: props.data?.field_curriculum_themes,
     },
     {
+      title: 'Fag - Grundskole',
+      content: props.data?.field_primary_school_subject,
+    },
+    {
+      title: 'Fag - Ungdomsuddannelse',
+      content: props.data?.field_youth_education_subject,
+    },
+    {
       title: 'Antal',
       content: props.data?.field_quantity,
       description: props.data?.field_quantity_description,
