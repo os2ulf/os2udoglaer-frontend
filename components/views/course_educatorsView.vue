@@ -121,13 +121,13 @@ const practicalInfoData = computed(() => {
 </script>
 
 <template>
-  <div class="course">
-    <div class="course__top-section">
+  <div class="educators">
+    <div class="educators__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="course__tags-wrapper">
-              <div class="course__tags-item" v-if="data?.field_theme">
+            <div class="educators__tags-wrapper">
+              <div class="educators__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
                   :data="{ label: data?.field_theme }"
@@ -135,7 +135,7 @@ const practicalInfoData = computed(() => {
                 />
               </div>
 
-              <div class="course__tags-item" v-if="data?.field_is_free">
+              <div class="educators__tags-item" v-if="data?.field_is_free">
                 <BaseTag
                   v-if="data?.field_is_free"
                   :data="{ label: 'Gratis' }"
@@ -143,9 +143,9 @@ const practicalInfoData = computed(() => {
                 />
               </div>
             </div>
-            <div class="course__page-heading-wrapper">
-              <h1 class="course__page-title">{{ data?.label }}</h1>
-              <div class="course__page-heading-button-container">
+            <div class="educators__page-heading-wrapper">
+              <h1 class="educators__page-title">{{ data?.label }}</h1>
+              <div class="educators__page-heading-button-container">
                 <!-- TODO: connect buttons -->
                 <BaseButton
                   icon-after="arrow-right"
@@ -158,7 +158,7 @@ const practicalInfoData = computed(() => {
               </div>
             </div>
 
-            <div class="course__banner-image">
+            <div class="educators__banner-image">
               <!-- TODO: Once BE has proper image styling, change this into img component -->
               <img
                 :src="data.field_image.src"
@@ -171,7 +171,7 @@ const practicalInfoData = computed(() => {
       </div>
     </div>
 
-    <div class="container course__second-section">
+    <div class="container educators__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
@@ -183,8 +183,8 @@ const practicalInfoData = computed(() => {
         >
           <SharePage />
           <PracticalInformation :data="practicalInfoData" />
-          <div class="course__practical-buttons">
-            <button class="button button--ghost course__contact-button">
+          <div class="educators__practical-buttons">
+            <button class="button button--ghost educators__contact-button">
               Kontakt udbyder
             </button>
           </div>
@@ -202,7 +202,7 @@ const practicalInfoData = computed(() => {
           Video component goes here
           <!-- Broken now  -->
           <!-- <VideoComponent
-            class="course__section-video"
+            class="educators__section-video"
             v-if="
               data.field_video_title ||
               data.field_video_description ||
@@ -220,7 +220,7 @@ const practicalInfoData = computed(() => {
 
         <!-- Section cards -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 course__section-cards"
+          class="col-xs-12 col-sm-12 col-md-12 educators__section-cards"
           v-if="
             data.field_materials.length > 1 ||
             data.field_materials[0].field_literature_suggestion ||
@@ -230,7 +230,7 @@ const practicalInfoData = computed(() => {
             data.field_materials[0].field_material_url
           "
         >
-          <div class="course__educational-cards">
+          <div class="educators__educational-cards">
             <EducationalCards
               :data="{
                 field_materials: data.field_materials,
@@ -240,8 +240,8 @@ const practicalInfoData = computed(() => {
         </div>
 
         <!-- Section calendar -->
-        <div class="col-xs-12 col-sm-12 col-md-12 course__section-calendar">
-          <div class="course__calendar">
+        <div class="col-xs-12 col-sm-12 col-md-12 educators__section-calendar">
+          <div class="educators__calendar">
             <h3>Tilmelding</h3>
             <p>calendar integration goes here</p>
           </div>
@@ -249,9 +249,9 @@ const practicalInfoData = computed(() => {
 
         <!-- Section related articles -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 course__section-related-articles"
+          class="col-xs-12 col-sm-12 col-md-12 educators__section-related-articles"
         >
-          <div class="course__related-articles">
+          <div class="educators__related-articles">
             <h3>Relaterede forløb</h3>
             <div>article cards</div>
           </div>
@@ -262,7 +262,7 @@ const practicalInfoData = computed(() => {
 </template>
 
 <style lang="postcss" scoped>
-.course {
+.educators {
   background-color: var(--color-tertiary-lighten-5);
 
   &__top-section {
