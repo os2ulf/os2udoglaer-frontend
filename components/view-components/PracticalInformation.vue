@@ -193,6 +193,10 @@ const props = defineProps({
       margin: 0;
       justify-content: space-between;
       font-family: var(--heading-font-family);
+
+      :deep(svg) {
+        font-size: 24px;
+      }
     }
 
     p {

@@ -197,6 +197,10 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
 
+    :deep(svg) {
+      font-size: 24px;
+    }
+
     &--icon {
       margin-right: auto;
     }
@@ -259,6 +263,10 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    :deep(svg) {
+      font-size: 24px;
+    }
 
     &:not(:first-child) {
       border-top: 1px solid var(--color-tertiary-lighten-4);

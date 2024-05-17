@@ -1,34 +1,94 @@
 <script setup lang="ts">
+import { useModalStore } from '~/stores/modal';
+const modalStore = useModalStore();
+
 const props = defineProps({
-  data: {
-    type: Object,
+  videoArr: {
     required: true,
     default: null,
   },
 });
 
-// {{ data.field_video_thumbnail }}
-// {{ data.field_video.url }}
+const handleVideo = (videoItem: any) => {
+  modalStore.showModal(videoItem);
+};
 </script>
 
 <template>
-  <div class="video-player">
-    <div>
-      LOGIC NEEDED: some sort of alert needs to happen here with a message, a
-      modal and a redirect button to see the video on the provider site. Should
-      it open in a new tab? <br />
-      <br />
-      +add base image once images transformed to proper structure
+  <div class="video">
+    <div
+      v-if="Array.isArray(props.videoArr)"
+      v-for="videoItem in props.videoArr"
+      :key="videoItem"
+      class="video__wrapper"
+      @click="handleVideo(videoItem)"
+    >
+      <!-- TODO: use Base Image comp. once images transformed to proper structure -->
       <img
-        :src="data.field_video_thumbnail.src"
-        alt="video thumbnail"
-        class="video-player__thumbnail"
+        :src="videoItem?.field_video_thumbnail?.src"
+        :alt="videoItem?.field_video_thumbnail?.alt"
+        class="video__thumbnail"
       />
+      <NuxtIcon class="video__play-icon" name="play" />
+    </div>
+
+    <!-- Here its an object -->
+    <div v-else @click="handleVideo(props.videoArr)">
+      <img
+        class="video__thumbnail"
+        :src="videoArr?.field_video_thumbnail?.src"
+        :alt="videoArr?.field_video_thumbnail?.alt"
+      />
+      <NuxtIcon class="video__play-icon" name="play" />
     </div>
   </div>
 </template>
 
 <style lang="postcss" scoped>
-.video-player {
+.video {
+  padding-top: 20px @(--md) 0;
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+
+  :deep(svg) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__wrapper {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+  }
+
+  &__play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px @(--sm) 64px;
+    height: 48px @(--sm) 64px;
+    color: var(--color-white);
+    border: 2px solid var(--color-white);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  &__thumbnail {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }
 </style>

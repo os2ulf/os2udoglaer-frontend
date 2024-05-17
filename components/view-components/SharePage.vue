@@ -89,6 +89,10 @@ const handleShareOnSome = (value: string) => {
     cursor: pointer;
     background-color: transparent;
 
+    :deep(svg) {
+      font-size: 24px;
+    }
+
     &--link-copied {
       background-color: var(--color-primary-lighten-3);
     }
