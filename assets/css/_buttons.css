@@ -37,12 +37,12 @@
     border-color: var(--color-primary);
 
     &:hover {
-      background-color: var(--color-primary-dark);
+      background-color: var(--color-primary-darken-3);
       border-color: var(--color-primary-dark);
     }
 
     &:active {
-      background-color: var(--color-primary-darkest);
+      background-color: var(--color-primary-darken-3);
       border-color: var(--color-primary-darkest);
     }
   }
@@ -243,6 +243,10 @@
   &__icon-after {
     margin: -2px 0;
     margin-left: 8px;
+
+    svg {
+      font-size: 24px;
+    }
   }
 
   &--loading {

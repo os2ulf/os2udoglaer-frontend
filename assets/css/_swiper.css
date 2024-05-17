@@ -1,7 +1,7 @@
 @import 'swiper/swiper-bundle.min.css';
 
 .swiper {
-  padding: 62px 0 54px;
+  padding: 48px 0 90px;
 }
 
 .swiper-slide {
@@ -25,22 +25,37 @@
 
 .swiper-button-next,
 .swiper-button-prev {
-  top: 10px;
+  top: 89%;
+  margin-bottom: 20px;
   margin-top: 0;
-  border: 1px solid var(--color-gray-62);
+  border: 1px solid var(--color-primary-lighten-4);
   border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
+
+  @media (--viewport-xs-max) {
+    top: 89%;
+  }
 
   @media (--viewport-sm-min) {
-    width: 54px;
-    height: 54px;
-    top: 0;
+    top: 89%;
+  }
+
+  @media (--viewport-md-min) {
+    top: 87%;
+  }
+
+  @media (--viewport-lg-min) {
+    top: 85%;
+  }
+
+  @media (--viewport-xl-min) {
+    top: 87%;
   }
 
   &:after {
     font-size: 14px;
-    color: var(--color-gray-62);
+    color: var(--color-primary);
   }
 
   &:hover {
@@ -74,11 +89,37 @@
 }
 
 .swiper-scrollbar-drag {
-  background: var(--color-black);
+  background: var(--color-primary);
 }
 
 .swiper-horizontal > .swiper-scrollbar,
 .swiper-scrollbar.swiper-scrollbar-horizontal {
   left: 0;
-  width: 100%;
+  background: var(--color-primary-lighten-4);
+}
+
+.swiper-horizontal > .swiper-scrollbar {
+  max-width: 92%;
+  margin-bottom: 16px;
+  width: 70%;
+
+  @media (--viewport-xs-max) {
+    width: 70%;
+  }
+
+  @media (--viewport-sm-min) {
+    width: 86%;
+  }
+
+  @media (--viewport-md-min) {
+    width: 88%;
+  }
+
+  @media (--viewport-lg-min) {
+    width: 90%;
+  }
+
+  @media (--viewport-xl-min) {
+    width: 92%;
+  }
 }

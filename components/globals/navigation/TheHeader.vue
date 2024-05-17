@@ -307,6 +307,10 @@ onBeforeUnmount(() => {
     font-weight: 600;
     display: inline-flex;
     align-items: center;
+
+    :deep(svg) {
+      font-size: 24px;
+    }
   }
 
   &__search {
@@ -318,6 +322,10 @@ onBeforeUnmount(() => {
     color: var(--color-tertiary);
     width: 52px;
     height: 52px;
+
+    :deep(svg) {
+      font-size: 24px;
+    }
   }
 
   &__burger-menu {
@@ -330,6 +338,10 @@ onBeforeUnmount(() => {
     display: block @(--md) none;
     width: 52px;
     height: 52px;
+
+    :deep(svg) {
+      font-size: 24px;
+    }
   }
 
   &__icon-wrapper {

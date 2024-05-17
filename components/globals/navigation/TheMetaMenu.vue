@@ -111,6 +111,10 @@ const closeOffCanvas = () => {
     height: var(--meta-navigation-bar-height);
     display: flex;
     justify-content: flex-end;
+
+    :deep(svg) {
+      font-size: 24px;
+    }
   }
 
   &__item {
