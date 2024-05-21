@@ -44,7 +44,7 @@ const props = defineProps({
           v-if="props.layoutType === 'flex' && data?.videoArr?.length == 1"
         >
           <div
-            class="col-xs-12 col-sm-12 col-md-6 video-component__layout-flex__remove-padding"
+            class="col-xs-12 col-sm-12 col-md-6 video-component__layout-flex__remove-padding--left"
           >
             <VideoContent
               class="video-component__layout-flex__video-content"
@@ -56,7 +56,7 @@ const props = defineProps({
             />
           </div>
           <div
-            class="col-xs-12 col-sm-12 col-md-6 video-component__layout-flex__remove-padding"
+            class="col-xs-12 col-sm-12 col-md-6 video-component__layout-flex__remove-padding--right"
           >
             <VideoPlayer v-if="data?.videoArr" :videoArr="data.videoArr" />
           </div>
@@ -67,9 +67,11 @@ const props = defineProps({
           v-else-if="
             props.layoutType === 'carousel' && data?.videoArr?.length > 1
           "
-          class="col-xs-12 col-sm-12 col-md-8 video-component__layout-carousel__remove-padding video-component__layout-carousel"
+          class="video-component__layout-carousel"
         >
-          <div>
+          <div
+            class="col-xs-12 col-sm-12 col-md-8 video-component__layout-carousel__remove-padding"
+          >
             <VideoContent
               v-if="data.videoTitle || data.videoDescription"
               :data="{
@@ -112,7 +114,21 @@ const props = defineProps({
     display: grid @(--md) flex;
 
     &__remove-padding {
-      padding: 0;
+      &--left {
+        padding-left: 0;
+
+        @media (--viewport-md-max) {
+          padding: 0;
+        }
+      }
+
+      &--right {
+        padding-right: 0;
+
+        @media (--viewport-md-max) {
+          padding: 0;
+        }
+      }
     }
 
     &__video-content {
