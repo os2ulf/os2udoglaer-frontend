@@ -72,15 +72,15 @@ onUnmounted(() => {
   &__wrapper {
     position: relative;
     width: 90%;
-    max-width: 600px; /* Adjust width as needed */
-    min-height: 400px;
+    max-width: 600px;
+    min-height: 330px;
     max-height: 90%;
     background-color: var(--color-white);
     overflow: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center content vertically */
-    align-items: center; /* Center content horizontally */
+    justify-content: center;
+    align-items: center;
     transition: all 0.3s ease-in-out;
   }
 
@@ -110,7 +110,7 @@ onUnmounted(() => {
   }
 
   &__content-body {
-    padding: 30px;
+    padding: 30px 30px 0 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
