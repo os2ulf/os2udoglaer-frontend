@@ -68,7 +68,7 @@ const practicalInfoData = computed(() => {
       content:
         props.data?.field_duration +
         ' ' +
-        props.data?.field_duration_unit_taxonomy.label,
+        props.data?.field_duration_unit_taxonomy?.label,
     },
     {
       description:
