@@ -1,14 +1,3 @@
-<template>
-  <div>
-    <PageHeader v-if="pageHeader" :page-block-header-data="pageHeader" />
-
-    <Sections
-      v-if="data && data.layout_builder__layout"
-      :sections="data.layout_builder__layout"
-    />
-  </div>
-</template>
-
 <script setup>
 const props = defineProps({
   data: {
@@ -27,3 +16,14 @@ useHead({
   title: props?.data?.field_meta_tags?.html_head?.title?.atributes?.content,
 });
 </script>
+
+<template>
+  <div>
+    <PageHeader v-if="pageHeader" :page-block-header-data="pageHeader" />
+
+    <Sections
+      v-if="data && data.layout_builder__layout"
+      :sections="data.layout_builder__layout"
+    />
+  </div>
+</template>

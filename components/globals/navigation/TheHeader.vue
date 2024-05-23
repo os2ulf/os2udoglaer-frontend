@@ -216,7 +216,6 @@ onBeforeUnmount(() => {
   width: 100%;
   height: var(--navigation-bar-height);
   background: var(--color-primary-lighten-3);
-  border-bottom: 1px solid var(--color-gray-11);
   transition: transform 0.3s ease-in-out;
 
   &--fixed {
