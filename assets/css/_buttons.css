@@ -45,6 +45,19 @@
       background-color: var(--color-primary-darken-3);
       border-color: var(--color-primary-darkest);
     }
+
+    &--ghost {
+      color: var(--color-primary);
+      background-color: transparent;
+      border: 2px solid var(--color-primary);
+      opacity: 1;
+
+      &:hover {
+        color: var(--color-primary-lighten-4);
+        background-color: var(--color-primary);
+        opacity: 1;
+      }
+    }
   }
 
   &--secondary {

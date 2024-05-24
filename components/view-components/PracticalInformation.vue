@@ -5,12 +5,29 @@ const props = defineProps({
     required: true,
     default: null,
   },
+  userProfilePage: {
+    type: Object,
+    required: false,
+    default: null,
+  },
 });
 </script>
 
 <template>
   <div class="practical-information">
-    <h3 class="practical-information__title">Praktisk information</h3>
+    <div
+      class="practical-information__provider-logo"
+      v-if="userProfilePage?.logo?.src"
+    >
+      <!-- TODO: Switchout once images are transformed BE -->
+      <img
+        :src="props.userProfilePage?.logo?.src"
+        :alt="userProfilePage.logo?.alt"
+      />
+    </div>
+    <h3 class="practical-information__title">
+      {{ !props.userProfilePage ? 'Praktisk information' : 'Udbyder' }}
+    </h3>
 
     <!--Practical information data for loop START -->
     <div v-for="(item, index) in props.data" :key="index">
@@ -37,6 +54,26 @@ const props = defineProps({
               <img :src="goals?.field_logo?.src" alt="SDG" />
             </NuxtLink>
           </div>
+        </div>
+      </div>
+
+      <!-- User Profile element -->
+      <div v-else-if="item.type === 'user_profile'">
+        <div class="practical-information__item-container">
+          <div class="practical-information__item-heading">
+            {{ item.title }}
+          </div>
+        </div>
+
+        <div class="practical-information__user-profile-content-wrapper">
+          <slot></slot>
+        </div>
+
+        <div class="practical-information__user-profile-button">
+          <BaseButton
+            :button-data="{ title: 'Kontakt udbyder' }"
+            class="button button--secondary button--secondary--ghost"
+          />
         </div>
       </div>
 
@@ -133,6 +170,10 @@ const props = defineProps({
   background-color: var(--color-white);
   border: 2px solid var(--color-primary-lighten-4);
   box-shadow: 0 4px 10px 4px #297f781a;
+
+  &__provider-logo {
+    margin-bottom: 22px;
+  }
 
   &__title {
     margin: 0;
@@ -240,6 +281,14 @@ const props = defineProps({
     &:hover {
       opacity: 0.8;
     }
+  }
+
+  &__user-profile-button {
+    padding-top: 11px @(--sm) 22px;
+  }
+
+  &__user-profile-content-wrapper {
+    padding-top: 8px;
   }
 
   details {
