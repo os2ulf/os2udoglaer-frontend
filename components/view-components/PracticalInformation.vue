@@ -260,6 +260,10 @@ const props = defineProps({
         display: none;
       }
     }
+
+    summary::-webkit-details-marker {
+      display:none;
+    }
   }
 }
 </style>
