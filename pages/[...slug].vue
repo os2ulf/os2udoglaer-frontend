@@ -2,7 +2,7 @@
 const { useContent } = useContentApi();
 
 definePageMeta({
-  layout: "default",
+  layout: 'default',
 });
 
 const router = useRouter();
@@ -17,7 +17,7 @@ let redirectUrl = ref(null);
 const { data } = await useAsyncData(encodedPath, () =>
   useContent(route.path)
     .then((res) => {
-      if (res.type === "redirect") {
+      if (res.type === 'redirect') {
         redirectUrl.value = res.target;
       }
 
@@ -25,21 +25,21 @@ const { data } = await useAsyncData(encodedPath, () =>
     })
     .catch((err) => {
       error = err;
-    })
+    }),
 );
 
 if (error || !data.value) {
   if (!error || !error.statusCode) {
-    navigateTo("/maintenance");
+    navigateTo('/maintenance');
   }
   // if BE is down
-  if (error.statusCode.toString().startsWith("5")) {
-    navigateTo("/maintenance");
+  if (error.statusCode.toString().startsWith('5')) {
+    navigateTo('/maintenance');
   }
 
   // if forbidden to see
   if (error.statusCode === 403) {
-    navigateTo("/forbidden");
+    navigateTo('/forbidden');
   }
 
   // stop code from executing further
@@ -59,54 +59,39 @@ if (redirectUrl.value) {
 const pageBlockHeaderData = viewData?.field_header;
 // SEO/META
 const seoHeadLinkDataEN = ref(
-  viewData?.field_meta_tags?.html_head?.alternate_en?.attributes
+  viewData?.field_meta_tags?.html_head?.alternate_en?.attributes,
 );
 const seoHeadLinkDataDA = ref(
-  viewData?.field_meta_tags?.html_head?.alternate_da?.attributes
+  viewData?.field_meta_tags?.html_head?.alternate_da?.attributes,
 );
 
 // // Dynamically import components
 const renderLayoutBlock = (viewName: string) => {
   return defineAsyncComponent(() =>
     import(`@/components/views/${viewName}View.vue`).catch((err) => {
-      console.error("View not implemented", err);
-    })
+      console.error('View not implemented', err);
+    }),
   );
 };
 
 useHead({
-  title:
-    viewData?.field_meta_tags?.html_head?.title?.attributes?.content ||
-    viewData?.label ||
-    "Page title",
-  meta: [
-    {
-      name: "description",
-      content:
-        viewData?.field_meta_tags?.html_head?.description?.attributes
-          ?.content || "Description",
-    },
-  ],
-});
-
-useHead({
   htmlAttrs: {
-    lang: viewData?.langcode || "da",
+    lang: viewData?.langcode || 'da',
   },
   title:
     viewData?.field_meta_tags?.html_head?.title?.attributes?.content ||
     viewData?.label ||
-    "Title",
+    'Title',
   meta: [
     {
-      name: "description",
+      name: 'description',
       content:
         viewData?.field_meta_tags?.html_head?.description?.attributes
-          ?.content || "Description",
+          ?.content || 'Description',
     },
     {
-      name: "robots",
-      content: "index, nofollow",
+      name: 'robots',
+      content: 'index, nofollow',
     },
   ],
   link: [

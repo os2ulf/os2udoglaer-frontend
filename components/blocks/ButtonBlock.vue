@@ -35,21 +35,38 @@ const props = defineProps({
   align-items: center;
   justify-content: center;
   min-width: 150px;
-  min-height: 60px;
-  padding: 14px 24px;
+  min-height: 56px;
+  padding: 16px 32px;
   overflow: hidden;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--heading-font-family);
   border-radius: 100px;
   cursor: pointer;
+  word-break: break-word;
 }
 
 .button--ghost {
-  border: 1px solid var(--color-gray-16);
+  border: 1px solid var(--color-primary-lighten-3);
+  color: var(--color-primary);
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    color: var(--color-primary);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-white);
+  }
 }
 
 .button--normal {
+  background-color: var(--color-primary);
   color: var(--color-white);
+  border: 1px solid transparent;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: var(--color-primary-darken-2);
+  }
 }
 
 .button--center {

@@ -1,0 +1,5 @@
+{
+  "postcss.validate": false,
+  "scss.validate": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

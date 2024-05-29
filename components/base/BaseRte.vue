@@ -1,7 +1,3 @@
-<template>
-  <div class="base-rte" v-html="content"></div>
-</template>
-
 <script setup lang="ts">
 const props = defineProps({
   content: {
@@ -9,10 +5,68 @@ const props = defineProps({
     required: true,
   },
 });
+
+let alteredData = props.content;
+
+if (alteredData !== null) {
+  const eternalStrings = ['www.'];
+
+  // find all links
+  const linkRegex =
+    /<a\s+(.*?)href=["'](?:[^"'>]*href=["']|(?!http:\/\/))(.*?)["'](.*?)>/g;
+  const links = alteredData?.match(linkRegex);
+
+  if (links) {
+    links.forEach((link) => {
+      const hrefMatch = link?.match(/href="([^"]*)"/);
+      if (hrefMatch) {
+        const href = hrefMatch[1];
+        if (
+          !href.startsWith('https://') &&
+          eternalStrings.some((external) => href.includes(external))
+        ) {
+          // the first character of the href is a /, so we need to remove that and add https:// to the href string
+          alteredData = alteredData?.replace(
+            link,
+            link?.replace(href, `https://${href}`),
+          );
+        }
+      }
+    });
+  }
+
+  // Correcting links, adding open in new tab, using title as link text
+  alteredData = alteredData?.replace(
+    /<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>(.*?)<\/a>/g,
+    (_, href, title, linkText) => {
+      const shouldOpenInNewTab = /target="_blank"/i.test(_);
+      return `<a href="${href}" title="${title}"${
+        shouldOpenInNewTab ? ' target="_blank"' : ''
+      }>${title || linkText}</a>`;
+    },
+  );
+}
 </script>
+
+<template>
+  <div class="base-rte" v-if="alteredData !== null" v-html="alteredData"></div>
+</template>
 
 <style lang="postcss" scoped>
 .base-rte {
+  word-wrap: break-word;
+
+  :deep(a) {
+    color: var(--color-primary-darken-1);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.3s ease-in-out;
+
+    &:hover {
+      border-bottom: 1px solid var(--color-primary);
+    }
+  }
+
   :deep(.text-align-right) {
     text-align: right;
   }

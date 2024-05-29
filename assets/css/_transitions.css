@@ -1,13 +1,12 @@
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
-  animation: shake 0.3s;
+  opacity: 1;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  animation: shake 0.3s;
 }
 
 /* Bounce in modal */
@@ -35,11 +34,30 @@
 
 /* slide in from side */
 .slide-enter-active {
-  animation: slide-in 0.5s;
+  animation: slide-in 0.3s;
 }
 
 .slide-leave-active {
-  animation: slide-in 0.5s reverse;
+  display: none;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* slide in from side */
+.slide-right-full-enter-active {
+  animation: slide-in 0.3s;
+}
+
+.slide-right-full-leave-active {
+  animation: slide-in 0.3s reverse;
 }
 
 @keyframes slide-in {
@@ -132,11 +150,11 @@
 
 /* slide in from right side */
 .slide-right-enter-active {
-  animation: slide-right 0.5s;
+  animation: slide-left 0.3s;
 }
 
 .slide-right-leave-active {
-  animation: slide-right 0.5s reverse;
+  display: none;
 }
 
 @keyframes slide-right {

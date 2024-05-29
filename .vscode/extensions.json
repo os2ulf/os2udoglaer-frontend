@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "xabikos.javascriptsnippets",
+    "antfu.vite",
+    "csstools.postcss",
+    "stylelint.vscode-stylelint",
+    "vue.volar",
+    "rbbit.typescript-hero",
+    "streetsidesoftware.code-spell-checker",
+    "sdras.vue-vscode-snippets",
+    "dbaeumer.vscode-eslint"
+  ]
+}

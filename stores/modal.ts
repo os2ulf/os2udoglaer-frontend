@@ -2,11 +2,13 @@ import { defineStore } from 'pinia';
 
 export const useModalStore = defineStore('modal', () => {
   const isVisible = ref(false);
-  const dynamicComponent = ref(null);
+  const modalData = ref(null);
 
-  const showModal = (componentName: any) => {
+  const showModal = (modalContent: any) => {
     isVisible.value = true;
-    dynamicComponent.value = markRaw(componentName);
+    modalData.value = modalContent;
+    console.log(modalData.value, modalContent);
+
     document.body.style.overflow = 'hidden';
   };
 
@@ -15,7 +17,7 @@ export const useModalStore = defineStore('modal', () => {
     document.body.style.overflow = 'auto';
 
     setTimeout(() => {
-      dynamicComponent.value = null;
+      modalData.value = null;
     }, 400);
   };
 
@@ -23,6 +25,6 @@ export const useModalStore = defineStore('modal', () => {
     isVisible,
     showModal,
     hideModal,
-    dynamicComponent,
+    modalData,
   };
 });

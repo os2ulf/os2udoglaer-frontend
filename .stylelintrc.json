@@ -1,4 +1,0 @@
-{
-  "extends": "@novicell/stylelint-config",
-  "rules": {}
-}

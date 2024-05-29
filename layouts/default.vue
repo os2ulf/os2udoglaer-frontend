@@ -1,4 +1,5 @@
 <template>
+  <TheMetaMenu />
   <TheHeaderParent />
   <div class="app">
     <slot></slot>

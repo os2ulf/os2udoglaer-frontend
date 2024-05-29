@@ -1,12 +1,11 @@
-import { Transition } from 'nuxt/dist/app/compat/capi';
 <script setup lang="ts">
 import { useModalStore } from '~~/stores/modal';
 const modalStore = useModalStore();
 
 const isVisible = computed(() => modalStore.isVisible);
 
-const dynamicComponent = computed(() => {
-  return modalStore.dynamicComponent;
+const modalContent = computed(() => {
+  return modalStore.modalData;
 });
 
 // listen to escape key
@@ -26,16 +25,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Transition name="fade-in">
-    <div v-show="isVisible" class="the-modal">
-      <div class="the-modal__content">
+  <Transition name="fade">
+    <div
+      v-show="isVisible"
+      class="the-modal"
+      @click.self="modalStore.hideModal"
+    >
+      <div class="the-modal__wrapper">
         <div class="the-modal__header">
           <button class="the-modal__button-close" @click="modalStore.hideModal">
-            <NuxtIcon name="close" />
+            <NuxtIcon class="the-modal__close-icon" name="close" />
           </button>
         </div>
-        <div v-if="dynamicComponent" class="the-modal__content-body">
-          <component :is="dynamicComponent" />
+        <div v-show="modalContent" class="the-modal__content-body">
+          <p>
+            {{ modalContent?.video_overlay_text }}
+          </p>
+
+          <NuxtLink
+            class="button button--primary the-modal__button-cta"
+            :to="modalContent?.field_video_url?.url"
+            target="_blank"
+          >
+            Se video
+          </NuxtLink>
         </div>
       </div>
     </div>
@@ -44,6 +57,7 @@ onUnmounted(() => {
 
 <style lang="postcss">
 .the-modal {
+  color: var(--color-tertiary);
   position: fixed;
   top: 0;
   right: 0;
@@ -55,13 +69,19 @@ onUnmounted(() => {
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.4);
 
-  &__content {
+  &__wrapper {
     position: relative;
-    width: 90% @(--md) 50%;
-    min-height: 80% @(--md) 600px;
-    max-height: 90vh @(--sm) 70vh;
-    overflow: auto;
+    width: 90%;
+    max-width: 600px;
+    min-height: 330px;
+    max-height: 90%;
     background-color: var(--color-white);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
   }
 
   &__header {
@@ -73,16 +93,35 @@ onUnmounted(() => {
 
   &__button-close {
     padding: 15px;
-    color: var(--color-text);
-    font-size: 20px;
+    color: var(--color-tertiary);
     white-space: nowrap;
     text-decoration: none;
     background: none;
     border: none;
   }
 
+  &__button-cta {
+    margin-top: 20px;
+  }
+
+  &__close-icon {
+    width: 52px;
+    height: 52px;
+  }
+
   &__content-body {
-    padding: 30px;
+    padding: 30px 30px 0 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  svg {
+    font-size: 30px;
   }
 }
 </style>

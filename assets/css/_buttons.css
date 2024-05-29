@@ -3,31 +3,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 24px;
+  padding: 18px 32px;
   overflow: hidden;
   color: var(--color-white);
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: var(--body-font-size);
   font-family: var(--heading-font-family);
-  line-height: 1em;
-  letter-spacing: 0.05em @(--sm) 0.24em;
   text-align: center;
-  text-transform: uppercase;
   text-decoration: none;
   background-color: var(--color-black);
-  border: 1px solid var(--color-black);
-  border-radius: 100px;
+  border: 2px solid var(--color-black);
+  border-radius: 56px;
   cursor: pointer;
   transition:
     background-color 0.2s,
     transform 0.2s;
+  line-height: 20px;
 
   .nuxt-icon {
     transition: transform 0.2s ease;
   }
 
   &:hover {
-    background-color: var(--color-black);
+    background-color: var(--color-primary-darken-2);
   }
 
   &:active {
@@ -37,15 +35,39 @@
   &--primary {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
+    transition: all 0.3s ease-in-out;
 
     &:hover {
-      background-color: var(--color-primary-dark);
-      border-color: var(--color-primary-dark);
+      background-color: var(--color-primary-darken-2);
+      border-color: var(--color-primary-darken-2);
     }
 
     &:active {
-      background-color: var(--color-primary-darkest);
-      border-color: var(--color-primary-darkest);
+      background-color: var(--color-primary-darken-2);
+      border-color: var(--color-primary-darken-2);
+    }
+  }
+
+  &--secondary {
+    background-color: var(--color-tertiary);
+    color: var(--color-secondary-lighten-4);
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: var(--color-tertiary-darken-2);
+      color: var(--color-secondary);
+    }
+
+    &--ghost {
+      color: var(--color-tertiary);
+      background-color: transparent;
+      border: 2px solid var(--color-tertiary);
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        color: var(--color-secondary);
+        background-color: var(--color-tertiary-darken-2);
+      }
     }
   }
 
@@ -113,45 +135,40 @@
   }
 
   &--small {
-    padding: 8px 22px;
+    padding: 14px 24px;
     font-size: 14px;
   }
 
   &--icon {
-    min-height: 44px;
-    letter-spacing: 0;
-    text-transform: none;
+    padding: 18px 32px;
+    font-size: var(--body-font-size);
 
     .button__text {
-      display: none @(--sm) flex;
-      margin-left: 7px;
-
-      .movie-view__cta & {
-        display: flex;
-      }
+      display: flex;
+      margin-left: 8px;
     }
   }
 
   &--ghost {
-    padding: 14px 24px;
+    padding: 18px 32px;
     color: var(--color-text);
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
+    font-weight: 700;
+    font-size: var(--body-font-size);
     background-color: transparent;
-    border: 1px solid var(--color-gray-25);
-    border-radius: 100px;
+    border: 2px solid var(--color-primary-lighten-3);
+    border-radius: 56px;
+    transition: all 0.3s ease-in-out;
 
     &:hover {
-      color: var(--color-white);
-      background-color: var(--color-text);
+      color: var(--color-primary-darken-2);
+      background-color: var(--color-white);
+      border-color: var(--color-white);
       opacity: 1;
     }
 
     &.button {
       &--primary {
-        color: var(--color-primary);
+        color: var(--color-primary-darken-2);
       }
 
       &--success {
@@ -167,7 +184,7 @@
       }
 
       &:hover {
-        color: var(--color-white);
+        color: var(--color-primary-darken-2);
       }
 
       &--white {
@@ -181,17 +198,15 @@
   }
 
   &--link {
-    padding-right: 0;
-    padding-bottom: 4px;
-    padding-left: 0;
+    padding: 10px 0;
     color: var(--color-text);
-    font-weight: 200;
-    font-weight: 500;
+    font-weight: 700;
     background-color: transparent;
     border-top: none;
     border-right: none;
     border-left: none;
     border-radius: 0;
+    font-size: var(--body-font-size);
 
     &:hover {
       color: var(--color-text);
@@ -229,19 +244,16 @@
   }
 
   &__icon {
-    margin: -1em 0;
-    font-size: 25px;
-    fill: currentcolor;
-
-    svg {
-      display: block;
-    }
+    margin: -2px 0;
   }
 
   &__icon-after {
-    margin-left: 10px;
-    font-size: 0.8em;
-    transform: rotate(-90deg);
+    margin: -2px 0;
+    margin-left: 8px;
+
+    svg {
+      font-size: 24px;
+    }
   }
 
   &--loading {

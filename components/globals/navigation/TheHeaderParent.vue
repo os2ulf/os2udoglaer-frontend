@@ -12,3 +12,10 @@ if (headerDataStore.headerData === null) {
     <TheHeader :data="headerDataStore.headerData" />
   </div>
 </template>
+
+<style lang="postcss" scoped>
+.header-parent {
+  height: var(--navigation-bar-height);
+  background-color: var(--color-primary-lighten-3);
+}
+</style>

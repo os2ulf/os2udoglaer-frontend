@@ -24,6 +24,6 @@ const props = defineProps({
 });
 
 useHead({
-  title: props.data.label,
+  title: props?.data?.field_meta_tags?.html_head?.title?.atributes?.content,
 });
 </script>

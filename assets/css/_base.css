@@ -47,3 +47,7 @@ table {
 img#concept-pixel {
   display: none;
 }
+
+.nuxt-icon svg {
+  margin-bottom: 0 !important;
+}
