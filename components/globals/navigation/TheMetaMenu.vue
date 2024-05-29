@@ -77,7 +77,7 @@ const closeOffCanvas = () => {
                   class="meta-menu__item--arrow"
                   filled
                   name="chevron-down"
-                  v-if="metaItem.below.length > 0"
+                  v-if="metaItem.below.length > 0 && !metaItem.url"
                   :class="{
                     'meta-menu__item--rotate-arrow': activeNavItem === metaItem,
                   }"
