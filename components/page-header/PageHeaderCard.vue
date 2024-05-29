@@ -40,19 +40,37 @@ const cardItem = ref(props.cardItem);
     background-color: var(--color-white);
     padding: 32px;
     height: 100%;
+
+    @media (--viewport-ms-max) {
+      display: flex;
+      align-items: center;
+    }
   }
 
   &__title {
     line-height: 28px;
+
+    @media (--viewport-ms-max) {
+      flex-grow: 1;
+      margin-bottom: 0;
+    }
   }
 
   &__description {
     font-weight: 400;
     line-height: 24px;
+
+    @media (--viewport-ms-max) {
+      display: none;
+    }
   }
 
   &__link {
     padding-top: 22px;
+
+    @media (--viewport-ms-max) {
+      padding-top: 0;
+    }
 
     &--icon {
       :deep(svg) {
