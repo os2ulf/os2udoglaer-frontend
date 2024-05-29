@@ -56,6 +56,7 @@ export default defineNuxtConfig({
     '~/components/modals',
     '~/components/globals/footer',
     '~/components/globals/navigation',
+    '~/components/page-header',
     '~/components/view-components',
     '~/components/views',
   ],

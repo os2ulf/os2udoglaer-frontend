@@ -55,6 +55,7 @@ const config = useRuntimeConfig().public;
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s;
+    height: 100%;
 
     &:hover {
       border: 2px solid var(--color-primary-lighten-4);
