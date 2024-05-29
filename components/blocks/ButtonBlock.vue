@@ -42,6 +42,7 @@ const props = defineProps({
   font-family: var(--heading-font-family);
   border-radius: 100px;
   cursor: pointer;
+  word-break: break-word;
 }
 
 .button--ghost {
