@@ -59,9 +59,7 @@ if (process.client) {
 <template>
   <ClientOnly>
     <div v-if="props.blockData" class="code-block">
-      <div class="code">
-        <div v-html="props.blockData.field_code_content"></div>
-      </div>
+      <div v-html="props.blockData.field_code_content"></div>
     </div>
   </ClientOnly>
 </template>
