@@ -37,8 +37,7 @@
     "sitemap": "^7.1.1",
     "swiper": "^8.4.6",
     "uuid": "^9.0.1",
-    "vee-validate": "^4.7.3",
-    "vue-tweet": "^2.2.1"
+    "vee-validate": "^4.7.3"
   },
   "overrides": {
     "vue": "latest"
