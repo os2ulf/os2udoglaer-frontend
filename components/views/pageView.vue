@@ -12,8 +12,24 @@ const props = defineProps({
   },
 });
 
+const robots = ref(
+  props.data?.field_meta_tags?.html_head?.robots?.attributes?.content,
+);
+
 useHead({
-  title: props?.data?.field_meta_tags?.html_head?.title?.atributes?.content,
+  title: props?.data?.field_meta_tags?.html_head?.title?.attributes?.content,
+  meta: [
+    {
+      name: 'description',
+      content:
+        props?.data?.field_meta_tags?.html_head?.description?.attributes
+          ?.content,
+    },
+    {
+      name: 'robots',
+      content: robots.value,
+    },
+  ],
 });
 </script>
 
