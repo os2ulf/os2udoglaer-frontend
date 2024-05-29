@@ -38,7 +38,7 @@ const cardItem = ref(props.cardItem);
 
   &__item {
     background-color: var(--color-white);
-    padding: 32px;
+    padding: 24px @(--sm) 32px;
     height: 100%;
 
     @media (--viewport-ms-max) {
