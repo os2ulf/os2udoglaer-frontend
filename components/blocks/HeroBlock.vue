@@ -1,92 +1,60 @@
-<template>
-  <div class="hero" :class="{ 'hero--dark': isDarkBg }">
-    <BaseMedia
-      class="hero__media"
-      :block-data="blockData"
-      :component-type-class="blockData.field_hero?.bundle"
-    />
-    <div
-      class="hero__content"
-      :class="[
-        blockData.field_hero?.field_text_position,
-        { 'hero__content--dark': isDarkText },
-      ]"
-    >
-      <div
-        v-if="blockData.field_hero?.field_text !== null"
-        class="hero__text"
-        v-html="blockData.field_hero?.field_text"
-      ></div>
-      <BaseButton
-        v-if="blockData.field_hero?.field_cta !== null"
-        :button-data="blockData.field_hero?.field_cta"
-        :link="
-          blockData.field_hero?.field_cta?.class &&
-          blockData.field_hero?.field_cta?.class != 'button--normal'
-        "
-        :color="
-          blockData.field_hero?.field_cta?.class == 'button--normal'
-            ? ''
-            : 'white'
-        "
-      />
-    </div>
-  </div>
-</template>
-
 <script setup>
 const props = defineProps({
   blockData: Object,
 });
 
-// Checking if overlay is turned on without image
-const isDarkText = computed(() => {
-  return (
-    !props.blockData?.field_hero?.field_overlay &&
-    props.blockData?.field_hero?.field_background === null
-  );
-});
-
-const isDarkBg = computed(() => {
-  return (
-    props.blockData?.field_hero?.field_overlay &&
-    props.blockData?.field_hero?.field_background === null
-  );
-});
+const heroData = ref(props.blockData);
+console.log('HeroBlock.vue', heroData);
 </script>
+
+<template>
+  <div class="hero">
+    <div class="hero__image-wrapper">
+      <!-- <BaseMedia
+        class="hero__media"
+        :block-data="heroData"
+        :component-type-class="heroData?.bundle"
+      /> -->
+      <img
+        :src="heroData?.field_image_media?.src"
+        :alt="heroData?.field_image_media?.alt"
+      />
+      <div class="hero__content">
+        <div
+          v-if="heroData?.field_hero_subtitle"
+          class="hero__text--under-title"
+        >
+          {{ heroData?.field_hero_subtitle }}
+        </div>
+        <div v-if="heroData?.field_hero_title" class="hero__text">
+          <h1>
+            {{ heroData?.field_hero_title }}
+          </h1>
+        </div>
+
+        <div
+          class="hero__button-wrapper"
+          v-if="heroData?.field_hero_links?.length > 0"
+        >
+          <BaseButton
+            class="hero__button-ghost"
+            v-for="link in heroData?.field_hero_links"
+            :key="link"
+            :button-data="link?.field_link"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="postcss" scoped>
 .hero {
   position: relative;
-  margin-bottom: var(--grid-gutter);
-  padding: 80px var(--grid-gutter);
   overflow: hidden;
 
   @media (--viewport-md-min) {
     margin-bottom: 0;
-  }
-
-  &--dark {
-    background: var(--color-black);
-
-    .hero__text {
-      :deep(strong) {
-        color: var(--color-black);
-        background: var(--color-gray-16);
-      }
-    }
-  }
-
-  &--left {
-    text-align: left;
-  }
-
-  &--center {
-    text-align: center;
-  }
-
-  &--right {
-    text-align: right;
   }
 
   &__media {
@@ -99,38 +67,58 @@ const isDarkBg = computed(() => {
     }
   }
 
-  &__content {
+  &__image-wrapper {
+    display: flex;
     position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    color: var(--color-white);
+    overflow: hidden;
+    height: 500px @(--sm) 700px;
 
-    &--dark {
-      color: var(--color-black);
+    :deep(img) {
+      object-fit: cover;
     }
   }
 
+  &__content {
+    position: absolute;
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    color: var(--color-white);
+    line-height: 38px @(--sm) 56px;
+
+    /* align center of its container */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
   &__text {
-    margin-bottom: 1rem;
+    margin-bottom: 16px @(--sm) 32px;
+    text-align: center;
+    word-wrap: break-word;
 
-    :deep(h1, h2) {
-      font-size: var(--font-size-display);
+    &--under-title {
+      font-size: 16px @(--sm) 20px;
+      font-weight: 500;
+      margin-bottom: 16px @(--sm) 32px;
     }
+  }
 
-    :deep(strong) {
-      padding: 4px 14px;
-      color: var(--color-white);
-      font-weight: 200;
-      font-size: 14px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      background: var(--color-black);
-    }
+  &__button-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
 
-    :deep(p:last-child) {
-      margin-bottom: 0;
+  &__button-ghost {
+    color: var(--color-white);
+    background-color: transparent;
+    border: 1px solid var(--color-white);
+
+    &:hover {
+      background-color: var(--color-white);
+      color: var(--color-text);
     }
   }
 }
