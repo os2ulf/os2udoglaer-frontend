@@ -10,6 +10,7 @@ console.log('HeroBlock.vue', heroData);
 <template>
   <div class="hero">
     <div class="hero__image-wrapper">
+      <!-- TODO: ONCE IMAGES TRANSFORMED -->
       <!-- <BaseMedia
         class="hero__media"
         :block-data="heroData"
@@ -34,13 +35,13 @@ console.log('HeroBlock.vue', heroData);
 
         <div
           class="hero__button-wrapper"
-          v-if="heroData?.field_hero_links?.length > 0"
+          v-if="heroData?.field_hero_link?.length > 0"
         >
           <BaseButton
             class="hero__button-ghost"
-            v-for="link in heroData?.field_hero_links"
+            v-for="link in heroData?.field_hero_link"
             :key="link"
-            :button-data="link?.field_link"
+            :button-data="link"
           />
         </div>
       </div>
@@ -102,6 +103,7 @@ console.log('HeroBlock.vue', heroData);
       font-size: 16px @(--sm) 20px;
       font-weight: 500;
       margin-bottom: 16px @(--sm) 32px;
+      line-height: 24px @(--sm) 32px;
     }
   }
 
@@ -109,6 +111,7 @@ console.log('HeroBlock.vue', heroData);
     display: flex;
     justify-content: center;
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   &__button-ghost {
