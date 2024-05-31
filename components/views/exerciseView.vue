@@ -182,41 +182,39 @@ const practicalInfoData = computed(() => {
             data.field_video
           "
         >
-          Video component goes here
-          <!-- Broken now  -->
-          <!-- <VideoComponent
-            class="exercise__section-video"
-            v-if="
-              data.field_video_title ||
-              data.field_video_description ||
-              data.field_video_thumbnail ||
-              data.field_video
-            "
-            :data="{
-              field_video_title: data.field_video_title,
-              field_video_description: data.field_video_description,
-              field_video_thumbnail: data.field_video_thumbnail,
-              field_video: data.field_video,
-            }"
-          /> -->
+          <ClientOnly>
+            <VideoComponent
+              v-if="
+                data?.field_video_title ||
+                data?.field_video_description ||
+                data?.field_video?.length > 0
+              "
+              :data="{
+                videoTitle: data?.field_video_title,
+                videoDescription: data?.field_video_description,
+                videoArr: data?.field_video,
+              }"
+              :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
+            />
+          </ClientOnly>
         </div>
 
         <!-- Section cards -->
         <div
           class="col-xs-12 col-sm-12 col-md-12 exercise__section-cards"
           v-if="
-            data.field_materials.length > 1 ||
-            data.field_materials[0].field_literature_suggestion ||
-            data.field_materials[0].field_material_description ||
-            data.field_materials[0].field_material_title ||
-            data.field_materials[0].field_material_file ||
-            data.field_materials[0].field_material_url
+            data.field_work_documents?.length > 1 ||
+            data.field_work_documents[0]?.field_literature_suggestion ||
+            data.field_work_documents[0]?.field_material_description ||
+            data.field_work_documents[0]?.field_material_title ||
+            data.field_work_documents[0]?.field_material_file ||
+            data.field_work_documents[0]?.field_material_url
           "
         >
           <div class="exercise__educational-cards">
             <EducationalCards
               :data="{
-                field_materials: data.field_materials,
+                field_materials: data.field_work_documents,
               }"
             />
           </div>
