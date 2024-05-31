@@ -174,7 +174,7 @@ const practicalInfoData = computed(() => {
         </div>
 
         <div
-          class="col-xs-12 col-sm-12 col-md-12"
+          class="col-xs-12 col-sm-12 col-md-12 exercise__section-video"
           v-if="
             data.field_video_title ||
             data.field_video_description ||
