@@ -29,10 +29,10 @@ const props = defineProps({
 .meta-offcanvas {
   position: absolute;
   z-index: 1000;
-  margin-top: 13px;
-  min-width: 340px;
+  top: 100%;
   right: 0;
-  box-shadow: 0px 4px 30px 0px #0000001a;
+  width: 100% @(--sm) 340px;
+  box-shadow: 0 4px 30px 0 #0000001a;
 
   &__item-wrapper {
     text-align: left;
