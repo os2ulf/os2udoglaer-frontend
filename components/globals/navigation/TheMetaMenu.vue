@@ -84,13 +84,11 @@ const closeOffCanvas = () => {
                 />
 
                 <ClientOnly>
-                  <Transition name="slide-right-full">
-                    <TheOffCanvasMetaMenu
-                      v-if="isOpen && activeNavItem === metaItem"
-                      :nested-items="metaItem?.below"
-                      class="meta-offcanvas"
-                    />
-                  </Transition>
+                  <TheOffCanvasMetaMenu
+                    v-if="isOpen && activeNavItem === metaItem"
+                    :nested-items="metaItem?.below"
+                    class="meta-offcanvas"
+                  />
                 </ClientOnly>
               </div>
             </NuxtLink>
@@ -118,6 +116,7 @@ const closeOffCanvas = () => {
   }
 
   &__item {
+    position: relative;
     color: var(--color-tertiary);
     font-size: 14px;
     font-weight: 600;
