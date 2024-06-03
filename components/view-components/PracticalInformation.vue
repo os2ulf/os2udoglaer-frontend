@@ -5,159 +5,119 @@ const props = defineProps({
     required: true,
     default: null,
   },
-  userProfilePage: {
-    type: Object,
-    required: false,
-    default: null,
-  },
 });
 </script>
 
 <template>
   <div class="practical-information">
-    <div
-      class="practical-information__provider-logo"
-      v-if="userProfilePage?.logo?.src"
-    >
-      <!-- TODO: Switchout once images are transformed BE -->
-      <img
-        :src="props.userProfilePage?.logo?.src"
-        :alt="userProfilePage.logo?.alt"
-      />
-    </div>
-    <h3 class="practical-information__title">
-      {{ !props.userProfilePage ? 'Praktisk information' : 'Udbyder' }}
-    </h3>
+    <h3 class="practical-information__title">Praktisk information</h3>
 
     <!--Practical information data for loop START -->
-    <div v-for="(item, index) in props.data" :key="index">
-      <!-- Divider element -->
-      <BaseDivider
-        v-if="item.type === 'divider'"
-        class="practical-information__divider"
-      />
+    <div class="practical-information__group" v-for="(groups, index) in props.data" :key="index">
+      <div class="practical-information__item" v-for="(item, index) in groups.group" :key="index">
 
-      <!-- Sustainability goals element -->
-      <div v-else-if="item.type === 'sustainability_goals'">
-        <div class="practical-information__item-container">
-          <div class="practical-information__item-heading">
-            {{ item.title }}
-          </div>
-        </div>
-        <div class="practical-information__sdg-wrapper">
-          <div
-            class="practical-information__sdgs"
-            v-for="goals in item.content"
-            :key="goals"
-          >
-            <NuxtLink :to="goals?.field_link?.url" target="_blank">
-              <img :src="goals?.field_logo?.src" alt="SDG" />
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-
-      <!-- User Profile element -->
-      <div v-else-if="item.type === 'user_profile'">
-        <div class="practical-information__item-container">
-          <div class="practical-information__item-heading">
-            {{ item.title }}
-          </div>
-        </div>
-
-        <div class="practical-information__user-profile-content-wrapper">
-          <slot></slot>
-        </div>
-
-        <div class="practical-information__user-profile-button">
-          <BaseButton
-            :button-data="{ title: 'Kontakt udbyder' }"
-            class="button button--secondary button--secondary--ghost"
-          />
-        </div>
-      </div>
-
-      <!-- Basic element with title, content & description -->
-      <div v-else class="practical-information__item-container">
-        <div class="practical-information__item-heading">{{ item.title }}</div>
-
-        <!-- Price items inside basic element -->
-        <div
-          v-if="item.type === 'price' && !item.free"
-          class="practical-information__item-value"
-        >
-          <div
-            v-for="(price, index) in item.content"
-            :key="index"
-            class="practical-information__prices"
-          >
-            <div>
-              {{ price?.field_price }}
-              {{ price?.field_price_settlement_unit?.label }}
+        <!-- Sustainability goals element -->
+        <div v-if="item.type === 'sustainability_goals'">
+          <div class="practical-information__item-container">
+            <div class="practical-information__item-heading">
+              {{ item?.title }}
             </div>
-            <div>{{ price?.field_price_vat?.label }}</div>
           </div>
-        </div>
-
-        <!-- Price free label inside basic element -->
-        <div
-          v-else-if="item.type === 'price' && item.free"
-          class="practical-information__item-value"
-        >
-          <BaseTag :data="{ label: 'Gratis' }" color="secondary" />
-        </div>
-
-        <!-- Basic element content array loop -->
-        <div
-          v-else-if="Array.isArray(item.content)"
-          class="practical-information__item-value"
-        >
-          <!-- IF All elements inside the array are null -->
-          <div v-if="item.content.every((content: string) => content === null)">
-            Ikke angivet
-          </div>
-          <div v-else>
-            <div v-for="(content, index) in item.content" :key="index">
-              {{ content }}
+          <div class="practical-information__sdg-wrapper">
+            <div
+              class="practical-information__sdgs"
+              v-for="goals in item.content"
+              :key="goals"
+            >
+              <NuxtLink :to="goals?.field_link?.url" target="_blank">
+                <img :src="goals?.field_logo?.src" alt="SDG" />
+              </NuxtLink>
             </div>
           </div>
         </div>
 
-        <!-- Basic element content string -->
-        <div v-else class="practical-information__item-value">
-          <div v-if="item?.content == null && !item.description">
-            Ikke angivet
-          </div>
-          <div v-else-if="!item?.content"></div>
-          <div v-else v-html="item?.content"></div>
-        </div>
-      </div>
+        <!-- Basic element with title, content & description -->
+        <div v-else class="practical-information__item-container">
+          <div class="practical-information__item-heading">{{ item.title }}</div>
 
-      <!-- Basic description element -->
-      <details
-        class="practical-information__accordion-container"
-        v-if="item.description"
-      >
-        <summary class="practical-information__accordion-container--cta">
-          <span class="practical-information__see-more-cta collapsed"
-            >Se flere detaljer</span
+          <!-- Price items inside basic element -->
+          <div
+            v-if="item.type === 'price' && !item.free"
+            class="practical-information__item-value"
           >
-          <span class="practical-information__see-more-cta expanded"
-            >Skjul detaljer</span
+            <div
+              v-for="(price, index) in item.content"
+              :key="index"
+              class="practical-information__prices"
+            >
+              <div>
+                {{ price?.field_price }}
+                {{ price?.field_price_settlement_unit?.label }}
+              </div>
+              <div>{{ price?.field_price_vat?.label }}</div>
+            </div>
+          </div>
+
+          <!-- Price free label inside basic element -->
+          <div
+            v-else-if="item.type === 'price' && item.free"
+            class="practical-information__item-value"
           >
-          <NuxtIcon
-            class="practical-information__accordion-icon collapsed"
-            name="plus"
-          />
-          <NuxtIcon
-            class="practical-information__accordion-icon expanded"
-            name="minus"
-          />
-        </summary>
-        <div class="practical-information__accordion-content">
-          <span v-html="item.description"> </span>
+            <BaseTag :data="{ label: 'Gratis' }" color="secondary" />
+          </div>
+
+          <!-- Basic element content array loop -->
+          <div
+            v-else-if="Array.isArray(item.content)"
+            class="practical-information__item-value"
+          >
+            <!-- IF All elements inside the array are null -->
+            <div v-if="item.content.every((content: string) => content === null)">
+              Ikke angivet
+            </div>
+            <div v-else>
+              <div v-for="(content, index) in item.content" :key="index">
+                {{ content }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic element content string -->
+          <div v-else class="practical-information__item-value">
+            <div v-if="item?.content == null && !item.description">
+              Ikke angivet
+            </div>
+            <div v-else-if="!item?.content"></div>
+            <div v-else v-html="item?.content"></div>
+          </div>
         </div>
-      </details>
+
+        <!-- Basic description element -->
+        <details
+          class="practical-information__accordion-container"
+          v-if="item.description"
+        >
+          <summary class="practical-information__accordion-container--cta">
+            <span class="practical-information__see-more-cta collapsed"
+              >Se flere detaljer</span
+            >
+            <span class="practical-information__see-more-cta expanded"
+              >Skjul detaljer</span
+            >
+            <NuxtIcon
+              class="practical-information__accordion-icon collapsed"
+              name="plus"
+            />
+            <NuxtIcon
+              class="practical-information__accordion-icon expanded"
+              name="minus"
+            />
+          </summary>
+          <div class="practical-information__accordion-content">
+            <span v-html="item.description"> </span>
+          </div>
+        </details>
+      </div>
     </div>
     <!-- Practical information data for loop END -->
   </div>
@@ -171,17 +131,14 @@ const props = defineProps({
   border: 2px solid var(--color-primary-lighten-4);
   box-shadow: 0 4px 10px 4px #297f781a;
 
-  &__provider-logo {
-    margin-bottom: 22px;
+  &__group {
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-tertiary-lighten-4);
   }
 
   &__title {
     margin: 0;
-  }
-
-  &__divider {
-    margin: 22px 0 14px 0;
-    color: var(--color-tertiary-lighten-4);
   }
 
   &__item-heading {
@@ -281,14 +238,6 @@ const props = defineProps({
     &:hover {
       opacity: 0.8;
     }
-  }
-
-  &__user-profile-button {
-    padding-top: 11px @(--sm) 22px;
-  }
-
-  &__user-profile-content-wrapper {
-    padding-top: 8px;
   }
 
   details {
