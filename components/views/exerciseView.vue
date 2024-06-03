@@ -138,6 +138,11 @@ const practicalInfoData = computed(() => {
           >
             <BaseRte :content="data.field_purpose_exercise" />
           </div>
+
+          <div class="exercise__paragraph-item" v-if="data.field_preparation">
+            <BaseRte :content="data.field_preparation" />
+          </div>
+
           <div class="exercise__paragraph-item" v-if="data.field_how_to">
             <BaseRte :content="data.field_how_to" />
           </div>
