@@ -16,20 +16,41 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Målgruppe',
+          content: props.data?.field_audience,
+        },
+      ],
     },
   ];
 });
-
-console.log('data News', props.data);
 </script>
 
 <template>
-  <div class="user">
+  <div class="news">
     <div class="news__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="news__tags-wrapper">
+              <div class="news__tags-item" v-if="data?.field_theme?.label">
+                <BaseTag
+                  v-if="data?.field_theme?.label"
+                  :data="{ label: data?.field_theme?.label }"
+                  color="secondary"
+                />
+              </div>
+            </div>
+
             <div class="news__page-heading-wrapper">
               <h1 class="news__page-title">{{ data?.label }}</h1>
               <div class="news__page-heading-button-container">
@@ -43,6 +64,15 @@ console.log('data News', props.data);
                   Kontakt udbyder
                 </button>
               </div>
+            </div>
+
+            <div class="news__banner-image">
+              <!-- TODO: Once BE has proper image styling, change this into img component -->
+              <img
+                :src="data?.field_image?.src"
+                :alt="data?.field_image?.alt"
+                :title="data?.field_image?.title"
+              />
             </div>
           </div>
         </div>
@@ -60,43 +90,9 @@ console.log('data News', props.data);
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
         >
           <SharePage />
-          <PracticalInformation :data="practicalInfoData">
-            <div>
-              {{ data?.field_location_name }} <br />
-              {{ data?.field_location_street }} <br />
-              {{ data?.field_location_zipcode }}
-              {{ data?.field_location_city }} <br />
-            </div>
-
-            <div>
-              {{ data?.field_cvr }}
-            </div>
-
-            <div class="news__links-wrapper">
-              <div>
-                <NuxtLink class="news__link" :to="'tel:' + data?.field_phone">{{
-                  data?.field_phone
-                }}</NuxtLink>
-              </div>
-
-              <div>
-                <NuxtLink
-                  class="news__link"
-                  :href="'mailto:' + data?.field_mail"
-                  >{{ data?.field_mail }}</NuxtLink
-                >
-              </div>
-
-              <div>
-                <NuxtLink
-                  class="news__link"
-                  target="_blank"
-                  :to="data?.field_homepage?.url"
-                  >{{ data?.field_homepage?.title }}</NuxtLink
-                >
-              </div>
-            </div>
-          </PracticalInformation>
+          <PracticalInformation
+            :data="practicalInfoData"
+          ></PracticalInformation>
         </div>
 
         <div class="col-xs-12 col-sm-12 col-md-12 news__divider">
@@ -129,41 +125,24 @@ console.log('data News', props.data);
           </ClientOnly>
         </div>
 
-        <!-- TODO: What is this -->
+        <!-- Section cards -->
         <div
-          class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1 news__section-user-info"
+          class="col-xs-12 col-sm-12 col-md-12 news__section"
+          v-if="
+            data.field_other_info.length > 1 ||
+            data.field_other_info[0].field_literature_suggestion ||
+            data.field_other_info[0].field_material_description ||
+            data.field_other_info[0].field_material_title ||
+            data.field_other_info[0].field_material_file ||
+            data.field_other_info[0].field_material_url
+          "
         >
-          <div class="news__info-description">
-            <div v-html="data?.field_other_info_description"></div>
-
-            <div
-              class="news__info-description--buttons"
-              v-if="data?.field_other_info?.length > 0"
-            >
-              <div
-                class="news__info-description--button-item"
-                v-for="button in data?.field_other_info"
-                :key="button"
-              >
-                <NuxtLink
-                  class="news__info-description__button-item__link button button--primary button--primary--ghost"
-                  :to="
-                    button?.field_file
-                      ? button?.field_file
-                      : button?.field_link?.url
-                  "
-                >
-                  <span class="news__info-description--button-item__link-text">
-                    {{ button?.field_link?.title }}
-                  </span>
-                  <NuxtIcon
-                    class="news__info-description--button-item__icon"
-                    name="arrow-right"
-                    filled
-                  />
-                </NuxtLink>
-              </div>
-            </div>
+          <div class="news__educational-cards">
+            <EducationalCards
+              :data="{
+                field_materials: data.field_other_info,
+              }"
+            />
           </div>
         </div>
       </div>
@@ -177,13 +156,12 @@ console.log('data News', props.data);
   color: var(--color-tertiary);
 
   &__top-section {
-    padding: 32px 0 @(--sm) 64px 0;
+    padding: 32px 0 @(--sm) 0 0 64px 0;
     background-color: var(--color-primary-lighten-5);
   }
 
   &__tags-wrapper {
     padding-top: 24px;
-
     display: flex;
     margin-bottom: 32px;
   }
@@ -213,31 +191,6 @@ console.log('data News', props.data);
     }
   }
 
-  &__paragraph-item {
-    padding-top: 36px;
-
-    &:last-child {
-      margin-bottom: 36px;
-    }
-  }
-
-  &__practical-buttons {
-    margin-top: 24px;
-    padding: 0 15px;
-    display: grid;
-    gap: 16px;
-  }
-
-  &__contact-button {
-    color: var(--color-tertiary);
-    border-color: var(--color-tertiary);
-
-    &:hover {
-      color: var(--color-white);
-      background-color: var(--color-tertiary);
-    }
-  }
-
   &__second-section {
     padding-top: 48px @(--md) 96px;
   }
@@ -245,10 +198,6 @@ console.log('data News', props.data);
   &__divider {
     padding-top: 43px @(--sm) 97px;
     margin-bottom: 43px @(--sm) 97px;
-  }
-
-  &__links-wrapper {
-    padding-top: 8px;
   }
 
   &__link {
@@ -263,48 +212,8 @@ console.log('data News', props.data);
   }
 
   &__section-video,
-  &__section-contact,
-  &__section-user-info,
-  &__section-related-articles {
+  &__section {
     padding-top: 48px @(--md) 96px;
-  }
-
-  &__section-user-info {
-    :not(:first-child) {
-      margin-bottom: 48px @(--md) 96px;
-    }
-  }
-
-  &__info-description {
-    :last-child {
-      margin-bottom: 36px;
-    }
-
-    &--buttons {
-      display: flex;
-      gap: 24px;
-    }
-
-    &--button-item {
-      &__link {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-    }
-  }
-
-  :deep(.user__info-description--button-item__icon) {
-    margin: 0;
-    margin-left: 8px;
-  }
-
-  :deep(svg) {
-    font-size: 24px;
-  }
-
-  :deep(.practical-information__item-heading) {
-    width: 100%;
   }
 }
 </style>
