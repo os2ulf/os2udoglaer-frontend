@@ -16,105 +16,111 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
-    },
-    {
-      title: 'Udbyder',
-      content: 'Object needed from BE',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Målgruppe',
-      content: props.data?.field_educators_target_group,
-    },
-    {
-      title: 'Læreplanstemaer',
-      content: props.data?.field_curriculum_themes,
-    },
-    {
-      title: 'Fag - Grundskole',
-      content: props.data?.field_primary_school_subject,
-    },
-    {
-      title: 'Fag - Ungdomsuddannelse',
-      content: props.data?.field_youth_education_subject,
-    },
-    {
-      title: 'Antal',
-      content: props.data?.field_quantity,
-      description: props.data?.field_quantity_description,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Periode',
-      content: props.data?.field_all_year
-        ? 'Hele året'
-        : props.data?.field_period?.start_date +
-          props.data?.field_period?.separator +
-          props.data?.field_period?.end_date,
-    },
-    {
-      type: 'price',
-      title: 'Pris',
-      content: props.data?.field_price,
-      free: props.data?.field_is_free,
-    },
-    {
-      title: 'Varighed',
-      content:
-        props.data?.field_duration +
-        ' ' +
-        props.data?.field_duration_unit_taxonomy?.label,
-    },
-    {
-      description:
-        props.data?.field_description_of_period +
-        props.data?.field_description_of_price +
-        props.data?.field_description_of_duration,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Emneområde',
-      content: props.data?.field_subject,
-    },
-    {
-      type: 'sustainability_goals',
-      title: 'Verdensmål',
-      content: props.data?.field_sustainability_goals,
-      description: props.data?.field_sustainability_goals_desc,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Forplejning',
-      description: props.data?.field_food_service,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Sted',
-      content: [
-        props.data?.field_location_name,
-        props.data?.field_location_street,
-        props.data?.field_location_zipcode,
-        props.data?.field_location_city,
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
       ],
     },
     {
-      title: 'Faciliteter',
-      content: props.data?.field_faciliteter,
-      description: props.data?.field_facilities_description,
+      group: [
+        {
+          title: 'Målgruppe',
+          content: props.data?.field_educators_target_group,
+        },
+        {
+          title: 'Læreplanstemaer',
+          content: props.data?.field_curriculum_themes,
+        },
+        {
+          title: 'Fag - Grundskole',
+          content: props.data?.field_primary_school_subject,
+        },
+        {
+          title: 'Fag - Ungdomsuddannelse',
+          content: props.data?.field_youth_education_subject,
+        },
+        {
+          title: 'Antal',
+          content: props.data?.field_quantity,
+          description: props.data?.field_quantity_description,
+        },
+      ],
     },
     {
-      description: props.data?.field_location_description,
+      group: [
+        {
+          title: 'Periode',
+          content: props.data?.field_all_year
+            ? 'Hele året'
+            : props.data?.field_period?.start_date +
+              props.data?.field_period?.separator +
+              props.data?.field_period?.end_date,
+        },
+        {
+          type: 'price',
+          title: 'Pris',
+          content: props.data?.field_price,
+          free: props.data?.field_is_free,
+        },
+        {
+          title: 'Varighed',
+          content:
+            props.data?.field_duration +
+            ' ' +
+            props.data?.field_duration_unit_taxonomy?.label,
+        },
+        {
+          description:
+            props.data?.field_description_of_period +
+            props.data?.field_description_of_price +
+            props.data?.field_description_of_duration,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Emneområde',
+          content: props.data?.field_subject,
+        },
+        {
+          type: 'sustainability_goals',
+          title: 'Verdensmål',
+          content: props.data?.field_sustainability_goals,
+          description: props.data?.field_sustainability_goals_desc,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Forplejning',
+          description: props.data?.field_food_service,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Sted',
+          content: [
+            props.data?.field_location_name,
+            props.data?.field_location_street,
+            props.data?.field_location_zipcode,
+            props.data?.field_location_city,
+          ],
+        },
+        {
+          title: 'Faciliteter',
+          content: props.data?.field_faciliteter,
+          description: props.data?.field_facilities_description,
+        },
+        {
+          description: props.data?.field_location_description,
+        },
+      ],
     },
   ];
 });
