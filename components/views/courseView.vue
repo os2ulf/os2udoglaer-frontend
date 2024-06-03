@@ -14,106 +14,114 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
-    },
-    {
-      title: 'Udbyder',
-      content: 'Object needed from BE',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Sted',
-      content: [
-        props.data?.field_location_name,
-        props.data?.field_location_street,
-        props.data?.field_location_zipcode,
-        props.data?.field_location_city,
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
       ],
-      description: props.data?.field_location_description,
     },
     {
-      type: 'divider',
+      group: [
+        {
+          title: 'Sted',
+          content: [
+            props.data?.field_location_name,
+            props.data?.field_location_street,
+            props.data?.field_location_zipcode,
+            props.data?.field_location_city,
+          ],
+          description: props.data?.field_location_description,
+        },
+      ],
     },
     {
-      title: 'Forløbstype',
-      content: props.data?.field_course_type,
-    },
-    {
-      title: 'Målgruppe',
-      content:
-        props.data?.field_target_group === 'Grundskole'
-          ? props.data?.field_trgt_grp_primary_school.concat(
-              props.data?.field_primary_school_subject,
-            )
-          : props.data?.field_target_group === 'Dagtilbud'
-            ? props.data?.field_trgt_grp_daycare.concat(
-                props.data?.field_curriculum_themes,
-              )
-            : props.data?.field_target_group === 'Ungdomsuddannelse'
-              ? props.data?.field_trgt_grp_youth_education.concat(
-                  props.data?.field_youth_education_subject,
+      group: [
+        {
+          title: 'Forløbstype',
+          content: props.data?.field_course_type,
+        },
+        {
+          title: 'Målgruppe',
+          content:
+            props.data?.field_target_group === 'Grundskole'
+              ? props.data?.field_trgt_grp_primary_school.concat(
+                  props.data?.field_primary_school_subject,
                 )
-              : 'Object needed from BE',
+              : props.data?.field_target_group === 'Dagtilbud'
+                ? props.data?.field_trgt_grp_daycare.concat(
+                    props.data?.field_curriculum_themes,
+                  )
+                : props.data?.field_target_group === 'Ungdomsuddannelse'
+                  ? props.data?.field_trgt_grp_youth_education.concat(
+                      props.data?.field_youth_education_subject,
+                    )
+                  : 'Object needed from BE',
+        },
+      ],
     },
     {
-      type: 'divider',
+      group: [
+        {
+          type: 'price',
+          title: 'Pris',
+          content: props.data?.field_price,
+          free: props.data?.field_is_free,
+        },
+        {
+          title: 'Antal',
+          content: props.data?.field_quantity,
+        },
+        {
+          title: 'Periode',
+          content: props.data?.field_all_year
+            ? 'Hele året'
+            : props.data?.field_period?.start_date +
+              props.data?.field_period?.separator +
+              props.data?.field_period?.end_date,
+          description:
+            props.data?.field_description_of_price +
+            props.data?.field_quantity_description +
+            props.data?.field_description_of_period,
+        },
+      ]
     },
     {
-      type: 'price',
-      title: 'Pris',
-      content: props.data?.field_price,
-      free: props.data?.field_is_free,
+      group: [
+        {
+          title: 'Varighed',
+          content:
+            props.data?.field_duration_unit != null ? props.data?.field_duration + ' ' + props.data?.field_duration_unit : props.data?.field_duration,
+          description: props.data?.field_description_of_duration,
+        },
+      ]
     },
     {
-      title: 'Antal',
-      content: props.data?.field_quantity,
+      group: [
+        {
+          title: 'Emneområde',
+          content: props.data?.field_subject,
+        },
+      ],
     },
     {
-      title: 'Periode',
-      content: props.data?.field_all_year
-        ? 'Hele året'
-        : props.data?.field_period?.start_date +
-          props.data?.field_period?.separator +
-          props.data?.field_period?.end_date,
-      description:
-        props.data?.field_description_of_price +
-        props.data?.field_quantity_description +
-        props.data?.field_description_of_period,
+      group: [
+        {
+          title: 'Faciliteter',
+          content: props.data?.field_faciliteter,
+          description: props.data?.field_facilities_description,
+        },
+      ],
     },
     {
-      type: 'divider',
-    },
-    {
-      title: 'Varighed',
-      content:
-        props.data?.field_duration + ' ' + props.data?.field_duration_unit,
-      description: props.data?.field_description_of_duration,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Emneområde',
-      content: props.data?.field_subject,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Faciliteter',
-      content: props.data?.field_faciliteter,
-      description: props.data?.field_facilities_description,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      type: 'sustainability_goals',
-      title: 'Verdensmål',
-      content: props.data?.field_sustainability_goals,
-      description: props.data?.field_sustainability_goals_desc,
+      group: [
+        {
+          type: 'sustainability_goals',
+          title: 'Verdensmål',
+          content: props.data?.field_sustainability_goals,
+          description: props.data?.field_sustainability_goals_desc,
+        },
+      ],
     },
   ];
 });
