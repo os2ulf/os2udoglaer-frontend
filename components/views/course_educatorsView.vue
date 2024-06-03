@@ -7,8 +7,6 @@ const props = defineProps({
   },
 });
 
-console.log('Kursus', props.data);
-
 useHead({
   title: props.data?.field_meta_tags?.html_head?.title?.atributes?.content,
 });
