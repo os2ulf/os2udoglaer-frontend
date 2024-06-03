@@ -43,7 +43,7 @@ const determineIcon = (cardLink: string) => {
                 class="educational-materials__card-link"
                 :to="
                   card.field_material_file
-                    ? config.API_BASE_URL + card.field_material_file
+                    ? card.field_material_file
                     : card?.field_material_url?.url
                 "
               >
