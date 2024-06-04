@@ -16,12 +16,21 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
+      ],
     },
 
     {
-      type: 'user_profile',
-      title: props.data?.field_name,
+      group: [
+        {
+          type: 'user_profile',
+          title: props.data?.field_name,
+        },
+      ],
     },
   ];
 });
