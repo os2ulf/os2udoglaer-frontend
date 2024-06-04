@@ -16,64 +16,68 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
+      ],
     },
+
     {
-      title: 'Udbyder',
-      content: 'Object needed from BE',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Emneområde',
-      content: props.data?.field_subject,
-    },
-    {
-      title: 'Målgruppe',
-      content:
-        props.data?.field_target_group === 'Grundskole'
-          ? props.data?.field_trgt_grp_primary_school.concat(
-              props.data?.field_primary_school_subject,
-            )
-          : props.data?.field_target_group === 'Dagtilbud'
-            ? props.data?.field_trgt_grp_daycare.concat(
-                props.data?.field_curriculum_themes,
-              )
-            : props.data?.field_target_group === 'Ungdomsuddannelse'
-              ? props.data?.field_trgt_grp_youth_education.concat(
-                  props.data?.field_youth_education_subject,
+      group: [
+        {
+          title: 'Emneområde',
+          content: props.data?.field_subject,
+        },
+        {
+          title: 'Målgruppe',
+          content:
+            props.data?.field_target_group === 'Grundskole'
+              ? props.data?.field_trgt_grp_primary_school.concat(
+                  props.data?.field_primary_school_subject,
                 )
-              : 'Object needed from BE',
+              : props.data?.field_target_group === 'Dagtilbud'
+                ? props.data?.field_trgt_grp_daycare.concat(
+                    props.data?.field_curriculum_themes,
+                  )
+                : props.data?.field_target_group === 'Ungdomsuddannelse'
+                  ? props.data?.field_trgt_grp_youth_education.concat(
+                      props.data?.field_youth_education_subject,
+                    )
+                  : 'Object needed from BE',
+        },
+        {
+          title: 'Aktivitet',
+          content: props.data?.field_activity_select,
+        },
+      ],
     },
+
     {
-      title: 'Aktivitet',
-      content: props.data?.field_activity_select,
+      group: [
+        {
+          title: 'Varighed',
+          content: props.data?.field_duration_select,
+          description: props.data?.field_duration_description,
+        },
+        {
+          title: 'Periode',
+          content: props.data?.field_period_select,
+          description: props.data?.field_description_of_period,
+        },
+      ],
     },
+
     {
-      type: 'divider',
-    },
-    {
-      title: 'Varighed',
-      content: props.data?.field_duration_select,
-      description: props.data?.field_duration_description,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Periode',
-      content: props.data?.field_period_select,
-      description: props.data?.field_description_of_period,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      type: 'sustainability_goals',
-      title: 'Verdensmål',
-      content: props.data?.field_sustainability_goals,
-      description: props.data?.field_sustainability_goals_desc,
+      group: [
+        {
+          type: 'sustainability_goals',
+          title: 'Verdensmål',
+          content: props.data?.field_sustainability_goals,
+          description: props.data?.field_sustainability_goals_desc,
+        },
+      ],
     },
   ];
 });

@@ -195,7 +195,7 @@ const practicalInfoData = computed(() => {
         </div>
 
         <div
-          class="col-xs-12 col-sm-12 col-md-12"
+          class="col-xs-12 col-sm-12 col-md-12 educators__section-cards"
           v-if="
             data.field_video_title ||
             data.field_video_description ||
@@ -203,23 +203,21 @@ const practicalInfoData = computed(() => {
             data.field_video
           "
         >
-          Video component goes here
-          <!-- Broken now  -->
-          <!-- <VideoComponent
-            class="educators__section-video"
-            v-if="
-              data.field_video_title ||
-              data.field_video_description ||
-              data.field_video_thumbnail ||
-              data.field_video
-            "
-            :data="{
-              field_video_title: data.field_video_title,
-              field_video_description: data.field_video_description,
-              field_video_thumbnail: data.field_video_thumbnail,
-              field_video: data.field_video,
-            }"
-          /> -->
+          <ClientOnly>
+            <VideoComponent
+              v-if="
+                data?.field_video_title ||
+                data?.field_video_description ||
+                data?.field_video?.length > 0
+              "
+              :data="{
+                videoTitle: data?.field_video_title,
+                videoDescription: data?.field_video_description,
+                videoArr: data?.field_video,
+              }"
+              :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
+            />
+          </ClientOnly>
         </div>
 
         <!-- Section cards -->
