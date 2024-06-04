@@ -14,76 +14,84 @@ useHead({
 const practicalInfoData = computed(() => {
   return [
     {
-      type: 'divider',
-    },
-    {
-      title: 'Udbyder',
-      content: 'Object needed from BE',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Interesseområder',
-      content: props.data?.field_areas_of_interest,
-    },
-    {
-      title: 'Uddannelsesvej',
-      content: props.data?.field_industry,
-      description: props.data?.field_education_path,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Antal',
-      content: props.data?.field_quantity,
-    },
-    {
-      title: 'Periode',
-      description: props.data?.field_description_of_period,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Varighed',
-      content: props.data?.field_duration_rte,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Mødetider',
-      content: props.data?.field_meeting_times,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Huskeliste',
-      content: props.data?.field_meeting_times,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Ansøgning',
-      content: props.data?.field_application_deadline?.text,
-      description: props.data?.field_desc_application_procedure,
-    },
-    {
-      type: 'divider',
-    },
-    {
-      title: 'Sted',
-      content: [
-        props.data?.field_location_name,
-        props.data?.field_location_street,
-        props.data?.field_location_zipcode,
-        props.data?.field_location_city,
+      group: [
+        {
+          title: 'Udbyder',
+          content: 'Object needed from BE',
+        },
       ],
-      description: props.data?.field_location_description,
+    },
+    {
+      group: [
+        {
+          title: 'Interesseområder',
+          content: props.data?.field_areas_of_interest,
+        },
+        {
+          title: 'Uddannelsesvej',
+          content: props.data?.field_industry,
+          description: props.data?.field_education_path,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Antal',
+          content: props.data?.field_quantity,
+        },
+        {
+          title: 'Periode',
+          description: props.data?.field_description_of_period,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Varighed',
+          content: props.data?.field_duration_rte,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Mødetider',
+          content: props.data?.field_meeting_times,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Huskeliste',
+          content: props.data?.field_meeting_times,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Ansøgning',
+          content: props.data?.field_application_deadline?.text,
+          description: props.data?.field_desc_application_procedure,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Sted',
+          content: [
+            props.data?.field_location_name,
+            props.data?.field_location_street,
+            props.data?.field_location_zipcode,
+            props.data?.field_location_city,
+          ],
+          description: props.data?.field_location_description,
+        },
+      ],
     },
   ];
 });
@@ -158,7 +166,7 @@ const practicalInfoData = computed(() => {
         </div>
 
         <div
-          class="col-xs-12 col-sm-12 col-md-12"
+          class="col-xs-12 col-sm-12 col-md-12 internship__section-cards"
           v-if="
             data.field_video_title ||
             data.field_video_description ||
@@ -166,23 +174,21 @@ const practicalInfoData = computed(() => {
             data.field_video
           "
         >
-          Video component goes here
-          <!-- Broken now  -->
-          <!-- <VideoComponent
-            class="internship__section-video"
-            v-if="
-              data.field_video_title ||
-              data.field_video_description ||
-              data.field_video_thumbnail ||
-              data.field_video
-            "
-            :data="{
-              field_video_title: data.field_video_title,
-              field_video_description: data.field_video_description,
-              field_video_thumbnail: data.field_video_thumbnail,
-              field_video: data.field_video,
-            }"
-          /> -->
+          <ClientOnly>
+            <VideoComponent
+              v-if="
+                data?.field_video_title ||
+                data?.field_video_description ||
+                data?.field_video?.length > 0
+              "
+              :data="{
+                videoTitle: data?.field_video_title,
+                videoDescription: data?.field_video_description,
+                videoArr: data?.field_video,
+              }"
+              :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
+            />
+          </ClientOnly>
         </div>
 
         <!-- Section cards -->
