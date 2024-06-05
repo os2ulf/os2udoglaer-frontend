@@ -4,7 +4,6 @@ const props = defineProps({
 });
 
 const heroData = ref(props.blockData);
-console.log('HeroBlock.vue', heroData);
 </script>
 
 <template>

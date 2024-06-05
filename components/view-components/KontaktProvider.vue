@@ -44,14 +44,6 @@ const props = defineProps({
               <NuxtIcon class="contact__icon" name="phone" filled />
               {{ person?.field_phone }}
             </a>
-            <NuxtLink
-              :to="person?.field_webpage?.url"
-              class="button button--primary contact__button"
-            >
-              <NuxtIcon class="contact__icon" name="language" filled />
-
-              {{ person?.field_webpage?.title }}
-            </NuxtLink>
           </div>
         </div>
       </div>

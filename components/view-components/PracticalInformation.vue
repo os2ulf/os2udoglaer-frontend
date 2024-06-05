@@ -5,17 +5,43 @@ const props = defineProps({
     required: true,
     default: null,
   },
+
+  userProfilePage: {
+    type: Object,
+    required: false,
+    default: null,
+  },
 });
 </script>
 
 <template>
   <div class="practical-information">
-    <h3 class="practical-information__title">Praktisk information</h3>
+    <div
+      class="practical-information__user-provider-logo"
+      v-if="userProfilePage?.logo?.src"
+    >
+      <!-- TODO: Switchout once images are transformed BE -->
+      <img
+        :src="props.userProfilePage?.logo?.src"
+        :alt="userProfilePage.logo?.alt"
+      />
+    </div>
+
+    <h3 class="practical-information__title">
+      {{ !props.userProfilePage ? 'Praktisk information' : 'Udbyder' }}
+    </h3>
 
     <!--Practical information data for loop START -->
-    <div class="practical-information__group" v-for="(groups, index) in props.data" :key="index">
-      <div class="practical-information__item" v-for="(item, index) in groups.group" :key="index">
-
+    <div
+      class="practical-information__group"
+      v-for="(groups, index) in props.data"
+      :key="index"
+    >
+      <div
+        class="practical-information__item"
+        v-for="(item, index) in groups.group"
+        :key="index"
+      >
         <!-- Sustainability goals element -->
         <div v-if="item.type === 'sustainability_goals'">
           <div class="practical-information__item-container">
@@ -36,9 +62,31 @@ const props = defineProps({
           </div>
         </div>
 
+        <!-- User Profile element -->
+        <div v-else-if="item.type === 'user_profile'">
+          <div class="practical-information__item-container">
+            <div class="practical-information__item-heading">
+              {{ item.title }}
+            </div>
+          </div>
+
+          <div class="practical-information__user-profile-content-wrapper">
+            <slot></slot>
+          </div>
+
+          <div class="practical-information__user-profile-button">
+            <BaseButton
+              :button-data="{ title: 'Kontakt udbyder' }"
+              class="button button--secondary button--secondary--ghost"
+            />
+          </div>
+        </div>
+
         <!-- Basic element with title, content & description -->
         <div v-else class="practical-information__item-container">
-          <div class="practical-information__item-heading">{{ item.title }}</div>
+          <div class="practical-information__item-heading">
+            {{ item.title }}
+          </div>
 
           <!-- Price items inside basic element -->
           <div
@@ -72,7 +120,9 @@ const props = defineProps({
             class="practical-information__item-value"
           >
             <!-- IF All elements inside the array are null -->
-            <div v-if="item.content.every((content: string) => content === null)">
+            <div
+              v-if="item.content.every((content: string) => content === null)"
+            >
               Ikke angivet
             </div>
             <div v-else>
@@ -260,8 +310,16 @@ const props = defineProps({
     }
 
     summary::-webkit-details-marker {
-      display:none;
+      display: none;
     }
+  }
+
+  &__user-profile-button {
+    padding-top: 22px;
+  }
+
+  &__user-provider-logo {
+    margin-bottom: 22px;
   }
 }
 </style>

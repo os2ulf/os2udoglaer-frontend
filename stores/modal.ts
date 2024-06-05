@@ -7,7 +7,6 @@ export const useModalStore = defineStore('modal', () => {
   const showModal = (modalContent: any) => {
     isVisible.value = true;
     modalData.value = modalContent;
-    console.log(modalData.value, modalContent);
 
     document.body.style.overflow = 'hidden';
   };
