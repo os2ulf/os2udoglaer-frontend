@@ -80,6 +80,8 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
+
+console.log('exerciseView', props.data);
 </script>
 
 <template>

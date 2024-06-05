@@ -33,6 +33,8 @@ const practicalInfoData = computed(() => {
     },
   ];
 });
+
+console.log('newsView', props.data);
 </script>
 
 <template>

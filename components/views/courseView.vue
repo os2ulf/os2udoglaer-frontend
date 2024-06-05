@@ -129,6 +129,8 @@ const practicalInfoData = computed(() => {
     },
   ];
 });
+
+console.log('courseView', props.data);
 </script>
 
 <template>

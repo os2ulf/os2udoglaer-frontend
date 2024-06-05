@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { filterGroups } from '~/utils/dataFilter';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -12,7 +14,7 @@ useHead({
 });
 
 const practicalInfoData = computed(() => {
-  return [
+  const data = [
     {
       group: [
         {
@@ -40,6 +42,10 @@ const practicalInfoData = computed(() => {
           title: 'Antal',
           content: props.data?.field_quantity,
         },
+      ],
+    },
+    {
+      group: [
         {
           title: 'Periode',
           description: props.data?.field_description_of_period,
@@ -94,7 +100,11 @@ const practicalInfoData = computed(() => {
       ],
     },
   ];
+
+  return filterGroups(data);
 });
+
+console.log('internshipView', props.data);
 </script>
 
 <template>
