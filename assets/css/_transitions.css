@@ -166,3 +166,22 @@
     transform: translateX(0);
   }
 }
+
+/* slide from top */
+.slide-top-enter-active {
+  animation: slide-top 0.3s;
+}
+
+.slide-top-leave-active {
+  animation: slide-top 0.3s reverse;
+}
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}

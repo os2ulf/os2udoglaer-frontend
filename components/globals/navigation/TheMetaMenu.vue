@@ -88,11 +88,13 @@ const closeOffCanvas = () => {
                 />
 
                 <ClientOnly>
-                  <TheOffCanvasMetaMenu
-                    v-if="isOpen && activeNavItem === metaItem"
-                    :nested-items="metaItem?.below"
-                    class="meta-offcanvas"
-                  />
+                  <Transition name="slide-top">
+                    <TheOffCanvasMetaMenu
+                      v-if="isOpen && activeNavItem === metaItem"
+                      :nested-items="metaItem?.below"
+                      class="meta-offcanvas"
+                    />
+                  </Transition>
                 </ClientOnly>
               </div>
             </NuxtLink>
