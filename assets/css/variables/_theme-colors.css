@@ -98,7 +98,7 @@
   --color-white: #fff;
   --color-text: #383838;
   --color-disabled: var(--color-gray-6);
-  --color-base-divider: #979797;
+  --color-base-divider: #D1CFCD;
 
   /* Layout colors */
   --site-background-color: var(--color-white);
