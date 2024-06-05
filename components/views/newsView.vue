@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { filterGroups } from '~/utils/dataFilter';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -14,7 +16,7 @@ useHead({
 });
 
 const practicalInfoData = computed(() => {
-  return [
+  const data = [
     {
       group: [
         {
@@ -32,6 +34,8 @@ const practicalInfoData = computed(() => {
       ],
     },
   ];
+
+  return filterGroups(data);
 });
 
 console.log('newsView', props.data);
