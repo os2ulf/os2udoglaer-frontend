@@ -75,7 +75,11 @@ onUnmounted(() => {
                   :key="node.id"
                   class="offcanvas-mobile__item-link"
                   @click="handleItemClick(node)"
-                  :to="node.link.url"
+                  :to="
+                    node.link.url && node.below.length === 0
+                      ? node.link.url
+                      : 'javascript:void(0)'
+                  "
                 >
                   {{ node.title }}
                   <span v-if="node.below.length > 0">

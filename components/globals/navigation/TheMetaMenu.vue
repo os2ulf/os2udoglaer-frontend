@@ -67,7 +67,11 @@ const closeOffCanvas = () => {
                 'meta-menu__item--active': activeNavItem === metaItem,
               }"
               :key="metaItem.title"
-              :to="metaItem.url ? metaItem.url : 'javascript:void(0)'"
+              :to="
+                metaItem.url && metaItem.below.length === 0
+                  ? metaItem.url
+                  : 'javascript:void(0)'
+              "
               :aria-label="'Link til ' + metaItem?.title"
               @click="handleNavigationItemClick(metaItem)"
             >
