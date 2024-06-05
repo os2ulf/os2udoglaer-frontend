@@ -172,12 +172,14 @@ onBeforeUnmount(() => {
               </button>
               <ClientOnly>
                 <Teleport to=".header-parent">
-                  <TheOffCanvasDesktopNavigation
-                    class="header__offcanvas"
-                    v-if="isOpen && activeNavItem === item"
-                    :isMetaMenuHidden="isMetaMenuHidden"
-                    :nested-items-data="item?.below"
-                  />
+                  <Transition name="slide-top-offcanvas">
+                    <TheOffCanvasDesktopNavigation
+                      class="header__offcanvas"
+                      v-if="isOpen && activeNavItem === item"
+                      :isMetaMenuHidden="isMetaMenuHidden"
+                      :nested-items-data="item?.below"
+                    />
+                  </Transition>
                 </Teleport>
               </ClientOnly>
             </NuxtLink>
