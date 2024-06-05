@@ -3,7 +3,6 @@ const props = defineProps({
   data: {
     type: Object,
     required: true,
-    default: null,
   },
 
   userProfilePage: {

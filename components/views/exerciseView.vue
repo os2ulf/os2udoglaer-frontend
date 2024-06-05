@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { filterGroups } from '~/utils/dataFilter';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -12,7 +14,7 @@ useHead({
 });
 
 const practicalInfoData = computed(() => {
-  return [
+  const data = [
     {
       group: [
         {
@@ -21,7 +23,6 @@ const practicalInfoData = computed(() => {
         },
       ],
     },
-
     {
       group: [
         {
@@ -51,7 +52,6 @@ const practicalInfoData = computed(() => {
         },
       ],
     },
-
     {
       group: [
         {
@@ -66,7 +66,6 @@ const practicalInfoData = computed(() => {
         },
       ],
     },
-
     {
       group: [
         {
@@ -78,6 +77,8 @@ const practicalInfoData = computed(() => {
       ],
     },
   ];
+
+  return filterGroups(data);
 });
 </script>
 
