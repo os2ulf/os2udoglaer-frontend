@@ -40,6 +40,7 @@ const determineIcon = (cardLink: string) => {
             </div>
             <div class="educational-materials__card-item-button">
               <NuxtLink
+                aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
                   card.field_material_file

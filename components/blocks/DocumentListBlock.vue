@@ -38,6 +38,7 @@ const props = defineProps({
           <div>
             <NuxtLink
               class="document-list__card-link"
+              aria-label="Link til download"
               :to="
                 item.field_material_file
                   ? item.field_material_file

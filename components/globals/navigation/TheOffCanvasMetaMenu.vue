@@ -15,7 +15,11 @@ const props = defineProps({
         v-for="item in props.nestedItems"
         :key="item"
       >
-        <NuxtLink :to="item.url" class="meta-offcanvas__item-link">
+        <NuxtLink
+          :aria-label="'Link til ' + item.title"
+          :to="item.url"
+          class="meta-offcanvas__item-link"
+        >
           {{ item.title }}
         </NuxtLink>
       </div>

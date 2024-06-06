@@ -54,7 +54,11 @@ const props = defineProps({
               v-for="goals in item.content"
               :key="goals"
             >
-              <NuxtLink :to="goals?.field_link?.url" target="_blank">
+              <NuxtLink
+                :to="goals?.field_link?.url"
+                target="_blank"
+                aria-label="Link til SDG"
+              >
                 <img :src="goals?.field_logo?.src" alt="SDG" />
               </NuxtLink>
             </div>

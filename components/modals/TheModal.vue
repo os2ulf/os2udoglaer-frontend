@@ -46,6 +46,7 @@ onUnmounted(() => {
             class="button button--primary the-modal__button-cta"
             :to="modalContent?.field_video_url?.url"
             target="_blank"
+            aria-label="Link til video"
           >
             Se video
           </NuxtLink>

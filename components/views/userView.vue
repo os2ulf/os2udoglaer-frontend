@@ -112,14 +112,18 @@ const practicalInfoData = computed(() => {
 
             <div class="user__links-wrapper">
               <div>
-                <NuxtLink class="user__link" :to="'tel:' + data?.field_phone">{{
-                  data?.field_phone
-                }}</NuxtLink>
+                <NuxtLink
+                  aria-label="Call phone number"
+                  class="user__link"
+                  :to="'tel:' + data?.field_phone"
+                  >{{ data?.field_phone }}</NuxtLink
+                >
               </div>
 
               <div>
                 <NuxtLink
                   class="user__link"
+                  aria-label="Send email"
                   :href="'mailto:' + data?.field_mail"
                   >{{ data?.field_mail }}</NuxtLink
                 >
@@ -127,6 +131,7 @@ const practicalInfoData = computed(() => {
 
               <div>
                 <NuxtLink
+                  aria-label="Visit website"
                   class="user__link"
                   target="_blank"
                   :to="data?.field_homepage?.url"
@@ -216,6 +221,7 @@ const practicalInfoData = computed(() => {
                       ? button?.field_file
                       : button?.field_link?.url
                   "
+                  aria-label="Download link"
                 >
                   <span class="user__info-description--button-item__link-text">
                     {{ button?.field_link?.title }}
