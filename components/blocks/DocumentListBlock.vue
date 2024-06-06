@@ -35,20 +35,26 @@ const props = defineProps({
             :name="item.field_material_file ? 'link-download' : 'ext-link'"
             filled
           />
-
-          <NuxtLink
-            class="document-list__card-link"
-            :to="
-              item.field_material_file
-                ? item.field_material_file
-                : item?.field_material_url?.url
-            "
-            :target="!item?.field_material_file ? '_blank' : ''"
-          >
-            <span class="document-list__card-link-text">
-              {{ item?.field_material_download_text }}
-            </span>
-          </NuxtLink>
+          <div>
+            <NuxtLink
+              class="document-list__card-link"
+              :to="
+                item.field_material_file
+                  ? item.field_material_file
+                  : item?.field_material_url?.url
+              "
+              :target="!item?.field_material_file ? '_blank' : ''"
+            >
+              <span class="document-list__card-link-text">
+                {{ item?.field_material_download_text }}
+              </span>
+            </NuxtLink>
+            <div
+              v-if="item.field_material_description"
+              class="document-list__card-item-description"
+              v-html="item.field_material_description"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -66,6 +72,12 @@ const props = defineProps({
   &__body {
     font-weight: 400;
     line-height: 24px;
+
+    :deep(p) {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
   &__item {
@@ -75,6 +87,10 @@ const props = defineProps({
   &__card-item {
     background: transparent;
     padding-bottom: 12px;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
   }
 
   &__card-item-button {
@@ -117,6 +133,15 @@ const props = defineProps({
 
     &:hover {
       border-bottom: 1px solid currentColor;
+    }
+  }
+
+  &__card-item-description {
+    :deep(p) {
+      padding-top: 5px;
+      font-weight: 300;
+      font-size: 14px;
+      margin: 0;
     }
   }
 }
