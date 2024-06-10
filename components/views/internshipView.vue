@@ -152,7 +152,7 @@ console.log('internshipView', props.data);
             <div class="internship__banner-image">
               <BaseImage
                 v-if="data.field_image"
-                :image="data"
+                :image="data.field_image"
               />
             </div>
           </div>

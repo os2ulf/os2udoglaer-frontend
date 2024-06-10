@@ -209,13 +209,7 @@ console.log('courseView', props.data);
             <div class="course__banner-image">
               <BaseImage
                 v-if="data.field_image"
-                :image="data"
-              />
-
-              <img
-                :src="data.field_image.src"
-                :alt="data.field_image.alt"
-                :title="data.field_image.title"
+                :image="data.field_image"
               />
             </div>
           </div>

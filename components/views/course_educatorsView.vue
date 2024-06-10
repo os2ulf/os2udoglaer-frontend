@@ -191,7 +191,7 @@ console.log('course_educatorsView', props.data);
             <div class="educators__banner-image">
               <BaseImage
                 v-if="data.field_image"
-                :image="data"
+                :image="data.field_image"
               />
             </div>
           </div>

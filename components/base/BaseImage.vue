@@ -27,21 +27,21 @@ const processedComponentTypeClass = computed(() => {
   <figure class="image">
     <picture :class="[processedIsOverlay + ' ' + processedComponentTypeClass]">
       <template
-        v-for="(el, index) in image?.field_image?.sources"
+        v-for="(el, index) in image?.sources"
         :key="index"
       >
         <source :media="el.media" :srcset="el.srcset" />
       </template>
       <img
-        :src="image?.field_media_image?.img_element?.uri"
+        :src="image?.img_element?.uri"
         :alt="
-          image?.field_media_image?.img_element?.alt
-            ? image?.field_media_image?.img_element?.alt
+          image?.img_element?.alt
+            ? image?.img_element?.alt
             : image?.label
         "
         loading="lazy"
-        :width="image?.field_media_image?.width"
-        :height="image?.field_media_image?.height"
+        :width="image?.width"
+        :height="image?.height"
       />
     </picture>
 

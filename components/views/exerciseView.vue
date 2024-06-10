@@ -140,7 +140,7 @@ console.log('exerciseView', props.data);
             <div class="exercise__banner-image">
               <BaseImage
                 v-if="data.field_image"
-                :image="data"
+                :image="data.field_image"
               />
             </div>
           </div>

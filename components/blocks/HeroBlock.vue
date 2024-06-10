@@ -11,7 +11,7 @@ const heroData = ref(props.blockData);
     <div class="hero__image-wrapper">
       <BaseImage
         v-if="heroData?.field_image"
-        :image="heroData"
+        :image="heroData?.field_image"
       />
       <div class="hero__content">
         <div

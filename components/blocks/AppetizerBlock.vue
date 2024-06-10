@@ -20,16 +20,10 @@ const props = defineProps({
       class="appetizer__image"
       :to="blockData?.field_appetizer_cta?.url"
     >
-      <img
-        :src="blockData?.field_appetizer_image?.src"
-        :alt="blockData?.field_appetizer_image?.alt"
-      />
-      <!-- <BaseImage
-        v-if="blockData?.field_appetizer_image?.bundle === 'image'"
+      <BaseImage
+        v-if="blockData?.field_appetizer_image"
         :image="blockData.field_appetizer_image"
-        :is-overlay="blockData.field_appetizer_image?.field_overlay"
-        :component-type-class="blockData.bundle"
-      /> -->
+      />
     </NuxtLink>
 
     <div class="appetizer__content">
@@ -160,7 +154,7 @@ const props = defineProps({
 
   &--image-right {
     display: flex;
-    flex-direction: column @(--sm) row-reverse;
+    flex-direction: row-reverse;
 
     & .appetizer__image {
       overflow: hidden;

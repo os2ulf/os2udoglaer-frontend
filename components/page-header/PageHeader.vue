@@ -40,17 +40,11 @@ const props = defineProps({
 
       <div class="page-header__image-wrapper">
         <div class="page-header__image-container">
-          <img
+          <BaseImage
+            v-if="pageBlockHeaderData?.field_background_image"
+            :image="pageBlockHeaderData?.field_background_image"
             class="page-header__image"
-            :src="pageBlockHeaderData?.field_background_image?.src"
-          />
-          <!-- TODO: When images transformed use the one below -->
-          <!-- <BaseImage
-            class="page-header__image"
-            v-if="pageBlockHeaderData?.field_background !== null"
-            :image="pageBlockHeaderData?.field_background"
-            :component-type-class="pageBlockHeaderData?.bundle"
-            /> -->
+            />
         </div>
       </div>
       <div class="page-header__card-container">
@@ -127,6 +121,11 @@ const props = defineProps({
     width: 100%;
     height: 100%;
     object-fit: cover;
+
+    :deep(picture),
+    :deep(img) {
+      height: 100%;
+    }
   }
 
   &__card-container {

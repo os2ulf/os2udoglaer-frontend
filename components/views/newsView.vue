@@ -93,7 +93,7 @@ console.log('newsView', props.data);
             <div class="news__banner-image">
               <BaseImage
                 v-if="data.field_image"
-                :image="data"
+                :image="data.field_image"
               />
             </div>
           </div>
