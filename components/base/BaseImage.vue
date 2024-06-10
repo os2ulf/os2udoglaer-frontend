@@ -27,7 +27,7 @@ const processedComponentTypeClass = computed(() => {
   <figure class="image">
     <picture :class="[processedIsOverlay + ' ' + processedComponentTypeClass]">
       <template
-        v-for="(el, index) in image?.field_media_image?.sources"
+        v-for="(el, index) in image?.field_image?.sources"
         :key="index"
       >
         <source :media="el.media" :srcset="el.srcset" />

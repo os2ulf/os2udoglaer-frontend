@@ -7,14 +7,12 @@
       class="image-block__link"
     >
       <BaseImage
-        :image="blockData?.field_image_media"
-        :caption="blockData?.field_image_caption"
+        :image="blockData"
       />
     </NuxtLink>
     <BaseImage
       v-else
-      :image="blockData?.field_image_media"
-      :caption="blockData?.field_image_caption"
+      :image="blockData"
     />
   </div>
 </template>

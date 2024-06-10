@@ -9,15 +9,9 @@ const heroData = ref(props.blockData);
 <template>
   <div class="hero">
     <div class="hero__image-wrapper">
-      <!-- TODO: ONCE IMAGES TRANSFORMED -->
-      <!-- <BaseMedia
-        class="hero__media"
-        :block-data="heroData"
-        :component-type-class="heroData?.bundle"
-      /> -->
-      <img
-        :src="heroData?.field_image_media?.src"
-        :alt="heroData?.field_image_media?.alt"
+      <BaseImage
+        v-if="heroData?.field_image"
+        :image="heroData"
       />
       <div class="hero__content">
         <div
