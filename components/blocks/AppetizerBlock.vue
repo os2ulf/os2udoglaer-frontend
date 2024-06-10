@@ -23,7 +23,6 @@ const props = defineProps({
       <BaseImage
         v-if="blockData?.field_appetizer_image"
         :image="blockData.field_appetizer_image"
-        :component-type-class="blockData.bundle"
       />
     </NuxtLink>
 
@@ -99,7 +98,7 @@ const props = defineProps({
 
   &__content {
     width: 100%;
-    color: var(--theme-color);
+    color: var(--color-text);
 
     .col-md-4 & {
       width: 100% @(--sm) 50% @(--md) 100%;
@@ -155,7 +154,7 @@ const props = defineProps({
 
   &--image-right {
     display: flex;
-    flex-direction: column @(--sm) row-reverse;
+    flex-direction: row-reverse;
 
     & .appetizer__image {
       overflow: hidden;
