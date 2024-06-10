@@ -22,7 +22,7 @@ const props = defineProps({
     >
       <img
         :src="blockData?.field_appetizer_image?.src"
-        :alt="blockData?.field_appetizer_image.alt"
+        :alt="blockData?.field_appetizer_image?.alt"
       />
       <!-- <BaseImage
         v-if="blockData?.field_appetizer_image?.bundle === 'image'"
