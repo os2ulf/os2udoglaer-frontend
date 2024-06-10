@@ -23,10 +23,9 @@ const handleVideo = (videoItem: any) => {
       class="video__wrapper"
       @click="handleVideo(videoItem)"
     >
-      <!-- TODO: use Base Image comp. once images transformed to proper structure -->
-      <img
-        :src="videoItem?.field_video_thumbnail?.src"
-        :alt="videoItem?.field_video_thumbnail?.alt"
+      <BaseImage
+        v-if="videoItem?.field_video_thumbnail"
+        :image="videoItem?.field_video_thumbnail"
         class="video__thumbnail"
       />
       <NuxtIcon class="video__play-icon" name="play" />
@@ -34,10 +33,10 @@ const handleVideo = (videoItem: any) => {
 
     <!-- Here its an object -->
     <div v-else @click="handleVideo(props.videoArr)">
-      <img
+      <BaseImage
+        v-if="videoItem?.field_video_thumbnail"
+        :image="videoItem?.field_video_thumbnail"
         class="video__thumbnail"
-        :src="videoArr?.field_video_thumbnail?.src"
-        :alt="videoArr?.field_video_thumbnail?.alt"
       />
       <NuxtIcon class="video__play-icon" name="play" />
     </div>
