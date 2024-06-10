@@ -1,0 +1,6 @@
+/* default vars - no theme */
+
+:root {
+  --theme-background-color: var(--color-white);
+  --theme-color: var(--color-tertiary);
+}

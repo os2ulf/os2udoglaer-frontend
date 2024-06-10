@@ -1,0 +1,4 @@
+.theme-grey {
+  --theme-background-color: #d1cfcd;
+  --theme-color: var(--color-tertiary);
+}

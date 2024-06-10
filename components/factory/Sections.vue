@@ -105,6 +105,7 @@ const assignMdCollumnsHandler = (
 .section {
   padding-top: var(--section-spacing-mobile);
   padding-bottom: var(--section-spacing-mobile);
+  background-color: var(--theme-background-color);
 
   @media (--viewport-md-min) {
     padding-top: var(--section-spacing);
