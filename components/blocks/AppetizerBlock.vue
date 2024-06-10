@@ -1,3 +1,9 @@
+<script setup>
+const props = defineProps({
+  blockData: Object,
+});
+</script>
+
 <template>
   <div
     class="appetizer"
@@ -14,43 +20,46 @@
       class="appetizer__image"
       :to="blockData?.field_appetizer_cta?.url"
     >
-      <BaseImage
+      <img
+        :src="blockData?.field_appetizer_image?.src"
+        :alt="blockData?.field_appetizer_image?.alt"
+      />
+      <!-- <BaseImage
         v-if="blockData?.field_appetizer_image?.bundle === 'image'"
         :image="blockData.field_appetizer_image"
         :is-overlay="blockData.field_appetizer_image?.field_overlay"
         :component-type-class="blockData.bundle"
-      />
+      /> -->
     </NuxtLink>
 
     <div class="appetizer__content">
-      <div class="appetizer__title">
-        {{ blockData.field_appetizer_headline }}
-      </div>
-      <div
-        v-if="blockData.field_appetizer_text !== null"
-        class="appetizer__text"
-        v-html="blockData.field_appetizer_text"
-      ></div>
+      <div class="appetizer__content-container">
+        <div class="appetizer__title">
+          {{ blockData.field_appetizer_headline }}
+        </div>
+        <div
+          v-if="blockData.field_appetizer_text !== null"
+          class="appetizer__text"
+          v-html="blockData.field_appetizer_text"
+        ></div>
 
-      <BaseButton
-        v-if="blockData.field_appetizer_cta?.title"
-        :button-data="blockData.field_appetizer_cta"
-      />
+        <div class="appetizer__cta">
+          <BaseButton
+            class="button--primary"
+            v-if="blockData.field_appetizer_cta?.title"
+            :button-data="blockData.field_appetizer_cta"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
-
-<script setup>
-const props = defineProps({
-  blockData: Object,
-});
-</script>
 
 <style lang="postcss" scoped>
 .appetizer {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-white);
+  background-color: transparent;
 
   .col-md-4 & {
     flex-direction: column @(--sm) row @(--md) column;
@@ -70,12 +79,32 @@ const props = defineProps({
 
   &__title {
     font-weight: 700;
-    font-size: var(--font-size-h2);
+    font-size: var(--font-size-h3);
+  }
+
+  &__text {
+    padding-top: 16px;
+    line-height: 32px;
+
+    :deep(p) {
+      font-size: 16px @(--sm) 22px;
+      font-weight: 400;
+    }
+  }
+
+  &__cta {
+    padding-top: 8px @(--sm) 16px;
+
+    @media (--viewport-sm-max) {
+      a {
+        width: 100%;
+      }
+    }
   }
 
   &__content {
     width: 100%;
-    padding: 20px;
+    color: var(--color-text);
 
     .col-md-4 & {
       width: 100% @(--sm) 50% @(--md) 100%;
@@ -84,6 +113,10 @@ const props = defineProps({
     .col-md-8 & {
       width: 100% @(--sm) 50% @(--md) 50%;
     }
+  }
+
+  &__content-container {
+    padding: 10px 0 @(--sm) 162px 168px;
   }
 
   &__image {
@@ -97,11 +130,13 @@ const props = defineProps({
       width: 100% @(--sm) 50% @(--md) 50%;
     }
 
-    :deep(picture) {
-      height: 100%;
+    :deep(picture),
+    :deep(img) {
+      height: -webkit-fill-available;
+      object-fit: cover;
 
       img {
-        height: 100%;
+        height: -webkit-fill-available;
         object-fit: cover;
       }
     }
@@ -125,7 +160,7 @@ const props = defineProps({
 
   &--image-right {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column @(--sm) row-reverse;
 
     & .appetizer__image {
       overflow: hidden;
