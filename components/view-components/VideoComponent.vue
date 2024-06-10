@@ -41,7 +41,7 @@ const props = defineProps({
       v-if="props.layoutType === 'flex' && data?.videoArr?.length == 1"
       >
       <div
-        class="col-xs-12 col-sm-12 col-md-6"
+        class="col-xs-12 col-sm-6"
       >
         <VideoContent
           class="video-component__layout-flex__video-content"
@@ -53,7 +53,7 @@ const props = defineProps({
         />
       </div>
       <div
-        class="col-xs-12 col-sm-12 col-md-6"
+        class="col-xs-12 col-sm-6"
       >
         <VideoPlayer v-if="data?.videoArr" :videoArr="data.videoArr" />
       </div>
