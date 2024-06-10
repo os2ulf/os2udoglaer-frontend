@@ -1,0 +1,24 @@
+.theme-secondary {
+  --theme-background-color: var(--color-secondary-lighten-5);
+  --theme-color: var(--color-text);
+
+  /* button - filled */
+  --theme-button-border-color: var(--color-tertiary);
+  --theme-button-background-color: var(--color-tertiary);
+  --theme-button-text-color: var(--color-secondary-lighten-4);
+
+  /* button - filled:hover */
+  --theme-button-border-color-hover: var(--color-tertiary-darken-2);
+  --theme-button-background-color-hover: var(--color-tertiary-darken-2);
+  --theme-button-text-color-hover: var(--color-secondary);
+
+  /* button -  ghost */
+  --theme-button-ghost-background-color: transparent;
+  --theme-button-ghost-border-color: var(--color-tertiary);
+  --theme-button-ghost-text-color: var(--color-tertiary);
+
+  /*  button - ghost:hover */
+  --theme-button-ghost-background-color-hover: var(--color-tertiary);
+  --theme-button-ghost-border-color-hover: var(--color-tertiary);
+  --theme-button-ghost-text-color-hover: var(--color-secondary);
+}
