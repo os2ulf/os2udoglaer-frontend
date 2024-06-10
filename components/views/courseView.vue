@@ -207,11 +207,9 @@ console.log('courseView', props.data);
             </div>
 
             <div class="course__banner-image">
-              <!-- TODO: Once BE has proper image styling, change this into img component -->
-              <img
-                :src="data.field_image.src"
-                :alt="data.field_image.alt"
-                :title="data.field_image.title"
+              <BaseImage
+                v-if="data.field_image"
+                :image="data.field_image"
               />
             </div>
           </div>
