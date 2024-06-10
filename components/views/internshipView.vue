@@ -68,7 +68,7 @@ const practicalInfoData = computed(() => {
       group: [
         {
           title: 'Periode',
-          description: props.data?.field_description_of_period,
+          content: props.data?.field_description_of_period,
         },
       ],
     },
