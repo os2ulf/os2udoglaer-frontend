@@ -9,54 +9,22 @@ const props = defineProps({
     default: true,
   },
 });
-
-const processedIsOverlay = computed(() => {
-  return props.isOverlay ? 'image--overlay' : '';
-});
-
-const processedComponentTypeClass = computed(() => {
-  if (props.componentTypeClass == undefined) {
-    return '';
-  } else {
-    return props.componentTypeClass;
-  }
-});
 </script>
 
 <template>
   <figure class="image">
-    <picture :class="[processedIsOverlay + ' ' + processedComponentTypeClass]">
-      <template
-        v-for="(el, index) in image?.sources"
-        :key="index"
-      >
+    <picture>
+      <template v-for="el in image?.sources" :key="el">
         <source :media="el.media" :srcset="el.srcset" />
       </template>
       <img
         :src="image?.img_element?.uri"
-        :alt="
-          image?.img_element?.alt
-            ? image?.img_element?.alt
-            : image?.label
-        "
+        :alt="image?.img_element?.alt ? image?.img_element?.alt : image?.label"
         loading="lazy"
         :width="image?.width"
         :height="image?.height"
       />
     </picture>
-
-    <figcaption
-      v-if="
-        (caption && caption !== null) ||
-        (image?.field_copyright && props.copyrightEnabled)
-      "
-      class="image__caption"
-    >
-      {{ caption && caption !== null ? caption : '' }}
-      <span v-if="image?.field_copyright !== null"
-        >(© {{ image?.field_copyright }})</span
-      >
-    </figcaption>
   </figure>
 </template>
 
@@ -72,34 +40,6 @@ const processedComponentTypeClass = computed(() => {
     width: 100%;
     height: auto;
     object-fit: cover;
-  }
-
-  &--overlay {
-    filter: brightness(0.6);
-  }
-
-  &__caption {
-    max-width: var(--container-width);
-    margin: 16px auto 0;
-    color: var(--color-gray-62);
-    font-size: var(--font-size-paragraph-xs);
-  }
-}
-
-.container--full {
-  .image {
-    &__caption {
-      padding: 0 var(--grid-gutter-half);
-    }
-  }
-}
-
-.appetizer,
-.article,
-.slider,
-.hero {
-  .image__caption {
-    display: none;
   }
 }
 </style>

@@ -8,12 +8,12 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
-  color: var(--color-text);
+  color: var(--theme-color);
   font-weight: var(--body-font-weight);
   font-size: var(--body-font-size);
   font-family: var(--body-font-family);
   line-height: 1.5;
-  background-color: var(--site-background-color);
+  background-color: var(--theme-background-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;

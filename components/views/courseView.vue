@@ -402,7 +402,7 @@ console.log('courseView', props.data);
     border-color: var(--color-tertiary);
 
     &:hover {
-      color: var(--color-white);
+      color: var(--color-white) !important;
       background-color: var(--color-tertiary);
     }
   }

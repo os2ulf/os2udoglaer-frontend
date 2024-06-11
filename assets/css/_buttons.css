@@ -33,31 +33,28 @@
   }
 
   &--primary {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
+    background-color: var(--theme-button-background-color);
+    border-color: var(--theme-button-border-color);
+    color: var(--theme-button-text-color);
     transition: all 0.3s ease-in-out;
 
     &:hover {
-      background-color: var(--color-primary-darken-2);
-      border-color: var(--color-primary-darken-2);
+      background-color: var(--theme-button-background-color-hover);
+      border-color: var(--theme-button-border-color-hover);
+      color: var(--theme-button-text-color-hover);
     }
 
     &:active {
-      background-color: var(--color-primary-darken-2);
-      border-color: var(--color-primary-darken-2);
+      background-color: var(--theme-button-background-color-hover);
+      border-color: var(--theme-button-border-color-hover);
+      color: var(--theme-button-text-color-hover);
     }
 
     &--ghost {
       color: var(--color-primary-darken-2);
       border-color: var(--color-primary-darken-2);
-      background-color: transparent;
+      background-color: var(--color-primary-darken-2);
       transition: all 0.3s ease-in-out;
-
-      &:hover {
-        color: var(--color-white);
-        border-color: var(--color-white);
-        background-color: var(--color-white);
-      }
     }
   }
 
@@ -164,24 +161,25 @@
 
   &--ghost {
     padding: 18px 32px;
-    color: var(--color-text);
     font-weight: 700;
     font-size: var(--body-font-size);
-    background-color: transparent;
-    border: 2px solid var(--color-primary-lighten-3);
     border-radius: 56px;
     transition: all 0.3s ease-in-out;
 
+    color: var(--theme-button-ghost-text-color);
+    border: 2px solid var(--theme-button-ghost-border-color);
+    background-color: var(--theme-button-ghost-background-color);
+
     &:hover {
-      color: var(--color-primary-darken-2);
-      background-color: var(--color-white);
-      border-color: var(--color-white);
+      color: var(--theme-button-ghost-text-color-hover) !important;
+      background-color: var(--theme-button-ghost-background-color-hover);
+      border-color: var(--theme-button-ghost-border-color-hover);
       opacity: 1;
     }
 
     &.button {
       &--primary {
-        color: var(--color-primary-darken-2);
+        color: var(--theme-button-ghost-text-color);
       }
 
       &--success {

@@ -1,0 +1,26 @@
+/* default vars - no theme */
+
+:root {
+  --theme-background-color: var(--color-white);
+  --theme-color: var(--color-text);
+
+  /* button - filled */
+  --theme-button-border-color: var(--color-primary);
+  --theme-button-background-color: var(--color-primary);
+  --theme-button-text-color: var(--color-white);
+
+  /* button - filled:hover */
+  --theme-button-border-color-hover: var(--color-primary-darken-2);
+  --theme-button-background-color-hover: var(--color-primary-darken-2);
+  --theme-button-text-color-hover: var(--color-white);
+
+  /* button -  ghost */
+  --theme-button-ghost-background-color: transparent;
+  --theme-button-ghost-border-color: var(--color-primary-lighten-4);
+  --theme-button-ghost-text-color: var(--color-primary-darken-3);
+
+  /*  button - ghost:hover */
+  --theme-button-ghost-background-color-hover: var(--color-primary-lighten-3);
+  --theme-button-ghost-border-color-hover: var(--color-primary-lighten-3);
+  --theme-button-ghost-text-color-hover: var(--color-primary-darken-3);
+}
