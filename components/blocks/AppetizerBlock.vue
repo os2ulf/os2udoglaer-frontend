@@ -3,7 +3,6 @@ const props = defineProps({
   blockData: Object,
 });
 </script>
-
 <template>
   <div
     class="appetizer"
@@ -16,33 +15,44 @@ const props = defineProps({
         : '',
     ]"
   >
-    <NuxtLink
-      class="appetizer__image"
-      :to="blockData?.field_appetizer_cta?.url"
-    >
-      <BaseImage
-        v-if="blockData?.field_appetizer_image"
-        :image="blockData.field_appetizer_image"
-      />
-    </NuxtLink>
-
-    <div class="appetizer__content">
-      <div class="appetizer__content-container">
-        <div class="appetizer__title">
-          {{ blockData.field_appetizer_headline }}
-        </div>
-        <div
-          v-if="blockData.field_appetizer_text !== null"
-          class="appetizer__text"
-          v-html="blockData.field_appetizer_text"
-        ></div>
-
-        <div class="appetizer__cta">
-          <BaseButton
-            class="button--primary"
-            v-if="blockData.field_appetizer_cta?.title"
-            :button-data="blockData.field_appetizer_cta"
+    <div class="row">
+      <div class="col-xs-12" :class="[
+        blockData.appetizer_size === 'default' ? 'col-md-6 col-lg-6' : 'col-md-12',
+        blockData.field_appetizer_orientation === 'right' && blockData.appetizer_size === 'default' ? 'col-lg-offset-1' : ''
+      ]">
+        <NuxtLink
+          class="appetizer__image"
+          :to="blockData?.field_appetizer_cta?.url"
+        >
+          <BaseImage
+            v-if="blockData?.field_appetizer_image"
+            :image="blockData.field_appetizer_image"
           />
+        </NuxtLink>
+      </div>
+      <div class="col-xs-12" :class="[
+        blockData.appetizer_size === 'default' ? 'col-md-6 col-lg-5' : 'col-md-12',
+        blockData.field_appetizer_orientation === 'left' && blockData.appetizer_size === 'default' ? 'col-lg-offset-1' : ''
+      ]">
+        <div class="appetizer__content">
+          <div class="appetizer__content-container">
+            <div class="appetizer__title">
+              {{ blockData.field_appetizer_headline }}
+            </div>
+            <div
+              v-if="blockData.field_appetizer_text !== null"
+              class="appetizer__text"
+              v-html="blockData.field_appetizer_text"
+            ></div>
+
+            <div class="appetizer__cta">
+              <BaseButton
+                class="button--primary"
+                v-if="blockData.field_appetizer_cta?.title"
+                :button-data="blockData.field_appetizer_cta"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -55,29 +65,14 @@ const props = defineProps({
   flex-direction: column;
   background-color: transparent;
 
-  .col-md-4 & {
-    flex-direction: column @(--sm) row @(--md) column;
-  }
-
-  .col-md-6 & {
-    flex-direction: column @(--sm) row @(--md) column;
-  }
-
-  .col-md-8 & {
-    flex-direction: column @(--sm) row @(--md) row;
-  }
-
-  @media (--viewport-sm-min) {
-    flex-direction: row;
-  }
-
   &__title {
+    margin-bottom: 16px;
     font-weight: 700;
     font-size: var(--font-size-h3);
   }
 
   &__text {
-    padding-top: 16px;
+    margin-bottom: 16px;
     line-height: 32px;
 
     :deep(p) {
@@ -87,8 +82,6 @@ const props = defineProps({
   }
 
   &__cta {
-    padding-top: 8px @(--sm) 16px;
-
     @media (--viewport-sm-max) {
       a {
         width: 100%;
@@ -97,43 +90,19 @@ const props = defineProps({
   }
 
   &__content {
+    display: flex;
     width: 100%;
+    height: 100%;
+    align-items: center;
     color: var(--color-text);
-
-    .col-md-4 & {
-      width: 100% @(--sm) 50% @(--md) 100%;
-    }
-
-    .col-md-8 & {
-      width: 100% @(--sm) 50% @(--md) 50%;
-    }
   }
 
   &__content-container {
-    padding: 10px 0 @(--sm) 162px 168px;
+    padding: 20px 0;
   }
 
   &__image {
     width: 100%;
-
-    .col-md-4 & {
-      width: 100% @(--sm) 50% @(--md) 100%;
-    }
-
-    .col-md-8 & {
-      width: 100% @(--sm) 50% @(--md) 50%;
-    }
-
-    :deep(picture),
-    :deep(img) {
-      height: -webkit-fill-available;
-      object-fit: cover;
-
-      img {
-        height: -webkit-fill-available;
-        object-fit: cover;
-      }
-    }
   }
 
   &--content-center {
@@ -145,16 +114,17 @@ const props = defineProps({
   }
 
   &--image-left {
-    display: flex;
-
     .appetizer__image {
       overflow: hidden;
     }
   }
 
   &--image-right {
-    display: flex;
-    flex-direction: row-reverse;
+    @media (--viewport-md-min) {
+      .row {
+        flex-direction: row-reverse;
+      }
+    }
 
     & .appetizer__image {
       overflow: hidden;
