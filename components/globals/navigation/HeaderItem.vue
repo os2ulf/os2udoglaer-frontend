@@ -17,6 +17,7 @@ const hasChildren = computed(() => {
 });
 
 const config = useRuntimeConfig().public;
+console.log('Nav Header Item', props.node);
 </script>
 
 <template>
@@ -30,8 +31,7 @@ const config = useRuntimeConfig().public;
     >
       <div class="header-item__item">
         <div class="header-item__icon" v-if="node.field_icon">
-          <!-- TODO: The baseAPI part might need to change once BE delivers absolute paths -->
-          <img :src="config.API_BASE_URL + node?.field_icon" />
+          <img :src="node?.field_icon" />
         </div>
         <div>
           {{ node?.title }}

@@ -16,10 +16,18 @@ const props = defineProps({
     ]"
   >
     <div class="row">
-      <div class="col-xs-12" :class="[
-        blockData.appetizer_size === 'default' ? 'col-md-6 col-lg-6' : 'col-md-12',
-        blockData.field_appetizer_orientation === 'right' && blockData.appetizer_size === 'default' ? 'col-lg-offset-1' : ''
-      ]">
+      <div
+        class="col-xs-12"
+        :class="[
+          blockData.appetizer_size === 'default'
+            ? 'col-md-6 col-lg-6'
+            : 'col-md-12',
+          blockData.field_appetizer_orientation === 'right' &&
+          blockData.appetizer_size === 'default'
+            ? 'col-lg-offset-1'
+            : '',
+        ]"
+      >
         <NuxtLink
           class="appetizer__image"
           :to="blockData?.field_appetizer_cta?.url"
@@ -30,10 +38,18 @@ const props = defineProps({
           />
         </NuxtLink>
       </div>
-      <div class="col-xs-12" :class="[
-        blockData.appetizer_size === 'default' ? 'col-md-6 col-lg-5' : 'col-md-12',
-        blockData.field_appetizer_orientation === 'left' && blockData.appetizer_size === 'default' ? 'col-lg-offset-1' : ''
-      ]">
+      <div
+        class="col-xs-12"
+        :class="[
+          blockData.appetizer_size === 'default'
+            ? 'col-md-6 col-lg-5'
+            : 'col-md-12',
+          blockData.field_appetizer_orientation === 'left' &&
+          blockData.appetizer_size === 'default'
+            ? 'col-lg-offset-1'
+            : '',
+        ]"
+      >
         <div class="appetizer__content">
           <div class="appetizer__content-container">
             <div class="appetizer__title">
@@ -69,11 +85,13 @@ const props = defineProps({
     margin-bottom: 16px;
     font-weight: 700;
     font-size: var(--font-size-h3);
+    color: var(--theme-color);
   }
 
   &__text {
     margin-bottom: 16px;
     line-height: 32px;
+    color: var(--theme-color);
 
     :deep(p) {
       font-size: 16px @(--sm) 22px;
@@ -94,7 +112,7 @@ const props = defineProps({
     width: 100%;
     height: 100%;
     align-items: center;
-    color: var(--color-text);
+    color: var(--theme-color);
   }
 
   &__content-container {
