@@ -34,8 +34,8 @@ const handleVideo = (videoItem: any) => {
     <!-- Here its an object -->
     <div v-else @click="handleVideo(props.videoArr)">
       <BaseImage
-        v-if="videoItem?.field_video_thumbnail"
-        :image="videoItem?.field_video_thumbnail"
+        v-if="props.videoArr?.field_video_thumbnail"
+        :image="props.videoArr?.field_video_thumbnail"
         class="video__thumbnail"
       />
       <NuxtIcon class="video__play-icon" name="play" />

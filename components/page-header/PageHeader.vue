@@ -44,14 +44,15 @@ const props = defineProps({
             v-if="pageBlockHeaderData?.field_background_image"
             :image="pageBlockHeaderData?.field_background_image"
             class="page-header__image"
-            />
+          />
         </div>
       </div>
       <div class="page-header__card-container">
         <div class="container">
           <div class="row">
-
-            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2">
+            <div
+              class="col-xs-12 col-sm-12 col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2"
+            >
               <!-- carousel -->
               <Swiper
                 :modules="modules"
@@ -162,7 +163,10 @@ const props = defineProps({
     background: var(--color-white);
   }
 
-  :deep(.swiper-horizontal > .swiper-scrollbar, .swiper-scrollbar.swiper-scrollbar-horizontal) {
+  :deep(
+      .swiper-horizontal > .swiper-scrollbar,
+      .swiper-scrollbar.swiper-scrollbar-horizontal
+    ) {
     background-color: rgba(255, 255, 255, 0.4);
   }
 

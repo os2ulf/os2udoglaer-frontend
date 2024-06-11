@@ -39,10 +39,8 @@ const props = defineProps({
     <div
       class="row video-component__layout-flex"
       v-if="props.layoutType === 'flex' && data?.videoArr?.length == 1"
-      >
-      <div
-        class="col-xs-12 col-sm-6"
-      >
+    >
+      <div class="col-xs-12 col-sm-6">
         <VideoContent
           class="video-component__layout-flex__video-content"
           v-if="data.videoTitle || data.videoDescription"
@@ -52,23 +50,17 @@ const props = defineProps({
           }"
         />
       </div>
-      <div
-        class="col-xs-12 col-sm-6"
-      >
+      <div class="col-xs-12 col-sm-6">
         <VideoPlayer v-if="data?.videoArr" :videoArr="data.videoArr" />
       </div>
     </div>
 
     <!-- layout type = carousel -->
     <div
-      v-else-if="
-        props.layoutType === 'carousel' && data?.videoArr?.length > 1
-      "
+      v-else-if="props.layoutType === 'carousel' && data?.videoArr?.length > 1"
       class="row video-component__layout-carousel"
     >
-      <div
-        class="col-xs-12 col-sm-12 col-md-8"
-      >
+      <div class="col-xs-12 col-sm-12 col-md-8">
         <VideoContent
           v-if="data.videoTitle || data.videoDescription"
           :data="{
@@ -78,9 +70,7 @@ const props = defineProps({
         />
       </div>
 
-      <div
-        class="col-xs-12 col-sm-12 col-md-12"
-      >
+      <div class="col-xs-12 col-sm-12 col-md-12">
         <Swiper
           :modules="modules"
           :slides-per-view="1"
