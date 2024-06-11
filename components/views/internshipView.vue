@@ -50,7 +50,7 @@ const practicalInfoData = computed(() => {
           content: props.data?.field_areas_of_interest,
         },
         {
-          title: 'Uddannelsesvej',
+          title: 'Branche',
           content: props.data?.field_industry,
           description: props.data?.field_education_path,
         },
@@ -150,10 +150,7 @@ console.log('internshipView', props.data);
             </div>
 
             <div class="internship__banner-image">
-              <BaseImage
-                v-if="data.field_image"
-                :image="data.field_image"
-              />
+              <BaseImage v-if="data.field_image" :image="data.field_image" />
             </div>
           </div>
         </div>
