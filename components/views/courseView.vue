@@ -227,7 +227,7 @@ const practicalInfoData = computed(() => {
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data.provider.link"
+                  v-if="data?.provider && data?.provider.link"
                   class="button button--secondary--ghost"
                   :button-data="{
                     title: 'Kontakt udbyder',
@@ -299,7 +299,7 @@ const practicalInfoData = computed(() => {
               class="button button--secondary"
             />
             <BaseButton
-              v-if="data.provider.link"
+              v-if="data?.provider && data?.provider.link"
               class="button button--ghost course__contact-button"
               :button-data="{
                 title: 'Kontakt udbyder',
@@ -370,7 +370,7 @@ const practicalInfoData = computed(() => {
           </div>
         </div>
 
-        <!-- Section calendar -->
+        <!-- Section registration -->
         <div
           v-if="
             data.field_registration_deadline ||

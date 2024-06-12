@@ -31,7 +31,6 @@ const props = defineProps({
       </div>
     </div>
     <div v-if="props.data.description" class="course__registration__price-description" v-html="props.data.price_description" />
-    <h4 v-if="props.data.title" class="course__registration__title" v-html="props.data.title" />
     <div v-if="props.data.description" class="course__registration__description" v-html="props.data.description" />
     <div v-if="props.data.deadline" class="course__registration__description">
       Tilmeldingsfrist: {{ props.data.deadline.text }}
@@ -43,7 +42,7 @@ const props = defineProps({
       Email: <a :href="'mailto:' + props.data.email">{{ props.data.email }}</a>
     </div>
     <div v-if="props.data.url" class="course__registration__url">
-      <a :href="props.data.url" target="_blank">{{ props.data.url }}</a>
+      <a :href="props.data.url" target="_blank">{{ props.data.title ? props.data.title : props.data.url }}</a>
     </div>
   </div>
 </template>
@@ -58,13 +57,13 @@ const props = defineProps({
       margin-bottom: 16px;
     }
 
-    &__title {
-      margin-bottom: 16px;
-      padding-top: 16px @(--md) 32px;
-    }
-
     &__price-item {
       margin-bottom: 16px;
+      font-size: 16px @(--md) 22px;
+    }
+
+    &__url {
+      margin-top: 16px;
       font-size: 16px @(--md) 22px;
     }
   }
