@@ -1,3 +1,11 @@
+<script setup>
+const config = useRuntimeConfig();
+
+const props = defineProps({
+  blockData: Object,
+});
+</script>
+
 <template>
   <div class="image-block">
     <NuxtLink
@@ -12,19 +20,11 @@
       />
     </NuxtLink>
     <BaseImage
-      v-if="blockData?.field_image"
+      v-else-if="blockData?.field_image"
       :image="blockData?.field_image"
     />
   </div>
 </template>
-
-<script setup>
-const config = useRuntimeConfig();
-
-const props = defineProps({
-  blockData: Object,
-});
-</script>
 
 <style lang="postcss" scoped>
 .image-block {

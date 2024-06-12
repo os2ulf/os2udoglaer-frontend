@@ -16,7 +16,7 @@ const cardItem = ref(props.cardItem);
       <div class="page-header-card__description">
         {{ cardItem?.field_description }}
       </div>
-      <div class="page-header-card__link" v-if="cardItem?.field_link.url">
+      <div class="page-header-card__link" v-if="cardItem?.field_link !== null">
         <NuxtLink :to="cardItem?.field_link.url" aria-label="Læs mere">
           <NuxtIcon
             class="page-header-card__link--icon"
