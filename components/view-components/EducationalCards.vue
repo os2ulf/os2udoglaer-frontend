@@ -52,6 +52,7 @@ const determineIcon = (cardLink: string) => {
                     ? card.field_material_file
                     : card?.field_material_url?.url
                 "
+                target="_blank"
               >
                 <span class="educational-materials__card-link-text">
                   {{ card?.field_material_download_text }}
@@ -80,8 +81,6 @@ const determineIcon = (cardLink: string) => {
 
 <style lang="postcss" scoped>
 .educational-materials {
-  margin-bottom: 20px;
-
   &__card-wrapper {
     .row {
       margin-right: -12px;

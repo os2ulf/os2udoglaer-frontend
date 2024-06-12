@@ -33,6 +33,20 @@ useHead({
   ],
 });
 
+const registrationData = computed(() => {
+  return {
+    'deadline': props.data?.field_registration_deadline,
+    'description': props.data?.field_registration_description,
+    'email': props.data?.field_registration_email,
+    'phone': props.data?.field_registration_phone,
+    'title': props.data?.field_registration_title,
+    'url': props.data?.field_registration_url,
+    'price': props.data?.field_price,
+    'price_description': props.data?.field_description_of_price,
+    'free': props.data?.field_is_free,
+  }
+});
+
 const practicalInfoData = computed(() => {
   const data = [
     {
@@ -331,11 +345,17 @@ const practicalInfoData = computed(() => {
         </div>
 
         <!-- Section calendar -->
-        <div class="col-xs-12 col-sm-12 col-md-12 course__section-calendar">
-          <div class="course__calendar">
-            <h3>Tilmelding</h3>
-            <p>calendar integration goes here</p>
-          </div>
+        <div
+          v-if="
+            data.field_registration_deadline ||
+            data.field_registration_description ||
+            data.field_registration_email ||
+            data.field_registration_phone ||
+            data.field_registration_title ||
+            data.field_registration_url"
+          class="col-xs-12 col-sm-12 col-md-12 course__section-registration"
+        >
+          <RegistrationSection :data="registrationData" />
         </div>
 
         <!-- Section related articles -->
@@ -343,7 +363,7 @@ const practicalInfoData = computed(() => {
           class="col-xs-12 col-sm-12 col-md-12 course__section-related-articles"
         >
           <div class="course__related-articles">
-            <h3>Relaterede forløb</h3>
+            <h2>Relaterede forløb</h2>
             <div>article cards</div>
           </div>
         </div>
@@ -419,14 +439,23 @@ const practicalInfoData = computed(() => {
     padding-top: 48px @(--md) 96px;
   }
 
-  &__section-video,
-  &__section-cards,
-  &__section-calendar,
-  &__section-related-articles {
+  &__section-registration {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-cards {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-video {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 24px @(--md) 48px;
   }
 
   &__section-related-articles {
+    padding-top: 24px @(--md) 48px;
     padding-bottom: 48px @(--md) 96px;
   }
 }
