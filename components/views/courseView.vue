@@ -38,8 +38,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: 'Object needed from BE',
+          title: props.data?.provider ? 'Udbyder' : '',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
         },
       ],
     },
@@ -158,8 +158,6 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
-
-console.log('courseView', props.data);
 </script>
 
 <template>
