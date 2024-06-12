@@ -102,7 +102,7 @@ const props = defineProps({
               class="practical-information__prices"
             >
               <div>
-                {{ price?.field_price }}
+                {{ price?.field_price }} kr.
                 {{ price?.field_price_settlement_unit?.label }}
               </div>
               <div>{{ price?.field_price_vat?.label }}</div>
