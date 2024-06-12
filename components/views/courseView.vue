@@ -38,7 +38,7 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
+          title: props.data?.provider ? 'Udbyder' : '',
           content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
         },
       ],
