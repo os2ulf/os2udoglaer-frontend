@@ -211,15 +211,30 @@ const practicalInfoData = computed(() => {
             <div class="course__page-heading-wrapper">
               <h1 class="course__page-title">{{ data?.label }}</h1>
               <div class="course__page-heading-button-container">
-                <!-- TODO: connect buttons -->
                 <BaseButton
+                  v-if="
+                    data.field_registration_deadline ||
+                    data.field_registration_description ||
+                    data.field_registration_email ||
+                    data.field_registration_phone ||
+                    data.field_registration_title ||
+                    data.field_registration_url"
                   icon-after="arrow-right"
-                  :button-data="{ title: 'Tilmelding' }"
+                  :button-data="{
+                    title: 'Tilmelding',
+                    url: '#course-registration'
+                  }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data.provider.link"
+                  class="button button--secondary--ghost"
+                  :button-data="{
+                    title: 'Kontakt udbyder',
+                    url: data.provider.link,
+                    target: '_blank'
+                  }"
+                />
               </div>
             </div>
 
@@ -270,18 +285,29 @@ const practicalInfoData = computed(() => {
           <div class="course__practical-buttons">
             <BaseButton
               v-if="
-                data.field_target_group === 'Grundskole' &&
-                data.field_practical_info_buttons?.includes(
-                  'show_free_course_request',
-                )
-              "
-              :button-data="{ title: 'Tilmeld dig forløbet' }"
+                data.field_registration_deadline ||
+                data.field_registration_description ||
+                data.field_registration_email ||
+                data.field_registration_phone ||
+                data.field_registration_title ||
+                data.field_registration_url"
+              :button-data="{
+                title: 'Tilmeld dig forløbet',
+                url: '#course-registration'
+              }"
               icon-after="arrow-right"
-              class="button--secondary"
+              class="button button--secondary"
             />
-            <button class="button button--ghost course__contact-button">
-              Kontakt udbyder
-            </button>
+            <BaseButton
+              v-if="data.provider.link"
+              class="button button--ghost course__contact-button"
+              :button-data="{
+                title: 'Kontakt udbyder',
+                url: data.provider.link,
+                target: '_blank'
+              }"
+              ghost
+            />
             <BaseButton
               v-if="
                 data.field_target_group === 'Grundskole' &&
@@ -353,6 +379,7 @@ const practicalInfoData = computed(() => {
             data.field_registration_phone ||
             data.field_registration_title ||
             data.field_registration_url"
+          id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 course__section-registration"
         >
           <RegistrationSection :data="registrationData" />
