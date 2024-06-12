@@ -33,7 +33,9 @@ const props = defineProps({
     <div v-if="props.data.description" class="course__registration__price-description" v-html="props.data.price_description" />
     <h4 v-if="props.data.title" class="course__registration__title" v-html="props.data.title" />
     <div v-if="props.data.description" class="course__registration__description" v-html="props.data.description" />
-    <div v-if="props.data.deadline" class="course__registration__description" v-html="props.data.deadline" />
+    <div v-if="props.data.deadline" class="course__registration__description">
+      Tilmeldingsfrist: {{ props.data.deadline.text }}
+    </div>
     <div v-if="props.data.phone" class="course__registration__phone">
       Tlf.: {{ props.data.phone }}
     </div>
