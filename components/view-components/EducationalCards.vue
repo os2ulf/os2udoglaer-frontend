@@ -37,9 +37,14 @@ const determineIcon = (cardLink: string) => {
                 v-if="card.field_material_description"
                 v-html="card?.field_material_description"
               ></div>
+              <div
+                v-else-if="card.field_literature_suggestion"
+                v-html="card?.field_literature_suggestion"
+              ></div>
             </div>
             <div class="educational-materials__card-item-button">
               <NuxtLink
+                v-if="card.field_material_file || card?.field_material_url?.url"
                 aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
@@ -51,20 +56,20 @@ const determineIcon = (cardLink: string) => {
                 <span class="educational-materials__card-link-text">
                   {{ card?.field_material_download_text }}
                 </span>
+                <NuxtIcon
+                  class="educational-materials__card-item-button--icon"
+                  :name="
+                    determineIcon(
+                      card.field_material_file
+                        ? card.field_material_file
+                        : card?.field_material_url?.url,
+                    )
+                  "
+                  filled
+                />
               </NuxtLink>
 
               <!-- icon -->
-              <NuxtIcon
-                class="educational-materials__card-item-button--icon"
-                :name="
-                  determineIcon(
-                    card.field_material_file
-                      ? card.field_material_file
-                      : card?.field_material_url?.url,
-                  )
-                "
-                filled
-              />
             </div>
           </div>
         </div>
@@ -106,12 +111,12 @@ const determineIcon = (cardLink: string) => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 
   &__card-item-button {
     display: flex;
     align-items: center;
+    margin-top: auto;
 
     a {
       text-decoration: none;
