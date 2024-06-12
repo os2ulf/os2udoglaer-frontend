@@ -48,12 +48,12 @@ const practicalInfoData = computed(() => {
         {
           title: 'Sted',
           content: [
-            props.data?.field_location_name,
-            props.data?.field_location_street,
-            props.data?.field_location_zipcode,
-            props.data?.field_location_city,
+            props.data?.field_location_name ? props.data?.field_location_name : '',
+            props.data?.field_location_street ? props.data?.field_location_street : '',
+            props.data?.field_location_zipcode ? props.data?.field_location_zipcode : '',
+            props.data?.field_location_city ? props.data?.field_location_city : '',
           ],
-          description: props.data?.field_location_description,
+          description: props.data?.field_location_description ? props.data?.field_location_description : '',
         },
       ],
     },
@@ -67,18 +67,23 @@ const practicalInfoData = computed(() => {
           title: 'Målgruppe',
           content:
             props.data?.field_target_group === 'Grundskole'
-              ? props.data?.field_trgt_grp_primary_school.concat(
-                  props.data?.field_primary_school_subject,
-                )
+              ? props.data?.field_trgt_grp_primary_school
               : props.data?.field_target_group === 'Dagtilbud'
-                ? props.data?.field_trgt_grp_daycare.concat(
-                    props.data?.field_curriculum_themes,
-                  )
-                : props.data?.field_target_group === 'Ungdomsuddannelse'
-                  ? props.data?.field_trgt_grp_youth_education.concat(
-                      props.data?.field_youth_education_subject,
-                    )
-                  : 'Object needed from BE',
+              ? props.data?.field_trgt_grp_daycare
+              : props.data?.field_target_group === 'Ungdomsuddannelse'
+              ? props.data?.field_trgt_grp_youth_education
+              : '',
+        },
+        {
+          title: props.data?.field_target_group === 'Dagtilbud' ? 'Læreplanstemaer' : 'Fag',
+          content:
+            props.data?.field_target_group === 'Grundskole'
+              ? props.data?.field_primary_school_subject
+              : props.data?.field_target_group === 'Dagtilbud'
+              ? props.data?.field_curriculum_themes
+              : props.data?.field_target_group === 'Ungdomsuddannelse'
+              ? props.data?.field_youth_education_subject
+              : '',
         },
       ],
     },
@@ -221,22 +226,27 @@ console.log('courseView', props.data);
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
+            <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
           </div>
 
           <div class="course__paragraph-item" v-if="data.field_activities">
+            <h4>Aktiviteter</h4>
             <BaseRte :content="data.field_activities" />
           </div>
 
           <div class="course__paragraph-item" v-if="data.field_preparation">
+            <h4>Forberedelse</h4>
             <BaseRte :content="data.field_preparation" />
           </div>
 
           <div class="course__paragraph-item" v-if="data.field_post_processing">
+            <h4>Efterbehandling</h4>
             <BaseRte :content="data.field_post_processing" />
           </div>
 
           <div class="course__paragraph-item" v-if="data.field_purpose">
+            <h4>Formål</h4>
             <BaseRte :content="data.field_purpose" />
           </div>
         </div>
