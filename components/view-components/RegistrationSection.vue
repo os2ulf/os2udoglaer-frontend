@@ -61,14 +61,8 @@ const props = defineProps({
       padding-top: 16px @(--md) 32px;
     }
 
-    &__prices {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
     &__price-item {
+      margin-bottom: 16px;
       font-size: 16px @(--md) 22px;
     }
   }
