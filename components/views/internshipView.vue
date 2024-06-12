@@ -33,13 +33,24 @@ useHead({
   ],
 });
 
+const registrationData = computed(() => {
+  return {
+    'deadline': props.data?.field_application_deadline,
+    'description': props.data?.field_desc_application_procedure,
+    'email': props.data?.field_application_email,
+    'phone': props.data?.field_application_phone,
+    'title': props.data?.field_application_title,
+    'url': props.data?.field_application_url,
+  }
+});
+
 const practicalInfoData = computed(() => {
   const data = [
     {
       group: [
         {
           title: 'Udbyder',
-          content: 'Object needed from BE',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
         },
       ],
     },
@@ -124,7 +135,6 @@ const practicalInfoData = computed(() => {
   return filterGroups(data);
 });
 
-console.log('internshipView', props.data);
 </script>
 
 <template>
@@ -137,15 +147,30 @@ console.log('internshipView', props.data);
             <div class="internship__page-heading-wrapper">
               <h1 class="internship__page-title">{{ data?.label }}</h1>
               <div class="internship__page-heading-button-container">
-                <!-- TODO: connect buttons -->
                 <BaseButton
+                  v-if="
+                    data?.field_application_deadline ||
+                    data?.field_desc_application_procedure ||
+                    data?.field_application_email ||
+                    data?.field_application_phone ||
+                    data?.field_application_title ||
+                    data?.field_application_url"
                   icon-after="arrow-right"
-                  :button-data="{ title: 'Tilmelding' }"
+                  :button-data="{
+                    title: 'Tilmelding',
+                    url: '#course-registration'
+                  }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data?.provider && data?.provider.link"
+                  class="button button--secondary--ghost"
+                  :button-data="{
+                    title: 'Kontakt udbyder',
+                    url: data.provider.link,
+                    target: '_blank'
+                  }"
+                />
               </div>
             </div>
 
@@ -184,14 +209,35 @@ console.log('internshipView', props.data);
           <SharePage />
           <PracticalInformation :data="practicalInfoData" />
           <div class="internship__practical-buttons">
-            <button class="button button--ghost internship__contact-button">
-              Kontakt udbyder
-            </button>
+            <BaseButton
+              v-if="
+                data.field_application_deadline ||
+                data.field_desc_application_procedure ||
+                data.field_application_email ||
+                data.field_application_phone ||
+                data.field_application_title ||
+                data.field_application_url"
+              icon-after="arrow-right"
+              :button-data="{
+                title: 'Tilmelding',
+                url: '#course-registration'
+              }"
+              class="button button--secondary"
+            />
+            <BaseButton
+              v-if="data?.provider && data?.provider.link"
+              class="button button--ghost internship__contact-button"
+              :button-data="{
+                title: 'Kontakt udbyder',
+                url: data.provider.link,
+                target: '_blank'
+              }"
+            />
           </div>
         </div>
 
         <div
-          class="col-xs-12 col-sm-12 col-md-12 internship__section-cards"
+          class="col-xs-12 col-sm-12 col-md-12 internship__section-video"
           v-if="
             data.field_video_title ||
             data.field_video_description ||
@@ -235,6 +281,20 @@ console.log('internshipView', props.data);
               }"
             />
           </div>
+        </div>
+
+        <!-- Section registration -->
+        <div
+          v-if="
+            data.field_application_deadline ||
+            data.field_desc_application_procedure ||
+            data.field_application_email ||
+            data.field_application_phone ||
+            data.field_application_url"
+          id="course-registration"
+          class="col-xs-12 col-sm-12 col-md-12 internship__section-registration"
+        >
+          <RegistrationSection :data="registrationData" />
         </div>
 
         <!-- Section related articles -->
@@ -318,14 +378,23 @@ console.log('internshipView', props.data);
     padding-top: 48px @(--md) 96px;
   }
 
-  &__section-video,
-  &__section-cards,
-  &__section-calendar,
-  &__section-related-articles {
+  &__section-registration {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-cards {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-video {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 24px @(--md) 48px;
   }
 
   &__section-related-articles {
+    padding-top: 24px @(--md) 48px;
     padding-bottom: 48px @(--md) 96px;
   }
 }
