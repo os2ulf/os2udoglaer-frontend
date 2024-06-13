@@ -33,6 +33,20 @@ useHead({
   ],
 });
 
+const priceQuantityPeriodDescription = computed(() => {
+  let description = '';
+  if (props.data?.field_description_of_price) {
+    description = description + props.data?.field_description_of_price;
+  }
+  if (props.data?.field_quantity_description) {
+    description = description + props.data?.field_quantity_description;
+  }
+  if (props.data?.field_description_of_period) {
+    description = description + props.data?.field_description_of_period;
+  }
+  return description;
+});
+
 const registrationData = computed(() => {
   return {
     'deadline': props.data?.field_registration_deadline,
@@ -62,10 +76,10 @@ const practicalInfoData = computed(() => {
         {
           title: 'Sted',
           content: [
-            props.data?.field_location_name ? props.data?.field_location_name : '',
-            props.data?.field_location_street ? props.data?.field_location_street : '',
-            props.data?.field_location_zipcode ? props.data?.field_location_zipcode : '',
-            props.data?.field_location_city ? props.data?.field_location_city : '',
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_name : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_street : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
           ],
           description: props.data?.field_location_description ? props.data?.field_location_description : '',
         },
@@ -121,9 +135,7 @@ const practicalInfoData = computed(() => {
               props.data?.field_period?.separator +
               props.data?.field_period?.end_date,
           description:
-            props.data?.field_description_of_price +
-            props.data?.field_quantity_description +
-            props.data?.field_description_of_period,
+            priceQuantityPeriodDescription.value ? priceQuantityPeriodDescription.value : '',
         },
       ],
     },

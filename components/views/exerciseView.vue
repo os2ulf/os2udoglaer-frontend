@@ -39,7 +39,7 @@ const practicalInfoData = computed(() => {
       group: [
         {
           title: 'Udbyder',
-          content: 'Object needed from BE',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
         },
       ],
     },
@@ -319,14 +319,18 @@ console.log('exerciseView', props.data);
     padding-top: 48px @(--md) 96px;
   }
 
-  &__section-video,
-  &__section-cards,
-  &__section-calendar,
-  &__section-related-articles {
+  &__section-cards {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-video {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 24px @(--md) 48px;
   }
 
   &__section-related-articles {
+    padding-top: 24px @(--md) 48px;
     padding-bottom: 48px @(--md) 96px;
   }
 }
