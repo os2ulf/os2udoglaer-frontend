@@ -18,16 +18,21 @@ const secondaryBgTextColor = computed(
 
 // Function to convert hex to RGB
 function hexToRgb(hex: string) {
-  let bigint = parseInt(hex.slice(1), 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-  return `${r}, ${g}, ${b}`;
+  try {
+    let bigint = parseInt(hex.slice(1), 16);
+    let r = (bigint >> 16) & 255;
+    let g = (bigint >> 8) & 255;
+    let b = bigint & 255;
+
+    return `${r}, ${g}, ${b}`;
+  } catch (error) {
+    return '255, 255, 255';
+  }
 }
 
 let primaryColor = '#297F78';
-let primaryTextColor = '#fff';
 let primaryColorRgb = hexToRgb(primaryColor);
+let primaryTextColor = '#fff';
 
 let secondaryColor = '#FBD800';
 let secondaryTextColor = '#000';

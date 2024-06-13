@@ -15,6 +15,8 @@ const handleUpdateCookieConsent = () => {
 // There can be multiple footer bundles / components coming from the CMS so we do some mental gymnastics below to check
 const allPossibleFooterData = ref(props.data);
 
+// Filter out footer bundles based on the bundle type and just use the 1st one,
+// because its editors job to be competent and not have multiple footers in the first place
 const filterFooterData = Object.keys(allPossibleFooterData.value)
   .filter((bundle) => allPossibleFooterData.value[bundle].bundle === 'footer')
   .map((bundle) => allPossibleFooterData.value[bundle]);
@@ -44,7 +46,7 @@ const footerData = ref(filterFooterData[0]);
 
     <div class="container">
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3 footer__section">
+        <div class="col-xs-12 col-sm-6 col-md-3 footer__section">
           <h3 class="footer__title">Kontakt</h3>
           <div class="footer__contact" v-if="footerData">
             <div
@@ -116,7 +118,7 @@ const footerData = ref(filterFooterData[0]);
           </div>
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-3 footer__section">
+        <div class="col-xs-12 col-sm-6 col-md-3 footer__section">
           <div
             class="footer__shortcuts"
             v-if="footerData?.field_shortcuts?.length > 0"
@@ -341,7 +343,7 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__shortcuts {
-    padding-top: 48px @(--md) 0;
+    padding-top: 48px @(--sm) 0;
     margin-bottom: 0 @(--md) 20px;
     display: grid;
   }
@@ -389,7 +391,7 @@ const footerData = ref(filterFooterData[0]);
     display: flex;
     align-items: flex-end;
     padding-top: 48px @(--md) 0;
-    justify-content: space-between @(--sm) flex-end;
+    justify-content: space-between @(--sm) space-evenly @(--md) flex-end;
     gap: 16px @(--md) 36px;
     height: 100%;
     width: 100%;
