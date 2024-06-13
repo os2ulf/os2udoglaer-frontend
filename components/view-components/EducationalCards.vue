@@ -37,14 +37,20 @@ const determineIcon = (cardLink: string) => {
                 v-if="card.field_material_description"
                 v-html="card?.field_material_description"
               ></div>
-              <div
-                v-else-if="card.field_literature_suggestion"
-                v-html="card?.field_literature_suggestion"
-              ></div>
             </div>
             <div class="educational-materials__card-item-button">
+              <div v-if="card.field_literature_suggestion" class="educational-materials__card-link educational-materials__card-link--placeholder">
+                <span class="educational-materials__card-link-text">
+                  {{ card?.field_literature_suggestion }}
+                </span>
+                <NuxtIcon
+                  class="educational-materials__card-item-button--icon"
+                  name="book-opened"
+                  filled
+                />
+              </div>
               <NuxtLink
-                v-if="card.field_material_file || card?.field_material_url?.url"
+                v-else-if="card.field_material_file || card?.field_material_url?.url"
                 aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
@@ -140,7 +146,7 @@ const determineIcon = (cardLink: string) => {
     }
   }
 
-  &__card-link:hover {
+  &__card-link:hover:not(.educational-materials__card-link--placeholder) {
     .educational-materials__card-link-text {
       border-bottom: 1px solid currentColor;
     }
@@ -149,10 +155,6 @@ const determineIcon = (cardLink: string) => {
   &__card-link-text {
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
-
-    &:hover {
-      border-bottom: 1px solid currentColor;
-    }
   }
 }
 </style>

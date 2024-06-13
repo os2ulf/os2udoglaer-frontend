@@ -121,10 +121,10 @@ const practicalInfoData = computed(() => {
         {
           title: 'Sted',
           content: [
-            props.data?.field_location_name,
-            props.data?.field_location_street,
-            props.data?.field_location_zipcode,
-            props.data?.field_location_city,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_name : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_street : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
           ],
           description: props.data?.field_location_description,
         },

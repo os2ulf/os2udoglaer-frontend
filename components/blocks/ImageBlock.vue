@@ -15,13 +15,13 @@ const props = defineProps({
       class="image-block__link"
     >
       <BaseImage
-        v-if="blockData?.field_image"
-        :image="blockData?.field_image"
+        v-if="blockData?.field_image_media"
+        :image="blockData?.field_image_media"
       />
     </NuxtLink>
     <BaseImage
-      v-else-if="blockData?.field_image"
-      :image="blockData?.field_image"
+      v-else-if="blockData?.field_image_media"
+      :image="blockData?.field_image_media"
     />
   </div>
 </template>
