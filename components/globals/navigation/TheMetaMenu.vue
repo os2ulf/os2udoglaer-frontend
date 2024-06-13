@@ -107,9 +107,11 @@ const closeOffCanvas = () => {
 
 <style lang="postcss" scoped>
 .meta-menu {
+  position: relative;
   display: none @(--md) flex;
   align-items: center;
   background: var(--color-tertiary-lighten-6);
+  z-index: 11;
 
   .meta-menu__items-wrapper {
     height: var(--meta-navigation-bar-height);

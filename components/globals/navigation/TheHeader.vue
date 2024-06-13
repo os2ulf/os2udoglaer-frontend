@@ -221,8 +221,9 @@ onBeforeUnmount(() => {
   z-index: 10;
   width: 100%;
   height: var(--navigation-bar-height);
-  background: var(--color-primary-lighten-3);
+  background: var(--color-white);
   transition: transform 0.3s ease-in-out;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
 
   &--fixed {
     position: fixed;
