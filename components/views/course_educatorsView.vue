@@ -109,15 +109,13 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price,
+          content: props.data?.field_price[0].field_price ? props.data?.field_price : '',
           free: props.data?.field_is_free,
         },
         {
           title: 'Varighed',
           content:
-            props.data?.field_duration +
-            ' ' +
-            props.data?.field_duration_unit_taxonomy?.label,
+            props.data?.field_duration && props.data?.field_duration_unit_taxonomy?.label ? props.data?.field_duration + ' ' + props.data?.field_duration_unit_taxonomy?.label : '',
         },
         {
           description:
@@ -151,14 +149,12 @@ const practicalInfoData = computed(() => {
             props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
             props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
           ],
+          description: props.data?.field_location_description ? props.data?.field_location_description : '',
         },
         {
           title: 'Faciliteter',
           content: props.data?.field_faciliteter,
           description: props.data?.field_facilities_description,
-        },
-        {
-          description: props.data?.field_location_description,
         },
       ],
     },

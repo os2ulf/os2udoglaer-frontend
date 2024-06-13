@@ -41,6 +41,9 @@ const registrationData = computed(() => {
     'phone': props.data?.field_application_phone,
     'title': props.data?.field_application_title,
     'url': props.data?.field_application_url,
+    'price': '',
+    'price_description': '',
+    'free': '',
   }
 });
 
