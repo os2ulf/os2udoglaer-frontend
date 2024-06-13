@@ -47,7 +47,10 @@ const props = defineProps({
           />
         </div>
       </div>
-      <div class="page-header__card-container">
+      <div
+        class="page-header__card-container"
+        v-if="pageBlockHeaderData?.field_paragraph_cards?.length > 0"
+      >
         <div class="container">
           <div class="row">
             <div
