@@ -21,4 +21,7 @@
   --theme-button-ghost-background-color-hover: var(--color-tertiary-darken-4);
   --theme-button-ghost-border-color-hover: var(--color-tertiary-darken-4);
   --theme-button-ghost-text-color-hover: var(--color-secondary);
+
+  /* Footer */
+  --theme-footer-text-color: var(--color-white);
 }

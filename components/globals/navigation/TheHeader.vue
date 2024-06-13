@@ -137,7 +137,12 @@ onBeforeUnmount(() => {
       <div class="container">
         <div class="header__content">
           <div class="header__left">
-            <NuxtLink v-if="siteLogo" to="/" aria-label="Gå til forsiden">
+            <NuxtLink
+              class="header__link-logo"
+              v-if="siteLogo"
+              to="/"
+              aria-label="Gå til forsiden"
+            >
               <BaseLogo :logo="siteLogo" class="header__logo" />
             </NuxtLink>
           </div>
@@ -224,6 +229,15 @@ onBeforeUnmount(() => {
   background: var(--color-white);
   transition: transform 0.3s ease-in-out;
   box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
+
+  &__link-logo {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
   &--fixed {
     position: fixed;

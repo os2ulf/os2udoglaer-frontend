@@ -23,4 +23,7 @@
   --theme-button-ghost-background-color-hover: var(--color-primary-lighten-3);
   --theme-button-ghost-border-color-hover: var(--color-primary-lighten-3);
   --theme-button-ghost-text-color-hover: var(--color-primary-darken-3);
+
+  /* Footer */
+  --theme-footer-text-color: var(--color-text);
 }
