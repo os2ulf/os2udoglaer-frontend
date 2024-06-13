@@ -10,8 +10,8 @@ const heroData = ref(props.blockData);
   <div class="hero">
     <div class="hero__image-wrapper">
       <BaseImage
-        v-if="heroData?.field_image"
-        :image="heroData?.field_image"
+        v-if="heroData?.field_image_media"
+        :image="heroData?.field_image_media"
       />
       <div class="hero__content">
         <div
@@ -51,21 +51,10 @@ const heroData = ref(props.blockData);
     margin-bottom: 0;
   }
 
-  &__media {
-    :deep(picture) {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
   &__image-wrapper {
     display: flex;
     position: relative;
     overflow: hidden;
-    height: 500px @(--sm) 700px;
 
     :deep(img) {
       object-fit: cover;

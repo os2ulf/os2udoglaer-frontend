@@ -101,7 +101,7 @@ const props = defineProps({
               :key="index"
               class="practical-information__prices"
             >
-              <div>
+              <div v-if="price?.field_price">
                 {{ price?.field_price }} kr.
                 {{ price?.field_price_settlement_unit?.label }}
               </div>

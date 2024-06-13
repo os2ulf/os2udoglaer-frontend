@@ -120,7 +120,7 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price,
+          content: props.data?.field_price[0].field_price ? props.data?.field_price : '',
           free: props.data?.field_is_free,
         },
         {
@@ -144,11 +144,7 @@ const practicalInfoData = computed(() => {
         {
           title: 'Varighed',
           content:
-            props.data?.field_duration_unit != null
-              ? props.data?.field_duration +
-                ' ' +
-                props.data?.field_duration_unit
-              : props.data?.field_duration,
+            props.data?.field_duration && props.data?.field_duration_unit_taxonomy?.label ? props.data?.field_duration + ' ' + props.data?.field_duration_unit_taxonomy?.label : '',
           description: props.data?.field_description_of_duration,
         },
       ],
