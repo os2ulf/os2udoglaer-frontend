@@ -210,7 +210,7 @@
 
   &--link {
     padding: 10px 0;
-    color: var(--color-text);
+    color: var(--theme-button-text-color);
     font-weight: 700;
     background-color: transparent;
     border-top: none;
@@ -218,16 +218,28 @@
     border-left: none;
     border-radius: 0;
     font-size: var(--body-font-size);
+    border-bottom: 2px solid var(--theme-button-border-color);
+    transition: all 0.3s ease-in-out;
 
     &:hover {
-      color: var(--color-text);
+      color: var(--theme-button-ghost-text-color-hover);
       background-color: transparent;
     }
 
     &.button {
+      color: var(--color-white);
+      border-bottom: 2px solid var(--color-white);
+      font-weight: 700;
+
+      &:hover {
+        color: var(--theme-button-ghost-text-color-hover);
+        border-bottom: 2px solid var(--theme-button-ghost-text-color-hover);
+      }
+
       &--white {
         &:hover {
-          color: var(--color-white);
+          color: var(--theme-button-ghost-text-color-hover);
+          border-bottom: 2px solid var(--theme-button-ghost-text-color-hover);
           background: none;
         }
       }
