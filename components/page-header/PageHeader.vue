@@ -40,24 +40,22 @@ const props = defineProps({
 
       <div class="page-header__image-wrapper">
         <div class="page-header__image-container">
-          <img
+          <BaseImage
+            v-if="pageBlockHeaderData?.field_background_image"
+            :image="pageBlockHeaderData?.field_background_image"
             class="page-header__image"
-            :src="pageBlockHeaderData?.field_background_image?.src"
           />
-          <!-- TODO: When images transformed use the one below -->
-          <!-- <BaseImage
-            class="page-header__image"
-            v-if="pageBlockHeaderData?.field_background !== null"
-            :image="pageBlockHeaderData?.field_background"
-            :component-type-class="pageBlockHeaderData?.bundle"
-            /> -->
         </div>
       </div>
-      <div class="page-header__card-container">
+      <div
+        class="page-header__card-container"
+        v-if="pageBlockHeaderData?.field_paragraph_cards?.length > 0"
+      >
         <div class="container">
           <div class="row">
-
-            <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2">
+            <div
+              class="col-xs-12 col-sm-12 col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-2"
+            >
               <!-- carousel -->
               <Swiper
                 :modules="modules"
@@ -127,6 +125,11 @@ const props = defineProps({
     width: 100%;
     height: 100%;
     object-fit: cover;
+
+    :deep(picture),
+    :deep(img) {
+      height: 100%;
+    }
   }
 
   &__card-container {
@@ -163,7 +166,10 @@ const props = defineProps({
     background: var(--color-white);
   }
 
-  :deep(.swiper-horizontal > .swiper-scrollbar, .swiper-scrollbar.swiper-scrollbar-horizontal) {
+  :deep(
+      .swiper-horizontal > .swiper-scrollbar,
+      .swiper-scrollbar.swiper-scrollbar-horizontal
+    ) {
     background-color: rgba(255, 255, 255, 0.4);
   }
 

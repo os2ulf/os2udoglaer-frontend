@@ -18,8 +18,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: 'Object needed from BE',
+          title: props.data.roles?.includes('corporation') ? 'Virksomhed' : props.data.roles?.includes('course_provider') ? 'Udbyder' : '',
+          content: props.data?.link ? '<a href="' + props.data?.link + '">' + props.data?.field_name + '</a>' : '',
         },
       ],
     },
@@ -51,18 +51,21 @@ const practicalInfoData = computed(() => {
                   :button-data="{ title: 'Find forløb' }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data?.field_contact?.length > 0"
+                  :button-data="{
+                    title: props.data.roles?.includes('corporation') ? 'Kontakt virksomhed' : props.data.roles?.includes('course_provider') ? 'Kontakt udbyder' : '',
+                    url: '#contact__section'
+                  }"
+                  class="button button--secondary--ghost"
+                />
               </div>
             </div>
 
             <div class="user__banner-image">
-              <!-- TODO: Once BE has proper image styling, change this into img component -->
-              <img
-                :src="data.field_image.src"
-                :alt="data.field_image.alt"
-                :title="data.field_image.title"
+              <BaseImage
+                v-if="data.field_image"
+                :image="data.field_image"
               />
             </div>
           </div>
@@ -96,7 +99,9 @@ const practicalInfoData = computed(() => {
             :data="practicalInfoData"
             :userProfilePage="{
               isUserProfilePage: true,
+              hasContactsData: data?.field_contact?.length > 0,
               logo: data.field_logo,
+              roles: props.data.roles
             }"
           >
             <div>
@@ -112,14 +117,18 @@ const practicalInfoData = computed(() => {
 
             <div class="user__links-wrapper">
               <div>
-                <NuxtLink class="user__link" :to="'tel:' + data?.field_phone">{{
-                  data?.field_phone
-                }}</NuxtLink>
+                <NuxtLink
+                  aria-label="Call phone number"
+                  class="user__link"
+                  :to="'tel:' + data?.field_phone"
+                  >{{ data?.field_phone }}</NuxtLink
+                >
               </div>
 
               <div>
                 <NuxtLink
                   class="user__link"
+                  aria-label="Send email"
                   :href="'mailto:' + data?.field_mail"
                   >{{ data?.field_mail }}</NuxtLink
                 >
@@ -127,6 +136,7 @@ const practicalInfoData = computed(() => {
 
               <div>
                 <NuxtLink
+                  aria-label="Visit website"
                   class="user__link"
                   target="_blank"
                   :to="data?.field_homepage?.url"
@@ -179,6 +189,7 @@ const practicalInfoData = computed(() => {
 
         <!-- Section kontakt -->
         <div
+          id="contact__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-contact"
           v-if="data?.field_contact?.length > 0"
         >
@@ -216,6 +227,7 @@ const practicalInfoData = computed(() => {
                       ? button?.field_file
                       : button?.field_link?.url
                   "
+                  aria-label="Download link"
                 >
                   <span class="user__info-description--button-item__link-text">
                     {{ button?.field_link?.title }}
@@ -297,7 +309,7 @@ const practicalInfoData = computed(() => {
     border-color: var(--color-tertiary);
 
     &:hover {
-      color: var(--color-white);
+      color: var(--color-white) !important;
       background-color: var(--color-tertiary);
     }
   }

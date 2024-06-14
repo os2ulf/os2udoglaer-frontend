@@ -27,7 +27,7 @@ const props = defineProps({
     </div>
 
     <h3 class="practical-information__title">
-      {{ !props.userProfilePage ? 'Praktisk information' : 'Udbyder' }}
+      {{ !props.userProfilePage ? 'Praktisk information' : props.userProfilePage.roles?.includes('corporation') ? 'Virksomhed' : props.userProfilePage.roles?.includes('course_provider') ? 'Udbyder' : '' }}
     </h3>
 
     <!--Practical information data for loop START -->
@@ -54,7 +54,11 @@ const props = defineProps({
               v-for="goals in item.content"
               :key="goals"
             >
-              <NuxtLink :to="goals?.field_link?.url" target="_blank">
+              <NuxtLink
+                :to="goals?.field_link?.url"
+                target="_blank"
+                aria-label="Link til SDG"
+              >
                 <img :src="goals?.field_logo?.src" alt="SDG" />
               </NuxtLink>
             </div>
@@ -75,7 +79,11 @@ const props = defineProps({
 
           <div class="practical-information__user-profile-button">
             <BaseButton
-              :button-data="{ title: 'Kontakt udbyder' }"
+              v-if="props.userProfilePage?.hasContactsData"
+              :button-data="{
+                title: props.userProfilePage.roles?.includes('corporation') ? 'Kontakt virksomhed' : props.userProfilePage.roles?.includes('course_provider') ? 'Kontakt udbyder' : '',
+                url: '#contact__section'
+              }"
               class="button button--secondary button--secondary--ghost"
             />
           </div>
@@ -97,8 +105,8 @@ const props = defineProps({
               :key="index"
               class="practical-information__prices"
             >
-              <div>
-                {{ price?.field_price }}
+              <div v-if="price?.field_price">
+                {{ price?.field_price }} kr.
                 {{ price?.field_price_settlement_unit?.label }}
               </div>
               <div>{{ price?.field_price_vat?.label }}</div>

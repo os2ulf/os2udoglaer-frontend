@@ -166,3 +166,41 @@
     transform: translateX(0);
   }
 }
+
+/* slide from top */
+.slide-top-enter-active {
+  animation: slide-top 0.3s;
+}
+
+.slide-top-leave-active {
+  animation: slide-top 0.3s reverse;
+}
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* slide top desktop offcanvas */
+.slide-top-offcanvas-enter-active {
+  animation: slide-top-offcanvas 0.3s;
+}
+
+.slide-top-offcanvas-leave-active {
+  display: none;
+}
+
+@keyframes slide-top-offcanvas {
+  0% {
+    transform: translateY(-20%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}

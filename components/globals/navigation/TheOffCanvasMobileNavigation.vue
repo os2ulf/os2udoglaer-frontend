@@ -75,7 +75,12 @@ onUnmounted(() => {
                   :key="node.id"
                   class="offcanvas-mobile__item-link"
                   @click="handleItemClick(node)"
-                  :to="node.link.url"
+                  :to="
+                    node.link.url && node.below.length === 0
+                      ? node.link.url
+                      : 'javascript:void(0)'
+                  "
+                  :aria-label="'Link til ' + node?.title"
                 >
                   {{ node.title }}
                   <span v-if="node.below.length > 0">
@@ -94,6 +99,7 @@ onUnmounted(() => {
                   class="offcanvas-mobile__item-link offcanvas-mobile__item-link--meta-menu"
                   @click="handleItemClick(metaItem)"
                   :to="metaItem.url"
+                  :aria-label="'Link til ' + metaItem?.title"
                 >
                   {{ metaItem.title }}
                   <span v-if="metaItem.below.length > 0">
@@ -110,7 +116,11 @@ onUnmounted(() => {
               v-if="showSubItems"
               class="offcanvas-mobile__menu-wrapper--subitems"
             >
-              <NuxtLink class="offcanvas-mobile__back-button" @click="goBack">
+              <NuxtLink
+                class="offcanvas-mobile__back-button"
+                @click="goBack"
+                aria-label="Tilbage"
+              >
                 <span class="offcanvas-movile__back-button--icon">
                   <NuxtIcon filled name="chevron-left" />
                 </span>
@@ -129,6 +139,7 @@ onUnmounted(() => {
                     v-if="subNode.url"
                     :to="subNode?.url"
                     class="offcanvas-mobile__item-link--subitems"
+                    :aria-label="'Link til ' + subNode?.title"
                   >
                     {{ subNode?.title }}
                   </NuxtLink>
@@ -137,6 +148,7 @@ onUnmounted(() => {
                     v-else
                     :to="subNode?.link?.url"
                     class="offcanvas-mobile__item-link--subitems"
+                    :aria-label="'Link til ' + subNode?.title"
                   >
                     {{ subNode?.title }}
                   </NuxtLink>

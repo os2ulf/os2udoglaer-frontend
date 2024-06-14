@@ -5,15 +5,16 @@
   /* Primary darken */
   --color-primary-darken-1: color-mix(in srgb, var(--color-primary), black 15%);
   --color-primary-darken-2: color-mix(in srgb, var(--color-primary), black 30%);
-  --color-primary-darken-3: color-mix(in srgb, var(--color-primary), black 45%);
-  --color-primary-darken-4: color-mix(in srgb, var(--color-primary), black 55%);
+  --color-primary-darken-3: color-mix(in srgb, var(--color-primary), black 45%); /* #1D5A55 */
+  --color-primary-darken-4: color-mix(in srgb, var(--color-primary), black 55%); /* #174844 */
+  --color-primary-darken-5: color-mix(in srgb, var(--color-primary), black 65%); /* #123936 */
 
   /* Primary lighten */
   --color-primary-lighten-1: color-mix(in srgb, var(--color-primary), white 20%);
-  --color-primary-lighten-2: color-mix(in srgb, var(--color-primary), white 40%);
+  --color-primary-lighten-2: color-mix(in srgb, var(--color-primary), white 40%); /* #236C66 */
   --color-primary-lighten-3: color-mix(in srgb, var(--color-primary), white 60%); /* #a3c8c5 */
-  --color-primary-lighten-4: color-mix(in srgb, var(--color-primary), white 75%);
-  --color-primary-lighten-5: color-mix(in srgb, var(--color-primary), white 90%);
+  --color-primary-lighten-4: color-mix(in srgb, var(--color-primary), white 75%);  /* #CCE0DF */
+  --color-primary-lighten-5: color-mix(in srgb, var(--color-primary), white 90%); 
 
   /* Secondary darken */
   --color-secondary-darken-1: color-mix(in srgb, var(--color-secondary), black 15%);
@@ -63,6 +64,7 @@
 
 
   --color-border: #d1cfcd;
+  --theme-button-text-color: var(--color-white);
 
   /* Success */
   --color-success: #65c179;

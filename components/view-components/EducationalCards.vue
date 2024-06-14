@@ -39,31 +39,44 @@ const determineIcon = (cardLink: string) => {
               ></div>
             </div>
             <div class="educational-materials__card-item-button">
+              <div v-if="card.field_literature_suggestion" class="educational-materials__card-link educational-materials__card-link--placeholder">
+                <span class="educational-materials__card-link-text">
+                  {{ card?.field_literature_suggestion }}
+                </span>
+                <NuxtIcon
+                  class="educational-materials__card-item-button--icon"
+                  name="book-opened"
+                  filled
+                />
+              </div>
               <NuxtLink
+                v-else-if="card.field_material_file || card?.field_material_url?.url"
+                aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
                   card.field_material_file
                     ? card.field_material_file
                     : card?.field_material_url?.url
                 "
+                target="_blank"
               >
                 <span class="educational-materials__card-link-text">
                   {{ card?.field_material_download_text }}
                 </span>
+                <NuxtIcon
+                  class="educational-materials__card-item-button--icon"
+                  :name="
+                    determineIcon(
+                      card.field_material_file
+                        ? card.field_material_file
+                        : card?.field_material_url?.url,
+                    )
+                  "
+                  filled
+                />
               </NuxtLink>
 
               <!-- icon -->
-              <NuxtIcon
-                class="educational-materials__card-item-button--icon"
-                :name="
-                  determineIcon(
-                    card.field_material_file
-                      ? card.field_material_file
-                      : card?.field_material_url?.url,
-                  )
-                "
-                filled
-              />
             </div>
           </div>
         </div>
@@ -74,8 +87,6 @@ const determineIcon = (cardLink: string) => {
 
 <style lang="postcss" scoped>
 .educational-materials {
-  margin-bottom: 20px;
-
   &__card-wrapper {
     .row {
       margin-right: -12px;
@@ -105,12 +116,12 @@ const determineIcon = (cardLink: string) => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 
   &__card-item-button {
     display: flex;
     align-items: center;
+    margin-top: auto;
 
     a {
       text-decoration: none;
@@ -135,7 +146,7 @@ const determineIcon = (cardLink: string) => {
     }
   }
 
-  &__card-link:hover {
+  &__card-link:hover:not(.educational-materials__card-link--placeholder) {
     .educational-materials__card-link-text {
       border-bottom: 1px solid currentColor;
     }
@@ -144,10 +155,6 @@ const determineIcon = (cardLink: string) => {
   &__card-link-text {
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
-
-    &:hover {
-      border-bottom: 1px solid currentColor;
-    }
   }
 }
 </style>

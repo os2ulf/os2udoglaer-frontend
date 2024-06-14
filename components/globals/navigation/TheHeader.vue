@@ -137,7 +137,12 @@ onBeforeUnmount(() => {
       <div class="container">
         <div class="header__content">
           <div class="header__left">
-            <NuxtLink v-if="siteLogo" to="/" aria-label="Gå til forsiden">
+            <NuxtLink
+              class="header__link-logo"
+              v-if="siteLogo"
+              to="/"
+              aria-label="Gå til forsiden"
+            >
               <BaseLogo :logo="siteLogo" class="header__logo" />
             </NuxtLink>
           </div>
@@ -146,7 +151,11 @@ onBeforeUnmount(() => {
             <NuxtLink
               v-for="(item, index) in data.primaernavigation_2.items"
               :key="index"
-              :to="item.link.url ? item.link.url : 'javascript:void(0)'"
+              :to="
+                item.link.url && item.below.length === 0
+                  ? item.link.url
+                  : 'javascript:void(0)'
+              "
               class="header__button header__button--left"
               :class="{
                 'header__button--active-text': activeNavItem === item,
@@ -168,12 +177,14 @@ onBeforeUnmount(() => {
               </button>
               <ClientOnly>
                 <Teleport to=".header-parent">
-                  <TheOffCanvasDesktopNavigation
-                    class="header__offcanvas"
-                    v-if="isOpen && activeNavItem === item"
-                    :isMetaMenuHidden="isMetaMenuHidden"
-                    :nested-items-data="item?.below"
-                  />
+                  <Transition name="slide-top-offcanvas">
+                    <TheOffCanvasDesktopNavigation
+                      class="header__offcanvas"
+                      v-if="isOpen && activeNavItem === item"
+                      :isMetaMenuHidden="isMetaMenuHidden"
+                      :nested-items-data="item?.below"
+                    />
+                  </Transition>
                 </Teleport>
               </ClientOnly>
             </NuxtLink>
@@ -215,8 +226,18 @@ onBeforeUnmount(() => {
   z-index: 10;
   width: 100%;
   height: var(--navigation-bar-height);
-  background: var(--color-primary-lighten-3);
+  background: var(--color-white);
   transition: transform 0.3s ease-in-out;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
+
+  &__link-logo {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
   &--fixed {
     position: fixed;

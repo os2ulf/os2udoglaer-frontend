@@ -9,8 +9,56 @@ const props = defineProps({
   },
 });
 
+const robots = ref(
+  props.data?.field_meta_tags?.html_head?.robots?.attributes?.content,
+);
+
+const seoPageContent = ref(
+  props.data?.field_meta_tags?.html_head?.description?.attributes?.content,
+);
+
 useHead({
-  title: props.data?.field_meta_tags?.html_head?.title?.atributes?.content,
+  title:
+    props?.data?.field_meta_tags?.html_head?.title?.attributes?.content ||
+    props.data?.field_name,
+  meta: [
+    {
+      name: 'description',
+      content: seoPageContent.value,
+    },
+    {
+      name: 'robots',
+      content: robots.value,
+    },
+  ],
+});
+
+const periodPriceDurationDescription = computed(() => {
+  let description = '';
+  if (props.data?.field_description_of_period) {
+    description = description + props.data?.field_description_of_period;
+  }
+  if (props.data?.field_description_of_price) {
+    description = description + props.data?.field_description_of_price;
+  }
+  if (props.data?.field_description_of_duration) {
+    description = description + props.data?.field_description_of_duration;
+  }
+  return description;
+});
+
+const registrationData = computed(() => {
+  return {
+    'deadline': props.data?.field_registration_deadline,
+    'description': props.data?.field_registration_description,
+    'email': props.data?.field_registration_email,
+    'phone': props.data?.field_registration_phone,
+    'title': props.data?.field_registration_title,
+    'url': props.data?.field_registration_url,
+    'price': props.data?.field_price,
+    'price_description': props.data?.field_description_of_price,
+    'free': props.data?.field_is_free,
+  }
 });
 
 const practicalInfoData = computed(() => {
@@ -18,8 +66,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: 'Object needed from BE',
+          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
         },
       ],
     },
@@ -61,21 +109,17 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price,
+          content: props.data?.field_price[0].field_price ? props.data?.field_price : '',
           free: props.data?.field_is_free,
         },
         {
           title: 'Varighed',
           content:
-            props.data?.field_duration +
-            ' ' +
-            props.data?.field_duration_unit_taxonomy?.label,
+            props.data?.field_duration && props.data?.field_duration_unit_taxonomy?.label ? props.data?.field_duration + ' ' + props.data?.field_duration_unit_taxonomy?.label : '',
         },
         {
           description:
-            props.data?.field_description_of_period +
-            props.data?.field_description_of_price +
-            props.data?.field_description_of_duration,
+            periodPriceDurationDescription.value ? periodPriceDurationDescription.value : '',
         },
       ],
     },
@@ -84,12 +128,6 @@ const practicalInfoData = computed(() => {
         {
           title: 'Emneområde',
           content: props.data?.field_subject,
-        },
-        {
-          type: 'sustainability_goals',
-          title: 'Verdensmål',
-          content: props.data?.field_sustainability_goals,
-          description: props.data?.field_sustainability_goals_desc,
         },
       ],
     },
@@ -106,19 +144,27 @@ const practicalInfoData = computed(() => {
         {
           title: 'Sted',
           content: [
-            props.data?.field_location_name,
-            props.data?.field_location_street,
-            props.data?.field_location_zipcode,
-            props.data?.field_location_city,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_name : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_street : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
+            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
           ],
+          description: props.data?.field_location_description ? props.data?.field_location_description : '',
         },
         {
           title: 'Faciliteter',
           content: props.data?.field_faciliteter,
           description: props.data?.field_facilities_description,
         },
+      ],
+    },
+    {
+      group: [
         {
-          description: props.data?.field_location_description,
+          type: 'sustainability_goals',
+          title: 'Verdensmål',
+          content: props.data?.field_sustainability_goals,
+          description: props.data?.field_sustainability_goals_desc,
         },
       ],
     },
@@ -126,8 +172,6 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
-
-console.log('course_educatorsView', props.data);
 </script>
 
 <template>
@@ -156,24 +200,37 @@ console.log('course_educatorsView', props.data);
             <div class="educators__page-heading-wrapper">
               <h1 class="educators__page-title">{{ data?.label }}</h1>
               <div class="educators__page-heading-button-container">
-                <!-- TODO: connect buttons -->
                 <BaseButton
+                  v-if="
+                    data.field_registration_deadline ||
+                    data.field_registration_description ||
+                    data.field_registration_email ||
+                    data.field_registration_phone ||
+                    data.field_registration_title ||
+                    data.field_registration_url"
                   icon-after="arrow-right"
-                  :button-data="{ title: 'Tilmelding' }"
+                  :button-data="{
+                    title: 'Tilmelding',
+                    url: '#course-registration'
+                  }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+                  class="button button--secondary--ghost"
+                  :button-data="{
+                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
+                    target: '_blank'
+                  }"
+                />
               </div>
             </div>
 
             <div class="educators__banner-image">
-              <!-- TODO: Once BE has proper image styling, change this into img component -->
-              <img
-                :src="data.field_image.src"
-                :alt="data.field_image.alt"
-                :title="data.field_image.title"
+              <BaseImage
+                v-if="data.field_image"
+                :image="data.field_image"
               />
             </div>
           </div>
@@ -194,14 +251,35 @@ console.log('course_educatorsView', props.data);
           <SharePage />
           <PracticalInformation :data="practicalInfoData" />
           <div class="educators__practical-buttons">
-            <button class="button button--ghost educators__contact-button">
-              Kontakt udbyder
-            </button>
+            <BaseButton
+              v-if="
+                data.field_registration_deadline ||
+                data.field_registration_description ||
+                data.field_registration_email ||
+                data.field_registration_phone ||
+                data.field_registration_title ||
+                data.field_registration_url"
+              :button-data="{
+                title: 'Tilmeld dig forløbet',
+                url: '#course-registration'
+              }"
+              icon-after="arrow-right"
+              class="button button--secondary"
+            />
+            <BaseButton
+              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+              class="button button--ghost educators__contact-button"
+              :button-data="{
+                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
+                target: '_blank'
+              }"
+            />
           </div>
         </div>
 
         <div
-          class="col-xs-12 col-sm-12 col-md-12 educators__section-cards"
+          class="col-xs-12 col-sm-12 col-md-12 educators__section-video"
           v-if="
             data.field_video_title ||
             data.field_video_description ||
@@ -247,12 +325,19 @@ console.log('course_educatorsView', props.data);
           </div>
         </div>
 
-        <!-- Section calendar -->
-        <div class="col-xs-12 col-sm-12 col-md-12 educators__section-calendar">
-          <div class="educators__calendar">
-            <h3>Tilmelding</h3>
-            <p>calendar integration goes here</p>
-          </div>
+        <!-- Section registration -->
+        <div
+          v-if="
+            data.field_registration_deadline ||
+            data.field_registration_description ||
+            data.field_registration_email ||
+            data.field_registration_phone ||
+            data.field_registration_title ||
+            data.field_registration_url"
+          id="course-registration"
+          class="col-xs-12 col-sm-12 col-md-12 educators__section-registration"
+        >
+          <RegistrationSection :data="registrationData" />
         </div>
 
         <!-- Section related articles -->
@@ -327,7 +412,7 @@ console.log('course_educatorsView', props.data);
     border-color: var(--color-tertiary);
 
     &:hover {
-      color: var(--color-white);
+      color: var(--color-white) !important;
       background-color: var(--color-tertiary);
     }
   }
@@ -336,14 +421,23 @@ console.log('course_educatorsView', props.data);
     padding-top: 48px @(--md) 96px;
   }
 
-  &__section-video,
-  &__section-cards,
-  &__section-calendar,
-  &__section-related-articles {
+  &__section-registration {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-cards {
+    padding-top: 24px @(--md) 48px;
+    padding-bottom: 24px @(--md) 48px;
+  }
+
+  &__section-video {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 24px @(--md) 48px;
   }
 
   &__section-related-articles {
+    padding-top: 24px @(--md) 48px;
     padding-bottom: 48px @(--md) 96px;
   }
 }

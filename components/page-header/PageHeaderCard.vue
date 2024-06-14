@@ -16,8 +16,8 @@ const cardItem = ref(props.cardItem);
       <div class="page-header-card__description">
         {{ cardItem?.field_description }}
       </div>
-      <div class="page-header-card__link" v-if="cardItem?.field_link.url">
-        <NuxtLink :to="cardItem?.field_link.url">
+      <div class="page-header-card__link" v-if="cardItem?.field_link !== null">
+        <NuxtLink :to="cardItem?.field_link.url" aria-label="Læs mere">
           <NuxtIcon
             class="page-header-card__link--icon"
             name="arrow-right"
@@ -49,6 +49,7 @@ const cardItem = ref(props.cardItem);
 
   &__title {
     line-height: 28px;
+    word-wrap: break-word;
 
     @media (--viewport-ms-max) {
       flex-grow: 1;

@@ -16,6 +16,6 @@ if (headerDataStore.headerData === null) {
 <style lang="postcss" scoped>
 .header-parent {
   height: var(--navigation-bar-height);
-  background-color: var(--color-primary-lighten-3);
+  background-color: var(--color-white);
 }
 </style>

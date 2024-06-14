@@ -9,10 +9,28 @@ const props = defineProps({
   },
 });
 
+const robots = ref(
+  props.data?.field_meta_tags?.html_head?.robots?.attributes?.content,
+);
+
+const seoPageContent = ref(
+  props.data?.field_meta_tags?.html_head?.description?.attributes?.content,
+);
+
 useHead({
   title:
-    props.data?.field_meta_tags?.html_head?.title?.atributes?.content ||
+    props?.data?.field_meta_tags?.html_head?.title?.attributes?.content ||
     props.data?.field_name,
+  meta: [
+    {
+      name: 'description',
+      content: seoPageContent.value,
+    },
+    {
+      name: 'robots',
+      content: robots.value,
+    },
+  ],
 });
 
 const practicalInfoData = computed(() => {
@@ -20,8 +38,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: 'Object needed from BE',
+          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
         },
       ],
     },
@@ -37,8 +55,6 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
-
-console.log('newsView', props.data);
 </script>
 
 <template>
@@ -66,18 +82,22 @@ console.log('newsView', props.data);
                   :button-data="{ title: 'Find forløb' }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+                  class="button button--secondary--ghost"
+                  :button-data="{
+                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
+                    target: '_blank'
+                  }"
+                />
               </div>
             </div>
 
             <div class="news__banner-image">
-              <!-- TODO: Once BE has proper image styling, change this into img component -->
-              <img
-                :src="data?.field_image?.src"
-                :alt="data?.field_image?.alt"
-                :title="data?.field_image?.title"
+              <BaseImage
+                v-if="data.field_image"
+                :image="data.field_image"
               />
             </div>
           </div>
