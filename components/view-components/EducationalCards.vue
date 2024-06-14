@@ -8,16 +8,6 @@ const props = defineProps({
     default: null,
   },
 });
-
-const determineIcon = (cardLink: string) => {
-  if (!cardLink) {
-    return 'link-download';
-  } else if (cardLink.includes('http')) {
-    return 'ext-link';
-  } else {
-    return 'link-download';
-  }
-};
 </script>
 
 <template>
@@ -66,11 +56,9 @@ const determineIcon = (cardLink: string) => {
                 <NuxtIcon
                   class="educational-materials__card-item-button--icon"
                   :name="
-                    determineIcon(
-                      card.field_material_file
-                        ? card.field_material_file
-                        : card?.field_material_url?.url,
-                    )
+                    card.field_material_file
+                      ? 'link-download'
+                      : 'ext-link'
                   "
                   filled
                 />
@@ -150,6 +138,10 @@ const determineIcon = (cardLink: string) => {
     .educational-materials__card-link-text {
       border-bottom: 1px solid currentColor;
     }
+  }
+
+  &__card-link--placeholder {
+    font-weight: 700;
   }
 
   &__card-link-text {
