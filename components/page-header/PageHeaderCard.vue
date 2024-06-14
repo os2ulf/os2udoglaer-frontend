@@ -49,6 +49,7 @@ const cardItem = ref(props.cardItem);
 
   &__title {
     line-height: 28px;
+    word-wrap: break-word;
 
     @media (--viewport-ms-max) {
       flex-grow: 1;

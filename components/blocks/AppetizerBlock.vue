@@ -86,6 +86,7 @@ const props = defineProps({
     font-weight: 700;
     font-size: var(--font-size-h3);
     color: var(--theme-color);
+    word-wrap: break-word;
   }
 
   &__text {
