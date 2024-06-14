@@ -354,7 +354,7 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__shortcuts-item {
-    padding-top: 8px;
+    margin-bottom: 8px;
     text-decoration: none;
     color: var(--theme-footer-text-color);
     cursor: pointer;
@@ -391,8 +391,8 @@ const footerData = ref(filterFooterData[0]);
     display: flex;
     align-items: flex-end;
     padding-top: 48px @(--md) 0;
-    justify-content: space-between @(--sm) space-evenly @(--md) flex-end;
-    gap: 16px @(--md) 36px;
+    justify-content: left @(--md) flex-end;
+    gap: 16px @(--sm) 36px;
     height: 100%;
     width: 100%;
 
@@ -403,8 +403,8 @@ const footerData = ref(filterFooterData[0]);
 
   &__big-icon-item {
     img {
-      height: 99px @(--md) 140px;
-      width: 99px @(--md) 140px;
+      height: 70px @(--xs) 99px @(--sm) 140px;
+      width: 70px @(--xs) 99px @(--sm) 140px;
       opacity: 1;
       transition: all 0.3s ease-in-out;
 
