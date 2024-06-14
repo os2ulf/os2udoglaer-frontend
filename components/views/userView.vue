@@ -18,8 +18,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: 'Object needed from BE',
+          title: props.data.roles?.includes('corporation') ? 'Virksomhed' : props.data.roles?.includes('course_provider') ? 'Udbyder' : '',
+          content: props.data?.link ? '<a href="' + props.data?.link + '">' + props.data?.field_name + '</a>' : '',
         },
       ],
     },
@@ -51,9 +51,14 @@ const practicalInfoData = computed(() => {
                   :button-data="{ title: 'Find forløb' }"
                   class="button button--secondary"
                 />
-                <button class="button button--secondary--ghost">
-                  Kontakt udbyder
-                </button>
+                <BaseButton
+                  v-if="data?.field_contact?.length > 0"
+                  :button-data="{
+                    title: props.data.roles?.includes('corporation') ? 'Kontakt virksomhed' : props.data.roles?.includes('course_provider') ? 'Kontakt udbyder' : '',
+                    url: '#contact__section'
+                  }"
+                  class="button button--secondary--ghost"
+                />
               </div>
             </div>
 
@@ -94,7 +99,9 @@ const practicalInfoData = computed(() => {
             :data="practicalInfoData"
             :userProfilePage="{
               isUserProfilePage: true,
+              hasContactsData: data?.field_contact?.length > 0,
               logo: data.field_logo,
+              roles: props.data.roles
             }"
           >
             <div>
@@ -182,6 +189,7 @@ const practicalInfoData = computed(() => {
 
         <!-- Section kontakt -->
         <div
+          id="contact__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-contact"
           v-if="data?.field_contact?.length > 0"
         >
