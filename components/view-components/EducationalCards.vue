@@ -152,6 +152,10 @@ const determineIcon = (cardLink: string) => {
     }
   }
 
+  &__card-link--placeholder {
+    font-weight: 700;
+  }
+
   &__card-link-text {
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
