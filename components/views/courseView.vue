@@ -49,6 +49,7 @@ const priceQuantityPeriodDescription = computed(() => {
 
 const registrationData = computed(() => {
   return {
+    'bundle': props.data?.bundle,
     'deadline': props.data?.field_registration_deadline,
     'description': props.data?.field_registration_description,
     'email': props.data?.field_registration_email,
@@ -66,8 +67,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: props.data?.provider ? 'Udbyder' : '',
-          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
+          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
         },
       ],
     },
@@ -235,11 +236,11 @@ const practicalInfoData = computed(() => {
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data?.provider && data?.provider.link"
+                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
                   class="button button--secondary--ghost"
                   :button-data="{
-                    title: 'Kontakt udbyder',
-                    url: data.provider.link,
+                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
                     target: '_blank'
                   }"
                 />
@@ -307,14 +308,13 @@ const practicalInfoData = computed(() => {
               class="button button--secondary"
             />
             <BaseButton
-              v-if="data?.provider && data?.provider.link"
+              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
               class="button button--ghost course__contact-button"
               :button-data="{
-                title: 'Kontakt udbyder',
-                url: data.provider.link,
+                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
                 target: '_blank'
               }"
-              ghost
             />
             <BaseButton
               v-if="

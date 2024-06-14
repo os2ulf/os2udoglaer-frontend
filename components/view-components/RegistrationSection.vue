@@ -10,7 +10,8 @@ const props = defineProps({
 
 <template>
   <div class="course__registration">
-    <h2>Tilmelding</h2>
+    <h2 v-if="props.data.bundle == 'internship'">Ansøgning</h2>
+    <h2 v-else>Tilmelding</h2>
     <div v-if="props.data.free || props.data.price" class="course__registration__prices">
       <BaseTag
         v-if="props.data.free"

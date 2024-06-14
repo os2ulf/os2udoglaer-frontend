@@ -35,6 +35,7 @@ useHead({
 
 const registrationData = computed(() => {
   return {
+    'bundle': props.data?.bundle,
     'deadline': props.data?.field_application_deadline,
     'description': props.data?.field_desc_application_procedure,
     'email': props.data?.field_application_email,
@@ -52,8 +53,8 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Udbyder',
-          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : '',
+          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
+          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
         },
       ],
     },
@@ -137,7 +138,6 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
-
 </script>
 
 <template>
@@ -160,17 +160,17 @@ const practicalInfoData = computed(() => {
                     data?.field_application_url"
                   icon-after="arrow-right"
                   :button-data="{
-                    title: 'Tilmelding',
+                    title: 'Ansøgning',
                     url: '#course-registration'
                   }"
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data?.provider && data?.provider.link"
+                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
                   class="button button--secondary--ghost"
                   :button-data="{
-                    title: 'Kontakt udbyder',
-                    url: data.provider.link,
+                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
                     target: '_blank'
                   }"
                 />
@@ -222,17 +222,17 @@ const practicalInfoData = computed(() => {
                 data.field_application_url"
               icon-after="arrow-right"
               :button-data="{
-                title: 'Tilmelding',
+                title: 'Ansøgning',
                 url: '#course-registration'
               }"
               class="button button--secondary"
             />
             <BaseButton
-              v-if="data?.provider && data?.provider.link"
+              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
               class="button button--ghost internship__contact-button"
               :button-data="{
-                title: 'Kontakt udbyder',
-                url: data.provider.link,
+                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
+                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
                 target: '_blank'
               }"
             />
