@@ -130,15 +130,6 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Ansøgning',
-          content: props.data?.field_application_deadline?.text,
-          description: props.data?.field_desc_application_procedure,
-        },
-      ],
-    },
-    {
-      group: [
-        {
           title: 'Sted',
           content: [
             props.data?.field_view_on_map == 'show_vendor_address' &&
