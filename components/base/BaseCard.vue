@@ -6,49 +6,177 @@ const props = defineProps({
   },
 });
 
-console.log('card item', props.data);
-
-// if field_target_group === Dagtilbud
-// then show Målgruppe: field_trgt_grp_daycare and Læreplanstemaer: field_curriculum_themes
-
-// if field_target_group === GRUNDSKOLE
-// then Målgruppe: field_trgt_grp_primary_school and Fag: field_primary_school_subject
-
-// if field_target_group === Ungdomsuddannelse
-// then Målgruppe: field_trgt_grp_youth_education AND Fag: field_youth_education_subject
-
+// The shit show begins.
 const targetGroupFields = computed(() => {
-  if (props.data?.field_target_group === 'Dagtilbud') {
+  // IF NEWS CT
+  if (props.data?.bundle === 'news' && props.data.field_audience) {
+    if (typeof props.data.field_audience === 'string') {
+      return {
+        audience: [props.data.field_audience],
+      };
+    } else {
+      return {
+        audience: props?.data?.field_audience,
+      };
+    }
+  }
+
+  // IF Internship (Erhvervspraktik) CT
+  if (props.data?.bundle === 'internship') {
     return {
-      audience: props.data.field_trgt_grp_daycare,
+      label1: 'Interesseområder',
+      audience: props.data.field_areas_of_interest,
+      label2: 'Branche',
+      subjectOrTheme: props.data.field_industry,
+    };
+  }
+
+  // IF Educators CT
+  if (props.data?.bundle === 'course_educators') {
+    return {
+      audience: props.data.field_educators_target_group,
+      label2: 'Læreplanstemaer',
       subjectOrTheme: props.data.field_curriculum_themes,
-      label: 'Læreplanstemaer',
     };
-  } else if (props.data?.field_target_group === 'Grundskole') {
-    return {
-      audience: props.data.field_trgt_grp_primary_school,
-      subjectOrTheme: props.data.field_primary_school_subject,
-      label: 'Fag',
-    };
-  } else if (props.data?.field_target_group === 'Ungdomsuddannelse') {
-    return {
-      audience: props.data.field_trgt_grp_youth_education,
-      subjectOrTheme: props.data.field_youth_education_subject,
-      label: 'Fag',
-    };
+  }
+
+  // IF Exercise/Opgave CT
+  if (props.data?.bundle === 'exercise') {
+    // filter malgrupe by target group
+    if (props.data?.field_target_group.label === 'Grundskole') {
+      const school = ref(props.data?.field_trgt_grp_primary_school);
+      const subject = ref(props.data?.field_primary_school_subject);
+
+      if (school.value || subject.value) {
+        let schoolLabels: any = [];
+        let subjectLabels: any = [];
+
+        // Check if school array exists and is an array
+        if (Array.isArray(school.value)) {
+          // Loop through school array and grab the .label from each object
+          schoolLabels = schoolLabels.concat(
+            school.value.map((item) => item.label),
+          );
+        }
+
+        // Check if subject array exists and is an array
+        if (Array.isArray(subject.value)) {
+          // Loop through subject array and grab the .label from each object
+          subjectLabels = subjectLabels.concat(
+            subject.value.map((item) => item.label),
+          );
+        }
+
+        return {
+          audience: schoolLabels,
+          subjectOrTheme: subjectLabels,
+        };
+      }
+    } else if (props.data?.field_target_group.label === 'Dagtilbud') {
+      const daycare = ref(props.data?.field_trgt_grp_daycare);
+      const themes = ref(props.data?.field_curriculum_themes);
+
+      if (daycare.value || themes.value) {
+        let dayCareLabels: any = [];
+        let themeLabels: any = [];
+
+        // Check if daycare array exists and is an array
+        if (Array.isArray(daycare.value)) {
+          // Loop through daycare array and grab the .label from each object
+          dayCareLabels = dayCareLabels.concat(
+            daycare.value.map((item) => item.label),
+          );
+        }
+
+        // Check if themes array exists and is an array
+        if (Array.isArray(themes.value)) {
+          // Loop through themes array and grab the .label from each object
+          themeLabels = themeLabels.concat(
+            themes.value.map((item) => item.label),
+          );
+        }
+
+        return {
+          audience: dayCareLabels,
+          label2: 'Læreplanstemaer',
+          subjectOrTheme: themeLabels,
+        };
+      }
+    } else if (props.data?.field_target_group.label === 'Ungdomsuddannelse') {
+      const youth = ref(props.data?.field_trgt_grp_youth_education);
+      const subject = ref(props.data?.field_youth_education_subject);
+
+      if (youth.value || subject.value) {
+        let youngLabels: any = [];
+        let subjectLabels: any = [];
+
+        // Check if youth array exists and is an array
+        if (Array.isArray(youth.value)) {
+          // Loop through youth array and grab the .label from each object
+          youngLabels = youngLabels.concat(
+            youth.value.map((item) => item.label),
+          );
+        }
+
+        // Check if subject array exists and is an array
+        if (Array.isArray(subject.value)) {
+          // Loop through subject array and grab the .label from each object
+          subjectLabels = subjectLabels.concat(
+            subject.value.map((item) => item.label),
+          );
+        }
+
+        return {
+          audience: youngLabels,
+          subjectOrTheme: subjectLabels,
+        };
+      }
+    }
+  } else if (
+    props.data?.bundle === 'exercise' ||
+    props.data?.bundle === 'course'
+  ) {
+    if (props.data?.field_target_group === 'Dagtilbud') {
+      return {
+        audience: props.data.field_trgt_grp_daycare,
+        subjectOrTheme: props.data.field_curriculum_themes,
+        label: 'Læreplanstemaer',
+      };
+    } else if (props.data?.field_target_group === 'Grundskole') {
+      return {
+        audience: props.data.field_trgt_grp_primary_school,
+        subjectOrTheme: props.data.field_primary_school_subject,
+        label: 'Fag',
+      };
+    } else if (props.data?.field_target_group === 'Ungdomsuddannelse') {
+      return {
+        audience: props.data.field_trgt_grp_youth_education,
+        subjectOrTheme: props.data.field_youth_education_subject,
+        label: 'Fag',
+      };
+    }
   } else {
     return null;
   }
 });
+
+const providerData = ref(
+  props.data?.provider || props.data?.corporation || null,
+);
 </script>
+
 <template>
-  <NuxtLink class="card__link" to="/" aria-label="Link til kort">
+  <NuxtLink class="card__link" :to="data?.link" aria-label="Link til kort">
     <div class="card">
       <div class="card__image" v-if="data?.field_image">
         <!-- TODO: use base img once img styles are done and prolly tweak condition above-->
         <img :src="data?.field_image?.src" :alt="data?.field_image?.alt" />
         <div v-if="data?.field_target_group" class="card__target-group">
-          {{ data?.field_target_group }}
+          {{
+            data?.field_target_group.label
+              ? data?.field_target_group.label
+              : data?.field_target_group
+          }}
         </div>
       </div>
       <div class="card__content">
@@ -57,43 +185,68 @@ const targetGroupFields = computed(() => {
         </div>
 
         <div v-if="data?.body" class="card__text" v-html="data?.body"></div>
-        <div class="card__icons" v-if="targetGroupFields">
-          <div class="card__icon">
-            <div class="card__icon-group">
-              <NuxtIcon name="home-alt" filled />
-              <div class="card__icon-text">Udbyder</div>
-            </div>
+        <div class="card__icons" v-if="targetGroupFields || providerData">
+          <div class="card__icon" v-if="providerData">
+            <ClientOnly>
+              <NuxtLink
+                :to="providerData?.link"
+                aria-label="Link til virksomhed"
+                class="card__link-provider"
+              >
+                <div class="card__icon-group card__icon-group--provider">
+                  <NuxtIcon name="home-alt" filled />
+                  <div class="card__icon-text card__icon-text--provider">
+                    {{ providerData?.label }}
+                  </div>
+                </div>
+              </NuxtLink>
+            </ClientOnly>
           </div>
 
-          <div class="card__icon" v-if="targetGroupFields.audience.length > 0">
+          <div class="card__icon" v-if="targetGroupFields?.audience.length > 0">
             <div class="card__icon-group">
               <NuxtIcon name="user" filled />
-              <div class="card__icon-text">Målgruppe</div>
+              <div class="card__icon-text">
+                {{
+                  targetGroupFields?.label1
+                    ? targetGroupFields?.label1
+                    : 'Målgruppe'
+                }}
+              </div>
             </div>
             <ul>
-              <li v-for="item in targetGroupFields.audience" :key="item">
-                {{ item }}
-              </li>
+              <li
+                v-for="item in targetGroupFields?.audience"
+                :key="item"
+                v-html="item"
+              ></li>
             </ul>
           </div>
 
           <div
             class="card__icon"
-            v-if="targetGroupFields.subjectOrTheme.length > 0"
+            v-if="targetGroupFields?.subjectOrTheme?.length > 0"
           >
             <div class="card__icon-group">
               <NuxtIcon name="info" filled />
-              <div class="card__icon-text">{{ targetGroupFields.label }}</div>
+              <div class="card__icon-text">
+                {{
+                  targetGroupFields?.label2 ? targetGroupFields?.label2 : 'Fag'
+                }}
+              </div>
             </div>
             <ul>
-              <li v-for="item in targetGroupFields.subjectOrTheme" :key="item">
+              <li v-for="item in targetGroupFields?.subjectOrTheme" :key="item">
                 {{ item }}
               </li>
             </ul>
           </div>
         </div>
 
-        <div class="card__footer">
+        <div
+          class="card__footer"
+          v-if="data?.field_theme || data?.field_is_free"
+        >
           <BaseLabel class="label--green" v-if="data?.field_theme?.label">
             {{ data?.field_theme?.label }}
           </BaseLabel>
@@ -129,6 +282,12 @@ const targetGroupFields = computed(() => {
 
   &__link {
     text-decoration: none;
+  }
+
+  &__link-provider {
+    text-decoration: none;
+    display: flex;
+    width: fit-content;
   }
 
   &__image {
@@ -169,7 +328,7 @@ const targetGroupFields = computed(() => {
   }
 
   &__content {
-    display: grid;
+    display: block;
     width: 100% @(--sm) 50%;
     padding: 24px @(--sm) 32px;
   }
@@ -192,6 +351,7 @@ const targetGroupFields = computed(() => {
 
   &__icon {
     padding-top: 8px;
+
     font-size: 20px;
     align-items: center;
 
@@ -206,11 +366,22 @@ const targetGroupFields = computed(() => {
   }
 
   &__icon-text {
-    padding-left: 8px;
     color: var(--color-text);
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
+    margin-left: 8px;
+  }
+
+  &__icon-text--provider {
+    color: var(--color-text);
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      color: var(--color-primary);
+      border-bottom: 1px solid var(--color-primary);
+    }
   }
 
   &__footer {

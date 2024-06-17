@@ -7,7 +7,6 @@ const props = defineProps({
 });
 
 const inspirationalItems = ref(props.blockData.field_content);
-console.log('blockData', inspirationalItems);
 </script>
 
 <template>
