@@ -14,7 +14,7 @@ console.log('blockData', inspirationalItems);
   <div class="inspiration">
     <div class="row">
       <div
-        class="col-xs-12 col-sm-12 col-md-6 inspiration__card"
+        class="col-xs-12 col-sm-12 col-md-12 col-lg-6 inspiration__card"
         v-for="item in inspirationalItems"
         :key="item"
       >
