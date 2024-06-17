@@ -18,8 +18,18 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: props.data.roles?.includes('corporation') ? 'Virksomhed' : props.data.roles?.includes('course_provider') ? 'Udbyder' : '',
-          content: props.data?.link ? '<a href="' + props.data?.link + '">' + props.data?.field_name + '</a>' : '',
+          title: props.data.roles?.includes('corporation')
+            ? 'Virksomhed'
+            : props.data.roles?.includes('course_provider')
+              ? 'Udbyder'
+              : '',
+          content: props.data?.link
+            ? '<a href="' +
+              props.data?.link +
+              '">' +
+              props.data?.field_name +
+              '</a>'
+            : '',
         },
       ],
     },
@@ -54,8 +64,12 @@ const practicalInfoData = computed(() => {
                 <BaseButton
                   v-if="data?.field_contact?.length > 0"
                   :button-data="{
-                    title: props.data.roles?.includes('corporation') ? 'Kontakt virksomhed' : props.data.roles?.includes('course_provider') ? 'Kontakt udbyder' : '',
-                    url: '#contact__section'
+                    title: props.data.roles?.includes('corporation')
+                      ? 'Kontakt virksomhed'
+                      : props.data.roles?.includes('course_provider')
+                        ? 'Kontakt udbyder'
+                        : '',
+                    url: '#contact__section',
                   }"
                   class="button button--secondary--ghost"
                 />
@@ -63,10 +77,7 @@ const practicalInfoData = computed(() => {
             </div>
 
             <div class="user__banner-image">
-              <BaseImage
-                v-if="data.field_image"
-                :image="data.field_image"
-              />
+              <BaseImage v-if="data.field_image" :image="data.field_image" />
             </div>
           </div>
         </div>
@@ -101,7 +112,7 @@ const practicalInfoData = computed(() => {
               isUserProfilePage: true,
               hasContactsData: data?.field_contact?.length > 0,
               logo: data.field_logo,
-              roles: props.data.roles
+              roles: props.data.roles,
             }"
           >
             <div>
@@ -249,8 +260,8 @@ const practicalInfoData = computed(() => {
 
 <style lang="postcss" scoped>
 .user {
+  color: var(--color-text);
   background-color: var(--color-tertiary-lighten-6);
-  color: var(--color-tertiary);
 
   &__top-section {
     padding: 32px 0 @(--sm) 64px 0;

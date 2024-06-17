@@ -16,6 +16,10 @@ const secondaryBgTextColor = computed(
   () => settingsDataStore.settingsData?.secondary_background_text_color,
 );
 
+const positiveFontColor = computed(
+  () => settingsDataStore.settingsData?.text_positive_color,
+);
+
 // Function to convert hex to RGB
 function hexToRgb(hex: string) {
   try {
@@ -30,6 +34,7 @@ function hexToRgb(hex: string) {
   }
 }
 
+const textPositiveColor = ref(positiveFontColor);
 let primaryColor = '#297F78';
 let primaryColorRgb = hexToRgb(primaryColor);
 let primaryTextColor = '#fff';
@@ -101,6 +106,13 @@ onBeforeMount(() => {
     '--color-secondary-text',
     secondaryTextColor,
   );
+
+  if (textPositiveColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-text',
+      textPositiveColor.value,
+    );
+  }
 });
 </script>
 

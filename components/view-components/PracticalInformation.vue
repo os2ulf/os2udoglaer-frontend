@@ -27,7 +27,15 @@ const props = defineProps({
     </div>
 
     <h3 class="practical-information__title">
-      {{ !props.userProfilePage ? 'Praktisk information' : props.userProfilePage.roles?.includes('corporation') ? 'Virksomhed' : props.userProfilePage.roles?.includes('course_provider') ? 'Udbyder' : '' }}
+      {{
+        !props.userProfilePage
+          ? 'Praktisk information'
+          : props.userProfilePage.roles?.includes('corporation')
+            ? 'Virksomhed'
+            : props.userProfilePage.roles?.includes('course_provider')
+              ? 'Udbyder'
+              : ''
+      }}
     </h3>
 
     <!--Practical information data for loop START -->
@@ -81,8 +89,12 @@ const props = defineProps({
             <BaseButton
               v-if="props.userProfilePage?.hasContactsData"
               :button-data="{
-                title: props.userProfilePage.roles?.includes('corporation') ? 'Kontakt virksomhed' : props.userProfilePage.roles?.includes('course_provider') ? 'Kontakt udbyder' : '',
-                url: '#contact__section'
+                title: props.userProfilePage.roles?.includes('corporation')
+                  ? 'Kontakt virksomhed'
+                  : props.userProfilePage.roles?.includes('course_provider')
+                    ? 'Kontakt udbyder'
+                    : '',
+                url: '#contact__section',
               }"
               class="button button--secondary button--secondary--ghost"
             />
@@ -183,7 +195,7 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .practical-information {
   padding: 48px 32px;
-  color: var(--color-tertiary);
+  color: var(--color-text);
   background-color: var(--color-white);
   border: 2px solid var(--color-primary-lighten-4);
   box-shadow: 0 4px 10px 4px #297f781a;

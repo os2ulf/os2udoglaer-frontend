@@ -26,13 +26,13 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .video-content {
   &__title {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     line-height: 38px;
   }
 
   &__description {
     padding-top: 6px;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     font-weight: 400;
     line-height: 24px;
   }

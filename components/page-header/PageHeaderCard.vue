@@ -31,7 +31,7 @@ const cardItem = ref(props.cardItem);
 
 <style lang="postcss" scoped>
 .page-header-card {
-  color: var(--color-tertiary);
+  color: var(--color-text);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 5px;
   height: 100%;

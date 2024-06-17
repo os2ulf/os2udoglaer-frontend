@@ -58,7 +58,7 @@ onUnmounted(() => {
 
 <style lang="postcss">
 .the-modal {
-  color: var(--color-tertiary);
+  color: var(--color-text);
   position: fixed;
   top: 0;
   right: 0;
@@ -94,7 +94,7 @@ onUnmounted(() => {
 
   &__button-close {
     padding: 15px;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     white-space: nowrap;
     text-decoration: none;
     background: none;

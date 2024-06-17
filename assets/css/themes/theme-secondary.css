@@ -1,6 +1,6 @@
 .theme-secondary {
   --theme-background-color: var(--color-secondary-lighten-5);
-  --theme-color: var(--color-text);
+  --theme-color: var(--color-tertiary);
 
   /* button - filled */
   --theme-button-border-color: var(--color-tertiary);

@@ -49,17 +49,17 @@ const priceQuantityPeriodDescription = computed(() => {
 
 const registrationData = computed(() => {
   return {
-    'bundle': props.data?.bundle,
-    'deadline': props.data?.field_registration_deadline,
-    'description': props.data?.field_registration_description,
-    'email': props.data?.field_registration_email,
-    'phone': props.data?.field_registration_phone,
-    'title': props.data?.field_registration_title,
-    'url': props.data?.field_registration_url,
-    'price': props.data?.field_price,
-    'price_description': props.data?.field_description_of_price,
-    'free': props.data?.field_is_free,
-  }
+    bundle: props.data?.bundle,
+    deadline: props.data?.field_registration_deadline,
+    description: props.data?.field_registration_description,
+    email: props.data?.field_registration_email,
+    phone: props.data?.field_registration_phone,
+    title: props.data?.field_registration_title,
+    url: props.data?.field_registration_url,
+    price: props.data?.field_price,
+    price_description: props.data?.field_description_of_price,
+    free: props.data?.field_is_free,
+  };
 });
 
 const practicalInfoData = computed(() => {
@@ -67,8 +67,24 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
-          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
+          title: props.data?.provider
+            ? 'Udbyder'
+            : props.data?.corporation
+              ? 'Virksomhed'
+              : '',
+          content: props.data?.provider
+            ? '<a href="' +
+              props.data?.provider?.link +
+              '">' +
+              props.data?.provider?.field_name +
+              '</a>'
+            : props.data?.corporation
+              ? '<a href="' +
+                props.data?.corporation?.link +
+                '">' +
+                props.data?.corporation?.field_name +
+                '</a>'
+              : '',
         },
       ],
     },
@@ -77,12 +93,26 @@ const practicalInfoData = computed(() => {
         {
           title: 'Sted',
           content: [
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_name : props.data?.field_location_name,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_street : props.data?.field_location_street,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_name
+              : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_street
+              : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_zipcode
+              : props.data?.field_location_zipcode,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_city
+              : props.data?.field_location_city,
           ],
-          description: props.data?.field_location_description ? props.data?.field_location_description : '',
+          description: props.data?.field_location_description
+            ? props.data?.field_location_description
+            : '',
         },
       ],
     },
@@ -98,21 +128,24 @@ const practicalInfoData = computed(() => {
             props.data?.field_target_group === 'Grundskole'
               ? props.data?.field_trgt_grp_primary_school
               : props.data?.field_target_group === 'Dagtilbud'
-              ? props.data?.field_trgt_grp_daycare
-              : props.data?.field_target_group === 'Ungdomsuddannelse'
-              ? props.data?.field_trgt_grp_youth_education
-              : '',
+                ? props.data?.field_trgt_grp_daycare
+                : props.data?.field_target_group === 'Ungdomsuddannelse'
+                  ? props.data?.field_trgt_grp_youth_education
+                  : '',
         },
         {
-          title: props.data?.field_target_group === 'Dagtilbud' ? 'Læreplanstemaer' : 'Fag',
+          title:
+            props.data?.field_target_group === 'Dagtilbud'
+              ? 'Læreplanstemaer'
+              : 'Fag',
           content:
             props.data?.field_target_group === 'Grundskole'
               ? props.data?.field_primary_school_subject
               : props.data?.field_target_group === 'Dagtilbud'
-              ? props.data?.field_curriculum_themes
-              : props.data?.field_target_group === 'Ungdomsuddannelse'
-              ? props.data?.field_youth_education_subject
-              : '',
+                ? props.data?.field_curriculum_themes
+                : props.data?.field_target_group === 'Ungdomsuddannelse'
+                  ? props.data?.field_youth_education_subject
+                  : '',
         },
       ],
     },
@@ -121,7 +154,9 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price[0].field_price ? props.data?.field_price : '',
+          content: props.data?.field_price[0].field_price
+            ? props.data?.field_price
+            : '',
           free: props.data?.field_is_free,
         },
         {
@@ -135,8 +170,9 @@ const practicalInfoData = computed(() => {
             : props.data?.field_period?.start_date +
               props.data?.field_period?.separator +
               props.data?.field_period?.end_date,
-          description:
-            priceQuantityPeriodDescription.value ? priceQuantityPeriodDescription.value : '',
+          description: priceQuantityPeriodDescription.value
+            ? priceQuantityPeriodDescription.value
+            : '',
         },
       ],
     },
@@ -145,7 +181,12 @@ const practicalInfoData = computed(() => {
         {
           title: 'Varighed',
           content:
-            props.data?.field_duration && props.data?.field_duration_unit_taxonomy?.label ? props.data?.field_duration + ' ' + props.data?.field_duration_unit_taxonomy?.label : '',
+            props.data?.field_duration &&
+            props.data?.field_duration_unit_taxonomy?.label
+              ? props.data?.field_duration +
+                ' ' +
+                props.data?.field_duration_unit_taxonomy?.label
+              : '',
           description: props.data?.field_description_of_duration,
         },
       ],
@@ -181,6 +222,8 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
+
+console.log('courseView.vue');
 </script>
 
 <template>
@@ -227,31 +270,40 @@ const practicalInfoData = computed(() => {
                     data.field_registration_email ||
                     data.field_registration_phone ||
                     data.field_registration_title ||
-                    data.field_registration_url"
+                    data.field_registration_url
+                  "
                   icon-after="arrow-right"
                   :button-data="{
                     title: 'Tilmelding',
-                    url: '#course-registration'
+                    url: '#course-registration',
                   }"
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+                  v-if="
+                    (data?.provider && data?.provider.link) ||
+                    (data?.corporation && data?.corporation.link)
+                  "
                   class="button button--secondary--ghost"
                   :button-data="{
-                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                    target: '_blank'
+                    title: props.data?.provider
+                      ? 'Kontakt udbyder'
+                      : props.data?.corporation
+                        ? 'Kontakt virksomhed'
+                        : '',
+                    url: props.data?.provider
+                      ? data.provider.link
+                      : props.data?.corporation
+                        ? data.corporation.link
+                        : '',
+                    target: '_blank',
                   }"
                 />
               </div>
             </div>
 
             <div class="course__banner-image">
-              <BaseImage
-                v-if="data.field_image"
-                :image="data.field_image"
-              />
+              <BaseImage v-if="data.field_image" :image="data.field_image" />
             </div>
           </div>
         </div>
@@ -299,21 +351,33 @@ const practicalInfoData = computed(() => {
                 data.field_registration_email ||
                 data.field_registration_phone ||
                 data.field_registration_title ||
-                data.field_registration_url"
+                data.field_registration_url
+              "
               :button-data="{
                 title: 'Tilmeld dig forløbet',
-                url: '#course-registration'
+                url: '#course-registration',
               }"
               icon-after="arrow-right"
               class="button button--secondary"
             />
             <BaseButton
-              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+              v-if="
+                (data?.provider && data?.provider.link) ||
+                (data?.corporation && data?.corporation.link)
+              "
               class="button button--ghost course__contact-button"
               :button-data="{
-                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                target: '_blank'
+                title: props.data?.provider
+                  ? 'Kontakt udbyder'
+                  : props.data?.corporation
+                    ? 'Kontakt virksomhed'
+                    : '',
+                url: props.data?.provider
+                  ? data.provider.link
+                  : props.data?.corporation
+                    ? data.corporation.link
+                    : '',
+                target: '_blank',
               }"
             />
             <BaseButton
@@ -386,7 +450,8 @@ const practicalInfoData = computed(() => {
             data.field_registration_email ||
             data.field_registration_phone ||
             data.field_registration_title ||
-            data.field_registration_url"
+            data.field_registration_url
+          "
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 course__section-registration"
         >
@@ -409,6 +474,7 @@ const practicalInfoData = computed(() => {
 
 <style lang="postcss" scoped>
 .course {
+  color: var(--color-text);
   background-color: var(--color-tertiary-lighten-5);
 
   &__top-section {
