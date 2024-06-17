@@ -64,7 +64,7 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .document-list {
-  color: var(--color-tertiary);
+  color: var(--color-text);
 
   &__heading-wrapper {
     margin-bottom: 24px;
@@ -101,7 +101,7 @@ const props = defineProps({
     a {
       text-decoration: none;
       font-weight: 700;
-      color: var(--color-tertiary-darken-1);
+      color: var(--color-text);
     }
 
     &--icon {

@@ -39,10 +39,12 @@ useHead({
   <div>
     <PageHeader v-if="pageHeader" :page-block-header-data="pageHeader" />
 
-    <div class="container" v-else>
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-          <h1 class="page-title">{{ data?.label }}</h1>
+    <div class="page-title-wrapper" v-else>
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12">
+            <h1 class="page-title">{{ data?.label }}</h1>
+          </div>
         </div>
       </div>
     </div>
@@ -55,6 +57,10 @@ useHead({
 </template>
 
 <style lang="postcss" scoped>
+.page-title-wrapper {
+  background-color: var(--color-tertiary-lighten-6);
+}
+
 .page-title {
   padding-top: 48px @(--md) 96px;
   margin-bottom: 32px @(--md) 64px;

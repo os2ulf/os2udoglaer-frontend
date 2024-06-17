@@ -29,7 +29,10 @@ const props = defineProps({
               ></div>
             </div>
             <div class="educational-materials__card-item-button">
-              <div v-if="card.field_literature_suggestion" class="educational-materials__card-link educational-materials__card-link--placeholder">
+              <div
+                v-if="card.field_literature_suggestion"
+                class="educational-materials__card-link educational-materials__card-link--placeholder"
+              >
                 <span class="educational-materials__card-link-text">
                   {{ card?.field_literature_suggestion }}
                 </span>
@@ -40,7 +43,9 @@ const props = defineProps({
                 />
               </div>
               <NuxtLink
-                v-else-if="card.field_material_file || card?.field_material_url?.url"
+                v-else-if="
+                  card.field_material_file || card?.field_material_url?.url
+                "
                 aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
@@ -56,9 +61,7 @@ const props = defineProps({
                 <NuxtIcon
                   class="educational-materials__card-item-button--icon"
                   :name="
-                    card.field_material_file
-                      ? 'link-download'
-                      : 'ext-link'
+                    card.field_material_file ? 'link-download' : 'ext-link'
                   "
                   filled
                 />
@@ -75,6 +78,8 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .educational-materials {
+  color: var(--color-text);
+
   &__card-wrapper {
     .row {
       margin-right: -12px;
@@ -147,6 +152,7 @@ const props = defineProps({
   &__card-link-text {
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
+    color: var(--color-text);
   }
 }
 </style>

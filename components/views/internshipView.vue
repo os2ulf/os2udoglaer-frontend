@@ -35,17 +35,17 @@ useHead({
 
 const registrationData = computed(() => {
   return {
-    'bundle': props.data?.bundle,
-    'deadline': props.data?.field_application_deadline,
-    'description': props.data?.field_desc_application_procedure,
-    'email': props.data?.field_application_email,
-    'phone': props.data?.field_application_phone,
-    'title': props.data?.field_application_title,
-    'url': props.data?.field_application_url,
-    'price': '',
-    'price_description': '',
-    'free': '',
-  }
+    bundle: props.data?.bundle,
+    deadline: props.data?.field_application_deadline,
+    description: props.data?.field_desc_application_procedure,
+    email: props.data?.field_application_email,
+    phone: props.data?.field_application_phone,
+    title: props.data?.field_application_title,
+    url: props.data?.field_application_url,
+    price: '',
+    price_description: '',
+    free: '',
+  };
 });
 
 const practicalInfoData = computed(() => {
@@ -53,8 +53,24 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
-          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
+          title: props.data?.provider
+            ? 'Udbyder'
+            : props.data?.corporation
+              ? 'Virksomhed'
+              : '',
+          content: props.data?.provider
+            ? '<a href="' +
+              props.data?.provider?.link +
+              '">' +
+              props.data?.provider?.field_name +
+              '</a>'
+            : props.data?.corporation
+              ? '<a href="' +
+                props.data?.corporation?.link +
+                '">' +
+                props.data?.corporation?.field_name +
+                '</a>'
+              : '',
         },
       ],
     },
@@ -114,21 +130,24 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Ansøgning',
-          content: props.data?.field_application_deadline?.text,
-          description: props.data?.field_desc_application_procedure,
-        },
-      ],
-    },
-    {
-      group: [
-        {
           title: 'Sted',
           content: [
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_name : props.data?.field_location_name,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_street : props.data?.field_location_street,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_zipcode : props.data?.field_location_zipcode,
-            props.data?.field_view_on_map == 'show_vendor_address' && props.data?.provider ? props.data?.provider.field_location_city : props.data?.field_location_city,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_name
+              : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_street
+              : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_zipcode
+              : props.data?.field_location_zipcode,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_city
+              : props.data?.field_location_city,
           ],
           description: props.data?.field_location_description,
         },
@@ -138,6 +157,8 @@ const practicalInfoData = computed(() => {
 
   return filterGroups(data);
 });
+
+console.log('internshipView.vue');
 </script>
 
 <template>
@@ -157,21 +178,33 @@ const practicalInfoData = computed(() => {
                     data?.field_application_email ||
                     data?.field_application_phone ||
                     data?.field_application_title ||
-                    data?.field_application_url"
+                    data?.field_application_url
+                  "
                   icon-after="arrow-right"
                   :button-data="{
                     title: 'Ansøgning',
-                    url: '#course-registration'
+                    url: '#course-registration',
                   }"
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+                  v-if="
+                    (data?.provider && data?.provider.link) ||
+                    (data?.corporation && data?.corporation.link)
+                  "
                   class="button button--secondary--ghost"
                   :button-data="{
-                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                    target: '_blank'
+                    title: props.data?.provider
+                      ? 'Kontakt udbyder'
+                      : props.data?.corporation
+                        ? 'Kontakt virksomhed'
+                        : '',
+                    url: props.data?.provider
+                      ? data.provider.link
+                      : props.data?.corporation
+                        ? data.corporation.link
+                        : '',
+                    target: '_blank',
                   }"
                 />
               </div>
@@ -219,21 +252,33 @@ const practicalInfoData = computed(() => {
                 data.field_application_email ||
                 data.field_application_phone ||
                 data.field_application_title ||
-                data.field_application_url"
+                data.field_application_url
+              "
               icon-after="arrow-right"
               :button-data="{
                 title: 'Ansøgning',
-                url: '#course-registration'
+                url: '#course-registration',
               }"
               class="button button--secondary"
             />
             <BaseButton
-              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+              v-if="
+                (data?.provider && data?.provider.link) ||
+                (data?.corporation && data?.corporation.link)
+              "
               class="button button--ghost internship__contact-button"
               :button-data="{
-                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                target: '_blank'
+                title: props.data?.provider
+                  ? 'Kontakt udbyder'
+                  : props.data?.corporation
+                    ? 'Kontakt virksomhed'
+                    : '',
+                url: props.data?.provider
+                  ? data.provider.link
+                  : props.data?.corporation
+                    ? data.corporation.link
+                    : '',
+                target: '_blank',
               }"
             />
           </div>
@@ -293,7 +338,8 @@ const practicalInfoData = computed(() => {
             data.field_desc_application_procedure ||
             data.field_application_email ||
             data.field_application_phone ||
-            data.field_application_url"
+            data.field_application_url
+          "
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 internship__section-registration"
         >
@@ -317,6 +363,7 @@ const practicalInfoData = computed(() => {
 <style lang="postcss" scoped>
 .internship {
   background-color: var(--color-tertiary-lighten-5);
+  color: var(--color-text);
 
   &__top-section {
     background-color: var(--color-primary-lighten-5);
