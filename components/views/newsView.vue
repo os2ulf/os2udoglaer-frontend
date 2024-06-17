@@ -57,10 +57,6 @@ const practicalInfoData = computed(() => {
                 '</a>'
               : '',
         },
-      ],
-    },
-    {
-      group: [
         {
           title: 'Målgruppe',
           content: props.data?.field_audience,
