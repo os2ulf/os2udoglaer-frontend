@@ -111,11 +111,11 @@ const practicalInfoData = computed(() => {
             <div class="exercise__tags-wrapper">
               <div
                 class="exercise__tags-item exercise__tags-item--main"
-                v-if="data?.field_target_group"
+                v-if="data?.bundle_label"
               >
                 <BaseTag
-                  v-if="data?.field_target_group"
-                  :data="{ label: data?.field_target_group }"
+                  v-if="data?.bundle_label"
+                  :data="{ label: data?.bundle_label }"
                   color="primary"
                 />
               </div>

@@ -50,7 +50,7 @@ const periodPriceDurationDescription = computed(() => {
 const registrationData = computed(() => {
   return {
     deadline: props.data?.field_registration_deadline,
-    description: props.data?.field_registration_description,
+    description: props.data?.field_registration_procedure,
     email: props.data?.field_registration_email,
     phone: props.data?.field_registration_phone,
     title: props.data?.field_registration_title,
@@ -221,6 +221,14 @@ console.log('course_educatorsView.vue', props.data);
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="educators__tags-wrapper">
+              <div class="educators__tags-item" v-if="data?.bundle_label">
+                <BaseTag
+                  v-if="data?.bundle_label"
+                  :data="{ label: data?.bundle_label }"
+                  color="primary"
+                />
+              </div>
+
               <div class="educators__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
@@ -303,7 +311,7 @@ console.log('course_educatorsView.vue', props.data);
             <BaseButton
               v-if="
                 data.field_registration_deadline ||
-                data.field_registration_description ||
+                data.field_registration_procedure ||
                 data.field_registration_email ||
                 data.field_registration_phone ||
                 data.field_registration_title ||
@@ -390,7 +398,7 @@ console.log('course_educatorsView.vue', props.data);
         <div
           v-if="
             data.field_registration_deadline ||
-            data.field_registration_description ||
+            data.field_registration_procedure ||
             data.field_registration_email ||
             data.field_registration_phone ||
             data.field_registration_title ||
