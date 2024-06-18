@@ -158,7 +158,7 @@ const practicalInfoData = computed(() => {
   return filterGroups(data);
 });
 
-console.log('internshipView.vue');
+console.log('internshipView.vue', props.data);
 </script>
 
 <template>
@@ -167,7 +167,16 @@ console.log('internshipView.vue');
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="internship__tags-wrapper"></div>
+            <div class="internship__tags-wrapper" v-if="data?.field_theme">
+              <div class="course__tags-item">
+                <BaseTag
+                  v-if="data?.field_theme"
+                  :data="{ label: data?.field_theme.label }"
+                  color="secondary"
+                />
+              </div>
+            </div>
+
             <div class="internship__page-heading-wrapper">
               <h1 class="internship__page-title">{{ data?.label }}</h1>
               <div class="internship__page-heading-button-container">
