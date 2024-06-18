@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update the Platform Repo Submodule for Backend
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         with:
           repository: os2ulf/os2udoglaer-frontend
           event-type: update-submodule
