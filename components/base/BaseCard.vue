@@ -171,12 +171,17 @@ const providerData = ref(
       <div class="card__image" v-if="data?.field_image">
         <!-- TODO: use base img once img styles are done and prolly tweak condition above-->
         <img :src="data?.field_image?.src" :alt="data?.field_image?.alt" />
-        <div v-if="data?.field_target_group" class="card__target-group">
-          {{
-            data?.field_target_group.label
-              ? data?.field_target_group.label
-              : data?.field_target_group
-          }}
+        <div
+          v-if="data?.bundle_label || data?.field_target_group"
+          class="card__target-group"
+        >
+          <div v-if="data?.bundle === 'course'">
+            {{ data?.field_target_group }}
+          </div>
+
+          <div v-else>
+            {{ data?.bundle_label }}
+          </div>
         </div>
       </div>
       <div class="card__content">
