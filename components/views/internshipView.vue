@@ -139,7 +139,7 @@ const practicalInfoData = computed(() => {
         },
         {
           title: 'Huskeliste',
-          content: props.data?.field_meeting_times,
+          content: props.data?.field_todo_list,
         },
       ],
     },
