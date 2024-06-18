@@ -112,7 +112,10 @@ const practicalInfoData = computed(() => {
         {
           title: 'Branche',
           content: props.data?.field_industry,
-          description: props.data?.field_education_path,
+        },
+        {
+          title: 'Uddannelsesvej',
+          content: props.data?.field_education_path,
         },
       ],
     },
@@ -122,34 +125,18 @@ const practicalInfoData = computed(() => {
           title: 'Antal',
           content: props.data?.field_quantity,
         },
-      ],
-    },
-    {
-      group: [
         {
           title: 'Periode',
           content: props.data?.field_description_of_period,
         },
-      ],
-    },
-    {
-      group: [
         {
           title: 'Varighed',
           content: props.data?.field_duration_rte,
         },
-      ],
-    },
-    {
-      group: [
         {
           title: 'Mødetider',
           content: props.data?.field_meeting_times,
         },
-      ],
-    },
-    {
-      group: [
         {
           title: 'Huskeliste',
           content: props.data?.field_meeting_times,
