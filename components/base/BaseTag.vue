@@ -43,5 +43,15 @@ const props = defineProps({
     background-color: var(--color-secondary);
     color: var(--color-secondary-text);
   }
+
+  &--primary-lighten {
+    background-color: var(--color-primary-lighten-4);
+    color: var(--color-text);
+  }
+
+  &--secondary-lighten {
+    background-color: var(--color-secondary-lighten-4);
+    color: var(--color-text);
+  }
 }
 </style>

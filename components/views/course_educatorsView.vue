@@ -221,11 +221,11 @@ console.log('course_educatorsView.vue', props.data);
                 />
               </div>
 
-              <div class="educators__tags-item" v-if="data?.field_theme">
+              <div class="educators__tags-item" if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
                   :data="{ label: data?.field_theme }"
-                  color="secondary"
+                  color="primary-lighten"
                 />
               </div>
 
