@@ -231,6 +231,7 @@ console.log('internshipView.vue', props.data);
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
+            <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
           </div>
 
@@ -238,6 +239,7 @@ console.log('internshipView.vue', props.data);
             class="internship__paragraph-item"
             v-if="data.field_purpose_internship"
           >
+            <h4>Formål</h4>
             <BaseRte :content="data.field_purpose_internship" />
           </div>
 
@@ -245,6 +247,7 @@ console.log('internshipView.vue', props.data);
             class="internship__paragraph-item"
             v-if="data.field_expectations"
           >
+            <h4>Forventninger</h4>
             <BaseRte :content="data.field_expectations" />
           </div>
         </div>
