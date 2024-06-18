@@ -221,6 +221,14 @@ console.log('course_educatorsView.vue', props.data);
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="educators__tags-wrapper">
+              <div class="educators__tags-item" v-if="data?.bundle_label">
+                <BaseTag
+                  v-if="data?.bundle_label"
+                  :data="{ label: data?.bundle_label }"
+                  color="primary"
+                />
+              </div>
+
               <div class="educators__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
