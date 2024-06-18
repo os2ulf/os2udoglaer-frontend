@@ -17,4 +17,4 @@ jobs:
           event-type: update-submodule
           client-payload: '{"submodule": "frontend", "branch": "${{ github.ref_name }}", "commit": "${{ github.sha }}"}'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
