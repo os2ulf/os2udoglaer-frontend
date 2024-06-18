@@ -50,7 +50,7 @@ const periodPriceDurationDescription = computed(() => {
 const registrationData = computed(() => {
   return {
     deadline: props.data?.field_registration_deadline,
-    description: props.data?.field_registration_description,
+    description: props.data?.field_registration_procedure,
     email: props.data?.field_registration_email,
     phone: props.data?.field_registration_phone,
     title: props.data?.field_registration_title,
@@ -303,7 +303,7 @@ console.log('course_educatorsView.vue', props.data);
             <BaseButton
               v-if="
                 data.field_registration_deadline ||
-                data.field_registration_description ||
+                data.field_registration_procedure ||
                 data.field_registration_email ||
                 data.field_registration_phone ||
                 data.field_registration_title ||
@@ -390,7 +390,7 @@ console.log('course_educatorsView.vue', props.data);
         <div
           v-if="
             data.field_registration_deadline ||
-            data.field_registration_description ||
+            data.field_registration_procedure ||
             data.field_registration_email ||
             data.field_registration_phone ||
             data.field_registration_title ||
