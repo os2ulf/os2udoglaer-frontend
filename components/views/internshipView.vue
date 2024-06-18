@@ -157,8 +157,8 @@ console.log('internshipView.vue', props.data);
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="internship__tags-wrapper" v-if="data?.field_theme">
-              <div class="course__tags-item">
+            <div class="internship__tags-wrapper">
+              <div class="course__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
                   :data="{ label: data?.field_theme.label }"

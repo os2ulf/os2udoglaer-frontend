@@ -211,7 +211,7 @@ const practicalInfoData = computed(() => {
   return filterGroups(data);
 });
 
-console.log('course_educatorsView.vue');
+console.log('course_educatorsView.vue', props.data);
 </script>
 
 <template>
