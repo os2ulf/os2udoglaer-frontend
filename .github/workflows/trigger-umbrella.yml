@@ -16,3 +16,5 @@ jobs:
           repository: os2ulf/os2udoglaer-frontend
           event-type: update-submodule
           client-payload: '{"submodule": "frontend", "branch": "${{ github.ref_name }}", "commit": "${{ github.sha }}"}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
