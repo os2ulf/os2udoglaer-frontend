@@ -64,7 +64,7 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .document-list {
-  color: var(--color-text);
+  color: var(--theme-color);
 
   &__heading-wrapper {
     margin-bottom: 24px;
