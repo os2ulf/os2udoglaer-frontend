@@ -158,14 +158,6 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Forplejning',
-          description: props.data?.field_food_service,
-        },
-      ],
-    },
-    {
-      group: [
-        {
           title: 'Sted',
           content: [
             props.data?.field_view_on_map == 'show_vendor_address' &&
@@ -300,6 +292,10 @@ console.log('course_educatorsView.vue', props.data);
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
             <BaseRte :content="data.body" />
+          </div>
+          <div v-if="data?.field_food_service" class="educators__paragraph-item">
+            <h4>Forplejning</h4>
+            <BaseRte :content="data?.field_food_service" />
           </div>
         </div>
         <div
