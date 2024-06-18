@@ -6,7 +6,7 @@ name: frontend
 
 # The runtime the application uses.
 # Complete list of available runtimes: https://docs.platform.sh/create-apps/app-reference.html#types
-type: "nodejs:18"
+type: 'nodejs:18'
 
 # The web key configures the web server running in front of your app.
 # More information: https://docs.platform.sh/create-apps/app-reference.html#web
@@ -15,7 +15,7 @@ web:
   # More information: https://docs.platform.sh/create-apps/app-reference.html#web-commands
   commands:
     # The command to launch your app. If it terminates, it’s restarted immediately.
-    start: "node .output/server/index.mjs"
+    start: 'node .output/server/index.mjs'
 
 # Variables to control the environment. More information: https://docs.platform.sh/create-apps/app-reference.html#variables
 variables:
@@ -31,7 +31,7 @@ build:
 # More info: https://unjs.io/blog/2023-08-25-nitro-2.6#default-persistent-data-storage
 disk: 128
 mounts:
-  ".data":
+  '.data':
     source: local
     source_path: .data
 
@@ -42,7 +42,9 @@ hooks:
   # More information: https://docs.platform.sh/create-apps/hooks/hooks-comparison.html#build-hook
   build: |
     corepack npm install
+    #corepack yarn install --frozen-lockfile
     corepack npm run build
+    #corepack yarn build
 
 # Information on the app's source code and operations that can be run on it.
 # More information: https://docs.platform.sh/create-apps/app-reference.html#source
