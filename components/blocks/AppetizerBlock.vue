@@ -32,9 +32,7 @@ const props = defineProps({
         <div
           class="col-xs-12 col-md-6 col-lg-5"
           :class="[
-            blockData.field_appetizer_orientation === 'left' &&
-            blockData.appetizer_size === 'default'
-              ? 'col-md-offset-6 col-lg-offset-7'
+            blockData.field_appetizer_orientation === 'left' ? 'col-md-offset-6 col-lg-offset-7'
               : '',
           ]"
         >
