@@ -7,6 +7,7 @@ const props = defineProps({
 });
 
 const inspirationalItems = ref(props.blockData.field_content);
+console.log(inspirationalItems);
 </script>
 
 <template>
@@ -27,12 +28,28 @@ const inspirationalItems = ref(props.blockData.field_content);
 
 <style lang="postcss" scoped>
 .inspiration {
-  padding-top: 22px @(--sm) 44px;
-  margin-bottom: 22px @(--sm) 44px;
+  &__card {
+    margin-bottom: 24px;
 
-  &__card-item {
-    height: 100%;
-    padding-bottom: 24px;
+    @media (--viewport-lg-min) {
+      &:nth-child(odd) {
+        padding-right: calc(var(--grid-gutter) / 4);
+      }
+
+      &:nth-child(even) {
+        padding-left: calc(var(--grid-gutter) / 4);
+      }
+    }
+
+    &-item {
+      height: 100%;
+
+      :deep(figure),
+      :deep(picture),
+      :deep(img) {
+        height: 100%;
+      }
+    }
   }
 }
 </style>

@@ -169,8 +169,10 @@ const providerData = ref(
   <NuxtLink class="card__link" :to="data?.link" aria-label="Link til kort">
     <div class="card">
       <div class="card__image" v-if="data?.field_image">
-        <!-- TODO: use base img once img styles are done and prolly tweak condition above-->
-        <img :src="data?.field_image?.src" :alt="data?.field_image?.alt" />
+        <BaseImage
+          v-if="data?.field_image"
+          :image="data?.field_image"
+        />
         <div
           v-if="data?.bundle_label || data?.field_target_group"
           class="card__target-group"
