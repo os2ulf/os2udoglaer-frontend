@@ -63,7 +63,7 @@ const assignMdCollumnsHandler = (
         :class="[
           'container',
           section.layout_settings.column_width === 'section--width-full'
-            ? 'container--full'
+            ? 'container--fluid'
             : '',
           section.layout_settings.column_width === 'section--width-narrow'
             ? 'container--narrow'
@@ -75,13 +75,14 @@ const assignMdCollumnsHandler = (
             v-for="(region, index) in section.regions"
             :key="index"
             class="col-xs-12"
-            :class="
+            :class="[
               'col-md-' +
               assignMdCollumnsHandler(
                 section.layout_settings.column_widths,
                 index,
-              )
-            "
+              ),
+              section.layout_settings.column_width === 'section--width-full' ? 'no-padding-x' : ''
+            ]"
           >
             <div
               v-for="content in region"
@@ -92,6 +93,7 @@ const assignMdCollumnsHandler = (
                 :is="renderLayoutBlock(content.bundle)"
                 v-if="content"
                 :block-data="content"
+                :section-width="section.layout_settings.column_width"
               />
             </div>
           </div>

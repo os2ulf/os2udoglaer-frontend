@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
   blockData: Object,
+  sectionWidth: String,
 });
 </script>
 <template>
@@ -13,60 +14,48 @@ const props = defineProps({
       blockData.field_appetizer_orientation
         ? 'appetizer--image-' + blockData.field_appetizer_orientation
         : '',
+      props.sectionWidth == 'section--width-full'
+        ? 'appetizer--width-full'
+        : '',
     ]"
   >
-    <div class="row">
+    <div :class="props.sectionWidth == 'section--width-full' ? 'container' : ''">
       <div
-        class="col-xs-12"
-        :class="[
-          blockData.appetizer_size === 'default'
-            ? 'col-md-6 col-lg-6'
-            : 'col-md-12',
-          blockData.field_appetizer_orientation === 'right' &&
-          blockData.appetizer_size === 'default'
-            ? 'col-lg-offset-1'
-            : '',
-        ]"
+        v-if="blockData?.field_appetizer_image"
+        class="appetizer__image"
       >
-        <NuxtLink
-          class="appetizer__image"
-          :to="blockData?.field_appetizer_cta?.url"
-        >
-          <BaseImage
-            v-if="blockData?.field_appetizer_image"
-            :image="blockData.field_appetizer_image"
-          />
-        </NuxtLink>
+        <BaseImage
+          :image="blockData.field_appetizer_image"
+        />
       </div>
-      <div
-        class="col-xs-12"
-        :class="[
-          blockData.appetizer_size === 'default'
-            ? 'col-md-6 col-lg-5'
-            : 'col-md-12',
-          blockData.field_appetizer_orientation === 'left' &&
-          blockData.appetizer_size === 'default'
-            ? 'col-lg-offset-1'
-            : '',
-        ]"
-      >
-        <div class="appetizer__content">
-          <div class="appetizer__content-container">
-            <div class="appetizer__title">
-              {{ blockData.field_appetizer_headline }}
-            </div>
-            <div
-              v-if="blockData.field_appetizer_text !== null"
-              class="appetizer__text"
-              v-html="blockData.field_appetizer_text"
-            ></div>
+      <div class="row">
+        <div
+          class="col-xs-12 col-md-6 col-lg-5"
+          :class="[
+            blockData.field_appetizer_orientation === 'left' &&
+            blockData.appetizer_size === 'default'
+              ? 'col-md-offset-6 col-lg-offset-7'
+              : '',
+          ]"
+        >
+          <div class="appetizer__content">
+            <div class="appetizer__content-container">
+              <div class="appetizer__title">
+                {{ blockData.field_appetizer_headline }}
+              </div>
+              <div
+                v-if="blockData.field_appetizer_text !== null"
+                class="appetizer__text"
+                v-html="blockData.field_appetizer_text"
+              ></div>
 
-            <div class="appetizer__cta">
-              <BaseButton
-                class="button--primary"
-                v-if="blockData.field_appetizer_cta?.title"
-                :button-data="blockData.field_appetizer_cta"
-              />
+              <div class="appetizer__cta">
+                <BaseButton
+                  class="button--primary"
+                  v-if="blockData.field_appetizer_cta?.title"
+                  :button-data="blockData.field_appetizer_cta"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -77,6 +66,7 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .appetizer {
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: transparent;
@@ -112,16 +102,49 @@ const props = defineProps({
     display: flex;
     width: 100%;
     height: 100%;
+    padding-top: 32px @(--sm) 64px @(--md) 162px;
+    padding-bottom: 32px @(--sm) 64px @(--md) 162px;
     align-items: center;
     color: var(--theme-color);
   }
 
-  &__content-container {
-    padding: 20px 0;
-  }
-
   &__image {
-    width: 100%;
+    position: relative;
+    margin-left: calc(var(--grid-gutter-half) * -1);
+    margin-right: calc(var(--grid-gutter-half) * -1);
+    overflow: hidden;
+
+    :deep(figure),
+    :deep(picture),
+    :deep(img) {
+    height: 100%;}
+
+    @media (--viewport-md-min) {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin-left: 0;
+      margin-right: 0;
+
+      .appetizer--image-left & {
+        right: 50%;
+        left: calc(var(--grid-gutter-half) * -1);
+      }
+
+      .appetizer--image-left.appetizer--width-full & {
+        left: 0;
+      }
+
+      .appetizer--image-right & {
+        left: 50%;
+        right: calc(var(--grid-gutter-half) * -1);
+      }
+
+      .appetizer--image-right.appetizer--width-full & {
+        right: 0;
+      }
+    }
+
   }
 
   &--content-center {
@@ -130,24 +153,6 @@ const props = defineProps({
 
   &--content-right {
     text-align: right;
-  }
-
-  &--image-left {
-    .appetizer__image {
-      overflow: hidden;
-    }
-  }
-
-  &--image-right {
-    @media (--viewport-md-min) {
-      .row {
-        flex-direction: row-reverse;
-      }
-    }
-
-    & .appetizer__image {
-      overflow: hidden;
-    }
   }
 }
 </style>
