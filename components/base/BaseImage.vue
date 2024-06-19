@@ -28,7 +28,7 @@ const props = defineProps({
   </figure>
 </template>
 
-<style setup lang="postcss" scoped>
+<style lang="postcss" scoped>
 .image {
   position: relative;
   width: 100%;
