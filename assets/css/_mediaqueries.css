@@ -1,11 +1,11 @@
 /* Extra small screen / phone */
 @custom-media --viewport-xs-min (min-width: 0);
-@custom-media --viewport-xs-max (max-width: 575px);
+@custom-media --viewport-xs-max (max-width: 480px);
 
 /* Small medium screen / phablet, large phones */
-@custom-media --viewport-ms-min (min-width: 576px);
+@custom-media --viewport-ms-min (min-width: 481px);
 @custom-media --viewport-ms-max (max-width: 767px);
-@custom-media --ms (min-width: 576px);
+@custom-media --ms (min-width: 481px);
 
 @custom-media --ms-max (max-width: 767px);
 
