@@ -1,83 +1,214 @@
-<script setup>
-import { Navigation, Scrollbar, A11y } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-
+<script lang="ts" setup>
 const props = defineProps({
   blockData: Object,
-  title: {
-    type: String,
-    required: false,
-  },
 });
 
-const modules = [Navigation, Scrollbar, A11y];
-const breakpoints = {
-  768: {
-    slidesPerView: 2,
-  },
-  992: {
-    slidesPerView: 3,
-  },
-  1200: {
-    slidesPerView: 4,
-  },
-};
+const inlineNavigationItems = ref(
+  props.blockData.field_inline_nav_paragraphs[0].field_inline_navigation_pages,
+);
+
+const altStyle = ref(true);
+
+console.log('Inline Nav Items', inlineNavigationItems);
 </script>
 
 <template>
   <div class="inline-navigation">
-    <ClientOnly>
-      <h2 v-if="blockData.field_headline" class="inline-navigation__title">
-        {{ blockData.field_headline }}
-      </h2>
-      <Swiper
-        :modules="modules"
-        :slides-per-view="1"
-        :space-between="30"
-        :breakpoints="breakpoints"
-        navigation
-        :scrollbar="{ draggable: true }"
-        class="inline-navigation__swiper"
+    <div class="inline-navigation__card-wrapper" v-if="!altStyle">
+      <NuxtLink
+        :class="`inline-navigation__card-link`"
+        v-for="item in inlineNavigationItems"
+        :key="item"
+        :to="item.url"
+        :aria-label="`Link til ${item.label}`"
       >
-        <SwiperSlide
-          v-for="item in blockData.items"
-          :key="item.id"
-          class="inline-navigation__slide"
-        >
-          <BaseArticle :article="item" />
-        </SwiperSlide>
-      </Swiper>
-    </ClientOnly>
+        <div class="inline-navigation__card-item">
+          <div
+            class="inline-navigation__card-image"
+            v-if="item.field_list_media"
+          >
+            <BaseImage
+              v-if="item.field_list_media"
+              :image="item.field_list_media"
+            />
+          </div>
+          <div class="inline-navigation__card-content">
+            <h4 class="inline-navigation__card-title" v-if="item.label">
+              {{ item?.label }}
+            </h4>
+            <p
+              class="inline-navigation__card-description"
+              v-if="item.field_description"
+            >
+              {{ item?.field_description }}
+            </p>
+          </div>
+          <div class="inline-navigation__card-link">
+            <NuxtIcon
+              class="inline-navigation__card-button-icon"
+              name="arrow-right"
+              filled
+            ></NuxtIcon>
+          </div>
+        </div>
+      </NuxtLink>
+    </div>
+
+    <!-- Compact Style -->
+    <div v-else class="inline-navigation__card-compact-wrapper">
+      <NuxtLink
+        :class="`inline-navigation__card-link`"
+        v-for="item in inlineNavigationItems"
+        :key="item"
+        :to="item.url"
+        :aria-label="`Link til ${item.label}`"
+      >
+        <div class="inline-navigation__card-compact-item">
+          <div class="inline-navigation__card-compact-container">
+            <div class="inline-navigation__card-compact-icon-container">
+              <NuxtIcon
+                class="inline-navigation__card-compact-icon"
+                name="document"
+                filled
+              ></NuxtIcon>
+            </div>
+            <div class="inline-navigation__card-compact-content">
+              <h4
+                class="inline-navigation__card-compact-title"
+                v-if="item.label"
+              >
+                {{ item?.label }}
+              </h4>
+            </div>
+          </div>
+
+          <div class="inline-navigation__card-link">
+            <NuxtIcon
+              class="inline-navigation__card-button-icon"
+              name="arrow-right"
+              filled
+            ></NuxtIcon>
+          </div>
+        </div>
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
 <style lang="postcss" scoped>
 .inline-navigation {
-  padding: 30px 0;
+  color: var(--theme-color);
 
-  &__slide {
-    padding-bottom: 30px;
+  &__card-wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr) @(--sm) repeat(2, 1fr) @(--md) repeat(
+        3,
+        1fr
+      );
+    gap: 22px;
+  }
 
-    &:first-child {
-      margin-left: auto !important;
+  &__card-link {
+    text-decoration: none;
+    color: var(--theme-color);
+  }
+
+  &__card-item {
+    height: 100%;
+    padding: 32px;
+    border: 2px solid var(--color-primary-lighten-4);
+    border-radius: 4px;
+    box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
+
+      :deep(img) {
+        opacity: 0.8;
+      }
     }
 
-    &:last-child {
-      margin-right: auto !important;
+    :deep(img) {
+      transition: all 0.3s ease-in-out;
+      opacity: 1;
     }
   }
 
-  &__title {
-    position: relative;
-    bottom: -50px;
+  &__card-content {
+    padding: 22px 0;
+  }
+
+  &__card-description {
+    line-height: 24px;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  &__card-button-icon {
+    :deep(svg) {
+      background-color: var(--color-secondary);
+      border-radius: 50%;
+      padding: 8px;
+      height: 40px;
+      width: 40px;
+
+      path {
+        stroke: var(--color-secondary-text);
+      }
+    }
+  }
+
+  /* Compact Style */
+  &__card-compact-wrapper {
+    display: grid;
+    grid-template-columns:
+      repeat(1, 1fr) @(--sm) repeat(2, 1fr) @(--md) repeat(3, 1fr)
+      @(--lg) repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  &__card-compact-item {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 42px;
-    margin: 0;
-    word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px;
+    border: 2px solid var(--color-primary-lighten-4);
+    border-radius: 4px;
+    box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
+    }
+  }
+
+  &__card-compact-container {
+    display: flex;
+  }
+
+  &__card-compact-content {
+    display: flex;
+    align-items: center;
+  }
+
+  &__card-compact-title {
+    margin-bottom: 0;
+  }
+
+  &__card-compact-icon-container {
+    margin-right: 8px;
+    font-size: 30px;
+  }
+
+  &__card-compact-icon {
+    :deep(path:first-child) {
+      stroke: var(--theme-color);
+    }
+
+    :deep(path:last-child) {
+      stroke: var(--theme-color);
+    }
   }
 }
 </style>
