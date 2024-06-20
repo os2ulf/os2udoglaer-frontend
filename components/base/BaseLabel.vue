@@ -22,7 +22,7 @@
   }
 
   &--yellow {
-    color: var(--color-text);
+    color: var(--color-secondary-text);
     background-color: var(--color-secondary);
     border: 2px solid var(--color-secondary);
   }
