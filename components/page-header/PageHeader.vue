@@ -108,7 +108,7 @@ const props = defineProps({
   &__image-wrapper {
     position: relative;
     width: 100%;
-    height: 250px @(--sm) 560px;
+    height: 250px @(--ms) 320px @(--sm) 460px @(--md) 560px;
     margin-bottom: 24px @(--sm) 0;
   }
 
