@@ -5,14 +5,12 @@ const props = defineProps({
 
 const inlineNavigationItems = ref(props.blockData.field_inline_nav_paragraphs);
 
-const isAltStyle = ref(false);
-
-console.log('Inline Nav Items', props.blockData);
+const isCompactStyle = ref(props.blockData.field_compact_view);
 </script>
 
 <template>
   <div class="inline-navigation">
-    <div class="inline-navigation__card-wrapper" v-if="!isAltStyle">
+    <div class="inline-navigation__card-wrapper" v-if="!isCompactStyle">
       <NuxtLink
         class="inline-navigation__card-link"
         v-for="item in inlineNavigationItems"
