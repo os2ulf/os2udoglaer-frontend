@@ -174,7 +174,8 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
   }
 
   &__card-compact-item {
-    color: var(--theme-color);
+    color: var(--theme-inline-navigation-color);
+    background-color: var(--color-white);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -208,11 +209,11 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
     display: flex;
 
     :deep(path:first-child) {
-      stroke: var(--theme-color);
+      stroke: var(--theme-inline-navigation-color);
     }
 
     :deep(path:last-child) {
-      stroke: var(--theme-color);
+      stroke: var(--theme-inline-navigation-color);
     }
   }
 }
