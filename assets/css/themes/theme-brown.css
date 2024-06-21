@@ -24,4 +24,7 @@
 
   /* Footer */
   --theme-footer-text-color: var(--color-white);
+
+  /* Inline Navigation */
+  --theme-inline-navigation-color: var(--color-tertiary);
 }
