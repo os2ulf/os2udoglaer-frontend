@@ -6,7 +6,11 @@ const props = defineProps({
   },
 });
 
-// The shit show begins.
+const providerData = ref(
+  props.data?.provider || props.data?.corporation || null,
+);
+
+// The shit show begins. Since each content type, has diff fields, this is the handler to filter them out
 const targetGroupFields = computed(() => {
   // IF NEWS CT
   if (props.data?.bundle === 'news' && props.data.field_audience) {
@@ -24,9 +28,7 @@ const targetGroupFields = computed(() => {
   // IF Internship (Erhvervspraktik) CT
   if (props.data?.bundle === 'internship') {
     return {
-      label1: 'Interesseområder',
       audience: props.data.field_areas_of_interest,
-      label2: 'Branche',
       subjectOrTheme: props.data.field_industry,
     };
   }
@@ -35,104 +37,12 @@ const targetGroupFields = computed(() => {
   if (props.data?.bundle === 'course_educators') {
     return {
       audience: props.data.field_educators_target_group,
-      label2: 'Læreplanstemaer',
       subjectOrTheme: props.data.field_curriculum_themes,
     };
   }
 
   // IF Exercise/Opgave CT
-  if (props.data?.bundle === 'exercise') {
-    // filter malgrupe by target group
-    if (props.data?.field_target_group.label === 'Grundskole') {
-      const school = ref(props.data?.field_trgt_grp_primary_school);
-      const subject = ref(props.data?.field_primary_school_subject);
-
-      if (school.value || subject.value) {
-        let schoolLabels: any = [];
-        let subjectLabels: any = [];
-
-        // Check if school array exists and is an array
-        if (Array.isArray(school.value)) {
-          // Loop through school array and grab the .label from each object
-          schoolLabels = schoolLabels.concat(
-            school.value.map((item) => item.label),
-          );
-        }
-
-        // Check if subject array exists and is an array
-        if (Array.isArray(subject.value)) {
-          // Loop through subject array and grab the .label from each object
-          subjectLabels = subjectLabels.concat(
-            subject.value.map((item) => item.label),
-          );
-        }
-
-        return {
-          audience: schoolLabels,
-          subjectOrTheme: subjectLabels,
-        };
-      }
-    } else if (props.data?.field_target_group.label === 'Dagtilbud') {
-      const daycare = ref(props.data?.field_trgt_grp_daycare);
-      const themes = ref(props.data?.field_curriculum_themes);
-
-      if (daycare.value || themes.value) {
-        let dayCareLabels: any = [];
-        let themeLabels: any = [];
-
-        // Check if daycare array exists and is an array
-        if (Array.isArray(daycare.value)) {
-          // Loop through daycare array and grab the .label from each object
-          dayCareLabels = dayCareLabels.concat(
-            daycare.value.map((item) => item.label),
-          );
-        }
-
-        // Check if themes array exists and is an array
-        if (Array.isArray(themes.value)) {
-          // Loop through themes array and grab the .label from each object
-          themeLabels = themeLabels.concat(
-            themes.value.map((item) => item.label),
-          );
-        }
-
-        return {
-          audience: dayCareLabels,
-          label2: 'Læreplanstemaer',
-          subjectOrTheme: themeLabels,
-        };
-      }
-    } else if (props.data?.field_target_group.label === 'Ungdomsuddannelse') {
-      const youth = ref(props.data?.field_trgt_grp_youth_education);
-      const subject = ref(props.data?.field_youth_education_subject);
-
-      if (youth.value || subject.value) {
-        let youngLabels: any = [];
-        let subjectLabels: any = [];
-
-        // Check if youth array exists and is an array
-        if (Array.isArray(youth.value)) {
-          // Loop through youth array and grab the .label from each object
-          youngLabels = youngLabels.concat(
-            youth.value.map((item) => item.label),
-          );
-        }
-
-        // Check if subject array exists and is an array
-        if (Array.isArray(subject.value)) {
-          // Loop through subject array and grab the .label from each object
-          subjectLabels = subjectLabels.concat(
-            subject.value.map((item) => item.label),
-          );
-        }
-
-        return {
-          audience: youngLabels,
-          subjectOrTheme: subjectLabels,
-        };
-      }
-    }
-  } else if (
+  else if (
     props.data?.bundle === 'exercise' ||
     props.data?.bundle === 'course'
   ) {
@@ -140,28 +50,156 @@ const targetGroupFields = computed(() => {
       return {
         audience: props.data.field_trgt_grp_daycare,
         subjectOrTheme: props.data.field_curriculum_themes,
-        label: 'Læreplanstemaer',
       };
     } else if (props.data?.field_target_group === 'Grundskole') {
       return {
         audience: props.data.field_trgt_grp_primary_school,
         subjectOrTheme: props.data.field_primary_school_subject,
-        label: 'Fag',
       };
     } else if (props.data?.field_target_group === 'Ungdomsuddannelse') {
       return {
         audience: props.data.field_trgt_grp_youth_education,
         subjectOrTheme: props.data.field_youth_education_subject,
-        label: 'Fag',
       };
     }
   } else {
+    console.error('Unknown bundle:', props.data?.bundle);
+
     return null;
   }
 });
 
-const providerData = ref(
-  props.data?.provider || props.data?.corporation || null,
+const shortenClasses = (items) => {
+  if (!items) {
+    return null; // Return null if the input array is null or undefined.
+  }
+
+  // Initialize an empty array to store the final result.
+  let result = [];
+
+  // Initialize an empty array to temporarily store a sequence of classes or years.
+  let tempSequence = [];
+
+  // Function to check if a string matches the pattern of a class (e.g., "1. klasse").
+  const isClass = (str) => /^\d+\. klasse$/.test(str);
+
+  // Function to check if a string matches the pattern of a year (e.g., "1 år").
+  const isYear = (str) => /^\d+ år$/.test(str);
+
+  // Function to extract the numeric part from a class string (e.g., "1. klasse" -> 1).
+  const getClassNumber = (str) => parseInt(str.split('.')[0], 10);
+
+  // Function to extract the numeric part from a year string (e.g., "1 år" -> 1).
+  const getYearNumber = (str) => parseInt(str.split(' ')[0], 10);
+
+  // Iterate through each element in the input array.
+  for (let i = 0; i < items.length; i++) {
+    // If the current element matches the class pattern.
+    if (isClass(items[i])) {
+      // Add the current element to the temporary sequence array.
+      tempSequence.push(items[i]);
+
+      // Check if the current element is the last in the array,
+      // or the next element does not match the class pattern,
+      // or the next element is not the next consecutive class number.
+      if (
+        i + 1 === items.length ||
+        !isClass(items[i + 1]) ||
+        getClassNumber(items[i + 1]) !== getClassNumber(items[i]) + 1
+      ) {
+        // If the temporary sequence contains more than one class, create a shortened entry.
+        if (tempSequence.length > 1) {
+          result.push(
+            `${getClassNumber(tempSequence[0])}. - ${getClassNumber(tempSequence[tempSequence.length - 1])}. klasse`,
+          );
+        } else {
+          // If the temporary sequence contains only one class, add it as is.
+          result.push(tempSequence[0]);
+        }
+        // Reset the temporary sequence array for the next potential sequence.
+        tempSequence = [];
+      }
+      // If the current element matches the year pattern.
+    } else if (isYear(items[i])) {
+      // Add the current element to the temporary sequence array.
+      tempSequence.push(items[i]);
+
+      // Check if the current element is the last in the array,
+      // or the next element does not match the year pattern,
+      // or the next element is not the next consecutive year number.
+      if (
+        i + 1 === items.length ||
+        !isYear(items[i + 1]) ||
+        getYearNumber(items[i + 1]) !== getYearNumber(items[i]) + 1
+      ) {
+        // If the temporary sequence contains more than one year, create a shortened entry.
+        if (tempSequence.length > 1) {
+          result.push(
+            `${getYearNumber(tempSequence[0])} - ${getYearNumber(tempSequence[tempSequence.length - 1])} år`,
+          );
+        } else {
+          // If the temporary sequence contains only one year, add it as is.
+          result.push(tempSequence[0]);
+        }
+        // Reset the temporary sequence array for the next potential sequence.
+        tempSequence = [];
+      }
+    } else {
+      // If the current element does not match the class or year pattern, add it to the result array.
+      result.push(items[i]);
+    }
+  }
+
+  // Return the final processed result array.
+  return result;
+};
+
+const limitCharLengthAndConvertToString = (array, maxLength) => {
+  if (!array) {
+    return;
+  }
+
+  // so we also get full html from one of the content types, we need to catch it and clean it up
+  if (array.length === 1 && array[0].startsWith('<')) {
+    // remove full html from the string
+    array = array[0].replace(/(<([^>]+)>)/gi, '');
+
+    if (array.length > maxLength) {
+      array = array.slice(0, maxLength);
+      array += '...';
+
+      return array;
+    }
+
+    return array;
+  }
+
+  let str = array.join(', ');
+
+  if (str.length > maxLength) {
+    str = str.slice(0, maxLength);
+
+    // Check if the truncated string ends with a comma and remove it
+    if (str.endsWith(',')) {
+      str = str.slice(0, -1);
+    }
+    str += '...';
+  }
+
+  return str;
+};
+
+const allAudienceArr = ref(targetGroupFields.value?.audience || null);
+const shortenClassesAudienceArr = ref(shortenClasses(allAudienceArr.value));
+const processedAudienceString = ref(
+  limitCharLengthAndConvertToString(shortenClassesAudienceArr.value, 85),
+);
+
+const allSubjectOrThemeArr = ref(
+  targetGroupFields.value?.subjectOrTheme || null,
+);
+const processedSubjectOrThemeString = ref(
+  limitCharLengthAndConvertToString(allSubjectOrThemeArr.value, 85),
 );
 </script>
 
@@ -169,10 +207,7 @@ const providerData = ref(
   <NuxtLink class="card__link" :to="data?.link" aria-label="Link til kort">
     <div class="card">
       <div class="card__image" v-if="data?.field_image">
-        <BaseImage
-          v-if="data?.field_image"
-          :image="data?.field_image"
-        />
+        <BaseImage v-if="data?.field_image" :image="data?.field_image" />
         <div
           v-if="data?.bundle_label || data?.field_target_group"
           class="card__target-group"
@@ -210,43 +245,22 @@ const providerData = ref(
             </ClientOnly>
           </div>
 
-          <div class="card__icon" v-if="targetGroupFields?.audience.length > 0">
+          <div class="card__icon" v-if="processedAudienceString">
             <div class="card__icon-group">
               <NuxtIcon name="user" filled />
               <div class="card__icon-text">
-                {{
-                  targetGroupFields?.label1
-                    ? targetGroupFields?.label1
-                    : 'Målgruppe'
-                }}
+                {{ processedAudienceString }}
               </div>
             </div>
-            <ul>
-              <li
-                v-for="item in targetGroupFields?.audience"
-                :key="item"
-                v-html="item"
-              ></li>
-            </ul>
           </div>
 
-          <div
-            class="card__icon"
-            v-if="targetGroupFields?.subjectOrTheme?.length > 0"
-          >
+          <div class="card__icon" v-if="processedSubjectOrThemeString">
             <div class="card__icon-group">
               <NuxtIcon name="info" filled />
               <div class="card__icon-text">
-                {{
-                  targetGroupFields?.label2 ? targetGroupFields?.label2 : 'Fag'
-                }}
+                {{ processedSubjectOrThemeString }}
               </div>
             </div>
-            <ul>
-              <li v-for="item in targetGroupFields?.subjectOrTheme" :key="item">
-                {{ item }}
-              </li>
-            </ul>
           </div>
         </div>
 
@@ -272,7 +286,7 @@ const providerData = ref(
 <style lang="postcss" scoped>
 .card {
   display: grid @(--sm) flex;
-  color: var(--color-text);
+  color: var(--theme-color);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
   height: 100%;
@@ -345,10 +359,6 @@ const providerData = ref(
       font-weight: 400;
       font-size: 14px;
       line-height: 22px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
     }
   }
 
@@ -358,22 +368,20 @@ const providerData = ref(
 
   &__icon {
     padding-top: 8px;
-
     font-size: 20px;
-    align-items: center;
 
     &:first-child {
       margin-bottom: 8px;
     }
 
     .nuxt-icon {
-      align-items: center;
+      padding-top: 2px;
       display: flex;
     }
   }
 
   &__icon-text {
-    color: var(--color-text);
+    color: var(--theme-color);
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -381,7 +389,7 @@ const providerData = ref(
   }
 
   &__icon-text--provider {
-    color: var(--color-text);
+    color: var(--theme-color);
     border-bottom: 1px solid transparent;
     transition: all 0.3s ease-in-out;
 
