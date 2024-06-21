@@ -10,7 +10,7 @@ const providerData = ref(
   props.data?.provider || props.data?.corporation || null,
 );
 
-// The shit show begins.
+// The shit show begins. Since each content type, has diff fields, this is the handler to filter them out
 const targetGroupFields = computed(() => {
   // IF NEWS CT
   if (props.data?.bundle === 'news' && props.data.field_audience) {
@@ -69,37 +69,43 @@ const targetGroupFields = computed(() => {
   }
 });
 
-const shortenClasses = (classes) => {
-  if (!classes) {
-    return null;
+const shortenClasses = (items) => {
+  if (!items) {
+    return null; // Return null if the input array is null or undefined.
   }
 
   // Initialize an empty array to store the final result.
   let result = [];
 
-  // Initialize an empty array to temporarily store a sequence of classes.
+  // Initialize an empty array to temporarily store a sequence of classes or years.
   let tempSequence = [];
 
   // Function to check if a string matches the pattern of a class (e.g., "1. klasse").
   const isClass = (str) => /^\d+\. klasse$/.test(str);
 
+  // Function to check if a string matches the pattern of a year (e.g., "1 år").
+  const isYear = (str) => /^\d+ år$/.test(str);
+
   // Function to extract the numeric part from a class string (e.g., "1. klasse" -> 1).
   const getClassNumber = (str) => parseInt(str.split('.')[0], 10);
 
+  // Function to extract the numeric part from a year string (e.g., "1 år" -> 1).
+  const getYearNumber = (str) => parseInt(str.split(' ')[0], 10);
+
   // Iterate through each element in the input array.
-  for (let i = 0; i < classes.length; i++) {
+  for (let i = 0; i < items.length; i++) {
     // If the current element matches the class pattern.
-    if (isClass(classes[i])) {
+    if (isClass(items[i])) {
       // Add the current element to the temporary sequence array.
-      tempSequence.push(classes[i]);
+      tempSequence.push(items[i]);
 
       // Check if the current element is the last in the array,
       // or the next element does not match the class pattern,
       // or the next element is not the next consecutive class number.
       if (
-        i + 1 === classes.length ||
-        !isClass(classes[i + 1]) ||
-        getClassNumber(classes[i + 1]) !== getClassNumber(classes[i]) + 1
+        i + 1 === items.length ||
+        !isClass(items[i + 1]) ||
+        getClassNumber(items[i + 1]) !== getClassNumber(items[i]) + 1
       ) {
         // If the temporary sequence contains more than one class, create a shortened entry.
         if (tempSequence.length > 1) {
@@ -113,15 +119,41 @@ const shortenClasses = (classes) => {
         // Reset the temporary sequence array for the next potential sequence.
         tempSequence = [];
       }
+      // If the current element matches the year pattern.
+    } else if (isYear(items[i])) {
+      // Add the current element to the temporary sequence array.
+      tempSequence.push(items[i]);
+
+      // Check if the current element is the last in the array,
+      // or the next element does not match the year pattern,
+      // or the next element is not the next consecutive year number.
+      if (
+        i + 1 === items.length ||
+        !isYear(items[i + 1]) ||
+        getYearNumber(items[i + 1]) !== getYearNumber(items[i]) + 1
+      ) {
+        // If the temporary sequence contains more than one year, create a shortened entry.
+        if (tempSequence.length > 1) {
+          result.push(
+            `${getYearNumber(tempSequence[0])} - ${getYearNumber(tempSequence[tempSequence.length - 1])} år`,
+          );
+        } else {
+          // If the temporary sequence contains only one year, add it as is.
+          result.push(tempSequence[0]);
+        }
+        // Reset the temporary sequence array for the next potential sequence.
+        tempSequence = [];
+      }
     } else {
-      // If the current element does not match the class pattern, add it to the result array.
-      result.push(classes[i]);
+      // If the current element does not match the class or year pattern, add it to the result array.
+      result.push(items[i]);
     }
   }
 
   // Return the final processed result array.
   return result;
 };
+
 const limitCharLengthAndConvertToString = (array, maxLength) => {
   if (!array) {
     return;
