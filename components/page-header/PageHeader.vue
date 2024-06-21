@@ -41,7 +41,7 @@ const props = defineProps({
       <div class="page-header__image-wrapper">
         <div class="page-header__image-container">
           <BaseImage
-            v-if="pageBlockHeaderData?.field_background_image"
+            v-if="pageBlockHeaderData?.field_background_image.length > 0"
             :image="pageBlockHeaderData?.field_background_image"
             class="page-header__image"
           />
