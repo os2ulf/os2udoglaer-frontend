@@ -38,8 +38,22 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: props.data?.provider ? 'Udbyder' : props.data?.corporation ? 'Virksomhed' : '',
-          content: props.data?.provider ? '<a href="' + props.data?.provider?.link + '">' + props.data?.provider?.field_name + '</a>' : props.data?.corporation ? '<a href="' + props.data?.corporation?.link + '">' + props.data?.corporation?.field_name + '</a>' : '',
+          type: 'content_author',
+          title: props.data?.provider
+            ? 'Udbyder'
+            : props.data?.corporation
+              ? 'Virksomhed'
+              : '',
+          content: props.data?.provider
+            ? props.data?.provider?.link
+            : props.data?.corporation
+              ? props.data?.corporation?.link
+              : '',
+          author_name: props.data?.provider
+            ? props.data?.provider?.field_name
+            : props.data?.corporation
+              ? props.data?.corporation?.field_name
+              : '',
         },
       ],
     },
@@ -124,22 +138,30 @@ const practicalInfoData = computed(() => {
               <h1 class="exercise__page-title">{{ data?.label }}</h1>
               <div class="exercise__page-heading-button-container">
                 <BaseButton
-                  v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+                  v-if="
+                    (data?.provider && data?.provider.link) ||
+                    (data?.corporation && data?.corporation.link)
+                  "
                   class="button button--secondary--ghost"
                   :button-data="{
-                    title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                    url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                    target: '_blank'
+                    title: props.data?.provider
+                      ? 'Kontakt udbyder'
+                      : props.data?.corporation
+                        ? 'Kontakt virksomhed'
+                        : '',
+                    url: props.data?.provider
+                      ? data.provider.link
+                      : props.data?.corporation
+                        ? data.corporation.link
+                        : '',
+                    target: '_blank',
                   }"
                 />
               </div>
             </div>
 
             <div class="exercise__banner-image">
-              <BaseImage
-                v-if="data.field_image"
-                :image="data.field_image"
-              />
+              <BaseImage v-if="data.field_image" :image="data.field_image" />
             </div>
           </div>
         </div>
@@ -194,12 +216,23 @@ const practicalInfoData = computed(() => {
           <PracticalInformation :data="practicalInfoData" />
           <div class="exercise__practical-buttons">
             <BaseButton
-              v-if="data?.provider && data?.provider.link || data?.corporation && data?.corporation.link"
+              v-if="
+                (data?.provider && data?.provider.link) ||
+                (data?.corporation && data?.corporation.link)
+              "
               class="button button--ghost exercise__contact-button"
               :button-data="{
-                title: props.data?.provider ? 'Kontakt udbyder' : props.data?.corporation ? 'Kontakt virksomhed' : '',
-                url: props.data?.provider ? data.provider.link : props.data?.corporation ? data.corporation.link : '',
-                target: '_blank'
+                title: props.data?.provider
+                  ? 'Kontakt udbyder'
+                  : props.data?.corporation
+                    ? 'Kontakt virksomhed'
+                    : '',
+                url: props.data?.provider
+                  ? data.provider.link
+                  : props.data?.corporation
+                    ? data.corporation.link
+                    : '',
+                target: '_blank',
               }"
             />
           </div>

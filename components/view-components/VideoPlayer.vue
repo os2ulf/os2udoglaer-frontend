@@ -84,6 +84,8 @@ const handleVideo = (videoItem: any) => {
     height: 100%;
     object-fit: cover;
     cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
 
     &:hover {
       opacity: 0.8;
