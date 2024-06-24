@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { scrollTo } from '~/utils/scrollTo';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -19,7 +21,6 @@ const props = defineProps({
       class="practical-information__user-provider-logo"
       v-if="userProfilePage?.logo?.src"
     >
-      <!-- TODO: Switchout once images are transformed BE -->
       <img
         :src="props.userProfilePage?.logo?.src"
         :alt="userProfilePage.logo?.alt"
@@ -94,10 +95,27 @@ const props = defineProps({
                   : props.userProfilePage.roles?.includes('course_provider')
                     ? 'Kontakt udbyder'
                     : '',
-                url: '#contact__section',
               }"
+              @click="scrollTo('contact__section')"
               class="button button--secondary button--secondary--ghost"
             />
+          </div>
+        </div>
+
+        <div v-else-if="item.type === 'content_author'">
+          <div class="practical-information__item-container">
+            <div class="practical-information__item-heading">
+              {{ item?.title }}
+            </div>
+
+            <div class="practical-information__item-value">
+              <NuxtLink
+                class="practical-information__item-value--author-link"
+                :aria-label="`Link til ${item?.author_name}`"
+                :to="item?.content"
+                >{{ item?.author_name }}</NuxtLink
+              >
+            </div>
           </div>
         </div>
 
@@ -238,6 +256,19 @@ const props = defineProps({
       &:hover {
         opacity: 0.8;
         border-bottom: 1px solid var(--color-primary);
+      }
+    }
+
+    &--author-link {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 400;
+      border-bottom: 1px solid var(--color-primary);
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
       }
     }
 

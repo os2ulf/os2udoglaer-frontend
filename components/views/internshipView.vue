@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
+import { scrollTo } from '~/utils/scrollTo';
 
 const props = defineProps({
   data: {
@@ -53,23 +54,21 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
+          type: 'content_author',
           title: props.data?.provider
             ? 'Udbyder'
             : props.data?.corporation
               ? 'Virksomhed'
               : '',
           content: props.data?.provider
-            ? '<a href="' +
-              props.data?.provider?.link +
-              '">' +
-              props.data?.provider?.field_name +
-              '</a>'
+            ? props.data?.provider?.link
             : props.data?.corporation
-              ? '<a href="' +
-                props.data?.corporation?.link +
-                '">' +
-                props.data?.corporation?.field_name +
-                '</a>'
+              ? props.data?.corporation?.link
+              : '',
+          author_name: props.data?.provider
+            ? props.data?.provider?.field_name
+            : props.data?.corporation
+              ? props.data?.corporation?.field_name
               : '',
         },
       ],
@@ -91,8 +90,12 @@ const practicalInfoData = computed(() => {
             props.data?.field_view_on_map == 'show_vendor_address' &&
             props.data?.field_view_on_map == 'show_vendor_address' &&
             props.data?.provider
-              ? props.data?.provider.field_location_zipcode + ' ' + props.data?.provider.field_location_city
-              : props.data?.field_location_zipcode + ' ' + props.data?.field_location_city,
+              ? props.data?.provider.field_location_zipcode +
+                ' ' +
+                props.data?.provider.field_location_city
+              : props.data?.field_location_zipcode +
+                ' ' +
+                props.data?.field_location_city,
           ],
           description: props.data?.field_location_description
             ? props.data?.field_location_description
@@ -186,8 +189,8 @@ console.log('internshipView.vue', props.data);
                   icon-after="arrow-right"
                   :button-data="{
                     title: 'Ansøgning',
-                    url: '#course-registration',
                   }"
+                  @click="scrollTo('course-registration')"
                   class="button button--secondary"
                 />
                 <BaseButton
@@ -263,8 +266,8 @@ console.log('internshipView.vue', props.data);
               icon-after="arrow-right"
               :button-data="{
                 title: 'Ansøgning',
-                url: '#course-registration',
               }"
+              @click="scrollTo('course-registration')"
               class="button button--secondary"
             />
             <BaseButton

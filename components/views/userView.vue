@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { scrollTo } from '~/utils/scrollTo';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -13,27 +15,10 @@ useHead({
     props.data?.field_name,
 });
 
+console.log('userView.vue', props.data);
+
 const practicalInfoData = computed(() => {
   return [
-    {
-      group: [
-        {
-          title: props.data.roles?.includes('corporation')
-            ? 'Virksomhed'
-            : props.data.roles?.includes('course_provider')
-              ? 'Udbyder'
-              : '',
-          content: props.data?.link
-            ? '<a href="' +
-              props.data?.link +
-              '">' +
-              props.data?.field_name +
-              '</a>'
-            : '',
-        },
-      ],
-    },
-
     {
       group: [
         {
@@ -69,8 +54,8 @@ const practicalInfoData = computed(() => {
                       : props.data.roles?.includes('course_provider')
                         ? 'Kontakt udbyder'
                         : '',
-                    url: '#contact__section',
                   }"
+                  @click="scrollTo('contact__section')"
                   class="button button--secondary--ghost"
                 />
               </div>

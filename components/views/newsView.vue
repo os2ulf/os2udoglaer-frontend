@@ -38,23 +38,21 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
+          type: 'content_author',
           title: props.data?.provider
             ? 'Udbyder'
             : props.data?.corporation
               ? 'Virksomhed'
               : '',
           content: props.data?.provider
-            ? '<a href="' +
-              props.data?.provider?.link +
-              '">' +
-              props.data?.provider?.field_name +
-              '</a>'
+            ? props.data?.provider?.link
             : props.data?.corporation
-              ? '<a href="' +
-                props.data?.corporation?.link +
-                '">' +
-                props.data?.corporation?.field_name +
-                '</a>'
+              ? props.data?.corporation?.link
+              : '',
+          author_name: props.data?.provider
+            ? props.data?.provider?.field_name
+            : props.data?.corporation
+              ? props.data?.corporation?.field_name
               : '',
         },
         {
