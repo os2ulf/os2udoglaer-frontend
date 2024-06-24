@@ -174,6 +174,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
   }
 
   &__card-compact-item {
+    height: 100%;
     color: var(--theme-inline-navigation-color);
     background-color: var(--color-white);
     display: flex;
