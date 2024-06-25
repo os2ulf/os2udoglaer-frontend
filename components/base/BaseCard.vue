@@ -285,7 +285,8 @@ const processedSubjectOrThemeString = ref(
 
 <style lang="postcss" scoped>
 .card {
-  display: grid @(--sm) flex;
+  display: flex;
+  flex-flow: column @(--sm) row;
   color: var(--theme-color);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
@@ -314,6 +315,12 @@ const processedSubjectOrThemeString = ref(
   &__image {
     width: 100% @(--sm) 50%;
     position: relative;
+
+    :deep(figure),
+    :deep(picture),
+    :deep(img) {
+      height: 100%;
+    }
 
     img {
       width: 100%;
