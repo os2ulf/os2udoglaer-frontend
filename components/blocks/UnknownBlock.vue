@@ -13,6 +13,8 @@ import { pascalCase } from '~/utils/pascalCase';
 const props = defineProps({
   blockData: Object,
 });
+
+console.log('UnknownBlock data', props.blockData);
 </script>
 
 <style lang="postcss" scoped>

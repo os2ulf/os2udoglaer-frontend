@@ -15,9 +15,6 @@ const hasChildren = computed(() => {
     return true;
   }
 });
-
-const config = useRuntimeConfig().public;
-console.log('Nav Header Item', props.node);
 </script>
 
 <template>
