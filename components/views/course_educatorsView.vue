@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+
+const modules = [Navigation, Scrollbar, A11y, Autoplay];
+const breakpoints = {
+  768: {
+    slidesPerView: 1,
+  },
+  992: {
+    slidesPerView: 2,
+  },
+};
 
 const props = defineProps({
   data: {
@@ -410,11 +422,27 @@ console.log('course_educatorsView.vue', props.data);
 
         <!-- Section related articles -->
         <div
+          v-if="props.data.field_related_courses.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 educators__section-related-articles"
         >
           <div class="educators__related-articles">
             <h3>Relaterede forløb</h3>
-            <div>article cards</div>
+            <ClientOnly>
+              <Swiper
+                :modules="modules"
+                :breakpoints="breakpoints"
+                :space-between="24"
+                navigation
+                :scrollbar="{ draggable: true }"
+              >
+                <SwiperSlide
+                  v-for="item in data.field_related_courses"
+                  :key="item.id"
+                >
+                  <BaseCard :data="item" />
+                </SwiperSlide>
+              </Swiper>
+            </ClientOnly>
           </div>
         </div>
       </div>
@@ -507,6 +535,31 @@ console.log('course_educatorsView.vue', props.data);
   &__section-related-articles {
     padding-top: 24px @(--md) 48px;
     padding-bottom: 48px @(--md) 96px;
+  }
+
+  &__related-articles {
+    h3 {
+      margin-bottom: 0;
+      padding-right: 120px;
+    }
+
+    :deep(.swiper) {
+      padding-top: 24px @(--sm) 44px;
+      padding-bottom: 44px @(--sm) 70px;
+      overflow: clip;
+      overflow-y: visible;
+    }
+
+    :deep(.swiper-button-next),
+    :deep(.swiper-button-prev) {
+      top: -32px @(--sm) -36px;
+      margin-bottom: 0;
+    }
+
+    :deep(.swiper-horizontal > .swiper-scrollbar) {
+      width: 100%;
+      max-width: 100%;
+    }
   }
 }
 </style>
