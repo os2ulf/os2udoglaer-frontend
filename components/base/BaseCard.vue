@@ -381,10 +381,6 @@ const processedSubjectOrThemeString = ref(
     padding-top: 8px;
     font-size: 20px;
 
-    &:first-child {
-      margin-bottom: 8px;
-    }
-
     .nuxt-icon {
       padding-top: 2px;
       display: flex;
