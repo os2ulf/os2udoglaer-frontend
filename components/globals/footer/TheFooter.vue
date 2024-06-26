@@ -407,10 +407,6 @@ const footerData = ref(filterFooterData[0]);
       width: 70px @(--xs) 99px @(--sm) 140px;
       opacity: 1;
       transition: all 0.3s ease-in-out;
-
-      border: 2px solid var(--color-primary-lighten-4);
-      border-radius: 50%;
-      box-shadow: 0px 4px 10px 15px rgba(var(--color-primary-rgb), 0.1);
     }
 
     &:hover {
