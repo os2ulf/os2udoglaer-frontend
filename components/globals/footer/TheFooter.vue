@@ -205,13 +205,13 @@ const footerData = ref(filterFooterData[0]);
         <div class="col-xs-12 col-sm-12 col-md-12 footer__section">
           <div class="footer__privacy">
             <div class="footer__privacy-buttons">
-              <button
+              <!-- <button
                 aria-label="Cookiepolitik"
                 class="footer__privacy-button-item"
                 @click="handleUpdateCookieConsent"
               >
                 Cookiepolitik
-              </button>
+              </button> -->
               <NuxtLink
                 class="footer__privacy-button-item"
                 v-for="item in footerData.field_privacy_terms"
