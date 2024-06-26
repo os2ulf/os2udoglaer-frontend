@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { stripHtmlFromString } from '~/utils/stripHtml';
+
 const props = defineProps({
   data: {
     type: Object,
@@ -226,7 +228,9 @@ const processedSubjectOrThemeString = ref(
           <h4>{{ data?.label }}</h4>
         </div>
 
-        <div v-if="data?.body" class="card__text" v-html="data?.body"></div>
+        <div v-if="data?.body" class="card__text">
+          {{ stripHtmlFromString(data?.body) }}
+        </div>
         <div class="card__icons" v-if="targetGroupFields || providerData">
           <div class="card__icon" v-if="providerData">
             <ClientOnly>
