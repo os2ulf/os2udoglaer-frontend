@@ -12,6 +12,8 @@ export const filterGroups = (data: any[]) => {
       group: group.group.filter((item: any) => {
         if (item.type === 'sustainability_goals') {
           return isValidContent(item.content);
+        } else if (item.type === 'price') {
+          return isValidContent(item.content || item.free);
         }
         return isValidContent(item.content) || isValidContent(item.description);
       }),
