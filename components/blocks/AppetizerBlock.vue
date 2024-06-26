@@ -106,6 +106,7 @@ const props = defineProps({
 
   &__image {
     position: relative;
+    margin-left: calc(var(--grid-gutter-half) * -1);
     margin-right: calc(var(--grid-gutter-half) * -1);
     overflow: hidden;
 
