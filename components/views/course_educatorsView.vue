@@ -302,6 +302,7 @@ console.log('course_educatorsView.vue', props.data);
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.body">
+            <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
           </div>
           <div
