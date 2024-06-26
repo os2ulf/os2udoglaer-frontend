@@ -193,6 +193,10 @@ const practicalInfoData = computed(() => {
             : '',
         },
         {
+          title: 'Forplejning',
+          content: props.data?.field_food_service,
+        },
+        {
           title: 'Faciliteter',
           content: props.data?.field_faciliteter,
           description: props.data?.field_facilities_description,
@@ -304,13 +308,6 @@ console.log('course_educatorsView.vue', props.data);
           <div v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
-          <div
-            v-if="data?.field_food_service"
-            class="educators__paragraph-item"
-          >
-            <h4>Forplejning</h4>
-            <BaseRte :content="data?.field_food_service" />
           </div>
         </div>
         <div
