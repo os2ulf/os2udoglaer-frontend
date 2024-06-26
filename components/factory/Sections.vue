@@ -45,7 +45,6 @@ const assignMdCollumnsHandler = (
     <div
       v-for="section in sections"
       :key="section.id"
-      class="dark"
       :class="[
         'section',
         section.layout_id,
@@ -109,6 +108,8 @@ const assignMdCollumnsHandler = (
   padding-bottom: var(--section-spacing-mobile);
   background-color: var(--theme-background-color);
   transition: background-color 0.3s ease-in-out;
+  overflow-y: visible;
+  overflow-x: clip;
 
   @media (--viewport-md-min) {
     padding-top: var(--section-spacing);

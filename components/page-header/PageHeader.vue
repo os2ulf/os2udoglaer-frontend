@@ -93,6 +93,7 @@ const props = defineProps({
 
   &__container {
     background-color: var(--color-primary);
+    transition: background-color 0.3s ease-in-out;
   }
 
   &__content-wrapper {
@@ -128,7 +129,7 @@ const props = defineProps({
 
     :deep(picture),
     :deep(img) {
-      height: 100%;
+      height: 100% !important;
     }
   }
 

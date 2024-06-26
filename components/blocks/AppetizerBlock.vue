@@ -19,20 +19,18 @@ const props = defineProps({
         : '',
     ]"
   >
-    <div :class="props.sectionWidth == 'section--width-full' ? 'container' : ''">
-      <div
-        v-if="blockData?.field_appetizer_image"
-        class="appetizer__image"
-      >
-        <BaseImage
-          :image="blockData.field_appetizer_image"
-        />
+    <div
+      :class="props.sectionWidth == 'section--width-full' ? 'container' : ''"
+    >
+      <div v-if="blockData?.field_appetizer_image" class="appetizer__image">
+        <BaseImage :image="blockData.field_appetizer_image" />
       </div>
       <div class="row">
         <div
           class="col-xs-12 col-md-6 col-lg-5"
           :class="[
-            blockData.field_appetizer_orientation === 'left' ? 'col-md-offset-6 col-lg-offset-7'
+            blockData.field_appetizer_orientation === 'left'
+              ? 'col-md-offset-6 col-lg-offset-7'
               : '',
           ]"
         >
@@ -115,7 +113,8 @@ const props = defineProps({
     :deep(figure),
     :deep(picture),
     :deep(img) {
-    height: 100%;}
+      height: 100%;
+    }
 
     @media (--viewport-md-min) {
       position: absolute;
@@ -142,7 +141,6 @@ const props = defineProps({
         right: 0;
       }
     }
-
   }
 
   &--content-center {
