@@ -29,4 +29,8 @@
 
   /* Inline Navigation */
   --theme-inline-navigation-color: var(--color-text);
+
+  /* Swiper */
+  --theme-swiper-primary-color: var(--color-primary);
+  --theme-swiper-secondary-color: var(--color-primary-lighten-4);
 }

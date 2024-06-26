@@ -27,4 +27,8 @@
 
   /* Inline Navigation */
   --theme-inline-navigation-color: var(--color-tertiary);
+
+  /* Swiper */
+  --theme-swiper-primary-color: var(--color-tertiary);
+  --theme-swiper-secondary-color: var(--color-tertiary-lighten-3);
 }

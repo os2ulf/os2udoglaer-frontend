@@ -4,17 +4,23 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
+  0: {
+    slidesPerView: 1.2,
+  },
+  480: {
+    slidesPerView: 1.4,
+  },
   768: {
-    slidesPerView: 1,
+    slidesPerView: 2.2,
   },
   992: {
-    slidesPerView: 2.6,
+    slidesPerView: 2.4,
   },
   1200: {
-    slidesPerView: 3.6,
+    slidesPerView: 3,
   },
   1400: {
-    slidesPerView: 4.3,
+    slidesPerView: 4,
   },
 };
 
@@ -31,36 +37,19 @@ const newsData = ref(props.blockData?.results);
     class="latest-news"
     v-if="newsData.length > 0"
     :class="
-      sectionWidth === 'section--width-full' && newsData.length > 4
+      sectionWidth === 'section--width-full'
         ? 'container'
         : ''
     "
   >
     <div
       :class="
-        props.sectionWidth === 'section--width-full' && newsData.length > 4
+        props.sectionWidth === 'section--width-full'
           ? 'latest-news--width-full'
           : ''
       "
     >
-      <!-- Normal view -->
-      <div v-if="newsData.length <= 4" class="latest-news__normal">
-        <h2 class="latest-news__title">Seneste nyheder</h2>
-        <div class="row">
-          <div
-            class="col-xs-12 col-sm-6 col-md-4 col-lg-3 latest-news__card"
-            v-for="i in newsData"
-            :key="i"
-          >
-            <div class="latest-news__card-item">
-              <NewsCard :data="i" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Carousel view -->
-      <div v-else class="latest-news__carousel">
+      <div class="latest-news__carousel">
         <h2 class="latest-news__title">Seneste nyheder</h2>
         <ClientOnly>
           <Swiper
@@ -68,8 +57,11 @@ const newsData = ref(props.blockData?.results);
             :breakpoints="breakpoints"
             :space-between="24"
             navigation
-            :scrollbar="{ draggable: true }"
+            :scrollbar="{
+              draggable: false,
+            }"
             class="latest-news__swiper"
+            :class="newsData.length < 5 ? 'swiper-no-pagination' : ''"
           >
             <SwiperSlide
               v-for="i in newsData"
@@ -98,8 +90,11 @@ const newsData = ref(props.blockData?.results);
   &--width-full {
     @media (--viewport-md-min) {
       position: relative;
-      overflow: hidden;
       margin-right: calc(var(--grid-gutter-half) * -1);
+    }
+
+    :deep(.swiper) {
+      overflow: visible;
     }
   }
 
@@ -126,7 +121,13 @@ const newsData = ref(props.blockData?.results);
 
   /* Filthy Swiper styling for this component */
   &__swiper {
-    padding: 0 0 80px @(--sm) 0 0 140px;
+    padding: 0 0 80px @(--md) 0 0 140px;
+
+    &.swiper-no-pagination {
+      @media (--viewport-xl-min) {
+        padding: 0;
+      }
+    }
   }
 
   &__item-content {
@@ -134,22 +135,40 @@ const newsData = ref(props.blockData?.results);
   }
 
   :deep(.swiper-scrollbar-drag) {
-    background: var(--color-primary);
+    background: var(--theme-swiper-primary-color);
   }
 
   :deep(
       .swiper-horizontal > .swiper-scrollbar,
       .swiper-scrollbar.swiper-scrollbar-horizontal
     ) {
-    background-color: var(--color-primary-lighten-4);
+    background-color: var(--theme-swiper-secondary-color);
   }
 
-  :deep(.swiper-button-next:after) {
-    color: var(--theme-color);
+  :deep(.swiper-button-next) {
+    border-color: var(--theme-swiper-secondary-color);
+    transition: border-color .3s ease;
+
+    &:hover {
+      border-color: var(--theme-swiper-primary-color);
+    }
+
+    &:after {
+      color: var(--theme-swiper-primary-color);
+    }
   }
 
-  :deep(.swiper-button-prev:after) {
-    color: var(--theme-color);
+  :deep(.swiper-button-prev) {
+    border-color: var(--theme-swiper-secondary-color);
+    transition: border-color .3s ease;
+
+    &:hover {
+      border-color: var(--theme-swiper-primary-color);
+    }
+
+    &:after {
+      color: var(--theme-swiper-primary-color);
+    }
   }
 
   :deep(.swiper-horizontal > .swiper-scrollbar) {
