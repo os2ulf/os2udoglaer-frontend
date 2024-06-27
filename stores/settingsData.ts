@@ -14,8 +14,13 @@ export const useSettingsDataStore = defineStore('settingsData', () => {
         useRegion('settings'),
       );
       settingsData.value = data.value.settings;
+      return data;
     }
     loading.value = false;
+  };
+
+  const setSettingsData = (value: Object) => {
+    settingsData.value = value;
   };
 
   const setIsHeaderFixed = (value: boolean) => {
@@ -25,6 +30,7 @@ export const useSettingsDataStore = defineStore('settingsData', () => {
   return {
     settingsData,
     getSettingsData,
+    setSettingsData,
     loading,
     isHeaderFixed,
     setIsHeaderFixed,
