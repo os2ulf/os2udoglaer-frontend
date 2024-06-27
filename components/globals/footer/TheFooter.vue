@@ -424,8 +424,9 @@ const footerData = ref(filterFooterData[0]);
 
   &__privacy {
     padding-top: 48px @(--md) 96px;
-    display: grid @(--md) flex;
-    align-items: center;
+    display: flex;
+    flex-flow: column @(--md) row wrap;
+    align-items: left @(--md) center;
     justify-content: space-between;
     flex-wrap: wrap;
   }
