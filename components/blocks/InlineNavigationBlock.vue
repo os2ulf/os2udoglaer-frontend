@@ -111,12 +111,13 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
 
   &__card-link {
     text-decoration: none;
-    color: var(--theme-color);
+    color: var(--color-text);
   }
 
   &__card-item {
     height: 100%;
     padding: 32px;
+    background-color: var(--color-white);
     border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);

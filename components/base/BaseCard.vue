@@ -291,7 +291,8 @@ const processedSubjectOrThemeString = ref(
 .card {
   display: flex;
   flex-flow: column @(--sm) row;
-  color: var(--theme-color);
+  background: var(--color-white);
+  color: var(--color-text);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
   height: 100%;
@@ -388,7 +389,7 @@ const processedSubjectOrThemeString = ref(
   }
 
   &__icon-text {
-    color: var(--theme-color);
+    color: var(--color-text);
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -396,13 +397,13 @@ const processedSubjectOrThemeString = ref(
   }
 
   &__icon-text--provider {
-    color: var(--theme-color);
+    color: var(--color-text);
     border-bottom: 1px solid transparent;
     transition: all 0.3s ease-in-out;
 
     &:hover {
-      color: var(--color-primary);
-      border-bottom: 1px solid var(--color-primary);
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-text);
     }
   }
 

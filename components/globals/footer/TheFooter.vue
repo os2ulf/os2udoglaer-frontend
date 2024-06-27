@@ -248,8 +248,11 @@ const footerData = ref(filterFooterData[0]);
   padding: 72px 0 @(--sm) 96px 0;
   transition: background-color 0.3s ease-in-out;
   position: relative;
+  overflow: hidden;
 
   &__section {
+    display: flex;
+    flex-flow: column;
     z-index: 1;
   }
 
@@ -263,13 +266,16 @@ const footerData = ref(filterFooterData[0]);
   &__contact-info {
     padding-top: 20px;
     font-weight: 400;
-    font-size: 16px;
     line-height: 24px;
     color: var(--theme-footer-text-color);
 
-    :deep(p):last-child {
-      padding-bottom: 0;
-      margin-bottom: 0;
+    :deep(p) {
+      font-size: 16px @(--md) 14px @(--lg) 16px;
+
+      &:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -280,6 +286,7 @@ const footerData = ref(filterFooterData[0]);
   &__contact-button {
     color: var(--theme-footer-text-color);
     border-bottom: 2px solid var(--theme-footer-text-color);
+    font-size: 16px @(--md) 14px @(--lg) 16px;
 
     &:hover {
       border-bottom: 2px solid var(--theme-button-ghost-text-color-hover);
@@ -359,8 +366,8 @@ const footerData = ref(filterFooterData[0]);
     color: var(--theme-footer-text-color);
     cursor: pointer;
     font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: 16px @(--md) 14px @(--lg) 16px;
+    line-height: 1.5;
     width: fit-content;
     transition: color 0.3s ease-in-out;
 
@@ -389,17 +396,13 @@ const footerData = ref(filterFooterData[0]);
 
   &__big-icons-container {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     flex-flow: wrap;
     padding-top: 48px @(--md) 0;
     justify-content: left @(--md) flex-end;
     gap: 16px @(--sm) 36px;
-    height: 100%;
     width: 100%;
-
-    /* this is to 'fix' the scrolling issue if there are more than 3 big logos,
-    however in the ACs it states it should only be up to 3 icons, so this is just in case. */
-    /* overflow: scroll @(--md) visible; */
+    margin-top: auto;
   }
 
   &__big-icon-item {
@@ -428,9 +431,9 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__privacy-buttons {
-    display: grid @(--md) flex;
+    display: flex;
     gap: 24px @(--md) 40px;
-    flex-wrap: wrap;
+    flex-flow: column @(--md) row wrap;
   }
 
   &__privacy-button-item {
@@ -441,8 +444,8 @@ const footerData = ref(filterFooterData[0]);
     color: var(--theme-footer-text-color);
     cursor: pointer;
     font-weight: 700;
-    font-size: 16px;
-    line-height: 20px;
+    font-size: 16px @(--md) 14px @(--lg) 16px;
+    line-height: 1.25;
     text-align: left;
     transition: color 0.3s ease-in-out;
 
