@@ -291,7 +291,8 @@ const processedSubjectOrThemeString = ref(
 .card {
   display: flex;
   flex-flow: column @(--sm) row;
-  color: var(--theme-color);
+  background: var(--color-white);
+  color: var(--color-text);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
   height: 100%;
@@ -360,17 +361,16 @@ const processedSubjectOrThemeString = ref(
   }
 
   &__content {
-    display: block;
+    display: flex;
+    flex-flow: column;
     width: 100% @(--sm) 50%;
     padding: 24px @(--sm) 32px;
   }
 
   &__text {
-    :deep(p) {
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 22px;
-    }
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   &__icon-group {
@@ -388,28 +388,29 @@ const processedSubjectOrThemeString = ref(
   }
 
   &__icon-text {
-    color: var(--theme-color);
-    font-size: 16px;
-    line-height: 24px;
+    color: var(--color-text);
+    font-size: 14px;
+    line-height: 20px;
     font-weight: 400;
     margin-left: 8px;
+    padding-top: 2px;
   }
 
   &__icon-text--provider {
-    color: var(--theme-color);
+    color: var(--color-text);
     border-bottom: 1px solid transparent;
     transition: all 0.3s ease-in-out;
 
     &:hover {
-      color: var(--color-primary);
-      border-bottom: 1px solid var(--color-primary);
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-text);
     }
   }
 
   &__footer {
     display: flex;
     gap: 4px;
-    align-items: end;
+    margin-top: auto;
     padding-top: 24px;
     flex-wrap: wrap;
   }
