@@ -6,4 +6,5 @@
   </div>
   <TheFooterParent />
   <TheModal />
+  <SiteTracking />
 </template>
