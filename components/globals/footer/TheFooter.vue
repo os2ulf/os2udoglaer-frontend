@@ -390,6 +390,7 @@ const footerData = ref(filterFooterData[0]);
   &__big-icons-container {
     display: flex;
     align-items: flex-end;
+    flex-flow: wrap;
     padding-top: 48px @(--md) 0;
     justify-content: left @(--md) flex-end;
     gap: 16px @(--sm) 36px;
@@ -403,8 +404,6 @@ const footerData = ref(filterFooterData[0]);
 
   &__big-icon-item {
     img {
-      height: 70px @(--xs) 99px @(--sm) 140px;
-      width: 70px @(--xs) 99px @(--sm) 140px;
       opacity: 1;
       transition: all 0.3s ease-in-out;
     }
