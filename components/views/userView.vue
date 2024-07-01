@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
+import { filterGroups } from '~/utils/dataFilter';
 
 const props = defineProps({
   data: {
@@ -18,7 +19,7 @@ useHead({
 console.log('userView.vue', props.data);
 
 const practicalInfoData = computed(() => {
-  return [
+  const data = [
     {
       group: [
         {
@@ -27,8 +28,65 @@ const practicalInfoData = computed(() => {
         },
       ],
     },
+    {
+      group: [
+        {
+          type: 'user_profile',
+          title: props.data?.field_name,
+          content: [
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_name
+              : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_street
+              : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_zipcode +
+                ' ' +
+                props.data?.provider.field_location_city
+              : props.data?.field_location_zipcode +
+                ' ' +
+                props.data?.field_location_city,
+          ],
+          description: props.data?.field_location_description
+            ? props.data?.field_location_description
+            : '',
+        },
+        {
+          type: 'user_profile',
+          content: [
+            props.data?.field_phone ? '<a href="tel:' + props.data?.field_phone + '">' + props.data?.field_phone + '</a>' : '',
+            props.data?.field_mail ? '<a href="mailto:' + props.data?.field_mail + '">' + props.data?.field_mail + '</a>' : '',
+            props.data?.field_homepage?.url ? '<a href="' + props.data?.field_homepage?.url + '" target="_blank">' + props.data?.field_homepage?.url + '</a>' : '',
+          ]
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          type: 'user_profile',
+          title: 'Brancher',
+          content: props.data?.field_brancher,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          type: 'user_profile',
+          title: 'Muligheder',
+          content: props.data?.field_posibilities,
+        },
+      ],
+    },
   ];
+  return filterGroups(data);
 });
+
 </script>
 
 <template>
@@ -73,6 +131,7 @@ const practicalInfoData = computed(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.field_presentation">
+            <h2>Velkommen til {{ props.data?.field_name }}</h2>
             <BaseRte :content="data.field_presentation" />
           </div>
 
@@ -80,10 +139,12 @@ const practicalInfoData = computed(() => {
             class="user__paragraph-item"
             v-if="data.field_educational_profile"
           >
+            <h3>Pædagogisk profil</h3>
             <BaseRte :content="data.field_educational_profile" />
           </div>
 
           <div class="user__paragraph-item" v-if="data.field_intro">
+            <h4>Entré</h4>
             <BaseRte :content="data.field_intro" />
           </div>
         </div>
@@ -136,7 +197,7 @@ const practicalInfoData = computed(() => {
                   class="user__link"
                   target="_blank"
                   :to="data?.field_homepage?.url"
-                  >{{ data?.field_homepage?.title }}</NuxtLink
+                  >{{ data?.field_homepage?.url }}</NuxtLink
                 >
               </div>
             </div>
@@ -190,50 +251,50 @@ const practicalInfoData = computed(() => {
           v-if="data?.field_contact?.length > 0"
         >
           <div class="user__contact">
-            <KontaktProvider :data="data?.field_contact" />
+            <KontaktProvider :data="data?.field_contact" :type="props.data.roles?.includes('corporation') ? 'virksomhed' : props.data.roles?.includes('course_provider') ? 'udbyder' : ''" />
           </div>
         </div>
 
         <!-- Section information -->
-        <div class="col-xs-12 col-sm-12 col-md-5 user__section-user-info">
-          <div class="user__info-title">
-            <h2>Yderligere information om udbyder</h2>
+        <div class="user__section-user-info" v-if="data?.field_other_info_description || data?.field_other_info?.length > 0">
+          <div class="col-xs-12 col-sm-12 col-md-5">
+            <div class="user__info-title">
+              <h2>Yderligere information om udbyder</h2>
+            </div>
           </div>
-        </div>
 
-        <div
-          class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1 user__section-user-info"
-        >
-          <div class="user__info-description">
-            <div v-html="data?.field_other_info_description"></div>
+          <div class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1">
+            <div class="user__info-description">
+              <div v-if="data?.field_other_info_description" v-html="data?.field_other_info_description"></div>
 
-            <div
-              class="user__info-description--buttons"
-              v-if="data?.field_other_info?.length > 0"
-            >
               <div
-                class="user__info-description--button-item"
-                v-for="button in data?.field_other_info"
-                :key="button"
+                class="user__info-description--buttons"
+                v-if="data?.field_other_info?.length > 0"
               >
-                <NuxtLink
-                  class="user__info-description__button-item__link button button--primary button--primary--ghost"
-                  :to="
-                    button?.field_file
-                      ? button?.field_file
-                      : button?.field_link?.url
-                  "
-                  aria-label="Download link"
+                <div
+                  class="user__info-description--button-item"
+                  v-for="button in data?.field_other_info"
+                  :key="button"
                 >
-                  <span class="user__info-description--button-item__link-text">
-                    {{ button?.field_link?.title }}
-                  </span>
-                  <NuxtIcon
-                    class="user__info-description--button-item__icon"
-                    name="arrow-right"
-                    filled
-                  />
-                </NuxtLink>
+                  <NuxtLink
+                    class="user__info-description__button-item__link button button--primary button--primary--ghost"
+                    :to="
+                      button?.field_file
+                        ? button?.field_file
+                        : button?.field_link?.url
+                    "
+                    aria-label="Download link"
+                  >
+                    <span class="user__info-description--button-item__link-text">
+                      {{ button?.field_link?.title }}
+                    </span>
+                    <NuxtIcon
+                      class="user__info-description--button-item__icon"
+                      name="arrow-right"
+                      filled
+                    />
+                  </NuxtLink>
+                </div>
               </div>
             </div>
           </div>
@@ -312,6 +373,7 @@ const practicalInfoData = computed(() => {
 
   &__second-section {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 48px @(--md) 96px;
   }
 
   &__divider {
@@ -342,9 +404,12 @@ const practicalInfoData = computed(() => {
   }
 
   &__section-user-info {
-    :not(:first-child) {
-      margin-bottom: 48px @(--md) 96px;
-    }
+    display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   &__info-description {
@@ -373,10 +438,6 @@ const practicalInfoData = computed(() => {
 
   :deep(svg) {
     font-size: 24px;
-  }
-
-  :deep(.practical-information__item-heading) {
-    width: 100%;
   }
 }
 </style>
