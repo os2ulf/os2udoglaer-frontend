@@ -386,7 +386,7 @@ const props = defineProps({
     margin-bottom: 22px;
   }
 
-  :deep(a) {
+  :deep(a:not(.button)) {
     color: var(--color-primary);
     text-decoration: none;
 
