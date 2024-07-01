@@ -234,6 +234,13 @@ const practicalInfoData = computed(() => {
   return filterGroups(data);
 });
 
+const showModal = ref(false);
+const contactPersonEmail = ref(
+  props.data?.provider?.field_mail ||
+    props.data?.corporation?.field_mail ||
+    null,
+);
+
 console.log('courseView', props.data);
 </script>
 
@@ -302,13 +309,8 @@ console.log('courseView', props.data);
                       : props.data?.corporation
                         ? 'Kontakt virksomhed'
                         : '',
-                    url: props.data?.provider
-                      ? data.provider.link
-                      : props.data?.corporation
-                        ? data.corporation.link
-                        : '',
-                    target: '_blank',
                   }"
+                  @click="showModal = true"
                 />
               </div>
             </div>
@@ -383,13 +385,8 @@ console.log('courseView', props.data);
                   : props.data?.corporation
                     ? 'Kontakt virksomhed'
                     : '',
-                url: props.data?.provider
-                  ? data.provider.link
-                  : props.data?.corporation
-                    ? data.corporation.link
-                    : '',
-                target: '_blank',
               }"
+              @click="showModal = true"
             />
             <BaseButton
               v-if="
@@ -496,6 +493,15 @@ console.log('courseView', props.data);
         </div>
       </div>
     </div>
+    <Transition name="fade">
+      <TheSlotModal
+        v-if="showModal"
+        :isOpen="showModal"
+        @update:isOpen="showModal = $event"
+      >
+        <ContactForm :contactPersonEmail="contactPersonEmail" />
+      </TheSlotModal>
+    </Transition>
   </div>
 </template>
 

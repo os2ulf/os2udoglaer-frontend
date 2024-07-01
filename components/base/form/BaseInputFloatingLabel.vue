@@ -82,28 +82,36 @@ const hasErrors = useFieldError(props.name);
       @input="$emit('input', value)"
       @animationstart="checkAnimation"
     />
-    <label v-if="label" class="form-label" :for="id"
-      >{{ label
-      }}<span v-show="rules.includes('required')" class="required"
-        >*</span
-      ></label
-    >
+    <label v-if="label" class="form-label" :for="id">{{ label }}</label>
   </div>
-  <span
-    v-if="customError"
-    class="form-validation-feedback form-validation-feedback--invalid"
-  >
-    {{ customError }}
-  </span>
-  <ErrorMessage
-    v-else
-    class="form-validation-feedback form-validation-feedback--invalid"
-    :name="name"
-  />
+  <Transition name="bounce">
+    <span
+      v-if="customError"
+      class="form-validation-feedback form-validation-feedback--invalid"
+    >
+      {{ customError }}
+    </span>
+
+    <ErrorMessage
+      v-else
+      class="form-validation-feedback form-validation-feedback--invalid"
+      :name="name"
+    />
+  </Transition>
 </template>
 
 <style lang="postcss">
 .form-input-wrapper {
   position: relative;
+}
+
+.form-input--floating-label {
+  position: relative;
+  margin-top: -2px;
+}
+
+.form-input--up + .form-label,
+.form-input:focus + .form-label {
+  color: var(--color-primary);
 }
 </style>

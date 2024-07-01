@@ -105,7 +105,8 @@ const props = defineProps({
     background: var(--color-white);
     border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
-    box-shadow: 0 4px 10px 4px #297f781a;
+    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
+
     height: 100%;
     display: flex;
     flex-direction: column;

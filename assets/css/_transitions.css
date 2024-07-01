@@ -204,3 +204,22 @@
     transform: translateY(0);
   }
 }
+
+/* fade input */
+.fade-input-enter-active {
+  animation: fade-shit 0.3s;
+}
+
+.fade-input-leave-active {
+  animation: fade-input-anim 0.3s reverse;
+}
+
+@keyframes fade-input-anim {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
