@@ -5,12 +5,17 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  type: {
+    type: String,
+    required: false,
+    default: '',
+  },
 });
 </script>
 
 <template>
   <div class="contact">
-    <h3 class="contact__title">Kontakt udbyder</h3>
+    <h3 class="contact__title">Kontakt {{ props.type }}</h3>
     <div class="contact__item-container">
       <div
         class="contact__item-section"

@@ -212,7 +212,7 @@ const practicalInfoData = computed(() => {
           v-if="data?.field_contact?.length > 0"
         >
           <div class="user__contact">
-            <KontaktProvider :data="data?.field_contact" />
+            <KontaktProvider :data="data?.field_contact" :type="props.data.roles?.includes('corporation') ? 'virksomhed' : props.data.roles?.includes('course_provider') ? 'udbyder' : ''" />
           </div>
         </div>
 
