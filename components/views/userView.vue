@@ -256,45 +256,45 @@ const practicalInfoData = computed(() => {
         </div>
 
         <!-- Section information -->
-        <div class="col-xs-12 col-sm-12 col-md-5 user__section-user-info">
-          <div class="user__info-title">
-            <h2>Yderligere information om udbyder</h2>
+        <div class="user__section-user-info" v-if="data?.field_other_info_description || data?.field_other_info?.length > 0">
+          <div class="col-xs-12 col-sm-12 col-md-5">
+            <div class="user__info-title">
+              <h2>Yderligere information om udbyder</h2>
+            </div>
           </div>
-        </div>
 
-        <div
-          class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1 user__section-user-info"
-        >
-          <div class="user__info-description">
-            <div v-html="data?.field_other_info_description"></div>
+          <div class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1">
+            <div class="user__info-description">
+              <div v-if="data?.field_other_info_description" v-html="data?.field_other_info_description"></div>
 
-            <div
-              class="user__info-description--buttons"
-              v-if="data?.field_other_info?.length > 0"
-            >
               <div
-                class="user__info-description--button-item"
-                v-for="button in data?.field_other_info"
-                :key="button"
+                class="user__info-description--buttons"
+                v-if="data?.field_other_info?.length > 0"
               >
-                <NuxtLink
-                  class="user__info-description__button-item__link button button--primary button--primary--ghost"
-                  :to="
-                    button?.field_file
-                      ? button?.field_file
-                      : button?.field_link?.url
-                  "
-                  aria-label="Download link"
+                <div
+                  class="user__info-description--button-item"
+                  v-for="button in data?.field_other_info"
+                  :key="button"
                 >
-                  <span class="user__info-description--button-item__link-text">
-                    {{ button?.field_link?.title }}
-                  </span>
-                  <NuxtIcon
-                    class="user__info-description--button-item__icon"
-                    name="arrow-right"
-                    filled
-                  />
-                </NuxtLink>
+                  <NuxtLink
+                    class="user__info-description__button-item__link button button--primary button--primary--ghost"
+                    :to="
+                      button?.field_file
+                        ? button?.field_file
+                        : button?.field_link?.url
+                    "
+                    aria-label="Download link"
+                  >
+                    <span class="user__info-description--button-item__link-text">
+                      {{ button?.field_link?.title }}
+                    </span>
+                    <NuxtIcon
+                      class="user__info-description--button-item__icon"
+                      name="arrow-right"
+                      filled
+                    />
+                  </NuxtLink>
+                </div>
               </div>
             </div>
           </div>
@@ -373,6 +373,7 @@ const practicalInfoData = computed(() => {
 
   &__second-section {
     padding-top: 48px @(--md) 96px;
+    padding-bottom: 48px @(--md) 96px;
   }
 
   &__divider {
@@ -403,9 +404,12 @@ const practicalInfoData = computed(() => {
   }
 
   &__section-user-info {
-    :not(:first-child) {
-      margin-bottom: 48px @(--md) 96px;
-    }
+    display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   &__info-description {
