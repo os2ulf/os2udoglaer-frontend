@@ -92,6 +92,7 @@ const practicalInfoData = computed(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.field_presentation">
+            <h2>Velkommen til {{ props.data?.field_name }}</h2>
             <BaseRte :content="data.field_presentation" />
           </div>
 
@@ -99,10 +100,12 @@ const practicalInfoData = computed(() => {
             class="user__paragraph-item"
             v-if="data.field_educational_profile"
           >
+            <h3>Pædagogisk profil</h3>
             <BaseRte :content="data.field_educational_profile" />
           </div>
 
           <div class="user__paragraph-item" v-if="data.field_intro">
+            <h4>Entré</h4>
             <BaseRte :content="data.field_intro" />
           </div>
         </div>
