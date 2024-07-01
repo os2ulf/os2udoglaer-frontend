@@ -99,26 +99,6 @@ const practicalInfoData = computed(() => {
                   :button-data="{ title: 'Find forløb' }"
                   class="button button--secondary"
                 />
-                <BaseButton
-                  v-if="
-                    (data?.provider && data?.provider.link) ||
-                    (data?.corporation && data?.corporation.link)
-                  "
-                  class="button button--secondary--ghost"
-                  :button-data="{
-                    title: props.data?.provider
-                      ? 'Kontakt udbyder'
-                      : props.data?.corporation
-                        ? 'Kontakt virksomhed'
-                        : '',
-                    url: props.data?.provider
-                      ? data.provider.link
-                      : props.data?.corporation
-                        ? data.corporation.link
-                        : '',
-                    target: '_blank',
-                  }"
-                />
               </div>
             </div>
 

@@ -33,7 +33,7 @@
     background: var(--form-input-background-focus);
     border: var(--form-input-border-focus);
     outline: 0;
-    box-shadow: var(--form-input-box-shadow-focus);
+    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
   }
 
   &.disabled,
@@ -89,15 +89,15 @@
 }
 
 .form-input--floating-label {
-  padding-inline: var(--spacing-x-base);
-  padding-top: calc(var(--spacing-y-base) + 5px);
-  padding-bottom: calc(var(--spacing-y-base) - 8px);
-
   &.form-input--up ~ .form-label,
   &:focus ~ .form-label {
-    top: 4px;
-    font-weight: var(--font-weight-bold);
+    top: -11px;
     font-size: 13px;
+    background-color: var(--color-white);
+    padding-inline: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 2px;
   }
 
   & ~ .form-label {

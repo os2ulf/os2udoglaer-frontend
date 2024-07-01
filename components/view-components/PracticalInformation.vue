@@ -216,7 +216,7 @@ const props = defineProps({
   color: var(--color-text);
   background-color: var(--color-white);
   border: 2px solid var(--color-primary-lighten-4);
-  box-shadow: 0 4px 10px 4px #297f781a;
+  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
 
   &__group {
     margin-top: 22px;
