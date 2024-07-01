@@ -71,3 +71,6 @@ Add these to .env file
 # A root endpoint to the API backend server
 API_BASE_URL = ""
 ```
+
+# Useless incrementor
+Incremented 1 time(s)
