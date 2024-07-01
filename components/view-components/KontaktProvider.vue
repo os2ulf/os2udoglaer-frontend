@@ -19,11 +19,11 @@ const props = defineProps({
       >
         <div class="contact__heading-wrapper">
           <div class="contact__person-heading">
-            <h4>
-              {{ person?.field_title }} -
+            <h4 v-if="person?.field_title || person?.field_name">
+              {{ person?.field_title ? person?.field_title + ' - ' : '' }}
               {{ person?.field_name }}
             </h4>
-            <div class="contact__contact-hours">
+            <div class="contact__contact-hours" v-if="person?.field_office_availability_text">
               Træffetid:
               {{ person?.field_office_availability_text }}
             </div>
@@ -31,6 +31,7 @@ const props = defineProps({
 
           <div class="contact__button-wrapper">
             <a
+              v-if="person?.field_email"
               :href="'mailto:' + person?.field_email"
               class="button button--primary contact__button"
             >
@@ -38,6 +39,7 @@ const props = defineProps({
               {{ person?.field_email }}
             </a>
             <a
+              v-if="person?.field_phone"
               :href="'tel:' + person?.field_phone"
               class="button button--primary contact__button"
             >
