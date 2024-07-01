@@ -31,7 +31,45 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
-          title: 'Branche',
+          type: 'user_profile',
+          title: props.data?.field_name,
+          content: [
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_name
+              : props.data?.field_location_name,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_street
+              : props.data?.field_location_street,
+            props.data?.field_view_on_map == 'show_vendor_address' &&
+            props.data?.provider
+              ? props.data?.provider.field_location_zipcode +
+                ' ' +
+                props.data?.provider.field_location_city
+              : props.data?.field_location_zipcode +
+                ' ' +
+                props.data?.field_location_city,
+          ],
+          description: props.data?.field_location_description
+            ? props.data?.field_location_description
+            : '',
+        },
+        {
+          type: 'user_profile',
+          content: [
+            props.data?.field_phone ? '<a href="tel:' + props.data?.field_phone + '">' + props.data?.field_phone + '</a>' : '',
+            props.data?.field_mail ? '<a href="mailto:' + props.data?.field_mail + '">' + props.data?.field_mail + '</a>' : '',
+            props.data?.field_homepage?.url ? '<a href="' + props.data?.field_homepage?.url + '" target="_blank">' + props.data?.field_homepage?.url + '</a>' : '',
+          ]
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          type: 'user_profile',
+          title: 'Brancher',
           content: props.data?.field_brancher,
         },
       ],
@@ -39,6 +77,7 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
+          type: 'user_profile',
           title: 'Muligheder',
           content: props.data?.field_posibilities,
         },
@@ -395,10 +434,6 @@ const practicalInfoData = computed(() => {
 
   :deep(svg) {
     font-size: 24px;
-  }
-
-  :deep(.practical-information__item-heading) {
-    width: 100%;
   }
 }
 </style>

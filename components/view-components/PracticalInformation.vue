@@ -76,29 +76,16 @@ const props = defineProps({
 
         <!-- User Profile element -->
         <div v-else-if="item.type === 'user_profile'">
-          <div class="practical-information__item-container">
-            <div class="practical-information__item-heading">
+          <div class="practical-information__item-container practical-information__item-container--profile">
+            <div class="practical-information__item-heading practical-information__item-heading--profile">
               {{ item.title }}
             </div>
-          </div>
 
-          <div class="practical-information__user-profile-content-wrapper">
-            <slot></slot>
-          </div>
-
-          <div class="practical-information__user-profile-button">
-            <BaseButton
-              v-if="props.userProfilePage?.hasContactsData"
-              :button-data="{
-                title: props.userProfilePage.roles?.includes('corporation')
-                  ? 'Kontakt virksomhed'
-                  : props.userProfilePage.roles?.includes('course_provider')
-                    ? 'Kontakt udbyder'
-                    : '',
-              }"
-              @click="scrollTo('contact__section')"
-              class="button button--secondary button--secondary--ghost"
-            />
+            <div class="practical-information__item-value practical-information__item-value--profile">
+              <div v-for="(content, index) in item.content" :key="index">
+                <div v-html="content"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -207,6 +194,20 @@ const props = defineProps({
       </div>
     </div>
     <!-- Practical information data for loop END -->
+    <div class="practical-information__user-profile-button">
+      <BaseButton
+        v-if="props.userProfilePage?.hasContactsData"
+        :button-data="{
+          title: props.userProfilePage.roles?.includes('corporation')
+            ? 'Kontakt virksomhed'
+            : props.userProfilePage.roles?.includes('course_provider')
+              ? 'Kontakt udbyder'
+              : '',
+        }"
+        @click="scrollTo('contact__section')"
+        class="button button--secondary button--secondary--ghost"
+      />
+    </div>
   </div>
 </template>
 
@@ -232,12 +233,21 @@ const props = defineProps({
     width: 50%;
     font-weight: 700;
     font-family: var(--heading-font-family);
+
+    &--profile {
+      width: 100%;
+      margin-bottom: 4px;
+    }
   }
 
   &__item-container {
     padding-top: 12px;
     display: flex;
     justify-content: space-between;
+
+    &--profile {
+      flex-direction: column;
+    }
   }
 
   &__item-value {
@@ -247,6 +257,10 @@ const props = defineProps({
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
+
+    &--profile {
+      width: 100%;
+    }
 
     &--link {
       color: var(--color-primary);
@@ -370,6 +384,15 @@ const props = defineProps({
 
   &__user-provider-logo {
     margin-bottom: 22px;
+  }
+
+  :deep(a) {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>
