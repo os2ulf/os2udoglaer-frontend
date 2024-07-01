@@ -83,7 +83,7 @@ const props = defineProps({
 
             <div class="practical-information__item-value practical-information__item-value--profile">
               <div v-for="(content, index) in item.content" :key="index">
-                <div v-html="content"></div>
+                <div v-if="content" v-html="content"></div>
               </div>
             </div>
           </div>
