@@ -11,9 +11,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update the Platform Repo Submodule for Backend
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          repository: "os2ulf/os2udoglaer-frontend"
-          event-type: "update-submodule"
-          token: "${{ secrets.REPO_ACCESS_TOKEN }}"
-          client-payload: '{"submodule": "frontend", "branch": "${{ github.ref_name }}", "commit": "${{ github.sha }}"}'
+        run: |
+          repo_owner="os2ulf"
+          repo_name="os2udoglaer-frontend"
+          event_type="update-submodule"
+
+          # Get the latest commit hash
+          commit_hash=${{ github.sha }}
+
+          # Get the branch name
+          branch_name=${{ github.ref_name }}
+
+          # Echo out the above variables
+          echo "Commit Hash: $commit_hash"
+          echo "Branch Name: $branch_name"
+          echo "Repository Owner: $repo_owner"
+          echo "Repository Name: $repo_name"
+          echo "Event Type: $event_type"
+
+          # Create a client payload
+          client_payload="{\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"backend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
+
+          # Trigger the repository dispatch event
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.REPO_DISPATCH_TOKEN }}" \
+            -d "$client_payload" \
+            https://api.github.com/repos/$repo_owner/$repo_name/dispatches
