@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
+import { filterGroups } from '~/utils/dataFilter';
 
 const props = defineProps({
   data: {
@@ -18,7 +19,7 @@ useHead({
 console.log('userView.vue', props.data);
 
 const practicalInfoData = computed(() => {
-  return [
+  const data = [
     {
       group: [
         {
@@ -27,8 +28,26 @@ const practicalInfoData = computed(() => {
         },
       ],
     },
+    {
+      group: [
+        {
+          title: 'Branche',
+          content: props.data?.field_brancher,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          title: 'Muligheder',
+          content: props.data?.field_posibilities,
+        },
+      ],
+    },
   ];
+  return filterGroups(data);
 });
+
 </script>
 
 <template>
