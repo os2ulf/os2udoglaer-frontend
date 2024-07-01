@@ -3,8 +3,8 @@ name: Update the common Platform.sh Repository
 on:
   push:
     branches:
-      - 'develop'
-      - 'master'
+      - "develop"
+      - "master"
 
 jobs:
   update-platform-repo:
@@ -15,6 +15,5 @@ jobs:
         with:
           repository: os2ulf/os2udoglaer-frontend
           event-type: update-submodule
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
           client-payload: '{"submodule": "frontend", "branch": "${{ github.ref_name }}", "commit": "${{ github.sha }}"}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
