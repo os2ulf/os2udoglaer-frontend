@@ -12,11 +12,8 @@ jobs:
     steps:
       - name: Update the Platform Repo Submodule for Backend
         run: |
-          # Remove the .netrc file to avoid any conflicts
-          rm -f ~/.netrc
-
           repo_owner="os2ulf"
-          repo_name="os2udoglaer-frontend"
+          repo_name="os2udoglaer-platform"
           event_type="update-submodule"
 
           # Get the latest commit hash
@@ -37,15 +34,16 @@ jobs:
           echo "Repository Owner: $repo_owner"
           echo "Repository Name: $repo_name"
           echo "Event Type: $event_type"
-          echo "URL: https://api.github.com/repos/$repo_owner/$repo_name/actions/workflows/103351619/dispatches"
-          echo "Payload: {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}"
+          echo "URL: https://api.github.com/repos/$repo_owner/$repo_name/dispatches"
+          echo "Payload: {\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
 
           # Create a client payload
 
           # Trigger the repository dispatch event
-          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.REPO_DISPATCH_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$repo_owner/$repo_name/actions/workflows/103351619/dispatches -d '{ "ref":"$branch_name", "inputs": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"} }')
-
-          if test $RESPONSE_CODE -ne 204; then
-            echo "Response: $RESPONSE_CODE"
-            exit 1
-          fi
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.REPO_DISPATCH_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
+            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
