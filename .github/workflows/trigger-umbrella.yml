@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Update the Platform Repo Submodule for Backend
         run: |
+          # Remove the .netrc file to avoid any conflicts
+          rm -f ~/.netrc
+
           repo_owner="os2ulf"
           repo_name="os2udoglaer-frontend"
           event_type="update-submodule"
@@ -34,6 +37,8 @@ jobs:
           echo "Repository Owner: $repo_owner"
           echo "Repository Name: $repo_name"
           echo "Event Type: $event_type"
+          echo "URL: https://api.github.com/repos/$repo_owner/$repo_name/dispatches"
+          echo "Payload: {\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
 
           # Create a client payload
 
