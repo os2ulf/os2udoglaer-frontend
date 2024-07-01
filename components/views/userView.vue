@@ -136,7 +136,7 @@ const practicalInfoData = computed(() => {
                   class="user__link"
                   target="_blank"
                   :to="data?.field_homepage?.url"
-                  >{{ data?.field_homepage?.title }}</NuxtLink
+                  >{{ data?.field_homepage?.url }}</NuxtLink
                 >
               </div>
             </div>
