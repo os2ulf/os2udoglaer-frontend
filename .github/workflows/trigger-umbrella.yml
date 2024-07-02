@@ -13,32 +13,48 @@ jobs:
     steps:
       - name: Update the Platform Repo Submodule for Backend
         run: |
+          # Define the repository we are pushing to
           repo_owner="os2ulf"
           repo_name="os2udoglaer-platform"
+
+          # Define the event type
           event_type="update-submodule"
 
-          # Get the latest commit hash
+          # Define the branch we are pushing to in the repository
+          # Default to main
+          branch_to="main"
+
+          # Define the branch we just pushed to, and that we want to update the submodule from
+          branch_from=${{ github.ref_name }}
+
+          # Define the commit hash we just pushed
           commit_hash=${{ github.sha }}
 
-          # Get the branch name
-          branch_name=${{ github.ref_name }}
-
-          # Valid branches are main and develop, fail on anything else
-          if [ "$branch_name" != "main" ] && [ "$branch_name" != "develop" ]; then
-            echo "Invalid branch name: $branch_name"
-            exit 1
+          # Treat any branch in branch_from that is not main, as develop
+          if [ "$branch_from" != "main" ]; then
+            branch_from="staging"
           fi
 
-          # Echo out the above variables
+          # Echo out all the variables
           echo "Commit Hash: $commit_hash"
-          echo "Branch Name: $branch_name"
-          echo "Repository Owner: $repo_owner"
-          echo "Repository Name: $repo_name"
+          echo "Branch From: $branch_from"
+          echo "Branch To: $branch_to"
+          echo "Push to repository: $repo_owner/$repo_name"
           echo "Event Type: $event_type"
           echo "URL: https://api.github.com/repos/$repo_owner/$repo_name/dispatches"
-          echo "Payload: {\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
 
-          # Create a client payload
+          # Create the json payload we will send to the repository dispatch event
+          payload='{
+            "event_type": "'$event_type'",
+            "client_payload":
+              {
+                "submodule": "backend",
+                "branch_to": "'$branch_to'",
+                "branch_from": "'$branch_from'",
+                "commit": "'$commit_hash'"
+              }
+            }'
+          payload=$(echo $payload | jq -c .)
 
           # Trigger the repository dispatch event
           curl -L \
@@ -47,4 +63,4 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.REPO_ACCESS_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
-            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"submodule\": \"frontend\", \"branch\": \"$branch_name\", \"commit\": \"$commit_hash\"}}"
+            -d "$payload"
