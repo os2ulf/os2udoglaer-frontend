@@ -9,6 +9,7 @@ on:
 jobs:
   update-platform-repo:
     runs-on: ubuntu-latest
+    environment: Staging
     steps:
       - name: Update the Platform Repo Submodule for Backend
         run: |
@@ -21,9 +22,6 @@ jobs:
 
           # Get the branch name
           branch_name=${{ github.ref_name }}
-
-          # Bind the token to a variable
-          token=${{ secrets.REPO_DISPATCH_TOKEN }}
 
           # Valid branches are main and develop, fail on anything else
           if [ "$branch_name" != "main" ] && [ "$branch_name" != "develop" ]; then
