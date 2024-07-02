@@ -551,7 +551,7 @@ const practicalInfoData = computed(() => {
         >
           <div class="col-xs-12 col-sm-12 col-md-5">
             <div class="user__info-title">
-              <h2>Yderligere information om udbyder</h2>
+              <h2>{{ props.data.roles?.includes('corporation') ? 'Yderligere information om virksomhed' : props.data.roles?.includes('course_provider') ? 'Yderligere information om udbyder' : 'Yderligere information' }}</h2>
             </div>
           </div>
 
