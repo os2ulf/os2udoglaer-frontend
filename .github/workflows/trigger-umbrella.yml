@@ -20,38 +20,29 @@ jobs:
           # Define the event type
           event_type="update-submodule"
 
-          # Define the branch we are pushing to in the repository
-          # Default to main
-          branch_to="main"
-
-          # Define the branch we just pushed to, and that we want to update the submodule from
-          branch_from=${{ github.ref_name }}
+          # Define the branch we are pushing to in platform repo
+          if [[ ${{ github.ref }} == 'refs/heads/master' ]]; then
+            platform_environment="production"
+          else
+            platform_environment="staging"
+          fi
 
           # Define the commit hash we just pushed
           commit_hash=${{ github.sha }}
 
-          # If we are pushing to main, then branch_to should be main
-          # If the branch we are pushing to is staging, then branch_to should be develop (Because the staging branch is called develop in the platform repo)
-          if [ "$branch_from" == "develop" ]; then
-            branch_to="develop"
-          fi
-
-          # Echo out all the variables
+          # Echo out the variables
           echo "Commit Hash: $commit_hash"
-          echo "Branch From: $branch_from"
-          echo "Branch To: $branch_to"
+          echo "Platform Environment: $platform_environment"
           echo "Push to repository: $repo_owner/$repo_name"
           echo "Event Type: $event_type"
-          echo "URL: https://api.github.com/repos/$repo_owner/$repo_name/dispatches"
 
           # Create the json payload we will send to the repository dispatch event
           payload='{
             "event_type": "'$event_type'",
             "client_payload":
               {
-                "submodule": "frontend",
-                "branch_to": "'$branch_to'",
-                "branch_from": "'$branch_from'",
+                "submodule": "backend",
+                "environment": "'$platform_environment'",
                 "commit": "'$commit_hash'"
               }
             }'
