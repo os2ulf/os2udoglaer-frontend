@@ -347,7 +347,7 @@ const practicalInfoData = computed(() => {
       group: [
         {
           type: 'user_profile',
-          title: 'Brancher',
+          title: 'Branche',
           content: props.data?.field_brancher,
         },
       ],
@@ -408,7 +408,7 @@ const practicalInfoData = computed(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
           <div v-if="data.field_presentation">
-            <h2>Velkommen til {{ props.data?.field_name }}</h2>
+            <h2>Præsentation</h2>
             <BaseRte :content="data.field_presentation" />
           </div>
 
@@ -551,7 +551,7 @@ const practicalInfoData = computed(() => {
         >
           <div class="col-xs-12 col-sm-12 col-md-5">
             <div class="user__info-title">
-              <h2>Yderligere information om udbyder</h2>
+              <h2>{{ props.data.roles?.includes('corporation') ? 'Yderligere information om virksomhed' : props.data.roles?.includes('course_provider') ? 'Yderligere information om udbyder' : 'Yderligere information' }}</h2>
             </div>
           </div>
 
