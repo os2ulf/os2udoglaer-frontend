@@ -30,9 +30,10 @@ jobs:
           # Define the commit hash we just pushed
           commit_hash=${{ github.sha }}
 
-          # Treat any branch in branch_from that is not main, as develop
-          if [ "$branch_from" != "main" ]; then
-            branch_from="staging"
+          # If we are pushing to main, then branch_to should be main
+          # If the branch we are pushing to is staging, then branch_to should be develop (Because the staging branch is called develop in the platform repo)
+          if [ "$branch_from" == "develop" ]; then
+            branch_to="develop"
           fi
 
           # Echo out all the variables
