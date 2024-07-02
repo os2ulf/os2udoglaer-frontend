@@ -3,6 +3,9 @@ import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
 import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { removeBEdomain } from '~/utils/removeBEdomain';
+import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
@@ -23,6 +26,7 @@ const props = defineProps({
 });
 
 const openGraph = ref(props.data?.field_meta_tags?.html_head);
+
 useHead({
   title: openGraph.value.title?.attributes?.content,
   meta: [
@@ -57,7 +61,9 @@ useHead({
     },
     {
       property: 'og:url',
-      content: openGraph.value.og_url?.attributes?.content,
+      content:
+        useGetCurrentDomain() +
+        removeBEdomain(openGraph.value.og_url?.attributes?.content),
     },
     {
       property: 'og:type',
@@ -273,7 +279,13 @@ useHead({
     },
   ],
   link: [
-    { rel: 'canonical', href: openGraph.value.canonical_url?.attributes?.href },
+    {
+      rel: 'canonical',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        props.data?.is_frontpage,
+      ),
+    },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
   ],
 });

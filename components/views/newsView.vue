@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { removeBEdomain } from '~/utils/removeBEdomain';
+import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
 
 const props = defineProps({
   data: {
@@ -45,7 +48,9 @@ useHead({
     },
     {
       property: 'og:url',
-      content: openGraph.value.og_url?.attributes?.content,
+      content:
+        useGetCurrentDomain() +
+        removeBEdomain(openGraph.value.og_url?.attributes?.content),
     },
     {
       property: 'og:type',
@@ -261,7 +266,13 @@ useHead({
     },
   ],
   link: [
-    { rel: 'canonical', href: openGraph.value.canonical_url?.attributes?.href },
+    {
+      rel: 'canonical',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        props.data?.is_frontpage,
+      ),
+    },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
   ],
 });

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
 import { filterGroups } from '~/utils/dataFilter';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { removeBEdomain } from '~/utils/removeBEdomain';
+import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
 
 const props = defineProps({
   data: {
@@ -46,7 +49,9 @@ useHead({
     },
     {
       property: 'og:url',
-      content: openGraph.value.og_url?.attributes?.content,
+      content:
+        useGetCurrentDomain() +
+        removeBEdomain(openGraph.value.og_url?.attributes?.content),
     },
     {
       property: 'og:type',
@@ -262,7 +267,13 @@ useHead({
     },
   ],
   link: [
-    { rel: 'canonical', href: openGraph.value.canonical_url?.attributes?.href },
+    {
+      rel: 'canonical',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        props.data?.is_frontpage,
+      ),
+    },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
   ],
 });
@@ -307,10 +318,28 @@ const practicalInfoData = computed(() => {
         {
           type: 'user_profile',
           content: [
-            props.data?.field_phone ? '<a href="tel:' + props.data?.field_phone + '">' + props.data?.field_phone + '</a>' : '',
-            props.data?.field_mail ? '<a href="mailto:' + props.data?.field_mail + '">' + props.data?.field_mail + '</a>' : '',
-            props.data?.field_homepage?.url ? '<a href="' + props.data?.field_homepage?.url + '" target="_blank">' + props.data?.field_homepage?.url + '</a>' : '',
-          ]
+            props.data?.field_phone
+              ? '<a href="tel:' +
+                props.data?.field_phone +
+                '">' +
+                props.data?.field_phone +
+                '</a>'
+              : '',
+            props.data?.field_mail
+              ? '<a href="mailto:' +
+                props.data?.field_mail +
+                '">' +
+                props.data?.field_mail +
+                '</a>'
+              : '',
+            props.data?.field_homepage?.url
+              ? '<a href="' +
+                props.data?.field_homepage?.url +
+                '" target="_blank">' +
+                props.data?.field_homepage?.url +
+                '</a>'
+              : '',
+          ],
         },
       ],
     },
@@ -335,7 +364,6 @@ const practicalInfoData = computed(() => {
   ];
   return filterGroups(data);
 });
-
 </script>
 
 <template>
@@ -500,12 +528,27 @@ const practicalInfoData = computed(() => {
           v-if="data?.field_contact?.length > 0"
         >
           <div class="user__contact">
-            <KontaktProvider :data="data?.field_contact" :type="props.data.roles?.includes('corporation') ? 'virksomhed' : props.data.roles?.includes('course_provider') ? 'udbyder' : ''" />
+            <KontaktProvider
+              :data="data?.field_contact"
+              :type="
+                props.data.roles?.includes('corporation')
+                  ? 'virksomhed'
+                  : props.data.roles?.includes('course_provider')
+                    ? 'udbyder'
+                    : ''
+              "
+            />
           </div>
         </div>
 
         <!-- Section information -->
-        <div class="user__section-user-info" v-if="data?.field_other_info_description || data?.field_other_info?.length > 0">
+        <div
+          class="user__section-user-info"
+          v-if="
+            data?.field_other_info_description ||
+            data?.field_other_info?.length > 0
+          "
+        >
           <div class="col-xs-12 col-sm-12 col-md-5">
             <div class="user__info-title">
               <h2>Yderligere information om udbyder</h2>
@@ -514,7 +557,10 @@ const practicalInfoData = computed(() => {
 
           <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-1">
             <div class="user__info-description">
-              <div v-if="data?.field_other_info_description" v-html="data?.field_other_info_description"></div>
+              <div
+                v-if="data?.field_other_info_description"
+                v-html="data?.field_other_info_description"
+              ></div>
 
               <div
                 class="user__info-description--buttons"
@@ -534,7 +580,9 @@ const practicalInfoData = computed(() => {
                     "
                     aria-label="Download link"
                   >
-                    <span class="user__info-description--button-item__link-text">
+                    <span
+                      class="user__info-description--button-item__link-text"
+                    >
                       {{ button?.field_link?.title }}
                     </span>
                     <NuxtIcon
