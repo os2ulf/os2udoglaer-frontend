@@ -415,6 +415,7 @@ const practicalInfoData = computed(() => {
   &__info-description {
     &--buttons {
       display: flex;
+      flex-flow: column @(--sm) row @(--md) column @(--xl) row;
       gap: 24px;
     }
 
