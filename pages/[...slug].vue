@@ -57,13 +57,6 @@ if (redirectUrl.value) {
 }
 
 const pageBlockHeaderData = viewData?.field_header;
-// SEO/META
-const seoHeadLinkDataEN = ref(
-  viewData?.field_meta_tags?.html_head?.alternate_en?.attributes,
-);
-const seoHeadLinkDataDA = ref(
-  viewData?.field_meta_tags?.html_head?.alternate_da?.attributes,
-);
 
 // // Dynamically import components
 const renderLayoutBlock = (viewName: string) => {
@@ -76,36 +69,8 @@ const renderLayoutBlock = (viewName: string) => {
 
 useHead({
   htmlAttrs: {
-    lang: viewData?.langcode || 'da',
+    lang: 'da',
   },
-  title:
-    viewData?.field_meta_tags?.html_head?.title?.attributes?.content ||
-    viewData?.label ||
-    'Title',
-  meta: [
-    {
-      name: 'description',
-      content:
-        viewData?.field_meta_tags?.html_head?.description?.attributes
-          ?.content || 'Description',
-    },
-    {
-      name: 'robots',
-      content: 'index, nofollow',
-    },
-  ],
-  link: [
-    {
-      rel: seoHeadLinkDataEN?.value?.rel,
-      href: seoHeadLinkDataEN?.value?.href,
-      hreflang: seoHeadLinkDataEN?.value?.hreflang,
-    },
-    {
-      rel: seoHeadLinkDataDA?.value?.rel,
-      href: seoHeadLinkDataDA?.value?.href,
-      hreflang: seoHeadLinkDataDA?.value?.hreflang,
-    },
-  ],
 });
 </script>
 

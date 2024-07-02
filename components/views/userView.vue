@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
 import { filterGroups } from '~/utils/dataFilter';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { removeBEdomain } from '~/utils/removeBEdomain';
+import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
 
 const props = defineProps({
   data: {
@@ -10,13 +13,270 @@ const props = defineProps({
   },
 });
 
-useHead({
-  title:
-    props.data?.field_meta_tags?.html_head?.title?.atributes?.content ||
-    props.data?.field_name,
-});
+const openGraph = ref(props.data?.field_meta_tags?.html_head);
 
-console.log('userView.vue', props.data);
+useHead({
+  title: openGraph.value.title?.attributes?.content,
+  meta: [
+    {
+      name: 'description',
+      content: openGraph.value.description?.attributes?.content,
+    },
+    { name: 'robots', content: openGraph.value.robots?.attributes?.content },
+    {
+      name: 'abstract',
+      content: openGraph.value.abstract?.attributes?.content,
+    },
+    {
+      name: 'keywords',
+      content: openGraph.value.keywords?.attributes?.content,
+    },
+    {
+      property: 'og:description',
+      content: openGraph.value.og_description?.attributes?.content,
+    },
+    {
+      property: 'og:image',
+      content: openGraph.value.og_image_0?.attributes?.content,
+    },
+    {
+      property: 'og:site_name',
+      content: openGraph.value.og_site_name?.attributes?.content,
+    },
+    {
+      property: 'og:title',
+      content: openGraph.value.og_title?.attributes?.content,
+    },
+    {
+      property: 'og:url',
+      content:
+        useGetCurrentDomain() +
+        removeBEdomain(openGraph.value.og_url?.attributes?.content),
+    },
+    {
+      property: 'og:type',
+      content: openGraph.value.og_type?.attributes?.content,
+    },
+    {
+      property: 'og:determiner',
+      content: openGraph.value.og_determiner?.attributes?.content,
+    },
+    {
+      property: 'article:author',
+      content: openGraph.value.article_author_0?.attributes?.content,
+    },
+    {
+      property: 'article:expiration_time',
+      content: openGraph.value.article_expiration_time?.attributes?.content,
+    },
+    {
+      property: 'article:modified_time',
+      content: openGraph.value.article_modified_time?.attributes?.content,
+    },
+    {
+      property: 'article:published_time',
+      content: openGraph.value.article_published_time?.attributes?.content,
+    },
+    {
+      property: 'article:publisher',
+      content: openGraph.value.article_publisher?.attributes?.content,
+    },
+    {
+      property: 'article:section',
+      content: openGraph.value.article_section?.attributes?.content,
+    },
+    {
+      property: 'article:tag',
+      content: openGraph.value.article_tag_0?.attributes?.content,
+    },
+    {
+      property: 'book:author',
+      content: openGraph.value.book_author_0?.attributes?.content,
+    },
+    {
+      property: 'book:isbn',
+      content: openGraph.value.book_isbn?.attributes?.content,
+    },
+    {
+      property: 'book:release_date',
+      content: openGraph.value.book_release_date?.attributes?.content,
+    },
+    {
+      property: 'book:tag',
+      content: openGraph.value.book_tag_0?.attributes?.content,
+    },
+    {
+      property: 'og:audio',
+      content: openGraph.value.og_audio?.attributes?.content,
+    },
+    {
+      property: 'og:audio:secure_url',
+      content: openGraph.value.og_audio_secure_url?.attributes?.content,
+    },
+    {
+      property: 'og:audio:type',
+      content: openGraph.value.og_audio_type?.attributes?.content,
+    },
+    {
+      property: 'og:country-name',
+      content: openGraph.value.og_country_name?.attributes?.content,
+    },
+    {
+      property: 'og:email',
+      content: openGraph.value.og_email?.attributes?.content,
+    },
+    {
+      property: 'og:fax_number',
+      content: openGraph.value.og_fax_number?.attributes?.content,
+    },
+    {
+      property: 'og:image:alt',
+      content: openGraph.value.og_image_alt?.attributes?.content,
+    },
+    {
+      property: 'og:image:height',
+      content: openGraph.value.og_image_height?.attributes?.content,
+    },
+    {
+      property: 'og:image:secure_url',
+      content: openGraph.value.og_image_secure_url_0?.attributes?.content,
+    },
+    {
+      property: 'og:image:type',
+      content: openGraph.value.og_image_type?.attributes?.content,
+    },
+    {
+      property: 'og:image:url',
+      content: openGraph.value.og_image_url_0?.attributes?.content,
+    },
+    {
+      property: 'og:image:width',
+      content: openGraph.value.og_image_width?.attributes?.content,
+    },
+    {
+      property: 'og:latitude',
+      content: openGraph.value.og_latitude?.attributes?.content,
+    },
+    {
+      property: 'og:locale',
+      content: openGraph.value.og_locale?.attributes?.content,
+    },
+    {
+      property: 'og:locale:alternative',
+      content: openGraph.value.og_locale_alternative_0?.attributes?.content,
+    },
+    {
+      property: 'og:locality',
+      content: openGraph.value.og_locality?.attributes?.content,
+    },
+    {
+      property: 'og:longitude',
+      content: openGraph.value.og_longitude?.attributes?.content,
+    },
+    {
+      property: 'og:phone_number',
+      content: openGraph.value.og_phone_number?.attributes?.content,
+    },
+    {
+      property: 'og:postal_code',
+      content: openGraph.value.og_postal_code?.attributes?.content,
+    },
+    {
+      property: 'og:region',
+      content: openGraph.value.og_region?.attributes?.content,
+    },
+    {
+      property: 'og:see_also',
+      content: openGraph.value.og_see_also?.attributes?.content,
+    },
+    {
+      property: 'og:street_address',
+      content: openGraph.value.og_street_address?.attributes?.content,
+    },
+    {
+      property: 'og:updated_time',
+      content: openGraph.value.og_updated_time?.attributes?.content,
+    },
+    {
+      property: 'og:video',
+      content: openGraph.value.og_video_0?.attributes?.content,
+    },
+    {
+      property: 'og:video:duration',
+      content: openGraph.value.og_video_duration?.attributes?.content,
+    },
+    {
+      property: 'og:video:height',
+      content: openGraph.value.og_video_height?.attributes?.content,
+    },
+    {
+      property: 'og:video:secure_url',
+      content: openGraph.value.og_video_secure_url?.attributes?.content,
+    },
+    {
+      property: 'og:video:type',
+      content: openGraph.value.og_video_type?.attributes?.content,
+    },
+    {
+      property: 'og:video:width',
+      content: openGraph.value.og_video_width?.attributes?.content,
+    },
+    {
+      property: 'profile:first_name',
+      content: openGraph.value.profile_first_name?.attributes?.content,
+    },
+    {
+      property: 'profile:gender',
+      content: openGraph.value.profile_gender?.attributes?.content,
+    },
+    {
+      property: 'profile:last_name',
+      content: openGraph.value.profile_last_name?.attributes?.content,
+    },
+    {
+      property: 'profile:username',
+      content: openGraph.value.profile_username?.attributes?.content,
+    },
+    {
+      property: 'video:actor',
+      content: openGraph.value.video_actor_0?.attributes?.content,
+    },
+    {
+      property: 'video:actor:role',
+      content: openGraph.value.video_actor_role_0?.attributes?.content,
+    },
+    {
+      property: 'video:director',
+      content: openGraph.value.video_director_0?.attributes?.content,
+    },
+    {
+      property: 'video:release_date',
+      content: openGraph.value.video_release_date?.attributes?.content,
+    },
+    {
+      property: 'video:series',
+      content: openGraph.value.video_series?.attributes?.content,
+    },
+    {
+      property: 'video:tag',
+      content: openGraph.value.video_tag_0?.attributes?.content,
+    },
+    {
+      property: 'video:writer',
+      content: openGraph.value.video_writer_0?.attributes?.content,
+    },
+  ],
+  link: [
+    {
+      rel: 'canonical',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        props.data?.is_frontpage,
+      ),
+    },
+    { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
+  ],
+});
 
 const practicalInfoData = computed(() => {
   const data = [
@@ -58,10 +318,28 @@ const practicalInfoData = computed(() => {
         {
           type: 'user_profile',
           content: [
-            props.data?.field_phone ? '<a href="tel:' + props.data?.field_phone + '">' + props.data?.field_phone + '</a>' : '',
-            props.data?.field_mail ? '<a href="mailto:' + props.data?.field_mail + '">' + props.data?.field_mail + '</a>' : '',
-            props.data?.field_homepage?.url ? '<a href="' + props.data?.field_homepage?.url + '" target="_blank">' + props.data?.field_homepage?.url + '</a>' : '',
-          ]
+            props.data?.field_phone
+              ? '<a href="tel:' +
+                props.data?.field_phone +
+                '">' +
+                props.data?.field_phone +
+                '</a>'
+              : '',
+            props.data?.field_mail
+              ? '<a href="mailto:' +
+                props.data?.field_mail +
+                '">' +
+                props.data?.field_mail +
+                '</a>'
+              : '',
+            props.data?.field_homepage?.url
+              ? '<a href="' +
+                props.data?.field_homepage?.url +
+                '" target="_blank">' +
+                props.data?.field_homepage?.url +
+                '</a>'
+              : '',
+          ],
         },
       ],
     },
@@ -86,7 +364,6 @@ const practicalInfoData = computed(() => {
   ];
   return filterGroups(data);
 });
-
 </script>
 
 <template>
@@ -251,12 +528,27 @@ const practicalInfoData = computed(() => {
           v-if="data?.field_contact?.length > 0"
         >
           <div class="user__contact">
-            <KontaktProvider :data="data?.field_contact" :type="props.data.roles?.includes('corporation') ? 'virksomhed' : props.data.roles?.includes('course_provider') ? 'udbyder' : ''" />
+            <KontaktProvider
+              :data="data?.field_contact"
+              :type="
+                props.data.roles?.includes('corporation')
+                  ? 'virksomhed'
+                  : props.data.roles?.includes('course_provider')
+                    ? 'udbyder'
+                    : ''
+              "
+            />
           </div>
         </div>
 
         <!-- Section information -->
-        <div class="user__section-user-info" v-if="data?.field_other_info_description || data?.field_other_info?.length > 0">
+        <div
+          class="user__section-user-info"
+          v-if="
+            data?.field_other_info_description ||
+            data?.field_other_info?.length > 0
+          "
+        >
           <div class="col-xs-12 col-sm-12 col-md-5">
             <div class="user__info-title">
               <h2>Yderligere information om udbyder</h2>
@@ -265,7 +557,10 @@ const practicalInfoData = computed(() => {
 
           <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-1">
             <div class="user__info-description">
-              <div v-if="data?.field_other_info_description" v-html="data?.field_other_info_description"></div>
+              <div
+                v-if="data?.field_other_info_description"
+                v-html="data?.field_other_info_description"
+              ></div>
 
               <div
                 class="user__info-description--buttons"
@@ -285,7 +580,9 @@ const practicalInfoData = computed(() => {
                     "
                     aria-label="Download link"
                   >
-                    <span class="user__info-description--button-item__link-text">
+                    <span
+                      class="user__info-description--button-item__link-text"
+                    >
                       {{ button?.field_link?.title }}
                     </span>
                     <NuxtIcon
