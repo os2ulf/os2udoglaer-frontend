@@ -49,7 +49,7 @@ jobs:
             "event_type": "'$event_type'",
             "client_payload":
               {
-                "submodule": "backend",
+                "submodule": "frontend",
                 "branch_to": "'$branch_to'",
                 "branch_from": "'$branch_from'",
                 "commit": "'$commit_hash'"
