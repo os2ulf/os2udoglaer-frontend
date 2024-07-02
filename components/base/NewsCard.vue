@@ -75,6 +75,14 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
       transform: scale(1.2);
       transition: transform 5s;
     }
+
+    .news-card__footer-button {
+      opacity: 0.8;
+    }
+
+    .news-card__button-icon {
+      animation: transformArrow 0.5s ease-in-out alternate;
+    }
   }
 
   :deep(img) {
@@ -206,6 +214,17 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
     :deep(path) {
       stroke: var(--color-primary);
     }
+  }
+}
+@keyframes transformArrow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 </style>
