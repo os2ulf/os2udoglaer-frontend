@@ -347,7 +347,7 @@ const practicalInfoData = computed(() => {
       group: [
         {
           type: 'user_profile',
-          title: 'Brancher',
+          title: 'Branche',
           content: props.data?.field_brancher,
         },
       ],
