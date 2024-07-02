@@ -41,7 +41,7 @@ jobs:
             "event_type": "'$event_type'",
             "client_payload":
               {
-                "submodule": "backend",
+                "submodule": "frontend",
                 "environment": "'$platform_environment'",
                 "commit": "'$commit_hash'"
               }
