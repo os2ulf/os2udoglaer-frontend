@@ -263,7 +263,7 @@ const practicalInfoData = computed(() => {
             </div>
           </div>
 
-          <div class="col-xs-12 col-sm-12 col-md-5 col-md-offset-1">
+          <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-1">
             <div class="user__info-description">
               <div v-if="data?.field_other_info_description" v-html="data?.field_other_info_description"></div>
 
@@ -277,7 +277,7 @@ const practicalInfoData = computed(() => {
                   :key="button"
                 >
                   <NuxtLink
-                    class="user__info-description__button-item__link button button--primary button--primary--ghost"
+                    class="user__info-description__button-item__link button button--ghost"
                     :to="
                       button?.field_file
                         ? button?.field_file
@@ -413,10 +413,6 @@ const practicalInfoData = computed(() => {
   }
 
   &__info-description {
-    :last-child {
-      margin-bottom: 36px;
-    }
-
     &--buttons {
       display: flex;
       gap: 24px;
@@ -432,7 +428,7 @@ const practicalInfoData = computed(() => {
   }
 
   :deep(.user__info-description--button-item__icon) {
-    margin: 0;
+    margin-bottom: 0;
     margin-left: 8px;
   }
 
