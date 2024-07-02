@@ -429,6 +429,7 @@ const practicalInfoData = computed(() => {
 .news {
   background-color: var(--color-tertiary-lighten-6);
   color: var(--color-text);
+  margin-bottom: 24px;
 
   &__top-section {
     padding: 32px 0 @(--sm) 0 0 64px 0;

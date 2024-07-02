@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { dateConversion } from '~/utils/dateConversion';
+import { stripHtmlFromString } from '~/utils/stripHtml';
+import { truncateString } from '~/utils/truncateString';
 
 const props = defineProps({
   data: {
@@ -7,6 +9,8 @@ const props = defineProps({
     default: null,
   },
 });
+
+const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
 </script>
 
 <template>
@@ -31,7 +35,9 @@ const props = defineProps({
           </div>
 
           <h4 class="news-card__title">{{ data?.label }}</h4>
-          <div class="news-card__description" v-html="data?.body"></div>
+          <div class="news-card__description" v-if="data?.body">
+            {{ truncateString(cardBodyText, 85) }}
+          </div>
         </div>
 
         <div class="news-card__footer-button">
