@@ -159,19 +159,17 @@ const haveFilterResults = (key: string) => {
   &__filters-container {
     padding-top: 6px;
     margin-bottom: 30px @(--sm) 64px;
-    gap: 2px;
   }
 
   &__filters {
     position: relative;
-    display: flow @(--sm) flex;
+    display: flex;
+    flex-flow: wrap;
     width: fit-content;
-    overflow: hidden;
     border: 2px solid var(--color-primary-lighten-3);
-    border-radius: 15px @(--sm) 50px;
-    padding: 2px;
-    overflow: hidden;
-    text-align: center @(--sm) left;
+    border-radius: 25px;
+    padding-top: 2px;
+    padding-left: 2px;
   }
 
   &__filter-item {
@@ -181,10 +179,12 @@ const haveFilterResults = (key: string) => {
     color: var(--color-primary);
     padding: 10px 16px;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px @(--sm) 16px;
     line-height: 1.25;
     transition: all .3s ease;
     cursor: pointer;
+    margin-right: 2px;
+    margin-bottom: 2px;
 
     &--active {
       color: var(--color-white);
