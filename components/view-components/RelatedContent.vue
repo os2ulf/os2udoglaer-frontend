@@ -79,7 +79,7 @@ const handleSorting = (key: string) => {
 
   setTimeout(() => {
     isLoading.value = false;
-  }, 300);
+  }, 200);
 };
 
 const haveFilterResults = (key: string) => {
