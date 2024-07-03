@@ -5,12 +5,10 @@ definePageMeta({
   layout: 'default',
 });
 
-const router = useRouter();
 const route = useRoute();
-// const config = useRuntimeConfig().public;
 const encodedPath = encodeURIComponent(route.path);
 
-// // fetching page data
+// fetching page data
 let error: any = null;
 let redirectUrl = ref(null);
 
