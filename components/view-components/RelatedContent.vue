@@ -179,11 +179,11 @@ const haveFilterResults = (key: string) => {
     background-color: transparent;
     border-radius: 50px;
     color: var(--color-primary);
-    padding: 0;
     padding: 10px 16px;
     font-weight: 700;
     font-size: 16px;
     line-height: 1.25;
+    transition: all .3s ease;
     cursor: pointer;
 
     &--active {

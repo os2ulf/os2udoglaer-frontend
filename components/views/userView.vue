@@ -543,13 +543,13 @@ const relatedContent = ref(props.data?.related_content);
             />
           </div>
         </div>
-
         <!-- Section information -->
         <div
           class="user__section-user-info"
           v-if="
-            data?.field_other_info_description ||
-            data?.field_other_info?.length > 0
+            data?.field_other_info_description !== null ||
+            data?.field_other_info[0]?.field_file !== null ||
+            data?.field_other_info[0]?.field_link !== null
           "
         >
           <div class="col-xs-12 col-sm-12 col-md-5">
