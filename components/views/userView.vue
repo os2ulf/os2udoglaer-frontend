@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
 import { filterGroups } from '~/utils/dataFilter';
-import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { removeBEdomain } from '~/utils/removeBEdomain';
 import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 
 const props = defineProps({
   data: {
@@ -14,7 +14,6 @@ const props = defineProps({
 });
 
 const openGraph = ref(props.data?.field_meta_tags?.html_head);
-
 useHead({
   title: openGraph.value.title?.attributes?.content,
   meta: [
@@ -364,6 +363,8 @@ const practicalInfoData = computed(() => {
   ];
   return filterGroups(data);
 });
+
+const relatedContent = ref(props.data?.related_content);
 </script>
 
 <template>
@@ -513,11 +514,13 @@ const practicalInfoData = computed(() => {
 
         <!-- Section related articles -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 user__section-related-articles"
+          class="col-xs-12 col-sm-12 col-md-12 user__section-related-content"
+          v-if="relatedContent?.results?.length > 0"
         >
-          <div class="user__related-articles">
-            <h3>Relaterede forløb</h3>
-            <div>article cards soon to come..</div>
+          <div class="user__related-content">
+            <RelatedContent
+              :data="{ relatedContent, title: data?.field_name }"
+            />
           </div>
         </div>
 
@@ -540,18 +543,26 @@ const practicalInfoData = computed(() => {
             />
           </div>
         </div>
-
         <!-- Section information -->
         <div
           class="user__section-user-info"
           v-if="
-            data?.field_other_info_description ||
-            data?.field_other_info?.length > 0
+            data?.field_other_info_description !== null ||
+            data?.field_other_info[0]?.field_file !== null ||
+            data?.field_other_info[0]?.field_link !== null
           "
         >
           <div class="col-xs-12 col-sm-12 col-md-5">
             <div class="user__info-title">
-              <h2>{{ props.data.roles?.includes('corporation') ? 'Yderligere information om virksomhed' : props.data.roles?.includes('course_provider') ? 'Yderligere information om udbyder' : 'Yderligere information' }}</h2>
+              <h2>
+                {{
+                  props.data.roles?.includes('corporation')
+                    ? 'Yderligere information om virksomhed'
+                    : props.data.roles?.includes('course_provider')
+                      ? 'Yderligere information om udbyder'
+                      : 'Yderligere information'
+                }}
+              </h2>
             </div>
           </div>
 
@@ -572,6 +583,7 @@ const practicalInfoData = computed(() => {
                   :key="button"
                 >
                   <NuxtLink
+                    v-if="button?.field_file || button?.field_link?.url"
                     class="user__info-description__button-item__link button button--ghost"
                     :to="
                       button?.field_file
@@ -696,7 +708,7 @@ const practicalInfoData = computed(() => {
   &__section-video,
   &__section-contact,
   &__section-user-info,
-  &__section-related-articles {
+  &__section-related-content {
     padding-top: 48px @(--md) 96px;
   }
 

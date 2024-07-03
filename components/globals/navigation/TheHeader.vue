@@ -228,7 +228,7 @@ onBeforeUnmount(() => {
   height: var(--navigation-bar-height);
   background: var(--color-white);
   transition: transform 0.3s ease-in-out;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 
   &__link-logo {
     opacity: 1;
@@ -269,6 +269,7 @@ onBeforeUnmount(() => {
   &__right-content {
     padding-top: 14px;
     display: none @(--md) flex;
+    flex-wrap: wrap;
   }
 
   /* Sliding the header up and down based on state */
