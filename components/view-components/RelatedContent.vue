@@ -6,11 +6,8 @@ const props = defineProps({
   },
 });
 
-console.log('props.data', props.data);
-
 const isLoading = ref(false);
 const relatedContent = ref(props.data.relatedContent);
-console.log('relatedContent component', relatedContent);
 
 const processedFilters = computed(() => {
   const exposedFilters =
@@ -57,8 +54,6 @@ const content = computed(() =>
 
 const currentFilter = ref('Alle');
 const handleSorting = (key: string) => {
-  console.log('filter key', key);
-
   if (key === currentFilter.value) {
     return;
   }
