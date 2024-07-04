@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { stripHtmlFromString } from '~/utils/stripHtml';
+import { truncateString } from '~/utils/truncateString';
 
 const props = defineProps({
   data: {
@@ -203,6 +204,9 @@ const allSubjectOrThemeArr = ref(
 const processedSubjectOrThemeString = ref(
   limitCharLengthAndConvertToString(allSubjectOrThemeArr.value, 85),
 );
+
+const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
+
 </script>
 
 <template>
@@ -229,7 +233,7 @@ const processedSubjectOrThemeString = ref(
         </div>
 
         <div v-if="data?.body" class="card__text">
-          {{ stripHtmlFromString(data?.body) }}
+          {{ truncateString(cardBodyText, 155) }}
         </div>
         <div class="card__icons" v-if="targetGroupFields || providerData">
           <div class="card__icon" v-if="providerData">
