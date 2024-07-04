@@ -6,6 +6,8 @@ const props = defineProps({
   },
 });
 
+console.log('props.data', props.data);
+
 const isLoading = ref(false);
 const relatedContent = ref(props.data.relatedContent);
 console.log('relatedContent component', relatedContent);
@@ -55,6 +57,8 @@ const content = computed(() =>
 
 const currentFilter = ref('Alle');
 const handleSorting = (key: string) => {
+  console.log('filter key', key);
+
   if (key === currentFilter.value) {
     return;
   }
@@ -68,11 +72,11 @@ const handleSorting = (key: string) => {
   } else {
     dynamicContent.value = props.data.relatedContent.results.filter(
       (item: any) => {
-        return (
-          item.field_target_group === key ||
-          item.bundle === key ||
-          item.bundle_label === key
-        );
+        if (item.bundle === 'course') {
+          return item.field_target_group === key;
+        } else {
+          return item.bundle === key || item.bundle_label === key;
+        }
       },
     );
   }
@@ -181,7 +185,7 @@ const haveFilterResults = (key: string) => {
     font-weight: 700;
     font-size: 14px @(--sm) 16px;
     line-height: 1.25;
-    transition: all .3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     margin-right: 2px;
     margin-bottom: 2px;
