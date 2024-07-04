@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 const { useContent } = useContentApi();
+import { seoCanonicalUrlHandler } from '~/utils/seoCanonicalUrlHandler';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { removeBEdomain } from '~/utils/removeBEdomain';
 
 definePageMeta({
   layout: 'default',
@@ -66,12 +69,12 @@ const renderLayoutBlock = (viewName: string) => {
 };
 
 const openGraph = ref(viewData?.field_meta_tags?.html_head);
-console.log('Open graph', openGraph.value);
 
 useHead({
   htmlAttrs: {
     lang: 'da',
   },
+
   title: openGraph.value.title?.attributes?.content,
   meta: [
     {
@@ -323,13 +326,13 @@ useHead({
     },
   ],
   link: [
-    // {
-    //   rel: 'canonical',
-    //   href: seoCanonicalUrlHandler(
-    //     openGraph.value.canonical_url?.attributes?.href,
-    //     props.data?.is_frontpage,
-    //   ),
-    // },
+    {
+      rel: 'canonical',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        viewData?.is_frontpage,
+      ),
+    },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
   ],
 });
