@@ -3,8 +3,8 @@ name: Update the common Platform.sh Repository
 on:
   push:
     branches:
-      - "develop"
-      - "master"
+      - "release/**"
+      - "main"
 
 jobs:
   update-platform-repo:
@@ -21,7 +21,7 @@ jobs:
           event_type="update-submodule"
 
           # Define the branch we are pushing to in platform repo
-          if [[ ${{ github.ref }} == 'refs/heads/master' ]]; then
+          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             platform_environment="production"
           else
             platform_environment="staging"
