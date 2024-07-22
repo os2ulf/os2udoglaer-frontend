@@ -191,9 +191,9 @@ onBeforeUnmount(() => {
           </nav>
 
           <div class="header__icon-wrapper">
-            <button class="header__search">
+            <NuxtLink to="/search" aria-label="Søg" class="header__search">
               <NuxtIcon filled name="search" />
-            </button>
+            </NuxtLink>
             <button class="header__burger-menu" @click="handleMobileNavigation">
               <NuxtIcon
                 filled

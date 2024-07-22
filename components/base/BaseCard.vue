@@ -66,7 +66,7 @@ const targetGroupFields = computed(() => {
       };
     }
   } else {
-    console.error('Unknown bundle:', props.data?.bundle);
+    // console.error('Unknown bundle:', props.data?.bundle);
 
     return null;
   }
@@ -206,7 +206,6 @@ const processedSubjectOrThemeString = ref(
 );
 
 const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
-
 </script>
 
 <template>
@@ -342,6 +341,8 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   }
 
   &__title {
+    word-break: break-word;
+
     h4 {
       margin-bottom: 8px;
     }
