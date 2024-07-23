@@ -120,6 +120,7 @@ const getFilteredPageResults = async (
 
 watch(selectedFiltersData, () => {
   getFilteredPageResults(true);
+  updateURLParameters();
 });
 
 const debounce = (func, delay) => {
@@ -134,12 +135,14 @@ const debounce = (func, delay) => {
 
 const handleSearchByKeyword = computed(() => {
   return debounce(() => {
+    updateURLParameters();
     getFilteredPageResults(true, true);
   }, 800);
 });
 
 const handlePager = (page: number) => {
   selectedPage.value = page;
+  updateURLParameters();
 
   getFilteredPageResults(false, true).then(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -148,12 +151,126 @@ const handlePager = (page: number) => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
+};
 
-  getFilteredPageResults(true, true);
+const updateURLParameters = () => {
+  const params = new URLSearchParams();
+
+  // Add search keyword to URL parameters
+  if (searchKeyword.value) {
+    params.set('search_string', searchKeyword.value);
+  }
+
+  // Add selected filters to URL parameters
+  selectedFiltersData.forEach((filter, index) => {
+    params.append(
+      `f[${index}]`,
+      `${filter.searchQueryUrlAlias}:${filter.value}`,
+    );
+  });
+
+  // Add selected page to URL parameters
+  params.set('page', selectedPage.value.toString());
+
+  // Use history.pushState to update the URL without reloading the page
+  const newURL = `${window.location.pathname}?${params.toString()}`;
+  history.pushState(null, '', newURL);
+};
+
+// Parse URL parameters
+const extractedFilters = reactive([]);
+const parseUrlParameters = () => {
+  const params = new URLSearchParams(window.location.search);
+  extractedFilters.value = [];
+
+  // Extract filters f[
+  params.forEach((value, key) => {
+    if (key.startsWith('f[')) {
+      const [searchQueryUrlAlias, filterValue] = value.split(':');
+      extractedFilters.value.push({
+        searchQueryUrlAlias,
+        value: filterValue,
+      });
+    }
+  });
+
+  // extract page
+  const page = params.get('page');
+  if (page) {
+    selectedPage.value = parseInt(page, 10);
+  }
+
+  // extract search keyword
+  const search = params.get('search_string');
+  if (search) {
+    searchKeyword.value = search;
+  }
+
+  // if finds anything - fetches data.
+  if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
+    handleExtractedFilters();
+  }
+};
+
+// populates selectedFiltersData with extracted filters
+const setSelectedFiltersDataWithExtractedFilters = () => {
+  // Clear previous selections
+  selectedFiltersData.splice(0, selectedFiltersData.length);
+
+  // Iterate through extractedFilters
+  extractedFilters.value.forEach((filter) => {
+    // Find the matching facet in allSortingOptions
+    const matchingFacet = Object.values(allSortingOptions.value).find(
+      (facet) => facet.facet_id === filter.searchQueryUrlAlias,
+    );
+
+    if (matchingFacet) {
+      // Find the specific item in the matching facet's items
+      const selectedItem = matchingFacet.items[filter.value];
+
+      if (selectedItem) {
+        // Push the filter object with necessary properties
+        selectedFiltersData.push({
+          searchQueryUrlAlias: filter.searchQueryUrlAlias,
+          value: filter.value,
+          label: selectedItem.label,
+        });
+      }
+    }
+  });
+};
+
+const handleExtractedFilters = async () => {
+  try {
+    let queryString = '';
+    extractedFilters.value.forEach((filter, index) => {
+      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
+      queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+    });
+
+    const response: any = await fetch(
+      `${backEndDomain.value}/search?format=json&region=content${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}`,
+    );
+
+    const data = await response.json();
+    dynamicContent.value = data.content.results;
+    totalItemsFound.value = data.content.pager.items;
+    pager.value = data.content.pager;
+    allSortingOptions.value = data.content.facets;
+    isLoading.value = false;
+
+    setSelectedFiltersDataWithExtractedFilters();
+  } catch (error) {
+    console.error('Error fetching filtered results:', error);
+  }
 };
 
 onBeforeMount(() => {
-  getInitialSearchResults();
+  if (window.location.search) {
+    parseUrlParameters();
+  } else {
+    getInitialSearchResults();
+  }
 });
 
 // TODO: Sorting options/logic.
