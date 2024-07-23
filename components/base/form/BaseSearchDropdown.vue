@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { is } from '@vee-validate/rules';
 import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
