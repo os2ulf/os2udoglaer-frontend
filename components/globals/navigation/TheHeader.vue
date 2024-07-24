@@ -191,9 +191,10 @@ onBeforeUnmount(() => {
           </nav>
 
           <div class="header__icon-wrapper">
-            <NuxtLink to="/search" aria-label="Søg" class="header__search">
-              <NuxtIcon filled name="search" />
-            </NuxtLink>
+            <ClientOnly>
+              <TheGlobalSearch />
+            </ClientOnly>
+
             <button class="header__burger-menu" @click="handleMobileNavigation">
               <NuxtIcon
                 filled
@@ -334,21 +335,6 @@ onBeforeUnmount(() => {
     }
   }
 
-  &__search {
-    margin-left: 10px;
-    padding: 12px;
-    background: none;
-    border: 1px solid var(--color-tertiary-lighten-4);
-    border-radius: 50%;
-    color: var(--color-tertiary);
-    width: 52px;
-    height: 52px;
-
-    :deep(svg) {
-      font-size: 24px;
-    }
-  }
-
   &__burger-menu {
     background-color: var(--color-primary);
     color: var(--color-white);
@@ -357,8 +343,8 @@ onBeforeUnmount(() => {
     border: none;
     border-radius: 50%;
     display: block @(--md) none;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
 
     :deep(svg) {
       font-size: 24px;

@@ -112,65 +112,71 @@ onUnmounted(() => {
       </div>
     </button>
 
-    <div
-      class="dropdown__list"
-      :class="{
-        dropdown__list__visible: visible,
-        dropdown__list__hidden: !visible,
-      }"
-      @click.stop
-    >
-      <ul :class="isLoading ? 'dropdown__list--loading' : ''">
-        <li
-          class="dropdown__search-wrapper"
-          v-if="Object.keys(allFilterOptions).length > 10"
-        >
-          <BaseInputFloatingLabel
-            v-model="searchFilterOptionKeyword"
-            type="text"
-            name="search"
-            label="Søg"
-            class="dropdown__search"
-            @input="handleSearchingFilterOptions"
-          />
-        </li>
-
-        <TransitionGroup name="list">
+    <TransitionGroup name="slide-top-dropdown">
+      <div
+        class="dropdown__list"
+        :class="{
+          dropdown__list__visible: visible,
+          dropdown__list__hidden: !visible,
+        }"
+        v-if="visible"
+        @click.stop
+      >
+        <ul :class="isLoading ? 'dropdown__list--loading' : ''">
           <li
-            class="dropdown__item"
-            v-for="item in filteredOptions"
-            :key="item"
+            class="dropdown__search-wrapper"
+            v-if="Object.keys(allFilterOptions).length > 10"
           >
-            <label
-              class="dropdown__checkbox"
-              :class="{ 'dropdown__checkbox--disabled': item.count === 0 }"
-              aria-label="Checkbox"
-            >
-              <input
-                type="checkbox"
-                :name="item.key"
-                :id="item.key"
-                @click="select(item)"
-                :checked="item.selected"
-                :disabled="item.count === 0"
-                aria-label="Checkbox"
-              />
-              <span
-                class="dropdown__checkbox-label"
-                :class="{
-                  'dropdown__checkbox-label--disabled': item.count === 0,
-                }"
-              >
-                {{ item.label }}
-              </span>
-            </label>
+            <BaseInputFloatingLabel
+              v-model="searchFilterOptionKeyword"
+              type="text"
+              name="search"
+              label="Søg"
+              class="dropdown__search"
+              @input="handleSearchingFilterOptions"
+            />
           </li>
-        </TransitionGroup>
-        <div class="dropdown__no-results" v-if="filteredOptions.length === 0">
-          <p>Ingen resultater</p>
-        </div>
-      </ul>
-    </div>
+
+          <TransitionGroup name="list">
+            <li
+              class="dropdown__item"
+              v-for="item in filteredOptions"
+              :key="item"
+            >
+              <label
+                class="dropdown__checkbox"
+                :class="{ 'dropdown__checkbox--disabled': item.count === 0 }"
+                aria-label="Checkbox"
+              >
+                <input
+                  type="checkbox"
+                  :name="item.key"
+                  :id="item.key"
+                  @click="select(item)"
+                  :checked="item.selected"
+                  :disabled="item.count === 0"
+                  aria-label="Checkbox"
+                />
+                <span
+                  class="dropdown__checkbox-label"
+                  :class="{
+                    'dropdown__checkbox-label--disabled': item.count === 0,
+                  }"
+                >
+                  {{ item.label }}
+                  <span class="dropdown__checkbox-count"
+                    >({{ item.count }})</span
+                  >
+                </span>
+              </label>
+            </li>
+          </TransitionGroup>
+          <div class="dropdown__no-results" v-if="filteredOptions.length === 0">
+            <p>Ingen resultater</p>
+          </div>
+        </ul>
+      </div>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -187,6 +193,7 @@ onUnmounted(() => {
   border-radius: 32px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  z-index: 2;
 
   &__title {
     &--focus {
@@ -197,6 +204,7 @@ onUnmounted(() => {
   &--focus {
     border: 1px solid var(--color-primary);
     box-shadow: 0px 0px 0px 4px #297f781a;
+    z-index: 9;
   }
 
   &__selector {
@@ -227,6 +235,12 @@ onUnmounted(() => {
     }
   }
 
+  &__checkbox-count {
+    font-size: var(--font-size-paragraph-sm);
+    line-height: 1.125;
+    color: #9b9b9b;
+  }
+
   &__arrow {
     width: fit-content;
     margin-left: 42px;
@@ -237,11 +251,26 @@ onUnmounted(() => {
 
     &__rotate {
       transform: rotateZ(180deg) translateY(0);
+
+      :deep(path) {
+        transition: all 0.3s ease-in-out;
+        stroke: var(--color-primary);
+      }
     }
   }
 
   &__list {
     z-index: 8;
+    position: absolute;
+    z-index: 9;
+    width: 100% @(--sm) max-content;
+    padding: 0;
+    background: var(--color-white);
+    box-shadow: 0px 4px 30px 0px #0000001a;
+    border-radius: 4px;
+    margin-top: 20px;
+    padding: 32px 24px;
+    cursor: default;
 
     &__visible {
       visibility: visible;
@@ -258,16 +287,6 @@ onUnmounted(() => {
 
       /* disable clicking on items */
       pointer-events: none;
-    }
-  }
-
-  &__item {
-    &:hover {
-      opacity: 0.7;
-
-      .dropdown__checkbox-label {
-        color: var(--color-primary);
-      }
     }
   }
 
@@ -293,6 +312,14 @@ onUnmounted(() => {
     font-size: 16px;
     align-items: center;
     cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+
+      .dropdown__checkbox-label {
+        color: var(--color-primary);
+      }
+    }
 
     &--disabled {
       cursor: not-allowed !important;
@@ -325,17 +352,9 @@ onUnmounted(() => {
   }
 
   ul {
-    position: absolute;
-    z-index: 9;
-    width: 100% @(--sm) 340px;
-    padding: 0;
     list-style-type: none;
-    background: var(--color-white);
-    box-shadow: 0px 4px 30px 0px #0000001a;
-    border-radius: 4px;
-    transform: translateY(3px);
-    padding: 32px 24px;
-    cursor: default;
+    padding: 0;
+    margin: 0;
   }
 
   li {

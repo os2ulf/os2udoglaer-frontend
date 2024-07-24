@@ -151,6 +151,10 @@ const handlePager = (page: number) => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
+
+  lastInteractedFilterReference.value = {
+    isFilterDropdownOpen: false,
+  };
 };
 
 const updateURLParameters = () => {
@@ -183,7 +187,7 @@ const parseUrlParameters = () => {
   const params = new URLSearchParams(window.location.search);
   extractedFilters.value = [];
 
-  // Extract filters f[
+  // Extract filters 'f[''
   params.forEach((value, key) => {
     if (key.startsWith('f[')) {
       const [searchQueryUrlAlias, filterValue] = value.split(':');
@@ -272,8 +276,6 @@ onBeforeMount(() => {
     getInitialSearchResults();
   }
 });
-
-// TODO: Sorting options/logic.
 </script>
 
 <template>
@@ -367,8 +369,6 @@ onBeforeMount(() => {
               <div class="search__results-found">
                 <h4>Viser {{ totalItemsFound }} forløb</h4>
               </div>
-
-              <div>Sorting option</div>
             </div>
 
             <div
@@ -457,6 +457,8 @@ onBeforeMount(() => {
   &__extra-filters-bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px @(--sm) 64px;
   }
 
   &__dropdown {
@@ -604,8 +606,6 @@ onBeforeMount(() => {
   }
 
   &__results-found {
-    margin-bottom: 32px @(--sm) 64px;
-
     h4 {
       margin: 0;
     }
