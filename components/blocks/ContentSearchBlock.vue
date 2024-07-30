@@ -1,48 +1,35 @@
 <script setup lang="ts">
-useHead({
-  title: 'Søg',
-  meta: [
-    {
-      name: 'robots',
-      content: 'noindex, nofollow',
-    },
-    {
-      name: 'description',
-      content: 'Søg i alle sider',
-    },
-  ],
+// @ts-nocheck
+import { v4 as uuidv4 } from 'uuid';
+
+const id = `search-block-${uuidv4()}`;
+
+const props = defineProps({
+  blockData: {
+    type: Object,
+    required: true,
+  },
 });
+
+const searchBlockData = ref(props.blockData);
 
 // TODO: Once we create logic to dynamically set the right BE Domain, use it here
 const backEndDomain = ref(
   'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
 );
 const isLoading = ref(true);
+const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');
-const dynamicContent = ref(null);
-const totalItemsFound = ref(null);
-const pager = ref(null);
-const allSortingOptions = ref(null);
+const dynamicContent = ref(searchBlockData?.value?.results);
+const totalItemsFound = ref(searchBlockData?.value?.pager?.items);
+const pager = ref(searchBlockData?.value?.pager);
+const allSortingOptions = ref(searchBlockData?.value?.facets);
+const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
-const isLoadingPageResults = ref(false);
 const showAllFilters = ref(false);
-
-const getInitialSearchResults = async () => {
-  try {
-    const response: any = await $fetch(
-      `${backEndDomain.value}/search?format=json&region=content`,
-    );
-
-    dynamicContent.value = response.content.results;
-    totalItemsFound.value = response.content.pager.items;
-    pager.value = response.content.pager;
-    allSortingOptions.value = response.content.facets;
-  } catch (error) {
-    console.error('Error fetching search results:', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
+const sortingString = ref(
+  searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
+);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -102,25 +89,20 @@ const getFilteredPageResults = async (
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/search?format=json&region=content${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
     );
     const data = await response.json();
 
-    dynamicContent.value = data.content.results;
-    totalItemsFound.value = data.content.pager.items;
-    pager.value = data.content.pager;
-    allSortingOptions.value = data.content.facets;
+    dynamicContent.value = data.results;
+    totalItemsFound.value = data.pager.items;
+    pager.value = data.pager;
+    allSortingOptions.value = data.facets;
   } catch (error) {
     console.error('Error fetching filtered results:', error);
   } finally {
     isLoadingPageResults.value = false;
   }
 };
-
-watch(selectedFiltersData, () => {
-  getFilteredPageResults(true);
-  updateURLParameters();
-});
 
 const debounce = (func, delay) => {
   let timeoutId;
@@ -139,29 +121,17 @@ const handleSearchByKeyword = computed(() => {
   }, 800);
 });
 
-const handlePager = (page: number) => {
-  selectedPage.value = page;
-  updateURLParameters();
-
-  getFilteredPageResults(false, true).then(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-};
-
-const handleClearAllFilters = () => {
-  selectedFiltersData.splice(0, selectedFiltersData.length);
-
-  lastInteractedFilterReference.value = {
-    isFilterDropdownOpen: false,
-  };
-};
-
 const updateURLParameters = () => {
   const params = new URLSearchParams();
 
   // Add search keyword to URL parameters
   if (searchKeyword.value) {
     params.set('search_string', searchKeyword.value);
+  }
+
+  // Add sorting
+  if (sortingString.value) {
+    params.set('sort_by', sortingString.value);
   }
 
   // Add selected filters to URL parameters
@@ -209,6 +179,12 @@ const parseUrlParameters = () => {
     searchKeyword.value = search;
   }
 
+  // extract sorting
+  const sort = params.get('sort_by');
+  if (sort) {
+    sortingString.value = sort;
+  }
+
   // if finds anything - fetches data.
   if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
     handleExtractedFilters();
@@ -224,7 +200,7 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
   extractedFilters.value.forEach((filter) => {
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => facet.facet_id === filter.searchQueryUrlAlias,
+      (facet) => facet.url_alias === filter.searchQueryUrlAlias,
     );
 
     if (matchingFacet) {
@@ -252,14 +228,14 @@ const handleExtractedFilters = async () => {
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/search?format=json&region=content${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
     );
 
     const data = await response.json();
-    dynamicContent.value = data.content.results;
-    totalItemsFound.value = data.content.pager.items;
-    pager.value = data.content.pager;
-    allSortingOptions.value = data.content.facets;
+    dynamicContent.value = data.results;
+    totalItemsFound.value = data.pager.items;
+    pager.value = data.pager;
+    allSortingOptions.value = data.facets;
     isLoading.value = false;
 
     setSelectedFiltersDataWithExtractedFilters();
@@ -268,22 +244,68 @@ const handleExtractedFilters = async () => {
   }
 };
 
+watch(selectedFiltersData, () => {
+  getFilteredPageResults(true);
+  updateURLParameters();
+});
+
+const handleClearAllFilters = () => {
+  selectedFiltersData.splice(0, selectedFiltersData.length);
+
+  lastInteractedFilterReference.value = {
+    isFilterDropdownOpen: false,
+  };
+};
+
+const handlePager = (page: number) => {
+  selectedPage.value = page;
+  updateURLParameters();
+
+  getFilteredPageResults(false, true).then(() => {
+    const searchBlock = document.querySelector('.search-block');
+
+    if (searchBlock) {
+      searchBlock.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+};
+
+const handleSortingChange = (item) => {
+  if (item.searchQueryUrlAlias && item.key) {
+    sortingString.value = item.key;
+    updateURLParameters();
+
+    getFilteredPageResults(false, true);
+  }
+
+  lastInteractedFilterReference.value = {
+    isFilterDropdownOpen: false,
+  };
+};
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
-  } else {
-    getInitialSearchResults();
   }
+});
+
+onMounted(() => {
+  isLoading.value = false;
+  isLoadingPageResults.value = false;
 });
 </script>
 
 <template>
-  <div class="search">
-    <div class="container">
+  <div :id="id">
+    <div class="search-block">
+      <div class="search-block__label" v-if="searchBlockData?.label">
+        {{ searchBlockData?.label }}
+      </div>
+
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
-          <div class="search__filters-container">
-            <div class="search__search-keyword">
+          <div class="search-block__filters-container">
+            <div class="search-block__search-keyword">
               <BaseInputFloatingLabel
                 v-model="searchKeyword"
                 type="text"
@@ -294,64 +316,90 @@ onBeforeMount(() => {
               />
             </div>
 
-            <div class="search__filters" v-if="!isLoadingPageResults">
+            <div class="search-block__filters" v-if="!isLoadingPageResults">
               <div
-                class="search__dropdown"
+                class="search-block__dropdown"
                 v-for="(item, name, idx) in allSortingOptions"
                 :key="item"
                 :class="{
-                  'search__dropdown--is-hidden': idx >= 4 && !showAllFilters,
-                  'search__dropdown--is-hidden-mobile': !showAllFilters
-                    ? 'search__dropdown--is-hidden-mobile'
+                  'search-block__dropdown--is-hidden':
+                    idx >= 4 && !showAllFilters,
+                  'search-block__dropdown--is-hidden-mobile': !showAllFilters
+                    ? 'search-block__dropdown--is-hidden-mobile'
                     : '',
                 }"
               >
-                <BaseSearchDropdown
-                  @dropdown-value="handleFilterChange"
-                  :allFilters="item"
-                  :last-interacted-filter-data="lastInteractedFilterReference"
-                  :isLoading="isLoadingPageResults"
-                />
+                <ClientOnly>
+                  <BaseSearchDropdown
+                    @dropdown-value="handleFilterChange"
+                    :allFilters="item"
+                    :last-interacted-filter-data="lastInteractedFilterReference"
+                    :isLoading="isLoadingPageResults"
+                  />
+                </ClientOnly>
               </div>
               <button
-                class="search__show-all-filters"
+                class="search-block__show-all-filters search-block__show-all-filters--desktop"
                 v-if="
-                  Object.keys(allSortingOptions).length > 3 && !showAllFilters
+                  Object.keys(allSortingOptions).length > 4 && !showAllFilters
                 "
                 @click="showAllFilters = true"
               >
                 <NuxtIcon
-                  class="search__chip-close"
+                  class="search-block__chip-close"
                   name="controls-vertical-alt"
                   filled
                 ></NuxtIcon>
                 Alle filtre
 
-                <div class="search__show-all-filters__counter">
+                <div class="search-block__show-all-filters__counter">
+                  {{ Object.keys(allSortingOptions).length }}
+                </div>
+              </button>
+
+              <button
+                class="search-block__show-all-filters search-block__show-all-filters--mobile"
+                v-if="!showAllFilters"
+                @click="showAllFilters = true"
+              >
+                <NuxtIcon
+                  class="search-block__chip-close"
+                  name="controls-vertical-alt"
+                  filled
+                ></NuxtIcon>
+                Alle filtre
+
+                <div class="search-block__show-all-filters__counter">
                   {{ Object.keys(allSortingOptions).length }}
                 </div>
               </button>
             </div>
-            <div v-else class="search__skeleton">
+            <div v-else class="search-block__skeleton">
               <BaseLoading />
             </div>
 
             <!-- chips -->
-            <div class="search__chips" v-if="selectedFiltersData.length > 0">
+            <div
+              class="search-block__chips"
+              v-if="selectedFiltersData.length > 0"
+            >
               <TransitionGroup name="pan-right">
                 <div
-                  class="search__chip"
+                  class="search-block__chip"
                   v-for="item in selectedFiltersData"
                   :key="item"
                   @click="handleFilterChange(item, true)"
                 >
-                  <NuxtIcon class="search__chip-close" name="close"></NuxtIcon>
+                  <NuxtIcon
+                    class="search-block__chip-close"
+                    name="close"
+                  ></NuxtIcon>
                   <span>{{ item?.label }}</span>
                 </div>
               </TransitionGroup>
               <button
                 @click="handleClearAllFilters"
-                class="search__chip-clear"
+                class="search-block__chip-clear"
                 v-if="selectedFiltersData.length > 0"
                 aria-label="Nulstil filtre"
               >
@@ -361,26 +409,38 @@ onBeforeMount(() => {
           </div>
 
           <div
-            class="search__results-container"
+            class="search-block__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search__extra-filters-bar">
-              <div class="search__results-found">
+            <div class="search-block__extra-filters-bar">
+              <div class="search-block__results-found">
                 <h4>Viser {{ totalItemsFound }} forløb</h4>
+              </div>
+              <div class="search-block__sorting">
+                <ClientOnly>
+                  <BaseSearchSorting
+                    @sorting-value="handleSortingChange"
+                    :sortingFilterData="pageSortingOptions"
+                    :isLoading="isLoadingPageResults"
+                    :defaultSelectedOption="sortingString"
+                  />
+                </ClientOnly>
               </div>
             </div>
 
             <div
-              class="search__result-items"
-              :class="{ 'search__result-items--loading': isLoadingPageResults }"
+              class="search-block__result-items"
+              :class="{
+                'search-block__result-items--loading': isLoadingPageResults,
+              }"
             >
               <TransitionGroup name="fade-in-search-results">
                 <div
-                  class="search__result-item"
+                  class="search-block__result-item"
                   v-for="item in dynamicContent"
                   :key="item"
                 >
-                  <div class="search__card-item">
+                  <div class="search-block__card-item">
                     <BaseCard :data="item" />
                   </div>
                 </div>
@@ -388,7 +448,7 @@ onBeforeMount(() => {
             </div>
 
             <BasePager
-              class="search__pager"
+              class="search-block__pager"
               v-if="pager"
               :pager="pager"
               @change="handlePager"
@@ -396,16 +456,20 @@ onBeforeMount(() => {
           </div>
 
           <div
-            class="search__no-results-container"
+            class="search-block__no-results-container"
             :class="{
-              'search__no-results-container--loading': isLoadingPageResults,
+              'search-block__no-results-container--loading':
+                isLoadingPageResults,
             }"
             v-else
           >
-            <div class="search__no-result-item">
+            <div class="search-block__no-result-item">
               <h4>Ingen resultater</h4>
 
-              <div v-if="isLoadingPageResults" class="search__spinner"></div>
+              <div
+                v-if="isLoadingPageResults"
+                class="search-block__spinner"
+              ></div>
             </div>
           </div>
         </div>
@@ -421,10 +485,17 @@ onBeforeMount(() => {
 </template>
 
 <style lang="postcss">
-.search {
+.search-block {
+  &__label {
+    color: var(--color-tertiary);
+    margin-bottom: 24px @(--sm) 64px;
+    font-size: var(--font-size-h1);
+    font-weight: 700;
+  }
+
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: transparent;
   color: var(--color-tertiary);
 
   &__skeleton {
@@ -491,6 +562,22 @@ onBeforeMount(() => {
     position: relative;
     transition: all 0.3s ease-in-out;
     border: 1px solid transparent;
+
+    &--mobile {
+      display: none;
+
+      @media (--viewport-sm-max) {
+        display: flex;
+      }
+    }
+
+    &--desktop {
+      display: flex;
+
+      @media (--viewport-sm-max) {
+        display: none;
+      }
+    }
 
     &:hover {
       background-color: var(--color-primary-lighten-3);
@@ -657,7 +744,12 @@ body {
   background-color: var(--color-tertiary-lighten-6);
 }
 
+/* overwrites */
 .header-parent {
+  background-color: var(--color-tertiary-lighten-6) !important;
+}
+
+.section {
   background-color: var(--color-tertiary-lighten-6) !important;
 }
 </style>

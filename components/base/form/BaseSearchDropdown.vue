@@ -183,9 +183,10 @@ onUnmounted(() => {
 <style lang="postcss" scoped>
 .dropdown {
   width: inherit;
+  height: inherit;
   cursor: pointer;
   position: relative;
-  height: 56px;
+  height: inherit;
   color: #444444;
   font-weight: 400;
   font-size: var(--font-size-paragraph-sm);
@@ -194,8 +195,11 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   z-index: 2;
+  padding: 10px 0 8px 0;
 
   &__title {
+    text-align: left;
+
     &--focus {
       color: var(--color-primary);
     }
@@ -221,7 +225,6 @@ onUnmounted(() => {
     padding: 0 24px;
     color: var(--color-gray-62);
     font-size: var(--font-size-paragraph-sm);
-    transform: translateY(9px);
   }
 
   &__checkbox-label {
@@ -268,7 +271,7 @@ onUnmounted(() => {
     background: var(--color-white);
     box-shadow: 0px 4px 30px 0px #0000001a;
     border-radius: 4px;
-    margin-top: 20px;
+    margin-top: 13px;
     padding: 32px 24px;
     cursor: default;
 
@@ -291,7 +294,6 @@ onUnmounted(() => {
   }
 
   &__no-results {
-    padding-top: 20px;
     font-weight: 400;
 
     p {
@@ -301,7 +303,7 @@ onUnmounted(() => {
   }
 
   &__search-wrapper {
-    padding-bottom: 5px;
+    margin-bottom: 25px;
   }
 
   &__checkbox {

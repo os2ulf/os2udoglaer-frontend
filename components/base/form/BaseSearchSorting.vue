@@ -11,14 +11,23 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  defaultSelectedOption: {
+    type: String,
+    default: null,
+  },
 });
 
 const id = `sorting-${uuidv4()}`;
 const emit = defineEmits(['sortingValue']);
 const visible = ref(false);
 const sortingFilterData = ref(props.sortingFilterData);
+
 const defaultFilterLabel = ref('Sorteret efter');
 const selectedFilterLabel = ref(null);
+const computedDefaultSelectedOption = computed(() => {
+  return props.defaultSelectedOption;
+});
 
 const computedLabel = computed(() => {
   return selectedFilterLabel.value
@@ -35,21 +44,26 @@ const toggleDropdown = () => {
 };
 
 const select = (item) => {
-  if (item.label === selectedFilterLabel.value) {
+  if (item.value === selectedFilterLabel.value) {
     visible.value = false;
     return;
   }
 
-  selectedFilterLabel.value = item.label;
+  selectedFilterLabel.value = item.value;
 
   item = {
     ...item,
-    // searchQueryUrlAlias: searchQueryUrlAlias.value,
+    searchQueryUrlAlias: 'sort_by',
     isDropdownOpen: false,
   };
 
   visible.value = false;
   emit('sortingValue', item);
+};
+
+// select without emitting
+const selectWithoutEmit = (filterOption) => {
+  selectedFilterLabel.value = filterOption;
 };
 
 const handleClickOutside = (e) => {
@@ -58,70 +72,25 @@ const handleClickOutside = (e) => {
   }
 };
 
-const checkIfAnyFilterIsSelected = () => {
-  for (const key in sortingFilterData.value.related_user.items) {
-    if (sortingFilterData.value.related_user.items[key].selected) {
-      return (selectedFilterLabel.value =
-        sortingFilterData.value.related_user.items[key].label);
+// Select default sorting option
+const selectDefaultSortingOption = () => {
+  if (props.defaultSelectedOption) {
+    for (const option of sortingFilterData.value.sort_by.options) {
+      if (option.key == computedDefaultSelectedOption.value) {
+        selectWithoutEmit(option.value);
+      }
     }
   }
 };
 
 onMounted(() => {
-  checkIfAnyFilterIsSelected();
+  selectDefaultSortingOption();
   document.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
-
-// TODO: pass this for testing if dummy data needed - otherwise delete once done.
-// const testSortingFilter = reactive({
-//   related_user: {
-//     type: 'facet',
-//     facet_id: 'related_user',
-//     label: 'Besøgssteder',
-//     url_alias: 'related_user',
-//     items: {
-//       '1': {
-//         type: 'facet_item',
-//         label: 'novicell',
-//         count: 0,
-//         selected: false,
-//         value: '1',
-//       },
-//       '2': {
-//         type: 'facet_item',
-//         label: 'Status Feed',
-//         count: 0,
-//         selected: false,
-//         value: '2',
-//       },
-//       '13': {
-//         type: 'facet_item',
-//         label: 'alexUdbyder',
-//         count: 2,
-//         selected: false,
-//         value: '13',
-//       },
-//       '14': {
-//         type: 'facet_item',
-//         label: 'signeVirksomhed',
-//         count: 0,
-//         selected: false,
-//         value: '14',
-//       },
-//       '15': {
-//         type: 'facet_item',
-//         label: 'signeTeaterkontakt',
-//         count: 0,
-//         selected: false,
-//         value: '15',
-//       },
-//     },
-//   },
-// });
 </script>
 
 <template>
@@ -171,19 +140,19 @@ onUnmounted(() => {
         <ul :class="isLoading ? 'sorting__list--loading' : ''">
           <li
             class="sorting__item"
-            v-for="item in sortingFilterData.related_user.items"
+            v-for="item in sortingFilterData.sort_by.options"
             :key="item"
           >
             <label
               class="sorting__list-item"
               :class="
-                computedLabel === item.label
+                computedLabel === item.value
                   ? 'sorting__list-item--selected'
                   : ''
               "
               @click="select(item)"
             >
-              {{ item.label }}
+              {{ item.value }}
             </label>
           </li>
         </ul>

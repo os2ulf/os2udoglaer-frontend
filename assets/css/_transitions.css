@@ -207,7 +207,7 @@
 
 /* fade input */
 .fade-input-enter-active {
-  animation: fade-shit 0.3s;
+  animation: fade-input-anim 0.3s;
 }
 
 .fade-input-leave-active {
@@ -319,6 +319,25 @@
   }
   100% {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* fade-in-search-results */
+.fade-in-search-results-enter-active {
+  animation: fade-in-search-results 0.5s;
+}
+
+.fade-in-search-results-leave-active {
+  animation: fade-in-search-results 0.25s reverse;
+}
+
+@keyframes fade-in-search-results {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+  100% {
     opacity: 1;
   }
 }
