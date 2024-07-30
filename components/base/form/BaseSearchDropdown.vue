@@ -195,7 +195,7 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   z-index: 2;
-  padding: 10px 0 8px 0;
+  padding: 8px 0 8px 0;
 
   &__title {
     text-align: left;
