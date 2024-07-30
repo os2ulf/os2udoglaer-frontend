@@ -264,15 +264,6 @@ function showHelperText() {
     transform: translate(-50%, -50%);
   }
 
-  .custom-checkbox {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--color-gray-25);
-    border-radius: 4px;
-    margin-right: 8px;
-  }
-
   &__styled-textarea {
     width: 100%;
     height: 220px;

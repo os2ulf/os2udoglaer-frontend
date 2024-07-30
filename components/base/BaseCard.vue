@@ -66,7 +66,7 @@ const targetGroupFields = computed(() => {
       };
     }
   } else {
-    console.error('Unknown bundle:', props.data?.bundle);
+    // console.error('Unknown bundle:', props.data?.bundle);
 
     return null;
   }
@@ -206,14 +206,17 @@ const processedSubjectOrThemeString = ref(
 );
 
 const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
-
 </script>
 
 <template>
   <NuxtLink class="card__link" :to="data?.link" aria-label="Link til kort">
     <div class="card">
       <div class="card__image" v-if="data?.field_image">
-        <BaseImage v-if="data?.field_image" :image="data?.field_image" />
+        <BaseImage
+          class="card__image-item"
+          v-if="data?.field_image"
+          :image="data?.field_image"
+        />
         <div
           v-if="data?.bundle_label || data?.field_target_group"
           class="card__target-group"
@@ -300,13 +303,18 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
   height: 100%;
-  transition: all 0.3s ease-in-out;
   box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+  transition: all 0.3s ease-in-out;
+
+  :deep(img) {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+  }
 
   &:hover {
     box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
 
-    img {
+    :deep(img) {
       opacity: 0.8;
     }
   }
@@ -337,11 +345,18 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
       object-fit: cover;
       opacity: 1;
       transition: opacity 0.3s ease-in-out;
-      border-radius: 3px 0 0 3px;
+    }
+  }
+
+  &__image-item {
+    :deep(img) {
+      border-radius: 3px 3px 0 0 @(--sm) 3px 0 0 3px;
     }
   }
 
   &__title {
+    word-break: break-word;
+
     h4 {
       margin-bottom: 8px;
     }

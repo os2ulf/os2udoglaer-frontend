@@ -42,7 +42,7 @@ const limitedPages = computed(() => {
       aria-label="Previous page"
       @click="$emit('change', pager.current - 1)"
     >
-      <NuxtIcon class="pager__page--prev-icon" name="chevron-down" />
+      <NuxtIcon class="pager__page--prev-icon" name="chevron-down" filled />
     </button>
 
     <button
@@ -64,7 +64,7 @@ const limitedPages = computed(() => {
       aria-label="Next page"
       @click="$emit('change', pager.current + 1)"
     >
-      <NuxtIcon class="pager__page--next-icon" name="chevron-down" />
+      <NuxtIcon class="pager__page--next-icon" name="chevron-down" filled />
     </button>
   </div>
 </template>
@@ -79,17 +79,20 @@ const limitedPages = computed(() => {
     width: 48px;
     height: 48px;
     margin: 0 4px;
-    font-weight: 500;
-    font-size: 14px;
-    background-color: var(--color-white);
+    font-weight: 700;
+    font-size: 16px;
+    background-color: transparent;
     border: none;
     border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid var(--color-primary-lighten-3);
+    color: var(--color-primary);
 
     &--active {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       color: var(--color-white);
-      background: var(--color-text);
+      background: var(--color-primary);
       border: none;
       cursor: default;
       pointer-events: none;
@@ -101,16 +104,26 @@ const limitedPages = computed(() => {
       align-items: center;
       justify-content: center;
       margin-right: 0;
-      color: var(--color-text);
+      color: var(--color-primary);
       background: transparent;
-      border: 1px solid var(--color-gray-25);
+      border: 2px solid var(--color-primary);
       cursor: pointer;
       pointer-events: auto;
+      font-size: 24px;
+
+      :deep(path) {
+        stroke: var(--color-primary);
+      }
     }
 
     &--prev {
-      margin-right: 4px;
+      margin-right: 22px;
       margin-left: 0;
+    }
+
+    &--next {
+      margin-left: 22px;
+      margin-right: 0;
     }
 
     &--prev-icon {
@@ -122,7 +135,8 @@ const limitedPages = computed(() => {
     }
 
     &:hover {
-      opacity: 0.5;
+      opacity: 0.7;
+      box-shadow: 0px 2px 10px 7px rgba(var(--color-primary-rgb), 0.1);
     }
   }
 }

@@ -207,7 +207,7 @@
 
 /* fade input */
 .fade-input-enter-active {
-  animation: fade-shit 0.3s;
+  animation: fade-input-anim 0.3s;
 }
 
 .fade-input-leave-active {
@@ -221,5 +221,123 @@
 
   100% {
     opacity: 0.5;
+  }
+}
+
+/* pan-right */
+.pan-right-enter-active {
+  animation: pan-right-enter 1s forwards;
+}
+
+.pan-right-leave-active {
+  animation: pan-right-leave 0.3s forwards;
+}
+
+@keyframes pan-right-enter {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pan-right-leave {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-20%);
+    opacity: 0;
+  }
+}
+
+/* search by keyword list */
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+}
+
+.list-leave-active {
+  position: absolute;
+  opacity: 0;
+}
+
+/* pan-top */
+.pan-top-enter-active {
+  animation: pan-top-enter 0.5s forwards;
+}
+
+.pan-top-leave-active {
+  animation: pan-top-leave 0.25s forwards;
+}
+
+@keyframes pan-top-enter {
+  0% {
+    transform: translateY(-40%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pan-top-leave {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20%);
+    opacity: 0;
+  }
+}
+
+/* slide-top-dropdown */
+.slide-top-dropdown-enter-active {
+  animation: slide-top-dropdown 0.5s;
+}
+
+.slide-top-dropdown-leave-active {
+  animation: slide-top-dropdown 0.25s reverse;
+}
+
+@keyframes slide-top-dropdown {
+  0% {
+    transform: translateY(-5%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* fade-in-search-results */
+.fade-in-search-results-enter-active {
+  animation: fade-in-search-results 0.5s;
+}
+
+.fade-in-search-results-leave-active {
+  animation: fade-in-search-results 0.25s reverse;
+}
+
+@keyframes fade-in-search-results {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
