@@ -190,8 +190,8 @@ console.log('internshipView.vue', props.data);
                 />
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link) ||
-                    (data?.corporation && data?.corporation.link)
+                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
+                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -262,8 +262,8 @@ console.log('internshipView.vue', props.data);
             />
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link) ||
-                (data?.corporation && data?.corporation.link)
+                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
+                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
               "
               class="button button--ghost internship__contact-button"
               :button-data="{
@@ -373,7 +373,11 @@ console.log('internshipView.vue', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" />
+        <ContactForm :contactPersonEmail="contactPersonEmail" :contactPersonName="props.data?.provider
+            ? props.data?.provider?.field_name
+            : props.data?.corporation
+              ? props.data?.corporation?.field_name
+              : ''" />
       </TheSlotModal>
     </Transition>
   </div>
