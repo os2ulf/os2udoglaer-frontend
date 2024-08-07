@@ -8,6 +8,7 @@ const props = defineProps({
 
 const isLoading = ref(false);
 const relatedContent = ref(props.data.relatedContent);
+const componentKey = ref(0);
 
 const processedFilters = computed(() => {
   const exposedFilters =
@@ -76,6 +77,8 @@ const handleSorting = (key: string) => {
     );
   }
 
+  componentKey.value += 1;
+
   setTimeout(() => {
     isLoading.value = false;
   }, 200);
@@ -136,7 +139,7 @@ const haveFilterResults = (key: string) => {
           v-for="(item, index) in content"
           :key="index"
         >
-          <div class="related-content__card-item">
+          <div class="related-content__card-item" :key="componentKey">
             <BaseCard :data="item" />
           </div>
         </div>
