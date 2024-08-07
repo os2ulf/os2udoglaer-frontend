@@ -7,15 +7,21 @@ const props = defineProps({
     default: '',
     required: true,
   },
+  contactPersonName: {
+    type: String,
+    default: '',
+    required: true,
+  },
 });
 
 const config = useRuntimeConfig().public;
 
 const fullName = ref('');
+const phone = ref('');
 const email = ref('');
 const message = ref('');
 const errorMessage = ref('');
-const agreementCheckbox = ref(false);
+const agreementCheckbox = ref(true);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
@@ -33,6 +39,7 @@ const handleSubmit = async () => {
 
   isLoading.value = true;
   const trimmedFullName = fullName.value.trim();
+  const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
   const trimmedMessage = message.value.trim();
 
@@ -40,6 +47,7 @@ const handleSubmit = async () => {
     webform_id: 'contact_provider',
     name: trimmedFullName,
     message: trimmedMessage,
+    phone: trimmedPhone,
     email: trimmedEmail,
     provider_email: props.contactPersonEmail,
   };
@@ -82,6 +90,7 @@ function showHelperText() {
 
 <template>
   <div class="contact-form" v-if="!isSuccess">
+  <h3 class="contact-form__title">Send besked til {{ contactPersonName }}</h3>
     <Form @submit="handleSubmit()">
       <BaseInputFloatingLabel
         class="contact-form__label"
@@ -89,6 +98,14 @@ function showHelperText() {
         type="text"
         name="name"
         label="Fulde navn"
+        rules="required"
+      />
+      <BaseInputFloatingLabel
+        class="contact-form__label"
+        v-model="phone"
+        type="text"
+        name="phone"
+        label="Telefonnummer"
         rules="required"
       />
       <BaseInputFloatingLabel
@@ -123,7 +140,7 @@ function showHelperText() {
                 v-if="showHelper && !message"
                 class="contact-form__helper-text"
               >
-                Uddyb venligst din henvendelse
+                Besked
               </span>
             </Transition>
             <Transition name="bounce">
@@ -135,40 +152,9 @@ function showHelperText() {
               </span>
             </Transition>
           </Field>
+          <div class="contact-form__textarea-description">Angiv din besked. Hvis du vil booke et forløb, så angiv venligst så mange informationer som muligt - f.eks. skole eller institution, klassetrin eller alder, antal børn, forslag til dato, dit tlf. nr. og andre informationer, der kan være gavnlige for udbyderen. Send ikke personfølsomme oplysninger i denne formular.</div>
         </div>
       </div>
-
-      <Field
-        v-slot="{ field, errors }"
-        v-model="agreementCheckbox"
-        name="consent"
-        label="Samtykke lorem ipsum dolor sit amet"
-        type="checkbox"
-        :value="true"
-        rules="required"
-        :validate-on-change="false"
-        :validate-on-blur="false"
-        :validate-on-model-update="false"
-        :validate-on-input="false"
-      >
-        <label class="contact-form__checkbox">
-          <input
-            type="checkbox"
-            v-bind="field"
-            :value="true"
-            :class="errors[0] ? 'contact-form__checkbox--invalid' : ''"
-          />
-          Samtykke lorem ipsum dolor sit amet
-        </label>
-        <Transition name="bounce">
-          <span
-            v-if="errors[0]"
-            role="alert"
-            class="form-validation-feedback form-validation-feedback--invalid"
-            >{{ errors[0] }}</span
-          >
-        </Transition>
-      </Field>
 
       <input type="text" v-model="honeypot" class="contact-form__honeypot" />
 
@@ -198,7 +184,7 @@ function showHelperText() {
   </div>
 
   <div v-else>
-    <h2 class="contact-form__success">Tak, Din besked er blevet sendt.</h2>
+    <h2 class="contact-form__success">Tak! Din besked er sendt til {{ contactPersonName }}.</h2>
   </div>
 </template>
 
@@ -262,6 +248,13 @@ function showHelperText() {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  &__textarea-description {
+    padding: 10px 26px 0;
+    font-size: 80%;
+    font-style: italic;
+    line-height: 1.2;
   }
 
   &__styled-textarea {

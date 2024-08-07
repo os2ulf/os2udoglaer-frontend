@@ -475,7 +475,11 @@ console.log('courseView', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" />
+        <ContactForm :contactPersonEmail="contactPersonEmail" :contactPersonName="props.data?.provider
+            ? props.data?.provider?.field_name
+            : props.data?.corporation
+              ? props.data?.corporation?.field_name
+              : ''" />
       </TheSlotModal>
     </Transition>
   </div>
