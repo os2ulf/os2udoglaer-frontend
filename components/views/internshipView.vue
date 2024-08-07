@@ -190,8 +190,8 @@ console.log('internshipView.vue', props.data);
                 />
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link) ||
-                    (data?.corporation && data?.corporation.link)
+                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
+                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -262,8 +262,8 @@ console.log('internshipView.vue', props.data);
             />
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link) ||
-                (data?.corporation && data?.corporation.link)
+                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
+                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
               "
               class="button button--ghost internship__contact-button"
               :button-data="{
