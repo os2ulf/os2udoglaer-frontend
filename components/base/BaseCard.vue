@@ -230,7 +230,10 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
           </div>
         </div>
       </div>
-      <div class="card__content">
+      <div
+        class="card__content"
+        :class="{ 'card__content--no-image': !data?.field_image }"
+      >
         <div v-if="data?.label" class="card__title">
           <h4>{{ data?.label }}</h4>
         </div>
@@ -384,6 +387,10 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
     flex-flow: column;
     width: 100% @(--sm) 50%;
     padding: 24px @(--sm) 32px;
+
+    &--no-image {
+      width: 100% !important;
+    }
   }
 
   &__text {
