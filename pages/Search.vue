@@ -257,6 +257,7 @@ const handleExtractedFilters = async () => {
 
     const data = await response.json();
     dynamicContent.value = data.content.results;
+
     totalItemsFound.value = data.content.pager.items;
     pager.value = data.content.pager;
     allSortingOptions.value = data.content.facets;
@@ -299,12 +300,6 @@ onBeforeMount(() => {
                 class="search__dropdown"
                 v-for="(item, name, idx) in allSortingOptions"
                 :key="item"
-                :class="{
-                  'search__dropdown--is-hidden': idx >= 4 && !showAllFilters,
-                  'search__dropdown--is-hidden-mobile': !showAllFilters
-                    ? 'search__dropdown--is-hidden-mobile'
-                    : '',
-                }"
               >
                 <BaseSearchDropdown
                   @dropdown-value="handleFilterChange"
@@ -313,24 +308,6 @@ onBeforeMount(() => {
                   :isLoading="isLoadingPageResults"
                 />
               </div>
-              <button
-                class="search__show-all-filters"
-                v-if="
-                  Object.keys(allSortingOptions).length > 3 && !showAllFilters
-                "
-                @click="showAllFilters = true"
-              >
-                <NuxtIcon
-                  class="search__chip-close"
-                  name="controls-vertical-alt"
-                  filled
-                ></NuxtIcon>
-                Alle filtre
-
-                <div class="search__show-all-filters__counter">
-                  {{ Object.keys(allSortingOptions).length }}
-                </div>
-              </button>
             </div>
             <div v-else class="search__skeleton">
               <BaseLoading />
@@ -364,7 +341,7 @@ onBeforeMount(() => {
             class="search__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search__extra-filters-bar">
+            <div class="search__results-wrapper">
               <div class="search__results-found">
                 <h4>Viser {{ totalItemsFound }} forløb</h4>
               </div>
@@ -380,9 +357,46 @@ onBeforeMount(() => {
                   v-for="item in dynamicContent"
                   :key="item"
                 >
-                  <div class="search__card-item">
-                    <BaseCard :data="item" />
-                  </div>
+                  <NuxtLink class="search__card-link" :to="item?.link">
+                    <div class="search__card-item">
+                      <div
+                        class="search__card-tag"
+                        v-if="
+                          item?.bundle_label ||
+                          item?.target_group ||
+                          item?.bundle
+                        "
+                      >
+                        {{
+                          item?.bundle_label ||
+                          item?.target_group ||
+                          item?.bundle
+                        }}
+                      </div>
+
+                      <div class="search__card-label" v-if="item?.label">
+                        <h4>{{ item?.label }}</h4>
+                      </div>
+
+                      <div
+                        class="search__card-description"
+                        v-if="item?.body || item?.field_description"
+                      >
+                        <BaseReadMore
+                          v-if="item?.body"
+                          :text="item?.body"
+                          :maxLength="300"
+                          :searchKeyword="searchKeyword"
+                        />
+                        <BaseReadMore
+                          v-else
+                          :text="item?.field_description"
+                          :maxLength="300"
+                          :searchKeyword="searchKeyword"
+                        />
+                      </div>
+                    </div>
+                  </NuxtLink>
                 </div>
               </TransitionGroup>
             </div>
@@ -453,11 +467,11 @@ onBeforeMount(() => {
     width: 100% @(--sm) 500px;
   }
 
-  &__extra-filters-bar {
+  &__results-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px @(--sm) 64px;
+    margin-bottom: 24px @(--sm) 44px;
   }
 
   &__dropdown {
@@ -613,7 +627,7 @@ onBeforeMount(() => {
   &__result-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 0 @(--sm) 48px 24px;
+    gap: 24px;
 
     &--loading {
       opacity: 0.5;
@@ -626,7 +640,45 @@ onBeforeMount(() => {
   }
 
   &__card-item {
+    background: var(--color-white);
+    color: var(--color-text);
+    border: 2px solid var(--color-primary-lighten-4);
+    border-radius: 4px;
     height: 100%;
+    box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+    padding: 24px @(--sm) 32px;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
+    }
+  }
+
+  &__card-link {
+    color: var(--color-tertiary);
+    text-decoration: none;
+  }
+
+  &__card-tag {
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px @(--sm) 14px;
+    margin-bottom: 10px;
+  }
+
+  &__card-description {
+    font-weight: 400;
+    font-size: 14px @(--sm) 16px;
+    line-height: 22px;
+    color: var(--color-text);
+
+    :deep(p) {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
   .form-input--floating-label {
