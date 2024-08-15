@@ -156,7 +156,7 @@ function showHelperText() {
         </div>
       </div>
 
-      <input type="text" v-model="honeypot" class="contact-form__honeypot" />
+      <input type="text" v-model="honeypot" class="contact-form__website" />
 
       <button
         v-if="!isLoading"
@@ -314,7 +314,7 @@ function showHelperText() {
     margin: auto;
   }
 
-  &__honeypot {
+  &__website {
     display: none;
   }
 
