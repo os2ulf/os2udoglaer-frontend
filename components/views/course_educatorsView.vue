@@ -206,6 +206,11 @@ const contactPersonEmail = ref(
     null,
 );
 
+// Get the complete URL for the current page.
+const currentUrl = computed(() => {
+  return process.client ? window.location.href : '';
+});
+
 console.log('course_educatorsView.vue', props.data);
 </script>
 
@@ -430,7 +435,7 @@ console.log('course_educatorsView.vue', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" :contactPersonName="props.data?.provider
+        <ContactForm :contactPersonEmail="contactPersonEmail" :currentUrl="currentUrl" :currentTitle="props.data?.label" :contactPersonName="props.data?.provider
             ? props.data?.provider?.field_name
             : props.data?.corporation
               ? props.data?.corporation?.field_name

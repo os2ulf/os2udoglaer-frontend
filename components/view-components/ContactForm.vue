@@ -12,6 +12,16 @@ const props = defineProps({
     default: '',
     required: true,
   },
+  currentUrl: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  currentTitle: {
+    type: String,
+    default: '',
+    required: true,
+  },
 });
 
 const config = useRuntimeConfig().public;
@@ -50,6 +60,8 @@ const handleSubmit = async () => {
     phone: trimmedPhone,
     email: trimmedEmail,
     provider_email: props.contactPersonEmail,
+    url: props.contactPersonEmail,
+    title: props.currentTitle,
   };
 
   try {
