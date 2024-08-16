@@ -3,7 +3,6 @@ import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
 import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-const router = useRouter();
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {

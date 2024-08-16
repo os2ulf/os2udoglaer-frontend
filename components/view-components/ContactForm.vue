@@ -60,7 +60,7 @@ const handleSubmit = async () => {
     phone: trimmedPhone,
     email: trimmedEmail,
     provider_email: props.contactPersonEmail,
-    url: props.contactPersonEmail,
+    url: props.currentUrl,
     title: props.currentTitle,
   };
 
