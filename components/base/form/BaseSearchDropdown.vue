@@ -267,6 +267,7 @@ onUnmounted(() => {
     position: absolute;
     z-index: 9;
     width: 100% @(--sm) max-content;
+    min-width: -webkit-fill-available;
     padding: 0;
     background: var(--color-white);
     box-shadow: 0px 4px 30px 0px #0000001a;

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { v4 as uuidv4 } from 'uuid';
+import { stripHtmlFromString } from '~/utils/stripHtml';
+import { truncateString } from '~/utils/truncateString';
 
 const id = `search-block-provider-${uuidv4()}`;
 
@@ -10,8 +12,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-console.log('test', props.blockData);
 
 const searchBlockData = ref(props.blockData);
 
@@ -273,8 +273,8 @@ const handlePager = (page: number) => {
 };
 
 const handleSortingChange = (item) => {
-  if (item.searchQueryUrlAlias && item.key) {
-    sortingString.value = item.key;
+  if (item.searchQueryUrlAlias && item.value) {
+    sortingString.value = item.value;
     updateURLParameters();
 
     getFilteredPageResults(false, true);
@@ -331,8 +331,6 @@ onMounted(() => {
                 v-for="(item, name, idx) in allSortingOptions"
                 :key="item"
                 :class="{
-                  'search-block-provider__dropdown--is-hidden':
-                    idx >= 4 && !showAllFilters,
                   'search-block-provider__dropdown--is-hidden-mobile':
                     !showAllFilters
                       ? 'search-block-provider__dropdown--is-hidden-mobile'
@@ -474,10 +472,19 @@ onMounted(() => {
                           class="search-block-provider__card-label"
                           v-if="item?.field_name"
                         >
-                          <h4>{{ item?.field_name }}</h4>
-                          <p class="search-block-provider__card-description">
-                            <!-- Præsentation (truncated if too long, strip html too) -->
-                            Præsentation truncated if too long, strip html too
+                          <h4 v-if="item?.field_name">
+                            {{ item?.field_name }}
+                          </h4>
+                          <p
+                            v-if="item?.field_presentation"
+                            class="search-block-provider__card-description"
+                          >
+                            {{
+                              truncateString(
+                                stripHtmlFromString(item?.field_presentation),
+                                250,
+                              )
+                            }}
                           </p>
                         </div>
                       </div>
@@ -775,14 +782,14 @@ onMounted(() => {
     }
   }
 
-  .search-block-provider__card-image {
+  &__card-image {
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
   }
 
   &__card {
     display: flex;
-    flex-direction: row;
+    flex-direction: column @(--sm) row;
   }
 
   &__card-link {
@@ -794,6 +801,7 @@ onMounted(() => {
   &__card-label {
     color: var(--color-tertiary);
     transition: color 0.3s ease-in-out;
+    padding-left: 0 @(--sm) 24px;
 
     h4 {
       margin: 0;
@@ -802,9 +810,7 @@ onMounted(() => {
 
   &__card-image-container {
     position: relative;
-    margin-right: 24px;
-    width: 100px;
-    height: 100px;
+    margin-bottom: 24px @(--sm) 0;
     border-radius: 4px;
     overflow: hidden;
   }

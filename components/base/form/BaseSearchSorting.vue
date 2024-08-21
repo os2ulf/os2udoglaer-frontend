@@ -23,7 +23,7 @@ const emit = defineEmits(['sortingValue']);
 const visible = ref(false);
 const sortingFilterData = ref(props.sortingFilterData);
 
-const defaultFilterLabel = ref('Sorteret efter');
+const defaultFilterLabel = ref(sortingFilterData.value.sort_by.label);
 const selectedFilterLabel = ref(null);
 const computedDefaultSelectedOption = computed(() => {
   return props.defaultSelectedOption;
@@ -44,12 +44,12 @@ const toggleDropdown = () => {
 };
 
 const select = (item) => {
-  if (item.value === selectedFilterLabel.value) {
+  if (item.label === selectedFilterLabel.value) {
     visible.value = false;
     return;
   }
 
-  selectedFilterLabel.value = item.value;
+  selectedFilterLabel.value = item.label;
 
   item = {
     ...item,
@@ -76,8 +76,8 @@ const handleClickOutside = (e) => {
 const selectDefaultSortingOption = () => {
   if (props.defaultSelectedOption) {
     for (const option of sortingFilterData.value.sort_by.options) {
-      if (option.key == computedDefaultSelectedOption.value) {
-        selectWithoutEmit(option.value);
+      if (option.value == computedDefaultSelectedOption.value) {
+        selectWithoutEmit(option.label);
       }
     }
   }
@@ -152,7 +152,7 @@ onUnmounted(() => {
               "
               @click="select(item)"
             >
-              {{ item.value }}
+              {{ item.label }}
             </label>
           </li>
         </ul>
