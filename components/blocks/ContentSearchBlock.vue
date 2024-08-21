@@ -271,8 +271,8 @@ const handlePager = (page: number) => {
 };
 
 const handleSortingChange = (item) => {
-  if (item.searchQueryUrlAlias && item.key) {
-    sortingString.value = item.key;
+  if (item.searchQueryUrlAlias && item.value) {
+    sortingString.value = item.value;
     updateURLParameters();
 
     getFilteredPageResults(false, true);

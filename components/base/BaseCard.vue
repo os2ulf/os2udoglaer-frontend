@@ -162,8 +162,17 @@ const limitCharLengthAndConvertToString = (array, maxLength) => {
     return;
   }
 
-  // so we also get full html from one of the content types, we need to catch it and clean it up
-  if (array.length === 1 && array[0].startsWith('<')) {
+  if (typeof array[0] === 'object') {
+    // console.log('arr is a lie its actually an object now', array[0]);
+    return array.label;
+  }
+
+  // incase BE pukes again - so we also get full html from one of the content types, we need to catch it and clean it up
+  if (
+    array.length === 1 &&
+    typeof array[0] === 'string' &&
+    array[0].startsWith('<')
+  ) {
     // remove full html from the string
     array = array[0].replace(/(<([^>]+)>)/gi, '');
 
