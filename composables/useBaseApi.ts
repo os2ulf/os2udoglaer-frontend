@@ -1,5 +1,6 @@
 import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
+import { all } from 'axios';
 
 export async function UseBaseApi<T>(
   path: string,
@@ -20,30 +21,50 @@ export async function UseBaseApi<T>(
     ...attachHostParam,
   };
 
-  // Grab routes from platform sh var
+  // Grab routes from platform sh enc. var and decode 'em
   if (process.server && process.env.PLATFORM_ROUTES) {
-    let platformRoutes = process.env.PLATFORM_ROUTES;
-    allRoutes.value = decodeBase64(platformRoutes);
-    // console.log('PLATFORM SH ROUTES, QUERYING FE server', allRoutes);
+    let encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
+    allRoutes.value = decodeBase64(encodedPlatformRoutes);
   } else {
     if (process.env.PLATFORM_ROUTES) {
-      let platformRoutes = process.env.PLATFORM_ROUTES;
-      allRoutes.value = decodeBase64(platformRoutes);
-      // console.log('PLATFORM SH ROUTES, QUERYING FE client', allRoutes);
+      let encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
+      allRoutes.value = decodeBase64(encodedPlatformRoutes);
     } else {
       allRoutes.value = null;
     }
   }
 
+  // extract only BE-API routes
+  const extractBEroutes = () => {
+    if (!allRoutes.value) {
+      return null;
+    }
+
+    // Extract URLs where "upstream" is "backend"
+    const backendUrls = Object.keys(allRoutes.value).filter(
+      (url) => allRoutes.value[url]?.upstream === 'backend',
+    );
+
+    return backendUrls.length > 0 ? backendUrls : null;
+  };
+
+  const onlyBEroutes = ref(extractBEroutes());
+  console.log('extracted BE ROUTES', onlyBEroutes.value);
+
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
 
-  // if (currentFEdomain.value === 'https://localhost:3000') {
-  //   // the data well endpoint (access to all supposedly)
-  //   beEndpoint.value = 'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site'
-  // }
+  // the data well endpoint (access to all of data supposedly)
+  const devEndpoint = ref(
+    'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
+  );
 
-  console.log('currentFEdomain', currentFEdomain.value);
+  if (currentFEdomain.value === 'https://localhost:3000') {
+    beEndpoint.value = devEndpoint.value;
+  } else {
+    //
+  }
+
   // e.g. returns this from the server: currentFEdomain https://ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
   // or currentFEdomain https://aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
 
@@ -51,8 +72,6 @@ export async function UseBaseApi<T>(
   // Find the right matching route from allRoutes and assign it to be the BE endpoint
 
   //
-
-  console.log('beEndpoint', beEndpoint.value);
 
   return await $fetch<T>(path, {
     baseURL: beEndpoint.value,
