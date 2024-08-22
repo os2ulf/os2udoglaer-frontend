@@ -34,6 +34,7 @@ export async function UseBaseApi<T>(
     }
   }
 
+  console.log('allRoutes type of', typeof allRoutes.value);
   // extract only BE-API routes
   const extractBEroutes = () => {
     if (!allRoutes.value) {
