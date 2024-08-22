@@ -11,33 +11,29 @@ const relatedContent = ref(props.data.relatedContent);
 const componentKey = ref(0);
 
 const processedFilters = computed(() => {
-  const exposedFilters =
-    ref(relatedContent.value?.exposed_filters?.type?.options) || {};
-
   const targetGroupFilters =
-    ref(relatedContent.value?.exposed_filters?.target_group?.options) || {};
+    ref(relatedContent.value?.exposed_filters?.target_group?.options) || null;
 
-  // removing "All" from both objects
-  delete exposedFilters.value['All'];
-  delete targetGroupFilters.value['All'];
+  const exposedFilters =
+    ref(relatedContent.value?.exposed_filters?.type?.options) || null;
 
-  // go through exposed_filters, look for "course" key, if exists remove it, and add it to targetGroupFilters on top of it.
-  for (const [key, value] of Object.entries(exposedFilters.value)) {
-    if (key === 'course') {
-      delete exposedFilters.value[key];
+  // remove 'all'
+  const processedExposedFilters = exposedFilters.value.filter(
+    (filter: any) => filter.value !== 'All',
+  );
+  const processedTargetGroupFilters = targetGroupFilters.value.filter(
+    (filter: any) => filter.value !== 'All',
+  );
 
-      // If we hit course - add entirety of targetGroupFilters to exposedFilters var (to complete all sorting options)
-      for (const [key, value] of Object.entries(targetGroupFilters.value)) {
-        exposedFilters.value[key] = value;
-      }
-    }
-  }
-
-  // create a new object, that will have "All" as first value and then add all values from exposedFilters.value onto it
-  const allFilterAdded = ref({
-    0: 'Alle',
-    ...exposedFilters.value,
-  });
+  // create a new object, that will have "All" as first value and then add the rest values onto it
+  const allFilterAdded = ref([
+    {
+      label: 'Alle',
+      value: 'Alle',
+    },
+    ...processedTargetGroupFilters,
+    ...processedExposedFilters,
+  ]);
 
   return {
     exposedFilters: allFilterAdded,
@@ -54,24 +50,29 @@ const content = computed(() =>
 );
 
 const currentFilter = ref('Alle');
-const handleSorting = (key: string) => {
-  if (key === currentFilter.value) {
+const handleSorting = (key: any) => {
+  if (key.label === currentFilter.value) {
     return;
   }
 
   isLoading.value = true;
+  currentFilter.value = key.label;
 
-  currentFilter.value = key;
-
-  if (key === 'Alle') {
+  if (key.label === 'Alle') {
     dynamicContent.value = props.data.relatedContent.results;
+  } else if (key.value === 'course') {
+    dynamicContent.value = props.data.relatedContent.results.filter(
+      (item: any) => {
+        return item.bundle === 'course';
+      },
+    );
   } else {
     dynamicContent.value = props.data.relatedContent.results.filter(
       (item: any) => {
         if (item.bundle === 'course') {
-          return item.field_target_group === key;
+          return item.field_target_group === key.label;
         } else {
-          return item.bundle === key || item.bundle_label === key;
+          return item.bundle === key.label || item.bundle_label === key.label;
         }
       },
     );
@@ -82,21 +83,6 @@ const handleSorting = (key: string) => {
   setTimeout(() => {
     isLoading.value = false;
   }, 200);
-};
-
-const haveFilterResults = (key: string) => {
-  if (key === 'Alle') {
-    return true;
-  }
-
-  // Check if selecting this filter option results in empty content
-  const filteredContent = props.data.relatedContent.results.filter(
-    (item: any) =>
-      // Gotta check against all 3 options, because of the weird logic with target groups...
-      [item.field_target_group, item.bundle, item.bundle_label].includes(key),
-  );
-
-  return filteredContent.length > 0;
 };
 </script>
 
@@ -115,35 +101,41 @@ const haveFilterResults = (key: string) => {
           class="related-content__filter-item"
           v-for="item in allSortingOptions"
           @click="handleSorting(item)"
-          v-show="haveFilterResults(item)"
           :key="item"
           :class="
-            currentFilter === item ? 'related-content__filter-item--active' : ''
+            currentFilter === item.label
+              ? 'related-content__filter-item--active'
+              : ''
           "
           :aria-label="item"
         >
-          {{ item }}
+          {{ item.label }}
         </button>
       </div>
     </div>
 
     <div :class="isLoading ? 'related-content__wrapper--loading' : ''">
-      <transition-group
-        name="fade-in"
-        class="related-content__wrapper row"
-        tag="div"
-        v-if="content.length > 0"
-      >
-        <div
-          class="col-xs-12 col-sm-12 col-md-12 col-lg-6 related-content__card"
-          v-for="(item, index) in content"
-          :key="index"
+      <div v-if="content.length > 0">
+        <transition-group
+          name="fade-in"
+          class="related-content__wrapper row"
+          tag="div"
         >
-          <div class="related-content__card-item" :key="componentKey">
-            <BaseCard :data="item" />
+          <div
+            class="col-xs-12 col-sm-12 col-md-12 col-lg-6 related-content__card"
+            v-for="(item, index) in content"
+            :key="index"
+          >
+            <div class="related-content__card-item" :key="componentKey">
+              <BaseCard :data="item" />
+            </div>
           </div>
-        </div>
-      </transition-group>
+        </transition-group>
+      </div>
+
+      <div v-else>
+        <h4>Ingen resultater</h4>
+      </div>
     </div>
   </div>
 </template>
