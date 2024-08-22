@@ -1,6 +1,5 @@
 import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
-import { all } from 'axios';
 
 export async function UseBaseApi<T>(
   path: string,
@@ -34,7 +33,7 @@ export async function UseBaseApi<T>(
     }
   }
 
-  console.log('allRoutes type of', typeof allRoutes.value);
+  console.log('allRoutes type of', typeof allRoutes.value, allRoutes.value);
   // extract only BE-API routes
   const extractBEroutes = () => {
     if (!allRoutes.value) {
