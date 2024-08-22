@@ -1,28 +1,37 @@
+import { decodeBase64 } from '~/utils/base64';
+
 export async function UseBaseApi<T>(
   path: string,
   opt: Record<string, any> = {},
 ) {
+  const allRoutes = ref();
   const config = useRuntimeConfig().public;
 
-  if (typeof window === 'undefined') {
-    console.log(
-      'trying to get from env',
-      process.env.PLATFORM_ROUTES,
-      process.env.VITE_PLATFORM_ROUTES,
-    );
-
-    // return process.env.VITE_BASE_URL;
+  // setting the vars from platform
+  if (process.server && process.env.PLATFORM_ROUTES) {
+    let platformRoutes = process.env.PLATFORM_ROUTES;
+    allRoutes.value = decodeBase64(platformRoutes);
+    // console.log('PLATFORM SH ROUTES, QUERYING FE server', allRoutes);
   } else {
-    console.log(
-      'trying to get from env',
-      process.env.PLATFORM_ROUTES,
-      process.env.VITE_PLATFORM_ROUTES,
-    );
+    if (process.env.PLATFORM_ROUTES) {
+      let platformRoutes = process.env.PLATFORM_ROUTES;
+      allRoutes.value = decodeBase64(platformRoutes);
+      // console.log('PLATFORM SH ROUTES, QUERYING FE client', allRoutes);
+    } else {
+      allRoutes.value = null;
+    }
   }
+
+  console.log('PLATFORM SH ROUTES', allRoutes.value);
+
+  const beEndpoint = config.API_BASE_URL;
+
+  //
 
   const attachHostParam = {
     params: {
       ...opt.params,
+      host: beEndpoint,
     },
   };
 
