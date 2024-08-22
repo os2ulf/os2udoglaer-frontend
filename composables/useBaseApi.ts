@@ -12,7 +12,6 @@ export async function UseBaseApi<T>(
   const attachHostParam = {
     params: {
       ...opt.params,
-      host: beEndpoint,
     },
   };
 
@@ -39,14 +38,21 @@ export async function UseBaseApi<T>(
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
 
-  // if (currentFEdomain.value === 'https://localhost:3000') {}
+  // if (currentFEdomain.value === 'https://localhost:3000') {
+  //   // the data well endpoint (access to all supposedly)
+  //   beEndpoint.value = 'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site'
+  // }
 
   console.log('currentFEdomain', currentFEdomain.value);
+  // e.g. returns this from the server: currentFEdomain https://ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
+  // or currentFEdomain https://aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
 
   // We need to know the current FE domain user is accessing to get the right BE domain
   // Find the right matching route from allRoutes and assign it to be the BE endpoint
 
   //
+
+  console.log('beEndpoint', beEndpoint.value);
 
   return await $fetch<T>(path, {
     baseURL: beEndpoint.value,
