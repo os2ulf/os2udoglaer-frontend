@@ -117,12 +117,12 @@ const limitedPages = computed(() => {
     }
 
     &--prev {
-      margin-right: 22px;
+      margin-right: 6px @(--sm) 22px;
       margin-left: 0;
     }
 
     &--next {
-      margin-left: 22px;
+      margin-left: 6px @(--sm) 22px;
       margin-right: 0;
     }
 
