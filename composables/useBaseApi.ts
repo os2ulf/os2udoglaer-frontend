@@ -20,15 +20,14 @@ export async function UseBaseApi<T>(
     ...attachHostParam,
   };
 
-  // Grab routes from platform sh enc. var and decode 'em
-  if (process.server && process.env.PLATFORM_ROUTES) {
-    let encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
-    allRoutes.value = decodeBase64(encodedPlatformRoutes);
-  } else {
-    if (process.env.PLATFORM_ROUTES) {
-      let encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
-      allRoutes.value = decodeBase64(encodedPlatformRoutes);
-    } else {
+  // Decode and parse PLATFORM_ROUTES environment variable
+  if (process.env.PLATFORM_ROUTES) {
+    try {
+      const encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
+      const decodedRoutes = decodeBase64(encodedPlatformRoutes);
+      allRoutes.value = JSON.parse(decodedRoutes);
+    } catch (error) {
+      console.error('Error decoding or parsing PLATFORM_ROUTES:', error);
       allRoutes.value = null;
     }
   }
