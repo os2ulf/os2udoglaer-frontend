@@ -1,4 +1,5 @@
 import { decodeBase64 } from '~/utils/base64';
+import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 
 export async function UseBaseApi<T>(
   path: string,
@@ -6,8 +7,21 @@ export async function UseBaseApi<T>(
 ) {
   const allRoutes = ref();
   const config = useRuntimeConfig().public;
+  const beEndpoint = ref(config.API_BASE_URL);
 
-  // setting the vars from platform
+  const attachHostParam = {
+    params: {
+      ...opt.params,
+      host: beEndpoint,
+    },
+  };
+
+  const mergedParamOptions = {
+    ...opt,
+    ...attachHostParam,
+  };
+
+  // Grab routes from platform sh var
   if (process.server && process.env.PLATFORM_ROUTES) {
     let platformRoutes = process.env.PLATFORM_ROUTES;
     allRoutes.value = decodeBase64(platformRoutes);
@@ -22,26 +36,20 @@ export async function UseBaseApi<T>(
     }
   }
 
-  console.log('PLATFORM SH ROUTES', allRoutes.value);
+  // Detect current FE domain
+  const currentFEdomain = ref(useGetCurrentDomain());
 
-  const beEndpoint = config.API_BASE_URL;
+  // if (currentFEdomain.value === 'https://localhost:3000') {}
+
+  console.log('currentFEdomain', currentFEdomain.value);
+
+  // We need to know the current FE domain user is accessing to get the right BE domain
+  // Find the right matching route from allRoutes and assign it to be the BE endpoint
 
   //
 
-  const attachHostParam = {
-    params: {
-      ...opt.params,
-      host: beEndpoint,
-    },
-  };
-
-  const mergedParamOptions = {
-    ...opt,
-    ...attachHostParam,
-  };
-
   return await $fetch<T>(path, {
-    baseURL: config.API_BASE_URL,
+    baseURL: beEndpoint.value,
     cache: 'no-cache',
     keepalive: true,
     ...mergedParamOptions,
