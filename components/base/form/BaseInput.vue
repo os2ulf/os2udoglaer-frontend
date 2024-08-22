@@ -16,7 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="input__wrapper">
+  <div class="form-input-wrapper input__wrapper">
     <label :for="id">
       <input
         :id="id"
