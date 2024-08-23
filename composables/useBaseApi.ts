@@ -54,10 +54,38 @@ export async function UseBaseApi<T>(
   console.log('currentFEdomain', currentFEdomain.value);
 
   // Extract the base domain to handle both staging and production
-  // const getDomainName = (url: string) => {
-  //   const parsedUrl = new URL(url);
-  //   return parsedUrl.hostname.replace(/^www\./, '');
-  // };
+  const getDomainName = (url: string) => {
+    const parsedUrl = new URL(url);
+    return parsedUrl.hostname.replace(/^www\./, '');
+  };
+
+  const assignBEendpoint = () => {
+    const currentDomain = getDomainName(currentFEdomain.value);
+    let selectedBE = null;
+
+    // Iterate through the backend routes and match the correct one based on the FE domain
+    for (const route of onlyBEroutes.value) {
+      console.log('for route', route);
+
+      const backendDomain = getDomainName(route);
+      console.log('backendDomain', backendDomain);
+
+      if (currentDomain.includes(backendDomain.replace('api.', ''))) {
+        selectedBE = route;
+        console.log('if true selectedBE = route', selectedBE);
+
+        break;
+      }
+    }
+
+    // If no match is found, fall back to the dev endpoint or another default
+    if (!selectedBE) {
+      //  throw error
+      throw new Error('No matching BE route found for the current FE domain');
+    }
+
+    beEndpoint.value = selectedBE;
+  };
 
   // the data well endpoint (access to all of data supposedly)
   const devEndpoint = ref(
@@ -67,13 +95,8 @@ export async function UseBaseApi<T>(
   if (currentFEdomain.value === 'https://localhost:3000') {
     beEndpoint.value = devEndpoint.value;
   } else {
-    //
+    assignBEendpoint();
   }
-
-  // We need to know the current FE domain user is accessing to get the right BE domain
-  // Find the right matching route from allRoutes and assign it to be the BE endpoint
-
-  //
 
   return await $fetch<T>(path, {
     baseURL: beEndpoint.value,
