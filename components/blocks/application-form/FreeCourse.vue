@@ -4,9 +4,13 @@ import { Field, Form } from 'vee-validate';
 const props = defineProps({
   blockData: Object,
 });
-
 const config = useRuntimeConfig().public;
-const formEndpoint = ref(config.API_BASE_URL);
+const baseEndpoint = ref(config.API_BASE_URL);
+
+// Combine username and password
+const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
+// Encode the combined string to Base64
+const encodedCredentials = btoa(credentials);
 
 // Set arrays for select options
 const schools = ref([]);
@@ -25,6 +29,7 @@ const receivingClass = ref('');
 const fullName = ref('');
 const phone = ref('');
 const email = ref('');
+const mailTo = ref(props.blockData?.field_mail_to);
 const selectedProvider = ref('');
 const selectedCourse = ref('');
 const selectedCourseTerm = ref('');
@@ -47,10 +52,11 @@ onBeforeMount(() => {
 
 const fetchSchools = async () => {
   try {
-    const response = await fetch(formEndpoint.value + '/rest-export/users/school', {
+    const response = await fetch(baseEndpoint.value + '/rest-export/users/school', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
       },
     });
     if (!response.ok) throw new Error(response.status);
@@ -71,10 +77,11 @@ const fetchSchools = async () => {
 
 const fetchProviders = async () => {
   try {
-    const response = await fetch(formEndpoint.value + '/rest-export/users/course_provider', {
+    const response = await fetch(baseEndpoint.value + '/rest-export/users/course_provider', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
       },
     });
     if (!response.ok) throw new Error(response.status);
@@ -96,10 +103,11 @@ const fetchProviders = async () => {
 const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
-    const response = await fetch(formEndpoint.value + '/rest-export/content/course/' + uid, {
+    const response = await fetch(baseEndpoint.value + '/rest-export/content/course/' + uid, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
       },
     });
     if (!response.ok) throw new Error(response.status);
@@ -121,10 +129,11 @@ const fetchCourses = async (uid) => {
 const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
   try {
-    const response = await fetch(formEndpoint.value + '/rest-export/content-subject-terms/' + nid, {
+    const response = await fetch(baseEndpoint.value + '/rest-export/content-subject-terms/' + nid, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
       },
     });
     if (!response.ok) throw new Error(response.status);
@@ -166,12 +175,17 @@ const handleCourseChange = async (event) => {
   await fetchCourseSubjects(event.target.value);
 };
 
+const settlementDateChange = async (event) => {
+  let date = new Date(event.target.value);
+  settlementDate.value = date.toISOString().replace('.000Z', '+00:00');
+};
+
 const handleSubmit = async () => {
   if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
       'Der er opstået en fejl under udfyldning af formularen, venligst udfyld formularen korrekt.';
     return;
-  } else if (!props.blockData.field_mail_to) {
+  } else if (!mailTo.value) {
     errorMessage.value =
       'Der blev ikke angivet en e-mailadresse af udbyderen. Dette er ikke din fejl. Venligst kontakt udbyderen på en anden måde.';
     return;
@@ -181,40 +195,123 @@ const handleSubmit = async () => {
   const trimmedFullName = fullName.value.trim();
   const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
-  const trimmedMessage = message.value.trim();
+  const trimmedCourseDescription = courseDescription.value.trim();
 
   const payload = {
-    type: 'contact_provider',
-    name: trimmedFullName,
-    message: trimmedMessage,
-    phone: trimmedPhone,
-    email: trimmedEmail,
-    provider_email: props.blockData.field_mail_to,
-    url: props.currentUrl,
-    title: props.currentTitle,
+    "type": [
+        {
+            "target_id": "free_course_request"
+        }
+    ],
+    "field_domain_access": [
+        {
+            "target_id": "api_mitvadehav_dk"
+        }
+    ],
+    "field_rfc_date": [
+        {
+            "value": settlementDate.value
+        }
+    ],
+    "field_rfc_requested_amount": [
+        {
+            "value": requestedAmount.value
+        }
+    ],
+    "field_rfc_new_course_description": [
+        {
+            "value": trimmedCourseDescription
+        }
+    ],
+    "field_rfc_course": [
+        {
+            "target_id": selectedCourse.value
+        }
+    ],
+    "field_rfc_new_course_name": [
+        {
+            "value": courseName.value
+        }
+    ],
+    "field_rfc_course_not_found": [
+        {
+            "value": false
+        }
+    ],
+    "field_rfc_grade": [
+        {
+            "value": schoolClass.value
+        }
+    ],
+    "field_rfc_mail": [
+        {
+            "value": trimmedEmail
+        }
+    ],
+    "field_receiving_class": [
+        {
+            "value": false
+        }
+    ],
+    "field_rfc_name": [
+        {
+            "value": trimmedFullName
+        }
+    ],
+    "field_rfc_send_mail": [
+        {
+            "value": true
+        }
+    ],
+    "field_rfc_school": [
+        {
+            "target_id": selectedSchool.value
+        }
+    ],
+    "field_rfc_status": [
+        {
+            "value": "awaiting"
+        }
+    ],
+    "field_rfc_phone": [
+        {
+            "value": trimmedPhone
+        }
+    ],
+    "field_rfc_provider": [
+        {
+            "target_id": selectedProvider.value
+        }
+    ],
+    "field_rfc_subject": [
+        {
+            "target_id": selectedCourseTerm.value
+        }
+    ]
   };
 
-  // try {
-  //   const response = await fetch(config.API_BASE_URL + '/webform_rest/submit', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(payload),
-  //   });
-  //
-  //   if (!response.ok) {
-  //     throw new Error('Failed to submit form');
-  //   }
-  //
-  //   isSuccess.value = true;
-  // } catch (error) {
-  //   console.error('Form submission failed:', error);
-  //   errorMessage.value =
-  //     error.message || 'Der opstod en fejl under indsendelse af formularen.';
-  // } finally {
-  //   isLoading.value = false;
-  // }
+  try {
+    const response = await fetch(baseEndpoint.value + '/node?_format=json', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit form');
+    }
+
+    isSuccess.value = true;
+  } catch (error) {
+    console.error('Form submission failed:', error);
+    errorMessage.value =
+      error.message || 'Der opstod en fejl under indsendelse af formularen.';
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 // Text area methods
@@ -224,7 +321,7 @@ function hideHelperText() {
 }
 
 function showHelperText() {
-  if (message.value === '') {
+  if (courseDescription.value === '') {
     showHelper.value = true;
   }
 }
@@ -241,7 +338,7 @@ function showHelperText() {
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
-          rules="required">
+          rules="">
         </BaseSelect>
         <BaseInputFloatingLabel
           class="contact-form__label"
@@ -249,7 +346,7 @@ function showHelperText() {
           type="text"
           name="Klasse"
           label="Klasse"
-          rules="required"
+          rules=""
         />
         <BaseInput
           class="contact-form__label"
@@ -257,7 +354,7 @@ function showHelperText() {
           type="checkbox"
           name="Modtageklasse"
           label="Modtageklasse"
-          rules="required"
+          rules=""
         />
         <BaseInputFloatingLabel
           class="contact-form__label"
@@ -265,7 +362,7 @@ function showHelperText() {
           type="text"
           name="Navn"
           label="Navn"
-          rules="required"
+          rules=""
         />
         <BaseInputFloatingLabel
           class="contact-form__label"
@@ -273,7 +370,7 @@ function showHelperText() {
           type="text"
           name="Telefonnummer"
           label="Telefonnummer"
-          rules="required"
+          rules=""
         />
         <BaseInputFloatingLabel
           class="contact-form__label"
@@ -293,7 +390,7 @@ function showHelperText() {
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
-          rules="required">
+          rules="">
         </BaseSelect>
         <BaseSelect
           v-if="!courseNotInList"
@@ -303,7 +400,7 @@ function showHelperText() {
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
-          rules="required">
+          rules="">
         </BaseSelect>
         <BaseInput
           v-model="courseNotInList"
@@ -320,7 +417,7 @@ function showHelperText() {
           type="text"
           name="Forløbets navn"
           label="Forløbets navn"
-          rules="required"
+          rules=""
         />
         <div
           v-if="courseNotInList"
@@ -331,7 +428,7 @@ function showHelperText() {
               v-slot="{ field, errors }"
               name="Beskrivelse af forløbet"
               label="Beskrivelse af forløbet"
-              rules="required"
+              rules=""
               v-model="courseDescription"
               :validate-on-blur="false"
               :validate-on-input="true"
@@ -345,7 +442,7 @@ function showHelperText() {
               ></textarea>
               <Transition name="fade-input">
                 <span
-                  v-if="showHelper && !message"
+                  v-if="showHelper && !courseDescription"
                   class="contact-form__helper-text"
                 >
                   Beskrivelse af forløbet
@@ -368,7 +465,7 @@ function showHelperText() {
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          rules="required">
+          rules="">
         </BaseSelect>
         <BaseInputFloatingLabel
           class="contact-form__label"
@@ -376,15 +473,16 @@ function showHelperText() {
           type="float"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
-          rules="required"
+          rules=""
         />
         <BaseInput
           class="contact-form__label"
           v-model="settlementDate"
+          @change="settlementDateChange"
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules="required"
+          rules=""
         />
       </div>
 
