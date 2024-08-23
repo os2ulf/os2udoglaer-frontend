@@ -1,3 +1,4 @@
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 
@@ -6,7 +7,6 @@ export async function UseBaseApi<T>(
   opt: Record<string, any> = {},
 ) {
   const allRoutes = ref();
-  const config = useRuntimeConfig().public;
   const beEndpoint = ref();
 
   const attachHostParam = {
@@ -57,11 +57,11 @@ export async function UseBaseApi<T>(
   };
 
   const onlyBEroutes = ref(extractBEroutes());
-  console.log('BE ROUTES:', onlyBEroutes.value);
+  // console.log('BE ROUTES:', onlyBEroutes.value);
 
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
-  console.log('FE DOMAIN that is querying:', currentFEdomain.value);
+  // console.log('FE DOMAIN that is querying:', currentFEdomain.value);
 
   // Extract the base domain to handle both staging and production
   const getDomainName = (url: string) => {
@@ -70,6 +70,8 @@ export async function UseBaseApi<T>(
   };
 
   const assignBEendpoint = () => {
+    const apiRouteStore = useApiRouteStore();
+
     const currentDomain = getDomainName(currentFEdomain.value);
     let selectedBE = null;
 
@@ -89,7 +91,8 @@ export async function UseBaseApi<T>(
     }
 
     beEndpoint.value = selectedBE;
-    console.log('FINAL beEndpoint:', beEndpoint.value);
+    apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
+    // console.log('FINAL beEndpoint:', beEndpoint.value);
   };
 
   // Development endpoints for local or staging testing
@@ -99,13 +102,21 @@ export async function UseBaseApi<T>(
   const localHostDevEnv = ref('https://localhost:3000');
 
   if (currentFEdomain.value === localHostDevEnv.value) {
+    const apiRouteStore = useApiRouteStore();
     beEndpoint.value = devEndpoint.value;
+    apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
   } else {
-    assignBEendpoint();
+    const apiRouteStore = useApiRouteStore();
+
+    if (apiRouteStore.apiRouteEndpoint === '') {
+      assignBEendpoint();
+    }
   }
 
+  const apiRouteStore = useApiRouteStore();
+
   return await $fetch<T>(path, {
-    baseURL: beEndpoint.value,
+    baseURL: apiRouteStore.apiRouteEndpoint,
     cache: 'no-cache',
     keepalive: true,
     ...mergedParamOptions,
