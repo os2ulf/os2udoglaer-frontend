@@ -51,7 +51,7 @@ export async function UseBaseApi<T>(
 
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
-  console.log('currentFEdomain', currentFEdomain.value);
+  console.log('FE DOMAIN thats qurying', currentFEdomain.value);
 
   // Extract the base domain to handle both staging and production
   const getDomainName = (url: string) => {
@@ -65,14 +65,11 @@ export async function UseBaseApi<T>(
 
     // Iterate through the backend routes and match the correct one based on the FE domain
     for (const route of onlyBEroutes.value) {
-      console.log('for route', route);
-
       const backendDomain = getDomainName(route);
-      console.log('backendDomain', backendDomain);
 
-      if (currentDomain.includes(backendDomain)) {
+      if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBE = route;
-        console.log('if true selectedBE = route', selectedBE);
+        // console.log('if true selectedBE = route', selectedBE);
 
         break;
       }
@@ -83,6 +80,7 @@ export async function UseBaseApi<T>(
     }
 
     beEndpoint.value = selectedBE;
+    console.log('FINAL beEndpoint', beEndpoint.value);
   };
 
   // the 'datawell' endpoint (access to all of data supposedly)
