@@ -55,6 +55,7 @@ export async function UseBaseApi<T>(
   };
 
   const onlyBEroutes = ref(extractBEroutes());
+  console.log('BE ROUTES:', onlyBEroutes.value);
 
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
