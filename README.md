@@ -6,6 +6,7 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 Make sure to install the dependencies:
 Node version used - v21.4.0
+Dev environment should be: https://localhost:3000 or change it in useBaseApi.ts file.
 
 ```bash
 # npm
@@ -73,4 +74,5 @@ API_BASE_URL = ""
 ```
 
 # Useless incrementor
+
 Incremented 1 time(s)

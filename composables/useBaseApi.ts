@@ -122,3 +122,5 @@ export async function UseBaseApi<T>(
     ...mergedParamOptions,
   });
 }
+
+// TODO: Next up, add on right BE endpoint from the store to all components that do fetches in the components + search page
