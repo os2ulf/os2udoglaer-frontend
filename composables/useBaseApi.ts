@@ -70,7 +70,7 @@ export async function UseBaseApi<T>(
       const backendDomain = getDomainName(route);
       console.log('backendDomain', backendDomain);
 
-      if (currentDomain.includes(backendDomain.replace('api.', ''))) {
+      if (currentDomain.includes(backendDomain)) {
         selectedBE = route;
         console.log('if true selectedBE = route', selectedBE);
 
@@ -78,21 +78,20 @@ export async function UseBaseApi<T>(
       }
     }
 
-    // If no match is found, fall back to the dev endpoint or another default
     if (!selectedBE) {
-      //  throw error
       throw new Error('No matching BE route found for the current FE domain');
     }
 
     beEndpoint.value = selectedBE;
   };
 
-  // the data well endpoint (access to all of data supposedly)
+  // the 'datawell' endpoint (access to all of data supposedly)
   const devEndpoint = ref(
     'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
   );
+  const localHostDevEnv = ref('https://localhost:3000');
 
-  if (currentFEdomain.value === 'https://localhost:3000') {
+  if (currentFEdomain.value === localHostDevEnv.value) {
     beEndpoint.value = devEndpoint.value;
   } else {
     assignBEendpoint();
