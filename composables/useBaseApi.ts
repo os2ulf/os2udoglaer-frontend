@@ -38,11 +38,12 @@ export async function UseBaseApi<T>(
       return null;
     }
 
-    // excluding 'data-well' endpoints that dont belong to any municipality
+    // excluding 'data-well' endpoints that dont belong to any municipality, and some of them a plain wrong.
     const excludeEndpoints = [
       'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
       'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-      'api.os2udoglaer.dk/',
+      'https://api.os2udoglaer.dk/',
+      'https://api.api.os2udoglaer.dk/',
     ];
 
     // Extract URLs where "upstream" is "backend" and filter out the unwanted endpoint
