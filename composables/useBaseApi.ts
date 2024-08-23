@@ -7,7 +7,7 @@ export async function UseBaseApi<T>(
 ) {
   const allRoutes = ref();
   const config = useRuntimeConfig().public;
-  const beEndpoint = ref(config.API_BASE_URL);
+  const beEndpoint = ref();
 
   const attachHostParam = {
     params: {
@@ -32,16 +32,19 @@ export async function UseBaseApi<T>(
     }
   }
 
-  // console.log('allRoutes type of', typeof allRoutes.value, allRoutes.value);
-  // extract only BE-API routes
+  // Extract only BE-API routes, filtering out the unwanted endpoint
   const extractBEroutes = () => {
     if (!allRoutes.value) {
       return null;
     }
 
-    // Extract URLs where "upstream" is "backend"
+    // Extract URLs where "upstream" is "backend" and filter out the unwanted endpoint
     const backendUrls = Object.keys(allRoutes.value).filter(
-      (url) => allRoutes.value[url]?.upstream === 'backend',
+      (url) =>
+        allRoutes.value[url]?.upstream === 'backend' &&
+        url !==
+          'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/' &&
+        url !== 'api.os2udoglaer.dk',
     );
 
     return backendUrls.length > 0 ? backendUrls : null;
@@ -51,7 +54,7 @@ export async function UseBaseApi<T>(
 
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
-  console.log('FE DOMAIN thats qurying', currentFEdomain.value);
+  console.log('FE DOMAIN that is querying:', currentFEdomain.value);
 
   // Extract the base domain to handle both staging and production
   const getDomainName = (url: string) => {
@@ -67,10 +70,9 @@ export async function UseBaseApi<T>(
     for (const route of onlyBEroutes.value) {
       const backendDomain = getDomainName(route);
 
+      // Match the correct domain, taking "api." prefix into account
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBE = route;
-        // console.log('if true selectedBE = route', selectedBE);
-
         break;
       }
     }
@@ -80,10 +82,10 @@ export async function UseBaseApi<T>(
     }
 
     beEndpoint.value = selectedBE;
-    console.log('FINAL beEndpoint', beEndpoint.value);
+    console.log('FINAL beEndpoint:', beEndpoint.value);
   };
 
-  // the 'datawell' endpoint (access to all of data supposedly)
+  // Development endpoints for local or staging testing
   const devEndpoint = ref(
     'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
   );
@@ -102,27 +104,3 @@ export async function UseBaseApi<T>(
     ...mergedParamOptions,
   });
 }
-
-// TODO: Figure out how to match these in a good way.
-// Seems like adding api. in front in not a bad idea...
-// lets see what gpt has to say about it
-
-// POSSIBLE FE DOMAINS
-// https://ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
-// https://aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
-
-// extracted BE ROUTES [
-//   'https://api.aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.klcviborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.laeringsportalenskive.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.mitvadehav.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.rum.thisted.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.ude.nu.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.udoglaer.randers.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.udoglaer.vejle.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.udsynmodarbejdsliv.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://api.ungegarantien.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-//   'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/'
-// ]
