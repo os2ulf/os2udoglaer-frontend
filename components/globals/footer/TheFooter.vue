@@ -204,7 +204,10 @@ const footerData = ref(filterFooterData[0]);
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 footer__section">
           <div class="footer__privacy">
-            <div class="footer__privacy-buttons">
+            <div
+              class="footer__privacy-buttons"
+              v-if="footerData?.field_privacy_terms?.length > 0"
+            >
               <!-- <button
                 aria-label="Cookiepolitik"
                 class="footer__privacy-button-item"
@@ -214,12 +217,12 @@ const footerData = ref(filterFooterData[0]);
               </button> -->
               <NuxtLink
                 class="footer__privacy-button-item"
-                v-for="item in footerData.field_privacy_terms"
-                :key="item.id"
-                :to="item.url"
-                :aria-label="item.title"
+                v-for="item in footerData?.field_privacy_terms"
+                :key="item?.id"
+                :to="item?.url"
+                :aria-label="item?.title"
               >
-                {{ item.title }}
+                {{ item?.title }}
               </NuxtLink>
             </div>
 
