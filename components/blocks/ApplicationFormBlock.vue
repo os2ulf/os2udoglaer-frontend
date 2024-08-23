@@ -25,9 +25,6 @@ const renderApplicationForm = (componentName: string) => {
       v-if="props.blockData?.field_form_type"
       :block-data="props.blockData"
     />
-    <pre>
-      {{ props.blockData }}
-    </pre>
   </div>
 </template>
 

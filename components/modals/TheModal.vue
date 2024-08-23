@@ -38,18 +38,8 @@ onUnmounted(() => {
           </button>
         </div>
         <div v-show="modalContent" class="the-modal__content-body">
-          <p>
-            {{ modalContent?.video_overlay_text }}
-          </p>
-
-          <NuxtLink
-            class="button button--primary the-modal__button-cta"
-            :to="modalContent?.field_video_url?.url"
-            target="_blank"
-            aria-label="Link til video"
-          >
-            Se video
-          </NuxtLink>
+          <h3 v-if="modalContent?.title">{{ modalContent?.title }}</h3>
+          <div v-if="modalContent?.content" v-html="modalContent?.content"></div>
         </div>
       </div>
     </div>
@@ -80,8 +70,8 @@ onUnmounted(() => {
     overflow: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    border-radius: 32px;
     transition: all 0.3s ease-in-out;
   }
 
@@ -111,14 +101,12 @@ onUnmounted(() => {
   }
 
   &__content-body {
-    padding: 30px 30px 0 30px;
+    padding: 60px 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
     width: 100%;
     height: 100%;
+    text-align: left;
   }
 
   svg {

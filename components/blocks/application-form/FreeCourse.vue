@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Field, Form } from 'vee-validate';
+import { useModalStore } from '~/stores/modal';
+const modalStore = useModalStore();
 
 const props = defineProps({
   blockData: Object,
@@ -21,6 +23,16 @@ const courses = ref([]);
 const coursesSelect = ref([]);
 const courseTerms = ref([]);
 const courseTermsSelect = ref([]);
+const domains = ref([]);
+const domainArray = ref(props.blockData?.field_domain_access);
+
+if (domainArray.value.length > 0) {
+  for (let i = 0; i < domainArray.value.length; i++) {
+    domains.value.push({
+      'target_id': domainArray.value[i]
+    });
+  }
+}
 
 // Form data
 const selectedSchool = ref('');
@@ -180,6 +192,13 @@ const settlementDateChange = async (event) => {
   settlementDate.value = date.toISOString().replace('.000Z', '+00:00');
 };
 
+const handleModal = (title, content: any) => {
+  modalStore.showModal({
+    title: title,
+    content: content,
+  });
+};
+
 const handleSubmit = async () => {
   if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
@@ -203,11 +222,7 @@ const handleSubmit = async () => {
             "target_id": "free_course_request"
         }
     ],
-    "field_domain_access": [
-        {
-            "target_id": "api_mitvadehav_dk"
-        }
-    ],
+    "field_domain_access": domains.value,
     "field_rfc_date": [
         {
             "value": settlementDate.value
@@ -488,7 +503,10 @@ function showHelperText() {
 
       <div v-if="props.blockData.field_information_text" class="field-group form-input-wrapper">
         <h3 v-if="props.blockData.field_information_text_title">{{ props.blockData.field_information_text_title }}</h3>
-        <div v-html="props.blockData.field_information_text"></div>
+        <div v-if="!props.blockData.field_show_in_modal" v-html="props.blockData.field_information_text"></div>
+        <div v-if="props.blockData.field_show_in_modal">
+          <NuxtLink class="modal__trigger" @click="handleModal(props.blockData?.field_information_text_title, props.blockData?.field_information_text)">Læs mere</NuxtLink>
+        </div>
       </div>
 
       <input type="text" v-model="honeypot" class="contact-form__website" />
@@ -519,7 +537,7 @@ function showHelperText() {
   </div>
 
   <div v-else>
-    <h2 class="contact-form__success">Tak! Din besked er sendt til {{ contactPersonName }}.</h2>
+    <h2 class="contact-form__success">Din ansøgning er sendt</h2>
   </div>
 </template>
 
@@ -664,5 +682,11 @@ function showHelperText() {
       transform: rotate(360deg);
     }
   }
+}
+
+.modal__trigger {
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>
