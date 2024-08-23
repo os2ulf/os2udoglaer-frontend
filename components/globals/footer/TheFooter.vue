@@ -27,7 +27,7 @@ const footerData = ref(filterFooterData[0]);
 <template>
   <div
     class="footer"
-    :class="footerData.field_theme ? footerData.field_theme : ''"
+    :class="footerData?.field_theme ? footerData?.field_theme : ''"
   >
     <div
       class="footer__watermark"
