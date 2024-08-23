@@ -16,6 +16,7 @@ const props = withDefaults(
     validateOnInput?: boolean;
     validateOnModelUpdate?: boolean;
     customError?: string;
+    isSearch?: boolean;
   }>(),
   {
     fieldType: 'input',
@@ -28,6 +29,7 @@ const props = withDefaults(
     customError: '',
     validateOnInput: true,
     maxlength: '',
+    isSearch: false,
   },
 );
 
@@ -82,7 +84,17 @@ const hasErrors = useFieldError(props.name);
       @input="$emit('input', value)"
       @animationstart="checkAnimation"
     />
-    <label v-if="label" class="form-label" :for="id">{{ label }}</label>
+    <label
+      v-if="label"
+      class="form-label"
+      :class="props.isSearch ? 'form-label--search' : ''"
+      :for="id"
+    >
+      <span class="form-input-icon" v-if="props.isSearch"
+        ><NuxtIcon name="search" filled
+      /></span>
+      {{ label }}</label
+    >
   </div>
   <Transition name="bounce">
     <span
@@ -110,8 +122,27 @@ const hasErrors = useFieldError(props.name);
   margin-top: -2px;
 }
 
+.form-input-icon {
+  margin-top: -2px;
+  padding-right: 2px;
+  font-size: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+
+  &--search {
+    margin-top: -4px !important;
+  }
+}
+
 .form-input--up + .form-label,
 .form-input:focus + .form-label {
   color: var(--color-primary);
+
+  path {
+    stroke: var(--color-primary);
+  }
 }
 </style>

@@ -36,11 +36,7 @@ const newsData = ref(props.blockData?.results);
   <div
     class="latest-news"
     v-if="newsData.length > 0"
-    :class="
-      sectionWidth === 'section--width-full'
-        ? 'container'
-        : ''
-    "
+    :class="sectionWidth === 'section--width-full' ? 'container' : ''"
   >
     <div
       :class="
@@ -147,7 +143,7 @@ const newsData = ref(props.blockData?.results);
 
   :deep(.swiper-button-next) {
     border-color: var(--theme-swiper-secondary-color);
-    transition: border-color .3s ease;
+    transition: border-color 0.3s ease;
 
     &:hover {
       border-color: var(--theme-swiper-primary-color);
@@ -160,7 +156,7 @@ const newsData = ref(props.blockData?.results);
 
   :deep(.swiper-button-prev) {
     border-color: var(--theme-swiper-secondary-color);
-    transition: border-color .3s ease;
+    transition: border-color 0.3s ease;
 
     &:hover {
       border-color: var(--theme-swiper-primary-color);

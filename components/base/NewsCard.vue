@@ -25,8 +25,8 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
           <div class="news-card__image">
             <BaseImage v-if="data.field_image" :image="data?.field_image" />
           </div>
-          <div class="news-card__tag" v-if="data?.bundle_label">
-            {{ data?.bundle_label }}
+          <div class="news-card__tag" v-if="data?.provider?.label">
+            {{ data?.provider?.label }}
           </div>
         </div>
         <div class="news-card__content">
@@ -41,13 +41,12 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
         </div>
 
         <div class="news-card__footer-button">
-          <NuxtLink
-            :to="data.link"
-            aria-label="Link til nyhed"
-            class="news-card__button"
-            >Læs nyheden</NuxtLink
-          >
-          <NuxtIcon class="news-card__button-icon" name="arrow-right" filled />
+          <span class="news-card__button"
+            >Læs nyheden<NuxtIcon
+              class="news-card__button-icon"
+              name="arrow-right"
+              filled
+          /></span>
         </div>
       </NuxtLink>
     </ClientOnly>
@@ -187,10 +186,6 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
     border-bottom: 2px solid var(--color-primary);
     width: fit-content;
     margin-top: auto;
-
-    a {
-      text-decoration: none;
-    }
   }
 
   &__button {
@@ -203,8 +198,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
     background-color: transparent;
     border: none;
     cursor: pointer;
-
-    padding: 0;
+    padding: 7px 0;
   }
 
   &__button-icon {
