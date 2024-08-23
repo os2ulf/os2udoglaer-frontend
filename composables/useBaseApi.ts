@@ -32,7 +32,7 @@ export async function UseBaseApi<T>(
     }
   }
 
-  console.log('allRoutes type of', typeof allRoutes.value, allRoutes.value);
+  // console.log('allRoutes type of', typeof allRoutes.value, allRoutes.value);
   // extract only BE-API routes
   const extractBEroutes = () => {
     if (!allRoutes.value) {
@@ -48,10 +48,16 @@ export async function UseBaseApi<T>(
   };
 
   const onlyBEroutes = ref(extractBEroutes());
-  console.log('extracted BE ROUTES', onlyBEroutes.value);
 
   // Detect current FE domain
   const currentFEdomain = ref(useGetCurrentDomain());
+  console.log('currentFEdomain', currentFEdomain.value);
+
+  // Extract the base domain to handle both staging and production
+  // const getDomainName = (url: string) => {
+  //   const parsedUrl = new URL(url);
+  //   return parsedUrl.hostname.replace(/^www\./, '');
+  // };
 
   // the data well endpoint (access to all of data supposedly)
   const devEndpoint = ref(
@@ -63,9 +69,6 @@ export async function UseBaseApi<T>(
   } else {
     //
   }
-
-  // e.g. returns this from the server: currentFEdomain https://ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
-  // or currentFEdomain https://aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
 
   // We need to know the current FE domain user is accessing to get the right BE domain
   // Find the right matching route from allRoutes and assign it to be the BE endpoint
@@ -79,3 +82,27 @@ export async function UseBaseApi<T>(
     ...mergedParamOptions,
   });
 }
+
+// TODO: Figure out how to match these in a good way.
+// Seems like adding api. in front in not a bad idea...
+// lets see what gpt has to say about it
+
+// POSSIBLE FE DOMAINS
+// https://ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
+// https://aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
+
+// extracted BE ROUTES [
+//   'https://api.aabenaalborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.klcviborg.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.laeringsportalenskive.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.mitvadehav.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.rum.thisted.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.ude.nu.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.udoglaer.randers.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.udoglaer.vejle.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.udsynmodarbejdsliv.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://api.ungegarantien.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+//   'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/'
+// ]
