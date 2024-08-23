@@ -38,13 +38,17 @@ export async function UseBaseApi<T>(
       return null;
     }
 
+    // excluding 'data-well' endpoints that dont belong to any municipality
+    const excludeEndpoints = [
+      'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
+      'api.os2udoglaer.dk/',
+    ];
+
     // Extract URLs where "upstream" is "backend" and filter out the unwanted endpoint
     const backendUrls = Object.keys(allRoutes.value).filter(
       (url) =>
         allRoutes.value[url]?.upstream === 'backend' &&
-        url !==
-          'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/' &&
-        url !== 'api.os2udoglaer.dk',
+        !excludeEndpoints.includes(url),
     );
 
     return backendUrls.length > 0 ? backendUrls : null;
@@ -70,7 +74,7 @@ export async function UseBaseApi<T>(
     for (const route of onlyBEroutes.value) {
       const backendDomain = getDomainName(route);
 
-      // Match the correct domain, taking "api." prefix into account
+      // Match the correct domain, taking "api." prefix into account by removing it.
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBE = route;
         break;
