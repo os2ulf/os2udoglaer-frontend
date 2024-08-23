@@ -40,6 +40,8 @@ if (error || !data.value) {
 
   // if forbidden to see
   if (error.statusCode === 403) {
+    console.log('forbidden');
+
     navigateTo('/forbidden');
   }
 

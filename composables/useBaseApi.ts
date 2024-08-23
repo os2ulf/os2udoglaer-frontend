@@ -46,17 +46,27 @@ export async function UseBaseApi<T>(
       'https://api.api.os2udoglaer.dk/',
     ];
 
-    // Extract URLs where "upstream" is "backend" and filter out the unwanted endpoint
-    const backendUrls = Object.keys(allRoutes.value).filter(
-      (url) =>
-        allRoutes.value[url]?.upstream === 'backend' &&
-        !excludeEndpoints.includes(url),
-    );
+    // Extract URLs where "upstream" is "backend" and filter out the unwanted endpoints
+    const backendRoutes = Object.entries(allRoutes.value)
+      .filter(
+        ([url, routeData]) =>
+          routeData.upstream === 'backend' && !excludeEndpoints.includes(url),
+      )
+      .map(([url, routeData]) => ({
+        url, // The route URL
+        productionUrl: routeData.production_url,
+      }));
 
-    return backendUrls.length > 0 ? backendUrls : null;
+    return backendRoutes.length > 0 ? backendRoutes : null;
   };
 
   const onlyBEroutes = ref(extractBEroutes());
+  console.log(
+    'onlyBEroutes (extracted):',
+    onlyBEroutes.value,
+    typeof onlyBEroutes.value,
+  );
+
   // console.log('BE ROUTES:', onlyBEroutes.value);
 
   // Detect current FE domain
