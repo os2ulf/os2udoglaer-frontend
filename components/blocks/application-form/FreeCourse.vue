@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Field, Form } from 'vee-validate';
 import { useModalStore } from '~/stores/modal';
+import { truncateString } from '~/utils/truncateString';
 const modalStore = useModalStore();
 
 const props = defineProps({
@@ -505,6 +506,7 @@ function showHelperText() {
         <h3 v-if="props.blockData.field_information_text_title">{{ props.blockData.field_information_text_title }}</h3>
         <div v-if="!props.blockData.field_show_in_modal" v-html="props.blockData.field_information_text"></div>
         <div v-if="props.blockData.field_show_in_modal">
+          <div v-html="truncateString(props.blockData.field_information_text, 155)"></div>
           <NuxtLink class="modal__trigger" @click="handleModal(props.blockData?.field_information_text_title, props.blockData?.field_information_text)">Læs mere</NuxtLink>
         </div>
       </div>
