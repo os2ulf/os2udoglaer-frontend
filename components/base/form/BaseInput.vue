@@ -68,6 +68,8 @@ const props = defineProps({
 
     &[type="date"] {
       margin-top: 21px;
+      padding-top: 0;
+      padding-right: 20px;
     }
   }
 
@@ -81,6 +83,10 @@ const props = defineProps({
     color: var(--color-text);
     border: 1px solid var(--color-black);
     outline: none;
+
+    &[type="date"] {
+      padding-top: 0;
+    }
   }
 
   span {
