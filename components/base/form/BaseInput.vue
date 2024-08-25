@@ -29,7 +29,7 @@ const props = defineProps({
         @input="$emit('inputValue', $event.target.value)"
         @keyup.enter="$emit('enterPressed')"
       />
-      <span>{{ label }}</span>
+      <span :class="'label--' + type">{{ label }}</span>
     </label>
   </div>
 </template>
@@ -64,6 +64,10 @@ const props = defineProps({
       height: 20px;
       padding: 0;
       margin: 0;
+    }
+
+    &[type="date"] {
+      margin-top: 21px;
     }
   }
 
@@ -101,6 +105,11 @@ const props = defineProps({
     font-weight: 400;
     font-size: 16px;
     transform: translateY(5px);
+
+    &.label--date {
+      left: 0;
+      font-size: 12px;
+    }
   }
 
   /* Chrome, Safari, Edge, Opera */
