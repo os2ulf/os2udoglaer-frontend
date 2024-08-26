@@ -93,7 +93,7 @@ export async function UseBaseApi<T>(
     beEndpoint.value = selectedBE;
 
     // remove trailing slash
-    if (beEndpoint.value.endsWith('/')) {
+    if (beEndpoint.value && beEndpoint.value.endsWith('/')) {
       beEndpoint.value = beEndpoint.value.slice(0, -1);
     }
 
@@ -114,8 +114,8 @@ export async function UseBaseApi<T>(
     const apiRouteStore = useApiRouteStore();
 
     // remove trailing slash
-    if (beEndpoint.value.endsWith('/')) {
-      beEndpoint.value = beEndpoint.value.slice(0, -1);
+    if (devEndpoint.value && devEndpoint.value.endsWith('/')) {
+      devEndpoint.value = devEndpoint.value.slice(0, -1);
     }
 
     beEndpoint.value = devEndpoint.value;
