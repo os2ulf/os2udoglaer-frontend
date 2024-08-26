@@ -12,8 +12,6 @@ export default defineEventHandler(async (event) => {
     `${backendUrl}/sitemap.xml`,
   );
 
-  console.log('backendUrl', backendUrl);
-
   let response = sitemapReq.data;
 
   // Replace the external XSL stylesheet with the local one
@@ -25,6 +23,6 @@ export default defineEventHandler(async (event) => {
   const replaceHttp = new RegExp('http://', 'g');
   response = response.replace(replaceHttp, 'https://');
 
-  console.log('response sitemap', response);
+  console.log(response);
   return response;
 });
