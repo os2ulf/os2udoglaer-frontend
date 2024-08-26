@@ -3,7 +3,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { truncateString } from '~/utils/truncateString';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
+const apiRouteStore = useApiRouteStore();
 const id = `search-block-provider-${uuidv4()}`;
 
 const props = defineProps({
@@ -14,11 +16,7 @@ const props = defineProps({
 });
 
 const searchBlockData = ref(props.blockData);
-
-// TODO: Once we create logic to dynamically set the right BE Domain, use it here
-const backEndDomain = ref(
-  'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
-);
+const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
 const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');

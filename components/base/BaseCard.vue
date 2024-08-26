@@ -298,7 +298,6 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
             Gratis
           </BaseLabel>
 
-          <!-- TODO: Figure out use-case -->
           <!-- <BaseLabel class="label--light-yellow">Øvrige</BaseLabel> -->
         </div>
       </div>

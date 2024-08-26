@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
+const apiRouteStore = useApiRouteStore();
+
 useHead({
   title: 'Søg',
   meta: [
@@ -13,10 +17,7 @@ useHead({
   ],
 });
 
-// TODO: Once we create logic to dynamically set the right BE Domain, use it here
-const backEndDomain = ref(
-  'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
-);
+const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
 const searchKeyword = ref('');
 const dynamicContent = ref(null);
@@ -25,7 +26,6 @@ const pager = ref(null);
 const allSortingOptions = ref(null);
 const selectedPage = ref(0);
 const isLoadingPageResults = ref(false);
-const showAllFilters = ref(false);
 
 const getInitialSearchResults = async () => {
   try {

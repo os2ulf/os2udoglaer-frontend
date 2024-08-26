@@ -92,15 +92,18 @@ export async function UseBaseApi<T>(
 
     beEndpoint.value = selectedBE;
     apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
-    // console.log('FINAL beEndpoint::', beEndpoint.value);
+    // console.log('FINAL beEndpoint:', beEndpoint.value);
   };
 
   // Development endpoints for local or staging testing
+  // https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
+
   const devEndpoint = ref(
     'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
   );
   const localHostDevEnv = ref('https://localhost:3000');
 
+  // if localhost, use dev endpoint
   if (currentFEdomain.value === localHostDevEnv.value) {
     const apiRouteStore = useApiRouteStore();
     beEndpoint.value = devEndpoint.value;
@@ -122,5 +125,3 @@ export async function UseBaseApi<T>(
     ...mergedParamOptions,
   });
 }
-
-// TODO: Next up, add on right BE endpoint from the store to all components that do fetches in the components + search page
