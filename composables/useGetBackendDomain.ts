@@ -1,18 +1,12 @@
 import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { excludeEndpoints } from '~/config/excludedEndpoints';
 
 export function useGetBackendDomain() {
   const allRoutes = ref<Record<string, any> | null>(null);
   const beEndpoint = ref<string | null>(null);
   const devEnv = ref<string | null>('https://localhost:3000');
-
-  const excludeEndpoints = [
-    'https://api.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-    'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site/',
-    'https://api.os2udoglaer.dk/',
-    'https://api.api.os2udoglaer.dk/',
-  ];
 
   if (process.env.PLATFORM_ROUTES) {
     try {
