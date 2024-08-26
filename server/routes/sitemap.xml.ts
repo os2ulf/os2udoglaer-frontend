@@ -1,13 +1,19 @@
+import { getBackendDomain } from '~/composables/getBackendDomain';
 import axios, { AxiosResponse } from 'axios';
 import { appendHeader } from 'h3';
 
 export default defineEventHandler(async (event) => {
+  // Get the request headers
+  const headers = getRequestHeaders(event);
+
+  // Get the backend URL using the utility function
+  const backendUrl = getBackendDomain(headers);
+  console.log('backendUrl', backendUrl);
+
   appendHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
 
-  // Have to use NUXT_PUBLIC_API_BASE_URL because simply API_BASE_URL doesnt work on the server. However this solution doesnt work on localhost out of the box
-  // so for the workaround, create a var in .env file with NUXT_PUBLIC_API_BASE_URL containing the same value as API_BASE_URL
   const sitemapReq: AxiosResponse<any> = await axios.get(
-    `${process.env.NUXT_PUBLIC_API_BASE_URL}/sitemap.xml`,
+    `${backendUrl}/sitemap.xml`,
   );
 
   // Get the response data
@@ -23,7 +29,7 @@ export default defineEventHandler(async (event) => {
   const replaceHttp = new RegExp('http://', 'g');
 
   response = response.replace(replaceHttp, 'https://');
-  console.log(response);
+  console.log('Sitemap', response);
 
   return response;
 });
