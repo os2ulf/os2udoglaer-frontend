@@ -3,12 +3,8 @@ import axios, { AxiosResponse } from 'axios';
 import { appendHeader } from 'h3';
 
 export default defineEventHandler(async (event) => {
-  // Get the request headers
   const headers = getRequestHeaders(event);
-
-  // Get the backend URL using the utility function
   const backendUrl = getBackendDomain(headers);
-  console.log('backendUrl', backendUrl);
 
   appendHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
 
@@ -16,20 +12,16 @@ export default defineEventHandler(async (event) => {
     `${backendUrl}/sitemap.xml`,
   );
 
-  // Get the response data
   let response = sitemapReq.data;
 
-  // Dont render XSL stylesheet cross-domain
-  const removeStylesheet =
+  // Replace the external XSL stylesheet with the local one
+  const externalStylesheet =
     '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
+  response = response.replace(/<\?xml-stylesheet.*?\?>/, externalStylesheet);
 
-  response = sitemapReq.data.replace(removeStylesheet, '');
-
-  // Replacing HTTP links with https url!
+  // Replacing HTTP links with HTTPS URLs
   const replaceHttp = new RegExp('http://', 'g');
-
   response = response.replace(replaceHttp, 'https://');
-  console.log('Sitemap', response);
 
   return response;
 });
