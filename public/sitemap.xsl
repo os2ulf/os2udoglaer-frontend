@@ -27,7 +27,6 @@
       </head>
       <body>
         <h1>Sitemap</h1>
-        <p>Minified version of the sitemap for the site users. Crawlers see more.</p>
         <table>
           <tr>
             <th>URL</th>
