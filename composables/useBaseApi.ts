@@ -91,6 +91,12 @@ export async function UseBaseApi<T>(
     }
 
     beEndpoint.value = selectedBE;
+
+    // remove trailing slash
+    if (beEndpoint.value.endsWith('/')) {
+      beEndpoint.value = beEndpoint.value.slice(0, -1);
+    }
+
     apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
     // console.log('FINAL beEndpoint:', beEndpoint.value);
   };
@@ -106,6 +112,12 @@ export async function UseBaseApi<T>(
   // if localhost, use dev endpoint
   if (currentFEdomain.value === localHostDevEnv.value) {
     const apiRouteStore = useApiRouteStore();
+
+    // remove trailing slash
+    if (beEndpoint.value.endsWith('/')) {
+      beEndpoint.value = beEndpoint.value.slice(0, -1);
+    }
+
     beEndpoint.value = devEndpoint.value;
     apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
   } else {
