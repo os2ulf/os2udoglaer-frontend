@@ -92,7 +92,7 @@ export async function UseBaseApi<T>(
 
     beEndpoint.value = selectedBE;
     apiRouteStore.setApiRouteEndpoint(beEndpoint.value);
-    // console.log('FINAL beEndpoint:', beEndpoint.value);
+    // console.log('FINAL beEndpoint::', beEndpoint.value);
   };
 
   // Development endpoints for local or staging testing
