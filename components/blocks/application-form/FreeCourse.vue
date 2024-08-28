@@ -116,7 +116,7 @@ const fetchProviders = async () => {
 const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/content/course/' + uid, {
+    const response = await fetch(baseEndpoint.value + '/rest-export/courses/primary-school/' + uid, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
