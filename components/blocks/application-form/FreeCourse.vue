@@ -24,6 +24,7 @@ const courses = ref([]);
 const coursesSelect = ref([]);
 const courseTerms = ref([]);
 const courseTermsSelect = ref([]);
+const coursePriceInfo = ref([]);
 const domains = ref([]);
 const domainArray = ref(props.blockData?.field_domain_access);
 
@@ -152,7 +153,7 @@ const fetchCourseSubjects = async (nid) => {
     if (!response.ok) throw new Error(response.status);
     courseTerms.value = await response.json();
   } catch (error) {
-    console.error('Error fetching courses:', error);
+    console.error('Error fetching courseTerms:', error);
   }
 
   if (courseTerms.value.length > 0) {
@@ -165,7 +166,24 @@ const fetchCourseSubjects = async (nid) => {
   }
 };
 
+const fetchCoursePriceInfo = async (nid) => {
+  try {
+    const response = await fetch(baseEndpoint.value + '/rest-export/course-price/' + nid, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
+    });
+    if (!response.ok) throw new Error(response.status);
+    coursePriceInfo.value = await response.json();
+  } catch (error) {
+    console.error('Error fetching coursePriceInfo:', error);
+  }
+};
+
 const handleProviderChange = async (event) => {
+  coursePriceInfo.value = [];
   await fetchCourses(event.target.value);
 };
 
@@ -176,6 +194,7 @@ const handleHideCourseSelect = async ()=> {
     coursesSelect.value = [];
     selectedCourseTerm.value = '';
     courseTermsSelect.value = [];
+    coursePriceInfo.value = [];
     courseNotInList.value = true;
   } else {
     // If the checkbox is unchecked, show the select list
@@ -185,7 +204,9 @@ const handleHideCourseSelect = async ()=> {
 }
 
 const handleCourseChange = async (event) => {
+  coursePriceInfo.value = [];
   await fetchCourseSubjects(event.target.value);
+  await fetchCoursePriceInfo(event.target.value);
 };
 
 const settlementDateChange = async (event) => {
@@ -344,7 +365,7 @@ function showHelperText() {
 </script>
 
 <template>
-  <div class="contact-form" v-if="!isSuccess">
+  <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
         <h3>Skole</h3>
@@ -357,7 +378,7 @@ function showHelperText() {
           rules="">
         </BaseSelect>
         <BaseInputFloatingLabel
-          class="contact-form__label"
+          class="application-form__label"
           v-model="schoolClass"
           type="text"
           name="Klasse"
@@ -365,7 +386,7 @@ function showHelperText() {
           rules=""
         />
         <BaseInput
-          class="contact-form__label"
+          class="application-form__label"
           v-model="receivingClass"
           type="checkbox"
           name="Modtageklasse"
@@ -373,7 +394,7 @@ function showHelperText() {
           rules=""
         />
         <BaseInputFloatingLabel
-          class="contact-form__label"
+          class="application-form__label"
           v-model="fullName"
           type="text"
           name="Navn"
@@ -381,7 +402,7 @@ function showHelperText() {
           rules=""
         />
         <BaseInputFloatingLabel
-          class="contact-form__label"
+          class="application-form__label"
           v-model="phone"
           type="text"
           name="Telefonnummer"
@@ -389,7 +410,7 @@ function showHelperText() {
           rules=""
         />
         <BaseInputFloatingLabel
-          class="contact-form__label"
+          class="application-form__label"
           v-model="email"
           type="text"
           name="E-mailadresse"
@@ -421,14 +442,14 @@ function showHelperText() {
         <BaseInput
           v-model="courseNotInList"
           @change="handleHideCourseSelect"
-          class="contact-form__label"
+          class="application-form__label"
           type="checkbox"
           name="course_not_in_list"
           label="Forløb findes ikke på listen"
         />
         <BaseInputFloatingLabel
           v-if="courseNotInList"
-          class="contact-form__label"
+          class="application-form__label"
           v-model="courseName"
           type="text"
           name="Forløbets navn"
@@ -437,9 +458,9 @@ function showHelperText() {
         />
         <div
           v-if="courseNotInList"
-          class="contact-form__textarea-wrapper"
+          class="application-form__textarea-wrapper"
         >
-          <div class="contact-form__textarea-container">
+          <div class="application-form__textarea-container">
             <Field
               v-slot="{ field, errors }"
               name="Beskrivelse af forløbet"
@@ -450,16 +471,16 @@ function showHelperText() {
               :validate-on-input="true"
             >
               <textarea
-                :class="`form-input form-input--floating-label ${errors[0] ? 'contact-form__styled-textarea--invalid' : ''}`"
+                :class="`form-input form-input--floating-label ${errors[0] ? 'application-form__styled-textarea--invalid' : ''}`"
                 v-bind="field"
-                class="contact-form__label contact-form__styled-textarea"
+                class="application-form__label application-form__styled-textarea"
                 @focus="hideHelperText"
                 @blur="showHelperText"
               ></textarea>
               <Transition name="fade-input">
                 <span
                   v-if="showHelper && !courseDescription"
-                  class="contact-form__helper-text"
+                  class="application-form__helper-text"
                 >
                   Beskrivelse af forløbet
                 </span>
@@ -483,8 +504,18 @@ function showHelperText() {
           selectLabel="Vælg emneområde"
           rules="">
         </BaseSelect>
+        <div v-if="coursePriceInfo.length > 0" class="price-info form-input-wrapper">
+          <div class="price-info-header" v-if="coursePriceInfo[0].price">Pris</div>
+          <div class="price-info-item" v-for="coursePriceInfoItem in coursePriceInfo">
+            {{ coursePriceInfoItem?.price ? coursePriceInfoItem?.price : '' }} {{ coursePriceInfoItem?.unit ? coursePriceInfoItem?.unit : '' }} {{ coursePriceInfoItem?.vat ? '(' + coursePriceInfoItem?.vat + ')' : '' }}
+          </div>
+          <div v-if="coursePriceInfo[0].field_description_of_price" class="price-info-description" v-html="coursePriceInfo[0]?.field_description_of_price"></div>
+          <div class="price-info-link">
+            <NuxtLink :to="coursePriceInfo[0]?.view_node" :target="_blank">Læs mere</NuxtLink>
+          </div>
+        </div>
         <BaseInputFloatingLabel
-          class="contact-form__label"
+          class="application-form__label"
           v-model="requestedAmount"
           type="float"
           name="Ansøgt beløb"
@@ -492,7 +523,7 @@ function showHelperText() {
           rules=""
         />
         <BaseInput
-          class="contact-form__label"
+          class="application-form__label"
           v-model="settlementDate"
           @change="settlementDateChange"
           type="date"
@@ -511,11 +542,11 @@ function showHelperText() {
         </div>
       </div>
 
-      <input type="text" v-model="honeypot" class="contact-form__website" />
+      <input type="text" v-model="honeypot" class="application-form__website" />
 
       <button
         v-if="!isLoading"
-        class="button button--primary contact-form__button"
+        class="button button--primary application-form__button"
         aria-label="Indsend"
         type="submit"
       >
@@ -524,27 +555,27 @@ function showHelperText() {
 
       <button
         v-else
-        class="button button--primary contact-form__button"
+        class="button button--primary application-form__button"
         disabled
         aria-label="Loading..."
       >
-        <div class="contact-form__spinner"></div>
+        <div class="application-form__spinner"></div>
       </button>
     </Form>
     <Transition name="bounce">
-      <div v-if="errorMessage" class="contact-form__error-message">
+      <div v-if="errorMessage" class="application-form__error-message">
         <p>{{ errorMessage }}</p>
       </div>
     </Transition>
   </div>
 
   <div v-else>
-    <h2 class="contact-form__success">Din ansøgning er sendt</h2>
+    <h2 class="application-form__success">Din ansøgning er sendt</h2>
   </div>
 </template>
 
 <style lang="postcss" scoped>
-.contact-form {
+.application-form {
   display: flex;
   flex-flow: column;
 
@@ -682,6 +713,26 @@ function showHelperText() {
     }
     100% {
       transform: rotate(360deg);
+    }
+  }
+
+  .price-info {
+    padding: 18px @(--sm) 26px;
+    border-radius: 32px;
+    background-color: var(--color-quaternary-lighten-4);
+
+    &-header {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    &-description {
+      padding-top: 8px;
+
+      :deep(p) {
+        margin-bottom: 8px;
+      }
     }
   }
 }
