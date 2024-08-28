@@ -511,7 +511,7 @@ function showHelperText() {
           </div>
           <div v-if="coursePriceInfo[0].field_description_of_price" class="price-info-description" v-html="coursePriceInfo[0]?.field_description_of_price"></div>
           <div class="price-info-link">
-            <NuxtLink :to="coursePriceInfo[0]?.view_node" :target="_blank">Læs mere</NuxtLink>
+            <NuxtLink :to="coursePriceInfo[0]?.view_node" target="_blank">Læs mere</NuxtLink>
           </div>
         </div>
         <BaseInputFloatingLabel
