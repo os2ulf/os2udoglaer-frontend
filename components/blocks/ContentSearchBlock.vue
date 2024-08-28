@@ -88,7 +88,7 @@ const getFilteredPageResults = async (
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
     );
     const data = await response.json();
 
@@ -227,10 +227,10 @@ const handleExtractedFilters = async () => {
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
     );
-
     const data = await response.json();
+
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
