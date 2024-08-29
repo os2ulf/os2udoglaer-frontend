@@ -717,7 +717,7 @@ function showHelperText() {
   }
 
   .price-info {
-    padding: 18px @(--sm) 26px;
+    padding: 22px 26px;
     border-radius: 32px;
     background-color: var(--color-quaternary-lighten-4);
 
