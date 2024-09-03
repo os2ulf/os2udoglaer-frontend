@@ -67,8 +67,7 @@ export function getBackendDomain(headers?: Record<string, string>) {
   };
 
   const devEndpoint =
-    'https://api.udsynmodarbejdsliv.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
-  // api.udsynmodarbejdsliv.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
+    'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
 
   if (headers && headers.host === 'localhost:3000') {
     beEndpoint = devEndpoint;

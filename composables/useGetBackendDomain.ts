@@ -66,9 +66,12 @@ export function useGetBackendDomain() {
       : selectedBackend;
   };
 
+  // Change BE endpoint you want to develop on here:
   if (currentFrontendDomain.value === devEnv.value) {
+    //  'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
+    // https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
     beEndpoint.value =
-      'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
+      'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
   } else {
     const apiRouteStore = useApiRouteStore();
 
