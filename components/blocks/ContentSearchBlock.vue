@@ -3,6 +3,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
+// TODO: Calendar
+// TODO: trigger clear datepicker method inside the child component
+// TODO: Make sure chips 'nutilse filtre' button clears calendar as well + URL PARAMS + refetches the data?
+// TODO: Check for dates on page load and populate them in the chips
+
 const apiRouteStore = useApiRouteStore();
 
 const id = `search-block-${uuidv4()}`;
@@ -29,6 +34,8 @@ const showAllFilters = ref(false);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
+const datePickerStartDate = ref('');
+const datePickerEndDate = ref('');
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -88,7 +95,7 @@ const getFilteredPageResults = async (
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
     );
     const data = await response.json();
 
@@ -131,6 +138,12 @@ const updateURLParameters = () => {
   // Add sorting
   if (sortingString.value) {
     params.set('sort_by', sortingString.value);
+  }
+
+  // Add date range
+  if (datePickerStartDate.value && datePickerEndDate.value) {
+    params.set('period[min]', datePickerStartDate.value);
+    params.set('period[max]', datePickerEndDate.value);
   }
 
   // Add selected filters to URL parameters
@@ -184,6 +197,14 @@ const parseUrlParameters = () => {
     sortingString.value = sort;
   }
 
+  // extract date range
+  const minDate = params.get('period[min]');
+  const maxDate = params.get('period[max]');
+  if (minDate && maxDate) {
+    datePickerStartDate.value = minDate;
+    datePickerEndDate.value = maxDate;
+  }
+
   // if finds anything - fetches data.
   if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
     handleExtractedFilters();
@@ -227,7 +248,7 @@ const handleExtractedFilters = async () => {
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
     );
     const data = await response.json();
 
@@ -292,6 +313,45 @@ onMounted(() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
 });
+
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
+
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+
+  return `${day}.${month}.${year}`;
+};
+
+const handleDatePicker = (date) => {
+  const formattedDates = date.map((item) => formatDate(item));
+
+  if (formattedDates[0] && formattedDates[1]) {
+    datePickerStartDate.value = formattedDates[0];
+    datePickerEndDate.value = formattedDates[1];
+    updateURLParameters();
+
+    // THis code will push in calendar as a 'chip' in the filters chips part,
+    // the whole feature is not fully done, but suspect customer will want it, so leaving it for the future.
+
+    // const index = selectedFiltersData.findIndex(
+    //   (filter) => filter.searchQueryUrlAlias === 'period',
+    // );
+
+    // if (index !== -1) {
+    //   selectedFiltersData.splice(index, 1);
+    // }
+
+    // selectedFiltersData.push({
+    //   searchQueryUrlAlias: 'period',
+    //   value: `${datePickerStartDate.value}:${datePickerEndDate.value}`,
+    //   label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+    // });
+
+    getFilteredPageResults(true, true);
+  }
+};
 </script>
 
 <template>
@@ -329,7 +389,18 @@ onMounted(() => {
                 }"
               >
                 <ClientOnly>
+                  <div v-if="item.length === 0">
+                    <BaseDatePicker
+                      @datepicker-value="handleDatePicker"
+                      :startAndEndDates="{
+                        startDate: datePickerStartDate,
+                        endDate: datePickerEndDate,
+                      }"
+                    />
+                  </div>
+
                   <BaseSearchDropdown
+                    v-else
                     @dropdown-value="handleFilterChange"
                     :allFilters="item"
                     :last-interacted-filter-data="lastInteractedFilterReference"
