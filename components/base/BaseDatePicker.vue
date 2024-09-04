@@ -4,6 +4,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  filterName: {
+    type: String,
+    default: 'Kalender',
+  },
 });
 
 const datepicker = ref();
@@ -47,10 +51,6 @@ const handleClickOutside = (e) => {
   }
 };
 
-const clearDate = () => {
-  date.value = null;
-};
-
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
 
@@ -82,7 +82,7 @@ onUnmounted(() => {
         name="calendar"
         filled
       />
-      <span>Kalender</span>
+      <span>{{ filterName }}</span>
     </button>
 
     <VueDatePicker
@@ -102,7 +102,6 @@ onUnmounted(() => {
       :week-numbers="{ type: 'iso' }"
       hide-offset-dates
       @update:model-value="handleDateChange"
-      :alt-position="customPosition"
     ></VueDatePicker>
   </div>
 </template>
@@ -161,7 +160,8 @@ onUnmounted(() => {
   }
 
   :deep(div:has(.dp__outer_menu_wrap)) {
-    transform: translateX(0) @(--sm) translateX(-75%);
+    left: 50%;
+    transform: translateX(0) @(--md) translateX(-50%);
   }
 }
 </style>
