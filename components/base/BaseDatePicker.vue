@@ -102,7 +102,6 @@ onUnmounted(() => {
       :week-numbers="{ type: 'iso' }"
       hide-offset-dates
       @update:model-value="handleDateChange"
-      :alt-position="customPosition"
     ></VueDatePicker>
   </div>
 </template>
