@@ -38,6 +38,7 @@ const sortingString = ref(
 );
 const datePickerStartDate = ref('');
 const datePickerEndDate = ref('');
+const datePickerLabel = ref(props.blockData?.exposed_filters?.period?.label);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -391,13 +392,14 @@ const handleDatePicker = (date) => {
                 }"
               >
                 <ClientOnly>
-                  <div v-if="item.length === 0">
+                  <div v-if="item.exposed_filter === 'period'">
                     <BaseDatePicker
                       @datepicker-value="handleDatePicker"
                       :startAndEndDates="{
                         startDate: datePickerStartDate,
                         endDate: datePickerEndDate,
                       }"
+                      :filter-name="datePickerLabel"
                     />
                   </div>
 
