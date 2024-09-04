@@ -3,11 +3,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
-// TODO: Calendar
-// TODO: trigger clear datepicker method inside the child component
-// TODO: Make sure chips 'nutilse filtre' button clears calendar as well + URL PARAMS + refetches the data?
-// TODO: Check for dates on page load and populate them in the chips
-
 const apiRouteStore = useApiRouteStore();
 
 const id = `search-block-${uuidv4()}`;
@@ -18,8 +13,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-console.log('ContentSearchBlock data', props.blockData);
 
 const searchBlockData = ref(props.blockData);
 const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
@@ -334,6 +327,11 @@ const handleDatePicker = (date) => {
     datePickerStartDate.value = formattedDates[0];
     datePickerEndDate.value = formattedDates[1];
     updateURLParameters();
+
+    // TODO: Calendar checklist for future, for the feature to fully work with other facet features, like chips, clearing etc.
+    // TODO: trigger clear datepicker method inside the child component
+    // TODO: Make sure chips 'nutilse filtre' button clears calendar as well + URL PARAMS + refetches the data?
+    // TODO: Check for dates on page load and populate them in the chips
 
     // THis code will push in calendar as a 'chip' in the filters chips part,
     // the whole feature is not fully done, but suspect customer will want it, so leaving it for the future.

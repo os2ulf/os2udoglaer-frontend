@@ -1,4 +1,9 @@
 <script setup lang="ts">
+// @ts-nocheck
+import { v4 as uuidv4 } from 'uuid';
+
+const id = `datepicker-${uuidv4()}`;
+
 const props = defineProps({
   startAndEndDates: {
     type: Object,
@@ -65,12 +70,10 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
-
-// const customPosition = () => ({ top: 0, left: 0 });
 </script>
 
 <template>
-  <div class="datepicker">
+  <div class="datepicker" :id="id">
     <button
       class="datepicker__trigger"
       :class="{ 'datepicker__trigger--active': showDatepicker }"
@@ -152,16 +155,8 @@ onUnmounted(() => {
 
   &__component {
     padding-top: 3px;
-    position: absolute;
     width: 100%;
     z-index: 8;
-    top: 100%;
-    right: 0;
-  }
-
-  :deep(div:has(.dp__outer_menu_wrap)) {
-    left: 50%;
-    transform: translateX(0) @(--md) translateX(-50%);
   }
 }
 </style>
