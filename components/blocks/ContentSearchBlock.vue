@@ -19,6 +19,8 @@ const props = defineProps({
   },
 });
 
+console.log('ContentSearchBlock data', props.blockData);
+
 const searchBlockData = ref(props.blockData);
 const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
