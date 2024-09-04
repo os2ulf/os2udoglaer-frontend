@@ -13,7 +13,6 @@ export default defineEventHandler((event) => {
     Disallow: /en/*
     Disallow: /node/*
     Disallow: /search
-    Disallow: /
 
 
     # Sitemap
@@ -48,8 +47,6 @@ export default defineEventHandler((event) => {
     'www.udoglaer.vejle.dk',
     'klcviborg.dk',
     'www.klcviborg.dk',
-    'www.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
-    'ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
   ];
 
   if (host && prodDomains.includes(host)) {
