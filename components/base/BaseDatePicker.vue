@@ -125,10 +125,10 @@ onUnmounted(() => {
   }
 
   &__trigger {
+    display: block;
+    width: 100%;
     border: 1px solid #707070;
     border-radius: 32px;
-    display: flex;
-    align-items: center;
     background: none;
     line-height: 18px;
     height: inherit;
