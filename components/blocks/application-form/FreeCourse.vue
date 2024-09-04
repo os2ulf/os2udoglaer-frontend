@@ -210,8 +210,7 @@ const handleCourseChange = async (event) => {
 };
 
 const settlementDateChange = async (event) => {
-  let date = new Date(event.target.value);
-  settlementDate.value = date.toISOString().replace('.000Z', '+00:00');
+  settlementDate.value = event.target.value;
 };
 
 const handleModal = (title, content: any) => {
@@ -245,6 +244,11 @@ const handleSubmit = async () => {
         }
     ],
     "field_domain_access": domains.value,
+    "field_mailto": [
+        {
+            "value": mailTo.value
+        }
+    ],
     "field_rfc_date": [
         {
             "value": settlementDate.value
@@ -303,11 +307,6 @@ const handleSubmit = async () => {
     "field_rfc_school": [
         {
             "target_id": selectedSchool.value
-        }
-    ],
-    "field_rfc_status": [
-        {
-            "value": "awaiting"
         }
     ],
     "field_rfc_phone": [
