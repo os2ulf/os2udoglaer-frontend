@@ -65,6 +65,8 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
+
+// const customPosition = () => ({ top: 0, left: 0 });
 </script>
 
 <template>
@@ -100,6 +102,7 @@ onUnmounted(() => {
       :week-numbers="{ type: 'iso' }"
       hide-offset-dates
       @update:model-value="handleDateChange"
+      :alt-position="customPosition"
     ></VueDatePicker>
   </div>
 </template>
@@ -126,6 +129,7 @@ onUnmounted(() => {
 
   &__trigger {
     display: block;
+    text-align: left;
     width: 100%;
     border: 1px solid #707070;
     border-radius: 32px;
@@ -148,12 +152,16 @@ onUnmounted(() => {
   }
 
   &__component {
-    padding-top: 7px;
+    padding-top: 3px;
     position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 8;
     width: 100%;
+    z-index: 8;
+    top: 100%;
+    right: 0;
+  }
+
+  :deep(div:has(.dp__outer_menu_wrap)) {
+    transform: translateX(0) @(--sm) translateX(-75%);
   }
 }
 </style>
