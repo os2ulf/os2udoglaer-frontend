@@ -14,6 +14,9 @@ export default defineEventHandler(async (event) => {
     return domain.replace(/https?:\/\//, '').replace(/:\d+/, '');
   };
 
+  console.log('creds', credentials, encodedCredentials);
+  console.log('beDataWellEndpoint', beDataWellEndpoint);
+
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
@@ -73,6 +76,8 @@ export default defineEventHandler(async (event) => {
     }
 
     if (responseStatus === 403) {
+      console.log('Forbidden console log 403', responseData);
+
       return {
         statusCode: 403,
         message: 'Forbidden',
