@@ -14,7 +14,8 @@ export default defineEventHandler(async (event) => {
     return domain.replace(/https?:\/\//, '').replace(/:\d+/, '');
   };
 
-  console.log('creds', credentials, encodedCredentials);
+  console.log('creds', credentials);
+  console.log('encodedCreds', encodedCredentials);
   console.log('beDataWellEndpoint', beDataWellEndpoint);
 
   const currentDomain = normalizeDomain(event.node.req.headers.host);
