@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
+  // BASIC ORIGIN CHECK
   if (requestOrigin) {
     console.log('current FE Domain:', currentDomain);
     console.log('request Origin:', requestOrigin);
