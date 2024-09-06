@@ -10,6 +10,7 @@ const props = defineProps({
 const config = useRuntimeConfig().public;
 const baseEndpoint = ref(config.API_BASE_URL);
 
+// TODO: Remove once done testing.
 // Combine username and password
 const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
 // Encode the combined string to Base64
@@ -31,7 +32,7 @@ const domainArray = ref(props.blockData?.field_domain_access);
 if (domainArray.value.length > 0) {
   for (let i = 0; i < domainArray.value.length; i++) {
     domains.value.push({
-      'target_id': domainArray.value[i]
+      target_id: domainArray.value[i],
     });
   }
 }
@@ -66,13 +67,15 @@ onBeforeMount(() => {
 
 const fetchSchools = async () => {
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/users/school', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+    const response = await fetch(
+      baseEndpoint.value + '/rest-export/users/school',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     if (!response.ok) throw new Error(response.status);
     schools.value = await response.json();
   } catch (error) {
@@ -91,13 +94,15 @@ const fetchSchools = async () => {
 
 const fetchProviders = async () => {
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/users/course_provider', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+    const response = await fetch(
+      baseEndpoint.value + '/rest-export/users/course_provider',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     if (!response.ok) throw new Error(response.status);
     providers.value = await response.json();
   } catch (error) {
@@ -117,13 +122,15 @@ const fetchProviders = async () => {
 const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/courses/primary-school/' + uid, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+    const response = await fetch(
+      baseEndpoint.value + '/rest-export/courses/primary-school/' + uid,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     if (!response.ok) throw new Error(response.status);
     courses.value = await response.json();
   } catch (error) {
@@ -143,13 +150,15 @@ const fetchCourses = async (uid) => {
 const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/content-subject-terms/' + nid, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+    const response = await fetch(
+      baseEndpoint.value + '/rest-export/content-subject-terms/' + nid,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     if (!response.ok) throw new Error(response.status);
     courseTerms.value = await response.json();
   } catch (error) {
@@ -168,13 +177,15 @@ const fetchCourseSubjects = async (nid) => {
 
 const fetchCoursePriceInfo = async (nid) => {
   try {
-    const response = await fetch(baseEndpoint.value + '/rest-export/course-price/' + nid, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+    const response = await fetch(
+      baseEndpoint.value + '/rest-export/course-price/' + nid,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     if (!response.ok) throw new Error(response.status);
     coursePriceInfo.value = await response.json();
   } catch (error) {
@@ -187,7 +198,7 @@ const handleProviderChange = async (event) => {
   await fetchCourses(event.target.value);
 };
 
-const handleHideCourseSelect = async ()=> {
+const handleHideCourseSelect = async () => {
   if (!courseNotInList.value) {
     // If the checkbox is checked, hide the select list and clear the v-model value
     selectedCourse.value = '';
@@ -201,7 +212,7 @@ const handleHideCourseSelect = async ()=> {
     courseNotInList.value = false;
     await fetchCourses(selectedProvider.value);
   }
-}
+};
 
 const handleCourseChange = async (event) => {
   coursePriceInfo.value = [];
@@ -238,92 +249,92 @@ const handleSubmit = async () => {
   const trimmedCourseDescription = courseDescription.value.trim();
 
   const payload = {
-    "type": [
-        {
-            "target_id": "free_course_request"
-        }
+    type: [
+      {
+        target_id: 'free_course_request',
+      },
     ],
-    "field_domain_access": domains.value,
-    "field_mailto": [
-        {
-            "value": mailTo.value
-        }
+    field_domain_access: domains.value,
+    field_mailto: [
+      {
+        value: mailTo.value,
+      },
     ],
-    "field_rfc_date": [
-        {
-            "value": settlementDate.value
-        }
+    field_rfc_date: [
+      {
+        value: settlementDate.value,
+      },
     ],
-    "field_rfc_requested_amount": [
-        {
-            "value": requestedAmount.value
-        }
+    field_rfc_requested_amount: [
+      {
+        value: requestedAmount.value,
+      },
     ],
-    "field_rfc_new_course_description": [
-        {
-            "value": trimmedCourseDescription
-        }
+    field_rfc_new_course_description: [
+      {
+        value: trimmedCourseDescription,
+      },
     ],
-    "field_rfc_course": [
-        {
-            "target_id": selectedCourse.value
-        }
+    field_rfc_course: [
+      {
+        target_id: selectedCourse.value,
+      },
     ],
-    "field_rfc_new_course_name": [
-        {
-            "value": courseName.value
-        }
+    field_rfc_new_course_name: [
+      {
+        value: courseName.value,
+      },
     ],
-    "field_rfc_course_not_found": [
-        {
-            "value": false
-        }
+    field_rfc_course_not_found: [
+      {
+        value: false,
+      },
     ],
-    "field_rfc_grade": [
-        {
-            "value": schoolClass.value
-        }
+    field_rfc_grade: [
+      {
+        value: schoolClass.value,
+      },
     ],
-    "field_rfc_mail": [
-        {
-            "value": trimmedEmail
-        }
+    field_rfc_mail: [
+      {
+        value: trimmedEmail,
+      },
     ],
-    "field_receiving_class": [
-        {
-            "value": false
-        }
+    field_receiving_class: [
+      {
+        value: false,
+      },
     ],
-    "field_rfc_name": [
-        {
-            "value": trimmedFullName
-        }
+    field_rfc_name: [
+      {
+        value: trimmedFullName,
+      },
     ],
-    "field_rfc_send_mail": [
-        {
-            "value": true
-        }
+    field_rfc_send_mail: [
+      {
+        value: true,
+      },
     ],
-    "field_rfc_school": [
-        {
-            "target_id": selectedSchool.value
-        }
+    field_rfc_school: [
+      {
+        target_id: selectedSchool.value,
+      },
     ],
-    "field_rfc_phone": [
-        {
-            "value": trimmedPhone
-        }
+    field_rfc_phone: [
+      {
+        value: trimmedPhone,
+      },
     ],
-    "field_rfc_provider": [
-        {
-            "target_id": selectedProvider.value
-        }
+    field_rfc_provider: [
+      {
+        target_id: selectedProvider.value,
+      },
     ],
-    "field_rfc_subject": [
-        {
-            "target_id": selectedCourseTerm.value
-        }
-    ]
+    field_rfc_subject: [
+      {
+        target_id: selectedCourseTerm.value,
+      },
+    ],
   };
 
   try {
@@ -331,7 +342,7 @@ const handleSubmit = async () => {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
       body: JSON.stringify(payload),
     });
@@ -361,9 +372,121 @@ function showHelperText() {
     showHelper.value = true;
   }
 }
+
+// TODO: Remove once done testing
+const mockBody = {
+  type: [
+    {
+      target_id: 'free_course_request',
+    },
+  ],
+  field_domain_access: [
+    {
+      target_id: 'api_os2udoglaer_dk',
+    },
+    {
+      target_id: 'api_mitvadehav_dk',
+    },
+  ],
+  field_rfc_date: [
+    {
+      value: '2024-09-03',
+    },
+  ],
+  field_rfc_requested_amount: [
+    {
+      value: '2000',
+    },
+  ],
+  field_rfc_new_course_description: [
+    {
+      value: '',
+    },
+  ],
+  field_rfc_course: [
+    {
+      target_id: 12,
+    },
+  ],
+  field_rfc_new_course_name: [
+    {
+      value: '',
+    },
+  ],
+  field_rfc_course_not_found: [
+    {
+      value: false,
+    },
+  ],
+  field_rfc_grade: [
+    {
+      value: '1. klasse',
+    },
+  ],
+  field_rfc_mail: [
+    {
+      value: 'sdb@novicell.dk',
+    },
+  ],
+  field_receiving_class: [
+    {
+      value: false,
+    },
+  ],
+  field_rfc_name: [
+    {
+      value: 'Søren Bonde',
+    },
+  ],
+  field_rfc_send_mail: [
+    {
+      value: true,
+    },
+  ],
+  field_rfc_school: [
+    {
+      target_id: 15,
+    },
+  ],
+  field_rfc_phone: [
+    {
+      value: '11223344',
+    },
+  ],
+  field_rfc_provider: [
+    {
+      target_id: 1,
+    },
+  ],
+  field_rfc_subject: [
+    {
+      target_id: 69,
+    },
+  ],
+  field_mailto: [
+    {
+      value: 'sdb@novicell.com',
+    },
+  ],
+};
+
+async function submitApplicationForm() {
+  try {
+    const response = await $fetch('/api/submit-application-form', {
+      method: 'POST',
+      body: mockBody,
+    });
+
+    console.log('RESPONSE FE', response);
+  } catch (error) {
+    console.error('Error on FE:', error);
+  }
+}
 </script>
 
 <template>
+  <button @click="submitApplicationForm()">trigger button to middleware</button>
+
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
@@ -374,7 +497,8 @@ function showHelperText() {
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
-          rules="">
+          rules=""
+        >
         </BaseSelect>
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -426,7 +550,8 @@ function showHelperText() {
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
-          rules="">
+          rules=""
+        >
         </BaseSelect>
         <BaseSelect
           v-if="!courseNotInList"
@@ -436,7 +561,8 @@ function showHelperText() {
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
-          rules="">
+          rules=""
+        >
         </BaseSelect>
         <BaseInput
           v-model="courseNotInList"
@@ -455,10 +581,7 @@ function showHelperText() {
           label="Forløbets navn"
           rules=""
         />
-        <div
-          v-if="courseNotInList"
-          class="application-form__textarea-wrapper"
-        >
+        <div v-if="courseNotInList" class="application-form__textarea-wrapper">
           <div class="application-form__textarea-container">
             <Field
               v-slot="{ field, errors }"
@@ -501,16 +624,37 @@ function showHelperText() {
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          rules="">
+          rules=""
+        >
         </BaseSelect>
-        <div v-if="coursePriceInfo.length > 0" class="price-info form-input-wrapper">
-          <div class="price-info-header" v-if="coursePriceInfo[0].price">Pris</div>
-          <div class="price-info-item" v-for="coursePriceInfoItem in coursePriceInfo">
-            {{ coursePriceInfoItem?.price ? coursePriceInfoItem?.price : '' }} {{ coursePriceInfoItem?.unit ? coursePriceInfoItem?.unit : '' }} {{ coursePriceInfoItem?.vat ? '(' + coursePriceInfoItem?.vat + ')' : '' }}
+        <div
+          v-if="coursePriceInfo.length > 0"
+          class="price-info form-input-wrapper"
+        >
+          <div class="price-info-header" v-if="coursePriceInfo[0].price">
+            Pris
           </div>
-          <div v-if="coursePriceInfo[0].field_description_of_price" class="price-info-description" v-html="coursePriceInfo[0]?.field_description_of_price"></div>
+          <div
+            class="price-info-item"
+            v-for="coursePriceInfoItem in coursePriceInfo"
+          >
+            {{ coursePriceInfoItem?.price ? coursePriceInfoItem?.price : '' }}
+            {{ coursePriceInfoItem?.unit ? coursePriceInfoItem?.unit : '' }}
+            {{
+              coursePriceInfoItem?.vat
+                ? '(' + coursePriceInfoItem?.vat + ')'
+                : ''
+            }}
+          </div>
+          <div
+            v-if="coursePriceInfo[0].field_description_of_price"
+            class="price-info-description"
+            v-html="coursePriceInfo[0]?.field_description_of_price"
+          ></div>
           <div class="price-info-link">
-            <NuxtLink :to="coursePriceInfo[0]?.view_node" target="_blank">Læs mere</NuxtLink>
+            <NuxtLink :to="coursePriceInfo[0]?.view_node" target="_blank"
+              >Læs mere</NuxtLink
+            >
           </div>
         </div>
         <BaseInputFloatingLabel
@@ -533,11 +677,27 @@ function showHelperText() {
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">{{ props.blockData.field_information_text_title }}</h3>
-        <div v-if="!props.blockData.field_show_in_modal" v-html="props.blockData.field_information_text"></div>
+        <h3 v-if="props.blockData.field_information_text_title">
+          {{ props.blockData.field_information_text_title }}
+        </h3>
+        <div
+          v-if="!props.blockData.field_show_in_modal"
+          v-html="props.blockData.field_information_text"
+        ></div>
         <div v-if="props.blockData.field_show_in_modal">
-          <div v-html="truncateString(props.blockData.field_information_text, 155)"></div>
-          <NuxtLink class="modal__trigger" @click="handleModal(props.blockData?.field_information_text_title, props.blockData?.field_information_text)">Læs mere</NuxtLink>
+          <div
+            v-html="truncateString(props.blockData.field_information_text, 155)"
+          ></div>
+          <NuxtLink
+            class="modal__trigger"
+            @click="
+              handleModal(
+                props.blockData?.field_information_text_title,
+                props.blockData?.field_information_text,
+              )
+            "
+            >Læs mere</NuxtLink
+          >
         </div>
       </div>
 
