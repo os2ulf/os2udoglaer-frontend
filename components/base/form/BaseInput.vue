@@ -16,7 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="input__wrapper">
+  <div class="form-input-wrapper input__wrapper">
     <label :for="id">
       <input
         :id="id"
@@ -29,7 +29,7 @@ const props = defineProps({
         @input="$emit('inputValue', $event.target.value)"
         @keyup.enter="$emit('enterPressed')"
       />
-      <span>{{ label }}</span>
+      <span :class="'label--' + type">{{ label }}</span>
     </label>
   </div>
 </template>
@@ -58,6 +58,19 @@ const props = defineProps({
     border: 1px solid var(--color-gray-25);
     border-radius: 32px;
     transition-duration: 0.3s;
+
+    &[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      margin: 0;
+    }
+
+    &[type="date"] {
+      margin-top: 21px;
+      padding-top: 0;
+      padding-right: 20px;
+    }
   }
 
   input::placeholder {
@@ -70,13 +83,16 @@ const props = defineProps({
     color: var(--color-text);
     border: 1px solid var(--color-black);
     outline: none;
+
+    &[type="date"] {
+      padding-top: 0;
+    }
   }
 
   span {
     position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 24px;
+    top: -6px;
+    left: 28px;
     color: var(--color-gray-62);
     font-weight: 400;
     font-size: 0.825em;
@@ -92,9 +108,14 @@ const props = defineProps({
   label:focus-within > span,
   input:not(:placeholder-shown) + span {
     color: var(--color-gray-62);
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: 400;
+    font-size: 16px;
     transform: translateY(5px);
+
+    &.label--date {
+      left: 0;
+      font-size: 12px;
+    }
   }
 
   /* Chrome, Safari, Edge, Opera */

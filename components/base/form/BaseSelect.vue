@@ -28,7 +28,7 @@ const value = computed({
 </script>
 
 <template>
-  <div class="form-select-wrapper">
+  <div class="form-select-wrapper form-input-wrapper">
     <div>
       <label v-if="label" class="form-label" :for="id"
         >{{ props.label
