@@ -53,6 +53,20 @@ const handleFilterChange = (
   }
 
   if (selectedFilterOption) {
+    // if date
+    if (selectedFilterOption.searchQueryUrlAlias === 'period') {
+      const index = selectedFiltersData.findIndex(
+        (filter) => filter.searchQueryUrlAlias === 'period',
+      );
+
+      if (index !== -1) {
+        datePickerEndDate.value = '';
+        datePickerStartDate.value = '';
+
+        updateURLParameters();
+      }
+    }
+
     // Check if selectedFilterOption already exists in selectedFiltersData
     const index = selectedFiltersData.findIndex(
       (option) => option.value === selectedFilterOption.value,
@@ -86,6 +100,11 @@ const getFilteredPageResults = async (
 
     let filterString = '';
     selectedFiltersData.forEach((filter, index) => {
+      // remove date from filter
+      if (filter.searchQueryUrlAlias === 'period') {
+        return;
+      }
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
@@ -144,6 +163,11 @@ const updateURLParameters = () => {
 
   // Add selected filters to URL parameters
   selectedFiltersData.forEach((filter, index) => {
+    // Remove date from filters
+    if (filter.searchQueryUrlAlias === 'period') {
+      return;
+    }
+
     params.append(
       `f[${index}]`,
       `${filter.searchQueryUrlAlias}:${filter.value}`,
@@ -168,6 +192,7 @@ const parseUrlParameters = () => {
   params.forEach((value, key) => {
     if (key.startsWith('f[')) {
       const [searchQueryUrlAlias, filterValue] = value.split(':');
+
       extractedFilters.value.push({
         searchQueryUrlAlias,
         value: filterValue,
@@ -207,21 +232,29 @@ const parseUrlParameters = () => {
   }
 };
 
-// populates selectedFiltersData with extracted filters
+// populates selectedFiltersData with extracted filters - CHIPS
 const setSelectedFiltersDataWithExtractedFilters = () => {
-  // Clear previous selections
   selectedFiltersData.splice(0, selectedFiltersData.length);
 
-  // Iterate through extractedFilters
   extractedFilters.value.forEach((filter) => {
+    if (filter.searchQueryUrlAlias === 'period') {
+      selectedFiltersData.push({
+        searchQueryUrlAlias: filter.searchQueryUrlAlias,
+        value: filter.value,
+        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+      });
+    }
+
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
       (facet) => facet.url_alias === filter.searchQueryUrlAlias,
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items
-      const selectedItem = matchingFacet.items[filter.value];
+      // Find the specific item in the matching facet's items array by value
+      const selectedItem = matchingFacet.items.find(
+        (item) => item.value === filter.value,
+      );
 
       if (selectedItem) {
         // Push the filter object with necessary properties
@@ -238,10 +271,25 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
 const handleExtractedFilters = async () => {
   try {
     let queryString = '';
+
     extractedFilters.value.forEach((filter, index) => {
+      // exclude date from extractedFilters
+      extractedFilters.value = extractedFilters.value.filter(
+        (filter) => filter.searchQueryUrlAlias !== 'period',
+      );
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
+
+    // add date back to extractedFilters
+    if (datePickerStartDate.value && datePickerEndDate.value) {
+      extractedFilters.value.push({
+        searchQueryUrlAlias: 'period',
+        value: `${datePickerStartDate.value}/${datePickerEndDate.value}`,
+        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+      });
+    }
 
     const response: any = await fetch(
       `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
@@ -267,6 +315,12 @@ watch(selectedFiltersData, () => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
+
+  if (datePickerStartDate.value && datePickerEndDate.value) {
+    datePickerStartDate.value = '';
+    datePickerEndDate.value = '';
+    updateURLParameters();
+  }
 
   lastInteractedFilterReference.value = {
     isFilterDropdownOpen: false,
@@ -328,29 +382,20 @@ const handleDatePicker = (date) => {
     datePickerEndDate.value = formattedDates[1];
     updateURLParameters();
 
-    // TODO: Calendar checklist for future, for the feature to fully work with other facet features, like chips, clearing etc.
-    // TODO: trigger clear datepicker method inside the child component
-    // TODO: Make sure chips 'nutilse filtre' button clears calendar as well + URL PARAMS + refetches the data?
-    // TODO: Check for dates on page load and populate them in the chips
+    // THis code will push in calendar as a 'chip' in the filters chips part.
+    const index = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === 'period',
+    );
 
-    // THis code will push in calendar as a 'chip' in the filters chips part,
-    // the whole feature is not fully done, but suspect customer will want it, so leaving it for the future.
+    if (index !== -1) {
+      selectedFiltersData.splice(index, 1);
+    }
 
-    // const index = selectedFiltersData.findIndex(
-    //   (filter) => filter.searchQueryUrlAlias === 'period',
-    // );
-
-    // if (index !== -1) {
-    //   selectedFiltersData.splice(index, 1);
-    // }
-
-    // selectedFiltersData.push({
-    //   searchQueryUrlAlias: 'period',
-    //   value: `${datePickerStartDate.value}:${datePickerEndDate.value}`,
-    //   label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
-    // });
-
-    getFilteredPageResults(true, true);
+    selectedFiltersData.push({
+      searchQueryUrlAlias: 'period',
+      value: `period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+    });
   }
 };
 </script>

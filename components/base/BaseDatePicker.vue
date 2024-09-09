@@ -150,6 +150,7 @@ onUnmounted(() => {
       border: 1px solid var(--color-primary);
       box-shadow: 0px 0px 0px 4px #297f781a;
       z-index: 9;
+      max-width: 166px;
     }
   }
 
