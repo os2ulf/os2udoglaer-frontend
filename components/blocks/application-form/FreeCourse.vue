@@ -10,12 +10,6 @@ const props = defineProps({
 const config = useRuntimeConfig().public;
 const baseEndpoint = ref(config.API_BASE_URL);
 
-// TODO: Remove once done testing.
-// Combine username and password
-const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
-// Encode the combined string to Base64
-const encodedCredentials = btoa(credentials);
-
 // Set arrays for select options
 const schools = ref([]);
 const schoolsSelect = ref([]);
@@ -59,7 +53,6 @@ const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
 
-// Convert to Base64
 onBeforeMount(() => {
   fetchSchools();
   fetchProviders();
@@ -338,17 +331,26 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await fetch(baseEndpoint.value + '/node?_format=json', {
+    // Submitting to our proxy endpoint
+    const response = await $fetch('/api/submit-application-form', {
       method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Basic ${encodedCredentials}`,
-      },
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to submit form');
+    // console.log('Response:', response);
+    // State/Error handling for the API responses:
+    // console.log('Status codes from the proxy:', response.statusCode);
+    // console.log(
+    //   'This is error / response message thats coming from the FE proxy level:',
+    //   response.message,
+    // );
+    // console.log(
+    //   'This is error response coming from the BE API level:',
+    //   response.error.message,
+    // );
+
+    if (response.statusCode !== 201 && response.statusCode !== 200) {
+      throw new Error('Form submission failed');
     }
 
     isSuccess.value = true;
@@ -372,121 +374,9 @@ function showHelperText() {
     showHelper.value = true;
   }
 }
-
-// TODO: Remove once done testing
-const mockBody = {
-  type: [
-    {
-      target_id: 'free_course_request',
-    },
-  ],
-  field_domain_access: [
-    {
-      target_id: 'api_os2udoglaer_dk',
-    },
-    {
-      target_id: 'api_mitvadehav_dk',
-    },
-  ],
-  field_rfc_date: [
-    {
-      value: '2024-09-03',
-    },
-  ],
-  field_rfc_requested_amount: [
-    {
-      value: '2000',
-    },
-  ],
-  field_rfc_new_course_description: [
-    {
-      value: '',
-    },
-  ],
-  field_rfc_course: [
-    {
-      target_id: 12,
-    },
-  ],
-  field_rfc_new_course_name: [
-    {
-      value: '',
-    },
-  ],
-  field_rfc_course_not_found: [
-    {
-      value: false,
-    },
-  ],
-  field_rfc_grade: [
-    {
-      value: '1. klasse',
-    },
-  ],
-  field_rfc_mail: [
-    {
-      value: 'sdb@novicell.dk',
-    },
-  ],
-  field_receiving_class: [
-    {
-      value: false,
-    },
-  ],
-  field_rfc_name: [
-    {
-      value: 'Søren Bonde',
-    },
-  ],
-  field_rfc_send_mail: [
-    {
-      value: true,
-    },
-  ],
-  field_rfc_school: [
-    {
-      target_id: 15,
-    },
-  ],
-  field_rfc_phone: [
-    {
-      value: '11223344',
-    },
-  ],
-  field_rfc_provider: [
-    {
-      target_id: 1,
-    },
-  ],
-  field_rfc_subject: [
-    {
-      target_id: 69,
-    },
-  ],
-  field_mailto: [
-    {
-      value: 'sdb@novicell.com',
-    },
-  ],
-};
-
-async function submitApplicationForm() {
-  try {
-    const response = await $fetch('/api/submit-application-form', {
-      method: 'POST',
-      body: mockBody,
-    });
-
-    console.log('RESPONSE FE', response);
-  } catch (error) {
-    console.error('Error on FE:', error);
-  }
-}
 </script>
 
 <template>
-  <button @click="submitApplicationForm()">trigger button to middleware</button>
-
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
