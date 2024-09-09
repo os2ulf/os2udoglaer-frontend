@@ -100,6 +100,11 @@ const getFilteredPageResults = async (
 
     let filterString = '';
     selectedFiltersData.forEach((filter, index) => {
+      // remove date from filter
+      if (filter.searchQueryUrlAlias === 'period') {
+        return;
+      }
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
@@ -158,6 +163,11 @@ const updateURLParameters = () => {
 
   // Add selected filters to URL parameters
   selectedFiltersData.forEach((filter, index) => {
+    // Remove date from filters
+    if (filter.searchQueryUrlAlias === 'period') {
+      return;
+    }
+
     params.append(
       `f[${index}]`,
       `${filter.searchQueryUrlAlias}:${filter.value}`,
@@ -182,6 +192,7 @@ const parseUrlParameters = () => {
   params.forEach((value, key) => {
     if (key.startsWith('f[')) {
       const [searchQueryUrlAlias, filterValue] = value.split(':');
+
       extractedFilters.value.push({
         searchQueryUrlAlias,
         value: filterValue,
@@ -221,7 +232,7 @@ const parseUrlParameters = () => {
   }
 };
 
-// populates selectedFiltersData with extracted filters
+// populates selectedFiltersData with extracted filters - CHIPS
 const setSelectedFiltersDataWithExtractedFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
 
@@ -240,8 +251,10 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items
-      const selectedItem = matchingFacet.items[filter.value];
+      // Find the specific item in the matching facet's items array by value
+      const selectedItem = matchingFacet.items.find(
+        (item) => item.value === filter.value,
+      );
 
       if (selectedItem) {
         // Push the filter object with necessary properties
@@ -259,12 +272,12 @@ const handleExtractedFilters = async () => {
   try {
     let queryString = '';
 
-    // exclude date from extractedFilters
-    extractedFilters.value = extractedFilters.value.filter(
-      (filter) => filter.searchQueryUrlAlias !== 'period',
-    );
-
     extractedFilters.value.forEach((filter, index) => {
+      // exclude date from extractedFilters
+      extractedFilters.value = extractedFilters.value.filter(
+        (filter) => filter.searchQueryUrlAlias !== 'period',
+      );
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
