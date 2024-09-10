@@ -59,7 +59,7 @@ const handleSubmit = async () => {
     message: trimmedMessage,
     phone: trimmedPhone,
     email: trimmedEmail,
-    provider_email: props.contactPersonEmail,
+    email_send_to: props.contactPersonEmail,
     url: props.currentUrl,
     title: props.currentTitle,
   };
