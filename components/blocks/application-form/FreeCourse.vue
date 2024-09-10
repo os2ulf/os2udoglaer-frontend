@@ -224,6 +224,38 @@ const handleModal = (title, content: any) => {
   });
 };
 
+const resetForm = async () => {
+  schools.value = [];
+  schoolsSelect.value = [];
+  providers.value = [];
+  providersSelect.value = [];
+  courses.value = [];
+  coursesSelect.value = [];
+  courseTerms.value = [];
+  courseTermsSelect.value = [];
+  coursePriceInfo.value = [];
+  domains.value = [];
+  selectedSchool.value = '';
+  schoolClass.value = '';
+  receivingClass.value = '';
+  fullName.value = '';
+  phone.value = '';
+  email.value = '';
+  selectedProvider.value = '';
+  selectedCourse.value = '';
+  selectedCourseTerm.value = '';
+  courseNotInList.value = false;
+  courseName.value = '';
+  courseDescription.value = '';
+  requestedAmount.value = '';
+  settlementDate.value = '';
+  errorMessage.value = '';
+  agreementCheckbox.value = true;
+  isSuccess.value = false;
+  isLoading.value = false;
+  honeypot.value = '';
+};
+
 const handleSubmit = async () => {
   if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
@@ -618,8 +650,9 @@ function showHelperText() {
     </Transition>
   </div>
 
-  <div v-else>
-    <h2 class="application-form__success">Din ansøgning er sendt</h2>
+  <div v-else class="application-form__success">
+    <h2>Din ansøgning er sendt</h2>
+    <p><button @click="resetForm" class="button">Send en ny</button></p>
   </div>
 </template>
 
@@ -738,8 +771,9 @@ function showHelperText() {
   }
 
   &__success {
-    margin-top: 18px @(--sm) 32px;
-    text-align: center;
+    h2 {
+      margin-bottom: 24px;
+    }
   }
 
   &__spinner {
