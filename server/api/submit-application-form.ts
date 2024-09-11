@@ -14,28 +14,15 @@ export default defineEventHandler(async (event) => {
     return domain.replace(/https?:\/\//, '').replace(/:\d+/, '');
   };
 
-  console.log('creds', credentials);
-  console.log('encodedCreds', encodedCredentials);
-  console.log('beDataWellEndpoint', beDataWellEndpoint);
-
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
-  // BASIC ORIGIN CHECK
-  if (requestOrigin) {
-    console.log('current FE Domain:', currentDomain);
-    console.log('request Origin:', requestOrigin);
-
-    if (requestOrigin !== currentDomain) {
-      return {
-        statusCode: 403,
-        message: 'Forbidden: CORS policy does not allow this origin.',
-      };
-    }
-  } else {
+  // BASIC ORIGIN HEADER CHECK
+  // This is only a basic measure protection, real protection (if needed) should be implemented in the BE.
+  if (!requestOrigin || requestOrigin !== currentDomain) {
     return {
       statusCode: 403,
-      message: 'Forbidden: CORS policy does not allow this origin.',
+      message: 'Forbidden: Not allowed to access.',
     };
   }
 
@@ -54,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
     if (responseStatus === 200 || responseStatus === 201) {
       return {
-        statusCode: 200,
+        statusCode: responseStatus,
         message: 'Success',
         data: responseData,
       };
@@ -62,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
     if (responseStatus === 400) {
       return {
-        statusCode: 400,
+        statusCode: responseStatus,
         message: 'Bad request',
         error: responseData,
       };
@@ -70,15 +57,13 @@ export default defineEventHandler(async (event) => {
 
     if (responseStatus === 401) {
       return {
-        statusCode: 401,
+        statusCode: responseStatus,
         message: 'Unauthorized',
         error: responseData,
       };
     }
 
     if (responseStatus === 403) {
-      console.log('Forbidden console log 403', responseData);
-
       return {
         statusCode: 403,
         message: 'Forbidden',
@@ -105,14 +90,13 @@ export default defineEventHandler(async (event) => {
     // Handle any other status codes or errors
     return {
       statusCode: 500,
-      message: 'Error while contacting the external API',
+      message: 'Error on the external API level',
       error: responseData,
     };
   } catch (error) {
-    // Handle any potential errors during the request
     return {
       statusCode: 500,
-      message: 'Error while contacting the external API',
+      message: 'Error on the external API level',
       error: error.message,
     };
   }

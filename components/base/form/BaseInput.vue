@@ -1,133 +1,151 @@
-<script setup>
+<script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
+import { Field, ErrorMessage, useFieldError } from 'vee-validate';
 
-const id = uuidv4();
-const value = ref(props.value);
+const props = withDefaults(
+  defineProps<{
+    type?: string | 'text' | 'password' | 'number' | 'tel' | 'url';
+    name: string;
+    description?: string;
+    rules?: string;
+    label: string;
+    inputMode?: string | 'none' | 'text ' | 'numeric' | 'tel' | 'url';
+    modelValue: string;
+    maxlength?: string;
+    validateOnBlur?: boolean;
+    validateOnChange?: boolean;
+    validateOnInput?: boolean;
+    validateOnModelUpdate?: boolean;
+    customError?: string;
+    isSearch?: boolean;
+  }>(),
+  {
+    fieldType: 'input',
+    type: 'text',
+    name: '',
+    description: '',
+    inputMode: '',
+    rules: '',
+    label: '',
+    modelValue: '',
+    customError: '',
+    validateOnInput: true,
+    maxlength: '',
+    isSearch: false,
+  },
+);
 
-const props = defineProps({
-  id: String,
-  type: String,
-  placeholder: String,
-  label: String,
-  value: String,
-  isError: String,
-  maxlength: Number,
+const autofilled = ref(false);
+const input = ref(null);
+const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus']);
+const id = ref(uuidv4());
+
+const value = computed({
+  get: () => props.modelValue,
+  set: (newValue) => emit('update:modelValue', newValue),
 });
+
+const inputClass = computed(() => {
+  return (value.value && value.value.toString().length > 0) || autofilled.value
+    ? 'form-input--up'
+    : '';
+});
+
+const checkAnimation = (e: any) => {
+  if (e.animationName === 'onAutoFillStart') {
+    autofilled.value = true;
+  } else if (e.animationName === 'onAutoFillCancel') {
+    autofilled.value = false;
+  }
+};
+
+const hasErrors = useFieldError(props.name);
 </script>
 
 <template>
-  <div class="form-input-wrapper input__wrapper">
-    <label :for="id">
-      <input
-        :id="id"
-        v-model="value"
-        :maxlength="maxlength"
-        :type="type"
-        :placeholder="placeholder"
-        :value="value"
-        :class="isError ? 'input__error' : ''"
-        @input="$emit('inputValue', $event.target.value)"
-        @keyup.enter="$emit('enterPressed')"
-      />
-      <span :class="'label--' + type">{{ label }}</span>
+  <div class="form-input-wrapper">
+    <label
+      v-if="label"
+      class="form-label form-label--not-floating"
+      :class="props.isSearch ? 'form-label--search' : ''"
+      :for="id"
+    >
+      {{ label }}
     </label>
+    <Field
+      :id="id"
+      ref="input"
+      v-model="value"
+      as="input"
+      :type="type"
+      :rules="rules"
+      :class="`form-input form-input--floating-label ${inputClass} ${hasErrors ? 'form-element-feedback--invalid' : ''}`"
+      :label="label"
+      :name="name"
+      :autocomplete="$attrs.autocomplete"
+      :maxlength="maxlength"
+      :inputmode="inputMode"
+      :validate-on-input="validateOnInput"
+      :validate-on-blur="validateOnBlur"
+      :validate-on-change="validateOnChange"
+      :validate-on-model-update="validateOnModelUpdate"
+      @blur="$emit('blur', value)"
+      @focus="$emit('focus', value)"
+      @input="$emit('input', value)"
+      @animationstart="checkAnimation"
+    />
+    <div v-if="description" class="form-description">
+      {{ description }}
+    </div>
   </div>
+  <Transition name="bounce">
+    <span
+      v-if="customError"
+      class="form-validation-feedback form-validation-feedback--invalid"
+    >
+      {{ customError }}
+    </span>
+
+    <ErrorMessage
+      v-else
+      class="form-validation-feedback form-validation-feedback--invalid"
+      :name="name"
+    />
+  </Transition>
 </template>
 
 <style lang="postcss" scoped>
-.input__error {
-  border: 1px solid var(--color-error-input) !important;
+.form-input-wrapper {
+  position: relative;
 }
 
-.input__wrapper {
-  display: flex;
+.form-input--floating-label {
+  position: relative;
+  margin-top: -2px;
+}
 
-  label {
-    position: relative;
-    width: 100%;
+.form-input-icon {
+  margin-top: -2px;
+  padding-right: 2px;
+  font-size: 24px;
+}
+
+.form-label {
+  position: relative;
+  padding-left: 26px;
+}
+
+.form-input--up + .form-label,
+.form-input:focus + .form-label {
+  color: var(--color-primary);
+
+  path {
+    stroke: var(--color-primary);
   }
+}
 
-  input {
-    width: 100%;
-    height: 56px;
-    padding-top: 10px;
-    padding-left: 24px;
-    color: var(--color-text);
-    font-size: 16px;
-    background-color: var(--color-white);
-    border: 1px solid var(--color-gray-25);
-    border-radius: 32px;
-    transition-duration: 0.3s;
-
-    &[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      padding: 0;
-      margin: 0;
-    }
-
-    &[type="date"] {
-      margin-top: 21px;
-      padding-top: 0;
-      padding-right: 20px;
-    }
-  }
-
-  input::placeholder {
-    opacity: 0;
-  }
-
-  /* input focus */
-  input:focus {
-    padding-top: 10px;
-    color: var(--color-text);
-    border: 1px solid var(--color-black);
-    outline: none;
-
-    &[type="date"] {
-      padding-top: 0;
-    }
-  }
-
-  span {
-    position: absolute;
-    top: -6px;
-    left: 28px;
-    color: var(--color-gray-62);
-    font-weight: 400;
-    font-size: 0.825em;
-    font-size: var(--font-size-paragraph-sm);
-    transform: translateY(15px);
-    transition-duration: 300ms;
-
-    @media (--viewport-ms-max) {
-      transform: translateY(17px);
-    }
-  }
-
-  label:focus-within > span,
-  input:not(:placeholder-shown) + span {
-    color: var(--color-gray-62);
-    font-weight: 400;
-    font-size: 16px;
-    transform: translateY(5px);
-
-    &.label--date {
-      left: 0;
-      font-size: 12px;
-    }
-  }
-
-  /* Chrome, Safari, Edge, Opera */
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    margin: 0;
-    appearance: none;
-  }
-
-  /* Firefox */
-  input[type='number'] {
-    appearance: textfield;
-  }
+.form-description {
+  padding-right: 26px;
+  padding-left: 26px;
 }
 </style>

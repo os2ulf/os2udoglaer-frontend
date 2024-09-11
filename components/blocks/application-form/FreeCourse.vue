@@ -10,12 +10,6 @@ const props = defineProps({
 const config = useRuntimeConfig().public;
 const baseEndpoint = ref(config.API_BASE_URL);
 
-// TODO: Remove once done testing.
-// Combine username and password
-const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
-// Encode the combined string to Base64
-const encodedCredentials = btoa(credentials);
-
 // Set arrays for select options
 const schools = ref([]);
 const schoolsSelect = ref([]);
@@ -59,7 +53,6 @@ const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
 
-// Convert to Base64
 onBeforeMount(() => {
   fetchSchools();
   fetchProviders();
@@ -231,6 +224,38 @@ const handleModal = (title, content: any) => {
   });
 };
 
+const resetForm = async () => {
+  schools.value = [];
+  schoolsSelect.value = [];
+  providers.value = [];
+  providersSelect.value = [];
+  courses.value = [];
+  coursesSelect.value = [];
+  courseTerms.value = [];
+  courseTermsSelect.value = [];
+  coursePriceInfo.value = [];
+  domains.value = [];
+  selectedSchool.value = '';
+  schoolClass.value = '';
+  receivingClass.value = '';
+  fullName.value = '';
+  phone.value = '';
+  email.value = '';
+  selectedProvider.value = '';
+  selectedCourse.value = '';
+  selectedCourseTerm.value = '';
+  courseNotInList.value = false;
+  courseName.value = '';
+  courseDescription.value = '';
+  requestedAmount.value = '';
+  settlementDate.value = '';
+  errorMessage.value = '';
+  agreementCheckbox.value = true;
+  isSuccess.value = false;
+  isLoading.value = false;
+  honeypot.value = '';
+};
+
 const handleSubmit = async () => {
   if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
@@ -247,6 +272,17 @@ const handleSubmit = async () => {
   const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
   const trimmedCourseDescription = courseDescription.value.trim();
+  const field_rfc_course = [
+    {
+      target_id: selectedCourse.value,
+    },
+  ];
+  const field_rfc_subject = [
+    {
+      target_id: selectedCourseTerm.value,
+    },
+  ];
+
 
   const payload = {
     type: [
@@ -273,11 +309,6 @@ const handleSubmit = async () => {
     field_rfc_new_course_description: [
       {
         value: trimmedCourseDescription,
-      },
-    ],
-    field_rfc_course: [
-      {
-        target_id: selectedCourse.value,
       },
     ],
     field_rfc_new_course_name: [
@@ -330,25 +361,34 @@ const handleSubmit = async () => {
         target_id: selectedProvider.value,
       },
     ],
-    field_rfc_subject: [
-      {
-        target_id: selectedCourseTerm.value,
-      },
-    ],
   };
 
+  if (selectedCourse.value && selectedCourseTerm.value) {
+    payload.field_rfc_course = field_rfc_course;
+    payload.field_rfc_subject = field_rfc_subject;
+  }
+
   try {
-    const response = await fetch(baseEndpoint.value + '/node?_format=json', {
+    // Submitting to our proxy endpoint
+    const response = await $fetch('/api/submit-application-form', {
       method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Basic ${encodedCredentials}`,
-      },
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to submit form');
+    // console.log('Response:', response);
+    // State/Error handling for the API responses:
+    // console.log('Status codes from the proxy:', response.statusCode);
+    // console.log(
+    //   'This is error / response message thats coming from the FE proxy level:',
+    //   response.message,
+    // );
+    // console.log(
+    //   'This is error response coming from the BE API level:',
+    //   response.error.message,
+    // );
+
+    if (response.statusCode !== 201 && response.statusCode !== 200) {
+      throw new Error('Form submission failed');
     }
 
     isSuccess.value = true;
@@ -358,6 +398,7 @@ const handleSubmit = async () => {
       error.message || 'Der opstod en fejl under indsendelse af formularen.';
   } finally {
     isLoading.value = false;
+    window.scrollTo(0, 0);
   }
 };
 
@@ -372,121 +413,9 @@ function showHelperText() {
     showHelper.value = true;
   }
 }
-
-// TODO: Remove once done testing
-const mockBody = {
-  type: [
-    {
-      target_id: 'free_course_request',
-    },
-  ],
-  field_domain_access: [
-    {
-      target_id: 'api_os2udoglaer_dk',
-    },
-    {
-      target_id: 'api_mitvadehav_dk',
-    },
-  ],
-  field_rfc_date: [
-    {
-      value: '2024-09-03',
-    },
-  ],
-  field_rfc_requested_amount: [
-    {
-      value: '2000',
-    },
-  ],
-  field_rfc_new_course_description: [
-    {
-      value: '',
-    },
-  ],
-  field_rfc_course: [
-    {
-      target_id: 12,
-    },
-  ],
-  field_rfc_new_course_name: [
-    {
-      value: '',
-    },
-  ],
-  field_rfc_course_not_found: [
-    {
-      value: false,
-    },
-  ],
-  field_rfc_grade: [
-    {
-      value: '1. klasse',
-    },
-  ],
-  field_rfc_mail: [
-    {
-      value: 'sdb@novicell.dk',
-    },
-  ],
-  field_receiving_class: [
-    {
-      value: false,
-    },
-  ],
-  field_rfc_name: [
-    {
-      value: 'Søren Bonde',
-    },
-  ],
-  field_rfc_send_mail: [
-    {
-      value: true,
-    },
-  ],
-  field_rfc_school: [
-    {
-      target_id: 15,
-    },
-  ],
-  field_rfc_phone: [
-    {
-      value: '11223344',
-    },
-  ],
-  field_rfc_provider: [
-    {
-      target_id: 1,
-    },
-  ],
-  field_rfc_subject: [
-    {
-      target_id: 69,
-    },
-  ],
-  field_mailto: [
-    {
-      value: 'sdb@novicell.com',
-    },
-  ],
-};
-
-async function submitApplicationForm() {
-  try {
-    const response = await $fetch('/api/submit-application-form', {
-      method: 'POST',
-      body: mockBody,
-    });
-
-    console.log('RESPONSE FE', response);
-  } catch (error) {
-    console.error('Error on FE:', error);
-  }
-}
 </script>
 
 <template>
-  <button @click="submitApplicationForm()">trigger button to middleware</button>
-
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
@@ -497,7 +426,7 @@ async function submitApplicationForm() {
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
-          rules=""
+          rules="required"
         >
         </BaseSelect>
         <BaseInputFloatingLabel
@@ -506,14 +435,16 @@ async function submitApplicationForm() {
           type="text"
           name="Klasse"
           label="Klasse"
-          rules=""
+          description="Skriv hvilken klasse, der deltager i forløbet - sådan her: 7.B eller 7.ABC)"
+          rules="required"
         />
-        <BaseInput
+        <BaseCheckbox
           class="application-form__label"
           v-model="receivingClass"
           type="checkbox"
           name="Modtageklasse"
           label="Modtageklasse"
+          description="Sæt kryds her, hvis klassen er en modtageklasse"
           rules=""
         />
         <BaseInputFloatingLabel
@@ -522,7 +453,7 @@ async function submitApplicationForm() {
           type="text"
           name="Navn"
           label="Navn"
-          rules=""
+          rules="required"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -530,7 +461,7 @@ async function submitApplicationForm() {
           type="text"
           name="Telefonnummer"
           label="Telefonnummer"
-          rules=""
+          rules="required"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -550,7 +481,7 @@ async function submitApplicationForm() {
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
-          rules=""
+          rules="required"
         >
         </BaseSelect>
         <BaseSelect
@@ -561,10 +492,10 @@ async function submitApplicationForm() {
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
-          rules=""
+          rules="required"
         >
         </BaseSelect>
-        <BaseInput
+        <BaseCheckbox
           v-model="courseNotInList"
           @change="handleHideCourseSelect"
           class="application-form__label"
@@ -579,7 +510,7 @@ async function submitApplicationForm() {
           type="text"
           name="Forløbets navn"
           label="Forløbets navn"
-          rules=""
+          rules="required"
         />
         <div v-if="courseNotInList" class="application-form__textarea-wrapper">
           <div class="application-form__textarea-container">
@@ -587,7 +518,7 @@ async function submitApplicationForm() {
               v-slot="{ field, errors }"
               name="Beskrivelse af forløbet"
               label="Beskrivelse af forløbet"
-              rules=""
+              rules="required"
               v-model="courseDescription"
               :validate-on-blur="false"
               :validate-on-input="true"
@@ -624,7 +555,7 @@ async function submitApplicationForm() {
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          rules=""
+          :rules="`${ courseNotInList ? '' : 'required'}`"
         >
         </BaseSelect>
         <div
@@ -663,7 +594,8 @@ async function submitApplicationForm() {
           type="float"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
-          rules=""
+          description="Skriv forløbets totale pris i hele tal - eks. '400'. Det er den pris, der er aftalt med udbyderen af forløbet og som ULF i Aarhus skal betale totalt. Hvis du ansøger for flere klasser, så skriv den samlede pris for alle forløb."
+          rules="required"
         />
         <BaseInput
           class="application-form__label"
@@ -672,7 +604,7 @@ async function submitApplicationForm() {
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules=""
+          rules="required"
         />
       </div>
 
@@ -728,8 +660,9 @@ async function submitApplicationForm() {
     </Transition>
   </div>
 
-  <div v-else>
-    <h2 class="application-form__success">Din ansøgning er sendt</h2>
+  <div v-else class="application-form__success">
+    <h2>Din ansøgning er sendt</h2>
+    <p><button @click="resetForm" class="button">Send en ny</button></p>
   </div>
 </template>
 
@@ -848,8 +781,9 @@ async function submitApplicationForm() {
   }
 
   &__success {
-    margin-top: 18px @(--sm) 32px;
-    text-align: center;
+    h2 {
+      margin-bottom: 24px;
+    }
   }
 
   &__spinner {
