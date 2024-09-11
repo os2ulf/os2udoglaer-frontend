@@ -6,6 +6,7 @@ const props = withDefaults(
   defineProps<{
     type?: string | 'text' | 'password' | 'number' | 'tel' | 'url';
     name: string;
+    description: string;
     rules?: string;
     label: string;
     inputMode?: string | 'none' | 'text ' | 'numeric' | 'tel' | 'url';
@@ -22,6 +23,7 @@ const props = withDefaults(
     fieldType: 'input',
     type: 'text',
     name: '',
+    description: '',
     inputMode: '',
     rules: '',
     label: '',
@@ -92,6 +94,9 @@ const hasErrors = useFieldError(props.name);
       @input="$emit('input', value)"
       @animationstart="checkAnimation"
     />
+    <div v-if="description" class="form-description">
+      {{ description }}
+    </div>
   </div>
   <Transition name="bounce">
     <span
@@ -137,5 +142,10 @@ const hasErrors = useFieldError(props.name);
   path {
     stroke: var(--color-primary);
   }
+}
+
+.form-description {
+  padding-right: 26px;
+  padding-left: 26px;
 }
 </style>

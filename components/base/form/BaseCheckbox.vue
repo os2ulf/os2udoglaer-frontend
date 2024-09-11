@@ -9,6 +9,7 @@ const props = defineProps({
   type: String,
   placeholder: String,
   label: String,
+  description: String,
   value: String,
   isError: String,
   maxlength: Number,
@@ -31,6 +32,9 @@ const props = defineProps({
       />
       <span :class="'label--' + type">{{ label }}</span>
     </label>
+    <div v-if="description" class="form-description">
+      {{ description }}
+    </div>
   </div>
 </template>
 
@@ -41,6 +45,8 @@ const props = defineProps({
 
 .input__wrapper {
   display: flex;
+  flex-direction: column;
+  padding-right: 26px;
   padding-left: 26px;
 
   label {
@@ -66,12 +72,6 @@ const props = defineProps({
       padding: 0;
       margin: 0;
     }
-
-    &[type="date"] {
-      margin-top: 21px;
-      padding-top: 0;
-      padding-right: 20px;
-    }
   }
 
   input::placeholder {
@@ -84,10 +84,6 @@ const props = defineProps({
     color: var(--color-text);
     border: 1px solid var(--color-black);
     outline: none;
-
-    &[type="date"] {
-      padding-top: 0;
-    }
   }
 
   span {
@@ -124,11 +120,6 @@ const props = defineProps({
   input::-webkit-inner-spin-button {
     margin: 0;
     appearance: none;
-  }
-
-  /* Firefox */
-  input[type='number'] {
-    appearance: textfield;
   }
 }
 </style>

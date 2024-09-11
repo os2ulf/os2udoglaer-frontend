@@ -428,6 +428,7 @@ function showHelperText() {
           type="text"
           name="Klasse"
           label="Klasse"
+          description="Skriv hvilken klasse, der deltager i forløbet - sådan her: 7.B eller 7.ABC)"
           rules="required|school_class"
         />
         <BaseCheckbox
@@ -436,6 +437,7 @@ function showHelperText() {
           type="checkbox"
           name="Modtageklasse"
           label="Modtageklasse"
+          description="Sæt kryds her, hvis klassen er en modtageklasse"
           rules=""
         />
         <BaseInputFloatingLabel
@@ -585,6 +587,7 @@ function showHelperText() {
           type="float"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
+          description="Skriv forløbets totale pris i hele tal - eks. '400'. Det er den pris, der er aftalt med udbyderen af forløbet og som ULF i Aarhus skal betale totalt. Hvis du ansøger for flere klasser, så skriv den samlede pris for alle forløb."
           rules="required|amount"
         />
         <BaseInput
