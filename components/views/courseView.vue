@@ -3,6 +3,27 @@ import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
 import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { useSettingsDataStore } from '~/stores/settingsData';
+const settingsDataStore = useSettingsDataStore();
+
+if (settingsDataStore.settingsData === null) {
+  settingsDataStore.getSettingsData();
+}
+
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
+    default: null,
+  },
+});
+
+let freeCourseApplicationUrl = computed(() => settingsDataStore.settingsData?.free_course_application_reference);
+freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
+
+if (props.data?.provider) {
+  freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+}
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
@@ -13,14 +34,6 @@ const breakpoints = {
     slidesPerView: 2,
   },
 };
-
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true,
-    default: null,
-  },
-});
 
 const priceQuantityPeriodDescription = computed(() => {
   let description = '';
@@ -378,6 +391,21 @@ console.log('courseView', props.data);
               "
               class="button--primary"
               :button-data="{ title: 'Information om transport' }"
+              icon-after="ext-link"
+              ghost
+            />
+            <BaseButton
+              v-if="
+                data.field_target_group === 'Grundskole' &&
+                data.field_practical_info_buttons?.includes(
+                  'show_free_course_request',
+                ) && freeCourseApplicationUrl
+              "
+              class="button--primary"
+              :button-data="{
+                title: 'Ansøg om betaling af dette forløb!' ,
+                url: freeCourseApplicationUrl,
+              }"
               icon-after="ext-link"
               ghost
             />
