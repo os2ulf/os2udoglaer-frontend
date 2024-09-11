@@ -272,6 +272,17 @@ const handleSubmit = async () => {
   const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
   const trimmedCourseDescription = courseDescription.value.trim();
+  const field_rfc_course = [
+    {
+      target_id: selectedCourse.value,
+    },
+  ];
+  const field_rfc_subject = [
+    {
+      target_id: selectedCourseTerm.value,
+    },
+  ];
+
 
   const payload = {
     type: [
@@ -298,11 +309,6 @@ const handleSubmit = async () => {
     field_rfc_new_course_description: [
       {
         value: trimmedCourseDescription,
-      },
-    ],
-    field_rfc_course: [
-      {
-        target_id: selectedCourse.value,
       },
     ],
     field_rfc_new_course_name: [
@@ -355,12 +361,12 @@ const handleSubmit = async () => {
         target_id: selectedProvider.value,
       },
     ],
-    field_rfc_subject: [
-      {
-        target_id: selectedCourseTerm.value,
-      },
-    ],
   };
+
+  if (selectedCourse.value && selectedCourseTerm.value) {
+    payload.field_rfc_course = field_rfc_course;
+    payload.field_rfc_subject = field_rfc_subject;
+  }
 
   try {
     // Submitting to our proxy endpoint
@@ -392,6 +398,7 @@ const handleSubmit = async () => {
       error.message || 'Der opstod en fejl under indsendelse af formularen.';
   } finally {
     isLoading.value = false;
+    window.scrollTo(0, 0);
   }
 };
 
@@ -419,7 +426,7 @@ function showHelperText() {
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
-          rules="required|school"
+          rules="required"
         >
         </BaseSelect>
         <BaseInputFloatingLabel
@@ -429,7 +436,7 @@ function showHelperText() {
           name="Klasse"
           label="Klasse"
           description="Skriv hvilken klasse, der deltager i forløbet - sådan her: 7.B eller 7.ABC)"
-          rules="required|school_class"
+          rules="required"
         />
         <BaseCheckbox
           class="application-form__label"
@@ -446,7 +453,7 @@ function showHelperText() {
           type="text"
           name="Navn"
           label="Navn"
-          rules="required|name"
+          rules="required"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -454,7 +461,7 @@ function showHelperText() {
           type="text"
           name="Telefonnummer"
           label="Telefonnummer"
-          rules="required|phone"
+          rules="required"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -474,7 +481,7 @@ function showHelperText() {
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
-          rules="required|provider"
+          rules="required"
         >
         </BaseSelect>
         <BaseSelect
@@ -485,7 +492,7 @@ function showHelperText() {
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
-          rules="required|provider"
+          rules="required"
         >
         </BaseSelect>
         <BaseCheckbox
@@ -503,7 +510,7 @@ function showHelperText() {
           type="text"
           name="Forløbets navn"
           label="Forløbets navn"
-          rules="required|course_name"
+          rules="required"
         />
         <div v-if="courseNotInList" class="application-form__textarea-wrapper">
           <div class="application-form__textarea-container">
@@ -511,7 +518,7 @@ function showHelperText() {
               v-slot="{ field, errors }"
               name="Beskrivelse af forløbet"
               label="Beskrivelse af forløbet"
-              rules="required|course_description"
+              rules="required"
               v-model="courseDescription"
               :validate-on-blur="false"
               :validate-on-input="true"
@@ -548,7 +555,7 @@ function showHelperText() {
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          :rules="`${ courseNotInList ? '' : 'required|course_name'}`"
+          :rules="`${ courseNotInList ? '' : 'required'}`"
         >
         </BaseSelect>
         <div
@@ -588,7 +595,7 @@ function showHelperText() {
           name="Ansøgt beløb"
           label="Ansøgt beløb"
           description="Skriv forløbets totale pris i hele tal - eks. '400'. Det er den pris, der er aftalt med udbyderen af forløbet og som ULF i Aarhus skal betale totalt. Hvis du ansøger for flere klasser, så skriv den samlede pris for alle forløb."
-          rules="required|amount"
+          rules="required"
         />
         <BaseInput
           class="application-form__label"
@@ -597,7 +604,7 @@ function showHelperText() {
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules="required|date"
+          rules="required"
         />
       </div>
 
