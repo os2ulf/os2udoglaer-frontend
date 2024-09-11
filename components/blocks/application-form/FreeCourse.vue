@@ -10,6 +10,8 @@ const props = defineProps({
 const config = useRuntimeConfig().public;
 const baseEndpoint = ref(config.API_BASE_URL);
 
+const $route = useRoute();
+
 // Set arrays for select options
 const schools = ref([]);
 const schoolsSelect = ref([]);
@@ -22,6 +24,9 @@ const courseTermsSelect = ref([]);
 const coursePriceInfo = ref([]);
 const domains = ref([]);
 const domainArray = ref(props.blockData?.field_domain_access);
+
+const urlQueryCourseId = ref('');
+const urlQueryProviderId = ref('');
 
 if (domainArray.value.length > 0) {
   for (let i = 0; i < domainArray.value.length; i++) {
@@ -413,6 +418,15 @@ function showHelperText() {
     showHelper.value = true;
   }
 }
+
+// If the course and provider are in the URL, set the values
+if ($route.query.course && $route.query.provider) {
+  urlQueryCourseId.value = $route.query.course;
+  urlQueryProviderId.value = $route.query.provider;
+  fetchCourses(urlQueryProviderId.value);
+  fetchCourseSubjects(urlQueryCourseId.value);
+  fetchCoursePriceInfo(urlQueryCourseId.value);
+}
 </script>
 
 <template>
@@ -478,6 +492,7 @@ function showHelperText() {
           v-model="selectedProvider"
           @change="handleProviderChange"
           :options="providersSelect"
+          :model-value="urlQueryProviderId"
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
@@ -489,6 +504,7 @@ function showHelperText() {
           v-model="selectedCourse"
           @change="handleCourseChange"
           :options="coursesSelect"
+          :model-value="urlQueryCourseId"
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"

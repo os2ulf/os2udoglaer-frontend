@@ -46,7 +46,7 @@ const value = computed({
         :disabled="disabled"
         :multiple="props.multiple"
       >
-        <option v-if="props.label" value="" disabled>
+        <option v-if="props.selectLabel" value="" disabled>
           {{ props.selectLabel }}
         </option>
 
