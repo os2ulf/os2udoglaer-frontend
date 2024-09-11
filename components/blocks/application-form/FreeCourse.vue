@@ -419,7 +419,7 @@ function showHelperText() {
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
-          rules=""
+          rules="required|school"
         >
         </BaseSelect>
         <BaseInputFloatingLabel
@@ -428,9 +428,9 @@ function showHelperText() {
           type="text"
           name="Klasse"
           label="Klasse"
-          rules=""
+          rules="required|school_class"
         />
-        <BaseInput
+        <BaseCheckbox
           class="application-form__label"
           v-model="receivingClass"
           type="checkbox"
@@ -444,7 +444,7 @@ function showHelperText() {
           type="text"
           name="Navn"
           label="Navn"
-          rules=""
+          rules="required|name"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -452,7 +452,7 @@ function showHelperText() {
           type="text"
           name="Telefonnummer"
           label="Telefonnummer"
-          rules=""
+          rules="required|phone"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -472,7 +472,7 @@ function showHelperText() {
           name="Udbyder"
           label="Udbyder"
           selectLabel="Vælg udbyder"
-          rules=""
+          rules="required|provider"
         >
         </BaseSelect>
         <BaseSelect
@@ -483,10 +483,10 @@ function showHelperText() {
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
-          rules=""
+          rules="required|provider"
         >
         </BaseSelect>
-        <BaseInput
+        <BaseCheckbox
           v-model="courseNotInList"
           @change="handleHideCourseSelect"
           class="application-form__label"
@@ -501,7 +501,7 @@ function showHelperText() {
           type="text"
           name="Forløbets navn"
           label="Forløbets navn"
-          rules=""
+          rules="required|course_name"
         />
         <div v-if="courseNotInList" class="application-form__textarea-wrapper">
           <div class="application-form__textarea-container">
@@ -509,7 +509,7 @@ function showHelperText() {
               v-slot="{ field, errors }"
               name="Beskrivelse af forløbet"
               label="Beskrivelse af forløbet"
-              rules=""
+              rules="required|course_description"
               v-model="courseDescription"
               :validate-on-blur="false"
               :validate-on-input="true"
@@ -546,7 +546,7 @@ function showHelperText() {
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          rules=""
+          :rules="`${ courseNotInList ? '' : 'required|course_name'}`"
         >
         </BaseSelect>
         <div
@@ -585,7 +585,7 @@ function showHelperText() {
           type="float"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
-          rules=""
+          rules="required|amount"
         />
         <BaseInput
           class="application-form__label"
@@ -594,7 +594,7 @@ function showHelperText() {
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules=""
+          rules="required|date"
         />
       </div>
 

@@ -112,7 +112,7 @@ const hasErrors = useFieldError(props.name);
   </Transition>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .form-input-wrapper {
   position: relative;
 }
