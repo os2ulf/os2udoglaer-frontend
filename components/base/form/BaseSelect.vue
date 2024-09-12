@@ -8,7 +8,7 @@ interface ISelectOptions {
 }
 
 const props = defineProps<{
-  modelValue: string;
+  modelValue?: string;
   options: ISelectOptions[];
   rules?: string;
   name: string;
@@ -22,7 +22,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue']);
 const id = ref(uuidv4());
 const value = computed({
-  get: () => props.modelValue || [],
+  get: () => props.modelValue || (props.multiple ? [] : ''),
   set: (value) => emit('update:modelValue', value),
 });
 </script>
