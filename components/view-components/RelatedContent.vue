@@ -6,6 +6,8 @@ const props = defineProps({
   },
 });
 
+console.log('relatedContent', props.data);
+
 const isLoading = ref(false);
 const relatedContent = ref(props.data.relatedContent);
 const componentKey = ref(0);
@@ -60,18 +62,28 @@ const handleSorting = (key: any) => {
 
   if (key.label === 'Alle') {
     dynamicContent.value = props.data.relatedContent.results;
-  } else if (key.value === 'course') {
-    dynamicContent.value = props.data.relatedContent.results.filter(
-      (item: any) => {
-        return item.bundle === 'course';
-      },
-    );
   } else {
     dynamicContent.value = props.data.relatedContent.results.filter(
       (item: any) => {
         if (item.bundle === 'course') {
-          return item.field_target_group === key.label;
+          // "Grundskole" for key 12
+          if (key.value === 12 && item.field_target_group === 'Grundskole') {
+            return true;
+          } else if (
+            //  "Ungdomsuddannelse" for key 13
+            key.value === 13 &&
+            item.field_target_group === 'Ungdomsuddannelse'
+          ) {
+            return true;
+          } else if (
+            // "Dagtilbud" for key 14
+            key.value === 14 &&
+            item.field_target_group === 'Dagtilbud'
+          ) {
+            return true;
+          }
         } else {
+          // General case for other key values
           return item.bundle === key.label || item.bundle_label === key.label;
         }
       },
