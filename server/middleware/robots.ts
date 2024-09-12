@@ -9,10 +9,11 @@ export default defineEventHandler((event) => {
   const prodRobotTxt = `
     User-agent: *
     Allow: /
-    Disallow: /en
-    Disallow: /en/*
     Disallow: /node/*
-    Disallow: /search
+    Disallow: /search*
+    Disallow: /maintenance
+    Disallow: /forbidden
+
 
 
     # Sitemap
