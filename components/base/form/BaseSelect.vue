@@ -8,7 +8,7 @@ interface ISelectOptions {
 }
 
 const props = defineProps<{
-  modelValue?: string;
+  modelValue: string;
   options: ISelectOptions[];
   rules?: string;
   name: string;
