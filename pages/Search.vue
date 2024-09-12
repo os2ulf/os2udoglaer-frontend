@@ -122,6 +122,10 @@ watch(selectedFiltersData, () => {
   updateURLParameters();
 });
 
+watch(allSortingOptions, () => {
+  cleanEmptyFilters();
+});
+
 const debounce = (func, delay) => {
   let timeoutId;
   return (...args) => {
@@ -276,6 +280,27 @@ onBeforeMount(() => {
     getInitialSearchResults();
   }
 });
+
+const cleanEmptyFilters = () => {
+  if (!allSortingOptions.value) return;
+
+  for (const [key, filter] of Object.entries(allSortingOptions.value)) {
+    const typedFilter = filter as { items: Record<string, { count: number }> };
+
+    // Remove empty filter options
+    for (const [key2, item] of Object.entries(typedFilter.items)) {
+      if (item.count === 0) {
+        delete typedFilter.items[key2];
+      }
+    }
+
+    // Check if the items object is now empty
+    if (Object.keys(typedFilter.items).length === 0) {
+      // Remove the whole filter
+      delete allSortingOptions.value[key];
+    }
+  }
+};
 </script>
 
 <template>
@@ -343,7 +368,7 @@ onBeforeMount(() => {
           >
             <div class="search__results-wrapper">
               <div class="search__results-found">
-                <h4>Viser {{ totalItemsFound }} forløb</h4>
+                <h4>Viser {{ totalItemsFound }} resultater</h4>
               </div>
             </div>
 
