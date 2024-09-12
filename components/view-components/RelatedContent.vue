@@ -6,8 +6,6 @@ const props = defineProps({
   },
 });
 
-console.log('relatedContent', props.data);
-
 const isLoading = ref(false);
 const relatedContent = ref(props.data.relatedContent);
 const componentKey = ref(0);
