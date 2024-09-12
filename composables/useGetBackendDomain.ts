@@ -2,12 +2,12 @@ import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
-const config = useRuntimeConfig();
 
 export function useGetBackendDomain() {
   const allRoutes = ref<Record<string, any> | null>(null);
   const beEndpoint = ref<string | null>(null);
   const devEnv = ref<string | null>('https://localhost:3000');
+  const config = useRuntimeConfig();
 
   if (process.env.PLATFORM_ROUTES) {
     try {
