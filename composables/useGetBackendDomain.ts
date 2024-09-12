@@ -2,7 +2,6 @@ import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
-import { useRuntimeConfig } from '#app/nuxt';
 const config = useRuntimeConfig();
 
 export function useGetBackendDomain() {
