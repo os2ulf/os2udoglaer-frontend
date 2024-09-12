@@ -43,6 +43,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.API_BASE_URL,
+      LOCAL_API_BASE_URL: process.env.LOCAL_API_BASE_URL,
     },
 
     REST_API_USER: process.env.REST_API_USER,

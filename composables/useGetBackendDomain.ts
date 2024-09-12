@@ -2,6 +2,8 @@ import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
+import { useRuntimeConfig } from '#app/nuxt';
+const config = useRuntimeConfig();
 
 export function useGetBackendDomain() {
   const allRoutes = ref<Record<string, any> | null>(null);
@@ -71,7 +73,7 @@ export function useGetBackendDomain() {
     //  'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
     // https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site
     beEndpoint.value =
-      'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
+      config.LOCAL_API_BASE_URL || 'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
   } else {
     const apiRouteStore = useApiRouteStore();
 
