@@ -2,13 +2,15 @@
 import { Field, Form } from 'vee-validate';
 import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
+const apiRouteStore = useApiRouteStore();
+
 const modalStore = useModalStore();
 
 const props = defineProps({
   blockData: Object,
 });
-const config = useRuntimeConfig().public;
-const baseEndpoint = ref(config.API_BASE_URL);
 
 const $route = useRoute();
 
@@ -66,7 +68,7 @@ onBeforeMount(() => {
 const fetchSchools = async () => {
   try {
     const response = await fetch(
-      baseEndpoint.value + '/rest-export/users/school',
+      apiRouteStore.apiRouteEndpoint + '/rest-export/users/school',
       {
         method: 'GET',
         headers: {
@@ -93,7 +95,7 @@ const fetchSchools = async () => {
 const fetchProviders = async () => {
   try {
     const response = await fetch(
-      baseEndpoint.value + '/rest-export/users/course_provider',
+      apiRouteStore.apiRouteEndpoint + '/rest-export/users/course_provider',
       {
         method: 'GET',
         headers: {
@@ -121,7 +123,7 @@ const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
     const response = await fetch(
-      baseEndpoint.value + '/rest-export/courses/primary-school/' + uid,
+      apiRouteStore.apiRouteEndpoint + '/rest-export/courses/primary-school/' + uid,
       {
         method: 'GET',
         headers: {
@@ -149,7 +151,7 @@ const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
   try {
     const response = await fetch(
-      baseEndpoint.value + '/rest-export/content-subject-terms/' + nid,
+      apiRouteStore.apiRouteEndpoint + '/rest-export/content-subject-terms/' + nid,
       {
         method: 'GET',
         headers: {
@@ -176,7 +178,7 @@ const fetchCourseSubjects = async (nid) => {
 const fetchCoursePriceInfo = async (nid) => {
   try {
     const response = await fetch(
-      baseEndpoint.value + '/rest-export/course-price/' + nid,
+      apiRouteStore.apiRouteEndpoint + '/rest-export/course-price/' + nid,
       {
         method: 'GET',
         headers: {
