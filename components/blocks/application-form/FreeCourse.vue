@@ -231,7 +231,7 @@ const fetchSubjects = async () => {
   if (subjectTerms.value.length > 0) {
     for (let i = 0; i < subjectTerms.value.length; i++) {
       subjectTermsSelect.value.push({
-        text: subjectTerms.value[i].name,
+        text: subjectTerms.value[i].label,
         value: subjectTerms.value[i].tid,
       });
     }
