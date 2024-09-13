@@ -1,4 +1,4 @@
-export const prodDomains = [
+export const productionDomains = [
   'aabenaalborg.dk',
   'www.aabenaalborg.dk',
   'ulfiaarhus.dk',
