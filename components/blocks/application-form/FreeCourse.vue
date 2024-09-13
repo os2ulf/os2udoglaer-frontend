@@ -23,12 +23,13 @@ const courses = ref([]);
 const coursesSelect = ref([]);
 const courseTerms = ref([]);
 const courseTermsSelect = ref([]);
+const subjectTerms = ref([]);
+const subjectTermsSelect = ref([]);
 const coursePriceInfo = ref([]);
+
+// Set domain array for form data
 const domains = ref([]);
 const domainArray = ref(props.blockData?.field_domain_access);
-
-const urlQueryCourseId = ref('');
-const urlQueryProviderId = ref('');
 
 if (domainArray.value.length > 0) {
   for (let i = 0; i < domainArray.value.length; i++) {
@@ -37,6 +38,10 @@ if (domainArray.value.length > 0) {
     });
   }
 }
+
+// URL query parameters
+const urlQueryCourseId = ref('');
+const urlQueryProviderId = ref('');
 
 // Form data
 const selectedSchool = ref('');
@@ -60,11 +65,13 @@ const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
 
+// Fetch schools and providers on component mount
 onBeforeMount(() => {
   fetchSchools();
   fetchProviders();
 });
 
+// Fetch schools
 const fetchSchools = async () => {
   try {
     const response = await fetch(
@@ -82,6 +89,7 @@ const fetchSchools = async () => {
     console.error('Error fetching schools:', error);
   }
 
+  // Push to array for use in select list
   if (schools.value.length > 0) {
     for (let i = 0; i < schools.value.length; i++) {
       schoolsSelect.value.push({
@@ -92,6 +100,7 @@ const fetchSchools = async () => {
   }
 };
 
+// Fetch providers
 const fetchProviders = async () => {
   try {
     const response = await fetch(
@@ -109,6 +118,7 @@ const fetchProviders = async () => {
     console.error('Error fetching providers:', error);
   }
 
+  // Push to array for use in select list
   if (providers.value.length > 0) {
     for (let i = 0; i < providers.value.length; i++) {
       providersSelect.value.push({
@@ -119,6 +129,7 @@ const fetchProviders = async () => {
   }
 };
 
+// Fetch courses from provider UID
 const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
@@ -137,6 +148,7 @@ const fetchCourses = async (uid) => {
     console.error('Error fetching courses:', error);
   }
 
+  // Push to array for use in select list
   if (courses.value.length > 0) {
     for (let i = 0; i < courses.value.length; i++) {
       coursesSelect.value.push({
@@ -147,6 +159,7 @@ const fetchCourses = async (uid) => {
   }
 };
 
+// Fetch course subjects from course NID
 const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
   try {
@@ -165,6 +178,7 @@ const fetchCourseSubjects = async (nid) => {
     console.error('Error fetching courseTerms:', error);
   }
 
+  // Push to array for use in select list
   if (courseTerms.value.length > 0) {
     for (let i = 0; i < courseTerms.value.length; i++) {
       courseTermsSelect.value.push({
@@ -175,6 +189,7 @@ const fetchCourseSubjects = async (nid) => {
   }
 };
 
+// Fetch course price info from course NID
 const fetchCoursePriceInfo = async (nid) => {
   try {
     const response = await fetch(
@@ -193,11 +208,47 @@ const fetchCoursePriceInfo = async (nid) => {
   }
 };
 
+// Fetch subjects from taxonomy vocabulary "subject"
+const fetchSubjects = async () => {
+  subjectTermsSelect.value = [];
+  try {
+    const response = await fetch(
+      apiRouteStore.apiRouteEndpoint + '/rest-export/terms/subject',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (!response.ok) throw new Error(response.status);
+    subjectTerms.value = await response.json();
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+  }
+
+  // Push to array for use in select list
+  if (subjectTerms.value.length > 0) {
+    for (let i = 0; i < subjectTerms.value.length; i++) {
+      subjectTermsSelect.value.push({
+        text: subjectTerms.value[i].name,
+        value: subjectTerms.value[i].tid,
+      });
+    }
+  }
+};
+
+// Fetch courses on provider change and empty course selected values
 const handleProviderChange = async (event) => {
+  selectedCourse.value = '';
+  coursesSelect.value = [];
+  selectedCourseTerm.value = '';
+  courseTermsSelect.value = [];
   coursePriceInfo.value = [];
   await fetchCourses(event.target.value);
 };
 
+// Handle "Course not in list" logic
 const handleHideCourseSelect = async () => {
   if (!courseNotInList.value) {
     // If the checkbox is checked, hide the select list and clear the v-model value
@@ -207,23 +258,29 @@ const handleHideCourseSelect = async () => {
     courseTermsSelect.value = [];
     coursePriceInfo.value = [];
     courseNotInList.value = true;
+    await fetchSubjects();
   } else {
-    // If the checkbox is unchecked, show the select list
+    // If the checkbox is unchecked fetch courses from selected provider
     courseNotInList.value = false;
-    await fetchCourses(selectedProvider.value);
+    if (selectedProvider.value) {
+      await fetchCourses(selectedProvider.value);
+    }
   }
 };
 
+// Fetch course subjects and price info on course change
 const handleCourseChange = async (event) => {
   coursePriceInfo.value = [];
   await fetchCourseSubjects(event.target.value);
   await fetchCoursePriceInfo(event.target.value);
 };
 
+// Set settlement date on date change
 const settlementDateChange = async (event) => {
   settlementDate.value = event.target.value;
 };
 
+// Handle modal
 const handleModal = (title, content: any) => {
   modalStore.showModal({
     title: title,
@@ -231,6 +288,7 @@ const handleModal = (title, content: any) => {
   });
 };
 
+// Reset form values and fetch schools and providers
 const resetForm = async () => {
   schools.value = [];
   schoolsSelect.value = [];
@@ -240,6 +298,8 @@ const resetForm = async () => {
   coursesSelect.value = [];
   courseTerms.value = [];
   courseTermsSelect.value = [];
+  subjectTerms.value = [];
+  subjectTermsSelect.value = [];
   coursePriceInfo.value = [];
   domains.value = [];
   selectedSchool.value = '';
@@ -261,8 +321,11 @@ const resetForm = async () => {
   isSuccess.value = false;
   isLoading.value = false;
   honeypot.value = '';
+  fetchSchools();
+  fetchProviders();
 };
 
+// Handle submit
 const handleSubmit = async () => {
   if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
@@ -279,6 +342,8 @@ const handleSubmit = async () => {
   const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
   const trimmedCourseDescription = courseDescription.value.trim();
+
+  // Set field_rfc_course and field_rfc_subject
   const field_rfc_course = [
     {
       target_id: selectedCourse.value,
@@ -290,7 +355,7 @@ const handleSubmit = async () => {
     },
   ];
 
-
+// Payload
   const payload = {
     type: [
       {
@@ -370,8 +435,13 @@ const handleSubmit = async () => {
     ],
   };
 
-  if (selectedCourse.value && selectedCourseTerm.value) {
+  // If course is selected add to payload
+  if (selectedCourse.value) {
     payload.field_rfc_course = field_rfc_course;
+  }
+
+  // If subject is selected add to payload
+  if (selectedCourseTerm.value) {
     payload.field_rfc_subject = field_rfc_subject;
   }
 
@@ -381,18 +451,6 @@ const handleSubmit = async () => {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-
-    // console.log('Response:', response);
-    // State/Error handling for the API responses:
-    // console.log('Status codes from the proxy:', response.statusCode);
-    // console.log(
-    //   'This is error / response message thats coming from the FE proxy level:',
-    //   response.message,
-    // );
-    // console.log(
-    //   'This is error response coming from the BE API level:',
-    //   response.error.message,
-    // );
 
     if (response.statusCode !== 201 && response.statusCode !== 200) {
       throw new Error('Form submission failed');
@@ -421,7 +479,7 @@ function showHelperText() {
   }
 }
 
-// If the course and provider are in the URL, set the values
+// If the course and provider are in the URL, set default values to URL query parameters
 if ($route.query.course && $route.query.provider) {
   urlQueryCourseId.value = $route.query.course;
   urlQueryProviderId.value = $route.query.provider;
@@ -569,11 +627,11 @@ if ($route.query.course && $route.query.provider) {
         </div>
         <BaseSelect
           v-model="selectedCourseTerm"
-          :options="courseTermsSelect"
+          :options="courseNotInList ? subjectTermsSelect : courseTermsSelect"
           name="Emneområde"
           label="Emneområde"
           selectLabel="Vælg emneområde"
-          :rules="`${ courseNotInList ? '' : 'required'}`"
+          rules="required"
         >
         </BaseSelect>
         <div
