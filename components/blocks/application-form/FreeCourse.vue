@@ -231,7 +231,7 @@ const fetchSubjects = async () => {
   if (subjectTerms.value.length > 0) {
     for (let i = 0; i < subjectTerms.value.length; i++) {
       subjectTermsSelect.value.push({
-        text: subjectTerms.value[i].label,
+        text: subjectTerms.value[i].name,
         value: subjectTerms.value[i].tid,
       });
     }
@@ -339,7 +339,6 @@ const handleSubmit = async () => {
 
   isLoading.value = true;
   const trimmedFullName = fullName.value.trim();
-  const trimmedPhone = phone.value.trim();
   const trimmedEmail = email.value.trim();
   const trimmedCourseDescription = courseDescription.value.trim();
 
@@ -425,7 +424,7 @@ const handleSubmit = async () => {
     ],
     field_rfc_phone: [
       {
-        value: trimmedPhone,
+        value: phone.value,
       },
     ],
     field_rfc_provider: [
@@ -532,7 +531,7 @@ if ($route.query.course && $route.query.provider) {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="phone"
-          type="text"
+          type="number"
           name="Telefonnummer"
           label="Telefonnummer"
           rules="required"
@@ -667,7 +666,7 @@ if ($route.query.course && $route.query.provider) {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="requestedAmount"
-          type="float"
+          type="number"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
           description="Skriv forløbets totale pris i hele tal - eks. '400'. Det er den pris, der er aftalt med udbyderen af forløbet og som ULF i Aarhus skal betale totalt. Hvis du ansøger for flere klasser, så skriv den samlede pris for alle forløb."
