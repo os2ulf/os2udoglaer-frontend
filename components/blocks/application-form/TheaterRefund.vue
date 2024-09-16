@@ -168,7 +168,7 @@ const handleSubmit = async () => {
 
   isLoading.value = true;
   const trimmedFullName = fullName.value.trim();
-  const trimmedPhone = phone.value.trim();
+  const trimmedPhone = phone.value;
   const trimmedEmail = email.value.trim();
 
   // Payload
@@ -305,7 +305,7 @@ const handleSubmit = async () => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="phone"
-          type="text"
+          type="number"
           name="Telefonnummer"
           label="Telefonnummer"
           rules="required"
@@ -343,7 +343,7 @@ const handleSubmit = async () => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="quantity"
-          type="text"
+          type="number"
           name="Antal"
           label="Antal"
           description="Skriv antal billetter eller forestillinger."
@@ -353,7 +353,7 @@ const handleSubmit = async () => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="requestedAmount"
-          type="text"
+          type="number"
           name="Ansøgt beløb"
           label="Ansøgt beløb"
           description="Skriv forestillingens totale pris i hele tal inkl. moms - eks. '8000'."
@@ -391,6 +391,8 @@ const handleSubmit = async () => {
                 props.blockData?.field_information_text,
               )
             "
+            aria-label="Læs mere"
+            role="button"
             >Læs mere</NuxtLink
           >
         </div>
