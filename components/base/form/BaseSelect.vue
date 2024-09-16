@@ -75,7 +75,7 @@ const value = computed({
   </div>
 </template>
 <style lang="postcss" scoped>
-  .form-label {
-    padding-left: 26px;
-  }
+.form-label {
+  padding-left: 26px;
+}
 </style>

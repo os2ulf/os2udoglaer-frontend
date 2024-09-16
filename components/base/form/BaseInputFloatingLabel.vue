@@ -6,11 +6,11 @@ const props = withDefaults(
   defineProps<{
     type?: string | 'text' | 'password' | 'number' | 'tel' | 'url';
     name: string;
-    description?: string
+    description?: string;
     rules?: string;
     label: string;
     inputMode?: string | 'none' | 'text ' | 'numeric' | 'tel' | 'url';
-    modelValue: string;
+    modelValue: string | number | null | any | any[] | undefined;
     maxlength?: string;
     validateOnBlur?: boolean;
     validateOnChange?: boolean;
