@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
+const apiRouteStore = useApiRouteStore();
+
 useHead({
   title: 'Søg',
   meta: [
@@ -13,10 +17,7 @@ useHead({
   ],
 });
 
-// TODO: Once we create logic to dynamically set the right BE Domain, use it here
-const backEndDomain = ref(
-  'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
-);
+const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
 const searchKeyword = ref('');
 const dynamicContent = ref(null);
@@ -25,7 +26,6 @@ const pager = ref(null);
 const allSortingOptions = ref(null);
 const selectedPage = ref(0);
 const isLoadingPageResults = ref(false);
-const showAllFilters = ref(false);
 
 const getInitialSearchResults = async () => {
   try {
@@ -120,6 +120,10 @@ const getFilteredPageResults = async (
 watch(selectedFiltersData, () => {
   getFilteredPageResults(true);
   updateURLParameters();
+});
+
+watch(allSortingOptions, () => {
+  cleanEmptyFilters();
 });
 
 const debounce = (func, delay) => {
@@ -276,6 +280,27 @@ onBeforeMount(() => {
     getInitialSearchResults();
   }
 });
+
+const cleanEmptyFilters = () => {
+  if (!allSortingOptions.value) return;
+
+  for (const [key, filter] of Object.entries(allSortingOptions.value)) {
+    const typedFilter = filter as { items: Record<string, { count: number }> };
+
+    // Remove empty filter options
+    for (const [key2, item] of Object.entries(typedFilter.items)) {
+      if (item.count === 0) {
+        delete typedFilter.items[key2];
+      }
+    }
+
+    // Check if the items object is now empty
+    if (Object.keys(typedFilter.items).length === 0) {
+      // Remove the whole filter
+      delete allSortingOptions.value[key];
+    }
+  }
+};
 </script>
 
 <template>
@@ -343,7 +368,7 @@ onBeforeMount(() => {
           >
             <div class="search__results-wrapper">
               <div class="search__results-found">
-                <h4>Viser {{ totalItemsFound }} forløb</h4>
+                <h4>Viser {{ totalItemsFound }} resultater</h4>
               </div>
             </div>
 

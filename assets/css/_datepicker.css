@@ -1,0 +1,55 @@
+:root {
+  --dp-cell-size: 50px !important; /* Width and height of calendar cell */
+  --dp-cell-padding: 15px !important; /* Padding in the cell */
+  --dp-font-family: var(--body-font-family) !important;
+  --dp-month-year-row-height: 55px !important; /* Height of the month-year select row */
+  --dp-row-maring: 2px 0 !important; /* Adjust the spacing between rows in the calendar */
+  --dp-menu-padding: 6px 0 !important; /* Menu padding */
+  --dp-font-size: 12px !important; /* Default font-size */
+  --dp-menu-min-width: 900px !important; /* Adjust the min width of the menu */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --dp-menu-min-width: 300px !important; /* Adjust the min width of the menu */
+  }
+}
+
+.dp__theme_light {
+  --dp-hover-color: var(--color-primary-lighten-2) !important;
+  --dp-background-color: #fff !important;
+  --dp-text-color: var(--color-black) !important;
+  --dp-hover-text-color: #fff !important;
+  --dp-primary-color: var(--color-primary) !important;
+  --dp-primary-text-color: var(--color-white) !important;
+  --dp-secondary-color: var(--color-black) !important;
+  --dp-border-color: var(--color-gray-25) !important;
+  --dp-menu-border-color: var(--color-gray-25) !important;
+  --dp-border-color-hover: var(--color-primary) !important;
+  --dp-success-color: var(--color-success) !important;
+  --dp-icon-color: var(--color-black) !important;
+  --dp-danger-color: var(--color-primary-lighten-2) !important;
+  --dp-highlight-color: var(--color-primary-lighten-2) !important;
+  --dp-hover-icon-color: var(--color-white) !important;
+}
+
+.dp__calendar_header_item {
+  text-transform: capitalize;
+}
+
+.dp__month_year_wrap {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dp__range_end,
+.dp__range_start,
+.dp__week_num {
+  font-weight: 700;
+}
+
+.dp__week_num {
+  .dp__cell_inner {
+    color: var(--color-primary);
+  }
+}

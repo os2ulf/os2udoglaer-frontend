@@ -4,6 +4,7 @@
 @import 'variables/_typography.css';
 @import 'variables/_grid.css';
 @import 'variables/_swiper.css';
+@import '_datepicker.css';
 
 @import 'variables/_theme-colors.css';
 @import 'themes/theme.css';

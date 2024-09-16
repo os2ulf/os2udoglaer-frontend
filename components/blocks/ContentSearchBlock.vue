@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { v4 as uuidv4 } from 'uuid';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
+const apiRouteStore = useApiRouteStore();
 
 const id = `search-block-${uuidv4()}`;
 
@@ -12,11 +15,7 @@ const props = defineProps({
 });
 
 const searchBlockData = ref(props.blockData);
-
-// TODO: Once we create logic to dynamically set the right BE Domain, use it here
-const backEndDomain = ref(
-  'https://staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site',
-);
+const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
 const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');
@@ -30,6 +29,9 @@ const showAllFilters = ref(false);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
+const datePickerStartDate = ref('');
+const datePickerEndDate = ref('');
+const datePickerLabel = ref(props.blockData?.exposed_filters?.period?.label);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -51,6 +53,20 @@ const handleFilterChange = (
   }
 
   if (selectedFilterOption) {
+    // if date
+    if (selectedFilterOption.searchQueryUrlAlias === 'period') {
+      const index = selectedFiltersData.findIndex(
+        (filter) => filter.searchQueryUrlAlias === 'period',
+      );
+
+      if (index !== -1) {
+        datePickerEndDate.value = '';
+        datePickerStartDate.value = '';
+
+        updateURLParameters();
+      }
+    }
+
     // Check if selectedFilterOption already exists in selectedFiltersData
     const index = selectedFiltersData.findIndex(
       (option) => option.value === selectedFilterOption.value,
@@ -84,12 +100,17 @@ const getFilteredPageResults = async (
 
     let filterString = '';
     selectedFiltersData.forEach((filter, index) => {
+      // remove date from filter
+      if (filter.searchQueryUrlAlias === 'period') {
+        return;
+      }
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
 
     const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
     );
     const data = await response.json();
 
@@ -134,8 +155,19 @@ const updateURLParameters = () => {
     params.set('sort_by', sortingString.value);
   }
 
+  // Add date range
+  if (datePickerStartDate.value && datePickerEndDate.value) {
+    params.set('period[min]', datePickerStartDate.value);
+    params.set('period[max]', datePickerEndDate.value);
+  }
+
   // Add selected filters to URL parameters
   selectedFiltersData.forEach((filter, index) => {
+    // Remove date from filters
+    if (filter.searchQueryUrlAlias === 'period') {
+      return;
+    }
+
     params.append(
       `f[${index}]`,
       `${filter.searchQueryUrlAlias}:${filter.value}`,
@@ -160,6 +192,7 @@ const parseUrlParameters = () => {
   params.forEach((value, key) => {
     if (key.startsWith('f[')) {
       const [searchQueryUrlAlias, filterValue] = value.split(':');
+
       extractedFilters.value.push({
         searchQueryUrlAlias,
         value: filterValue,
@@ -185,27 +218,43 @@ const parseUrlParameters = () => {
     sortingString.value = sort;
   }
 
+  // extract date range
+  const minDate = params.get('period[min]');
+  const maxDate = params.get('period[max]');
+  if (minDate && maxDate) {
+    datePickerStartDate.value = minDate;
+    datePickerEndDate.value = maxDate;
+  }
+
   // if finds anything - fetches data.
   if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
     handleExtractedFilters();
   }
 };
 
-// populates selectedFiltersData with extracted filters
+// populates selectedFiltersData with extracted filters - CHIPS
 const setSelectedFiltersDataWithExtractedFilters = () => {
-  // Clear previous selections
   selectedFiltersData.splice(0, selectedFiltersData.length);
 
-  // Iterate through extractedFilters
   extractedFilters.value.forEach((filter) => {
+    if (filter.searchQueryUrlAlias === 'period') {
+      selectedFiltersData.push({
+        searchQueryUrlAlias: filter.searchQueryUrlAlias,
+        value: filter.value,
+        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+      });
+    }
+
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
       (facet) => facet.url_alias === filter.searchQueryUrlAlias,
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items
-      const selectedItem = matchingFacet.items[filter.value];
+      // Find the specific item in the matching facet's items array by value
+      const selectedItem = matchingFacet.items.find(
+        (item) => item.value === filter.value,
+      );
 
       if (selectedItem) {
         // Push the filter object with necessary properties
@@ -222,16 +271,31 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
 const handleExtractedFilters = async () => {
   try {
     let queryString = '';
+
     extractedFilters.value.forEach((filter, index) => {
+      // exclude date from extractedFilters
+      extractedFilters.value = extractedFilters.value.filter(
+        (filter) => filter.searchQueryUrlAlias !== 'period',
+      );
+
       // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
       queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
     });
 
-    const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}`,
-    );
+    // add date back to extractedFilters
+    if (datePickerStartDate.value && datePickerEndDate.value) {
+      extractedFilters.value.push({
+        searchQueryUrlAlias: 'period',
+        value: `${datePickerStartDate.value}/${datePickerEndDate.value}`,
+        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+      });
+    }
 
+    const response: any = await fetch(
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+    );
     const data = await response.json();
+
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -251,6 +315,12 @@ watch(selectedFiltersData, () => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
+
+  if (datePickerStartDate.value && datePickerEndDate.value) {
+    datePickerStartDate.value = '';
+    datePickerEndDate.value = '';
+    updateURLParameters();
+  }
 
   lastInteractedFilterReference.value = {
     isFilterDropdownOpen: false,
@@ -293,6 +363,41 @@ onMounted(() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
 });
+
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
+
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+
+  return `${day}.${month}.${year}`;
+};
+
+const handleDatePicker = (date) => {
+  const formattedDates = date.map((item) => formatDate(item));
+
+  if (formattedDates[0] && formattedDates[1]) {
+    datePickerStartDate.value = formattedDates[0];
+    datePickerEndDate.value = formattedDates[1];
+    updateURLParameters();
+
+    // THis code will push in calendar as a 'chip' in the filters chips part.
+    const index = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === 'period',
+    );
+
+    if (index !== -1) {
+      selectedFiltersData.splice(index, 1);
+    }
+
+    selectedFiltersData.push({
+      searchQueryUrlAlias: 'period',
+      value: `period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
+    });
+  }
+};
 </script>
 
 <template>
@@ -330,7 +435,19 @@ onMounted(() => {
                 }"
               >
                 <ClientOnly>
+                  <div v-if="item.exposed_filter === 'period'">
+                    <BaseDatePicker
+                      @datepicker-value="handleDatePicker"
+                      :startAndEndDates="{
+                        startDate: datePickerStartDate,
+                        endDate: datePickerEndDate,
+                      }"
+                      :filter-name="datePickerLabel"
+                    />
+                  </div>
+
                   <BaseSearchDropdown
+                    v-else
                     @dropdown-value="handleFilterChange"
                     :allFilters="item"
                     :last-interacted-filter-data="lastInteractedFilterReference"

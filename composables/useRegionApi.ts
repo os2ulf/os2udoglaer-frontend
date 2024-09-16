@@ -1,8 +1,13 @@
+import { useGetBackendDomain } from '~/composables/useGetBackendDomain';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
 export default function () {
   const useRegion = (region: string) => {
-    const config = useRuntimeConfig().public;
+    const apiRouteStore = useApiRouteStore();
+    const beEndpoint = useGetBackendDomain();
 
-    return UseBaseApi(config.API_BASE_URL, {
+    apiRouteStore.setApiRouteEndpoint(beEndpoint);
+    return UseBaseApi(apiRouteStore.apiRouteEndpoint, {
       params: {
         format: 'json',
         region,

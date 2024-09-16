@@ -41,6 +41,7 @@ if (error || !data.value) {
   // if forbidden to see
   if (error.statusCode === 403) {
     navigateTo('/forbidden');
+    window.location.reload();
   }
 
   // stop code from executing further

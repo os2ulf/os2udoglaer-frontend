@@ -22,13 +22,13 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue']);
 const id = ref(uuidv4());
 const value = computed({
-  get: () => props.modelValue || [],
+  get: () => props.modelValue || (props.multiple ? [] : ''),
   set: (value) => emit('update:modelValue', value),
 });
 </script>
 
 <template>
-  <div class="form-select-wrapper">
+  <div class="form-select-wrapper form-input-wrapper">
     <div>
       <label v-if="label" class="form-label" :for="id"
         >{{ props.label
@@ -46,7 +46,7 @@ const value = computed({
         :disabled="disabled"
         :multiple="props.multiple"
       >
-        <option v-if="props.label" value="" disabled>
+        <option v-if="props.selectLabel" value="" disabled>
           {{ props.selectLabel }}
         </option>
 
@@ -74,3 +74,8 @@ const value = computed({
     />
   </div>
 </template>
+<style lang="postcss" scoped>
+  .form-label {
+    padding-left: 26px;
+  }
+</style>

@@ -149,11 +149,11 @@ onBeforeUnmount(() => {
 
           <nav class="header__right-content" v-if="data">
             <NuxtLink
-              v-for="(item, index) in data.primaernavigation_2.items"
+              v-for="(item, index) in data.primaernavigation_2?.items"
               :key="index"
               :to="
-                item.link.url && item.below.length === 0
-                  ? item.link.url
+                item?.link?.url && item?.below?.length === 0
+                  ? item?.link?.url
                   : 'javascript:void(0)'
               "
               class="header__button header__button--left"
