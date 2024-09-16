@@ -592,7 +592,7 @@ const handleSubmit = async () => {
     }
   }
 }
-
+/*  */
 .modal__trigger {
   color: var(--color-primary);
   cursor: pointer;
