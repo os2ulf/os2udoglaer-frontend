@@ -452,7 +452,7 @@ const handleSubmit = async () => {
     });
 
     if (response.statusCode !== 201 && response.statusCode !== 200) {
-      throw new Error('Form submission failed');
+      throw new Error('Der opstod en fejl under indsendelse af formularen');
     }
 
     isSuccess.value = true;

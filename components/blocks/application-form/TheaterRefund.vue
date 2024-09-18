@@ -194,25 +194,11 @@ const handleSubmit = async () => {
         value: quantity.value,
       },
     ],
-
-    field_tr_conditions: [
-      {
-        value: true,
-      },
-    ],
-
-    field_tr_gdpr: [
-      {
-        value: true,
-      },
-    ],
-
     field_rfc_new_course_name: [
       {
         value: performance.value,
       },
     ],
-
     field_rfc_grade: [
       {
         value: schoolClass.value,
@@ -228,19 +214,16 @@ const handleSubmit = async () => {
         value: trimmedFullName,
       },
     ],
-
     field_rfc_school: [
       {
         target_id: selectedSchool.value,
       },
     ],
-
     field_tr_theater: [
       {
         target_id: selectedTheater.value,
       },
     ],
-
     field_rfc_phone: [
       {
         value: trimmedPhone,
@@ -256,7 +239,7 @@ const handleSubmit = async () => {
     });
 
     if (response.statusCode !== 201 && response.statusCode !== 200) {
-      throw new Error('Form submission failed');
+      throw new Error('Der opstod en fejl under indsendelse af formularen');
     }
 
     isSuccess.value = true;
