@@ -6,10 +6,10 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
-  768: {
+  0: {
     slidesPerView: 1,
   },
-  992: {
+  768: {
     slidesPerView: 2,
   },
 };

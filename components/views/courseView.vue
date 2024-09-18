@@ -27,10 +27,10 @@ if (props.data?.provider) {
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
-  768: {
+  0: {
     slidesPerView: 1,
   },
-  992: {
+  768: {
     slidesPerView: 2,
   },
 };

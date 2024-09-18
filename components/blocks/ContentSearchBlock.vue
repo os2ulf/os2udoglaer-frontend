@@ -830,6 +830,8 @@ const handleDatePicker = (date) => {
   }
 
   &__card-item {
+    display: flex;
+    width: auto @(--sm) 100%;
     height: 100%;
   }
 

@@ -308,12 +308,12 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
 <style lang="postcss" scoped>
 .card {
   display: flex;
-  flex-flow: column @(--sm) row;
+  flex-flow: column @(--md) row;
   background: var(--color-white);
   color: var(--color-text);
   border: 2px solid var(--color-primary-lighten-4);
   border-radius: 4px;
-  height: 100%;
+  height: auto @(--sm) 100% @(--md) 324px;
   box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
   transition: all 0.3s ease-in-out;
 
@@ -331,6 +331,8 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   }
 
   &__link {
+    width: 100%;
+    height: 100%;
     text-decoration: none;
   }
 
@@ -341,7 +343,9 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   }
 
   &__image {
-    width: 100% @(--sm) 50%;
+    width: 100% @(--md) 50%;
+    min-height: auto @(--sm) 320px;
+    max-height: auto @(--sm) 320px;
     position: relative;
 
     :deep(figure),
@@ -370,6 +374,11 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
 
     h4 {
       margin-bottom: 8px;
+      display: -webkit-box;
+      max-width: 100%;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 
@@ -393,8 +402,9 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   &__content {
     display: flex;
     flex-flow: column;
-    width: 100% @(--sm) 50%;
-    padding: 24px @(--sm) 32px;
+    width: 100% @(--md) 50%;
+    height: 100%;
+    padding: 24px @(--lg) 32px;
 
     &--no-image {
       width: 100% !important;
@@ -405,6 +415,11 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
     font-weight: 400;
     font-size: 16px;
     line-height: 22px;
+    display: -webkit-box;
+    max-width: 100%;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__icon-group {
@@ -428,6 +443,11 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
     font-weight: 400;
     margin-left: 8px;
     padding-top: 2px;
+    display: -webkit-box;
+    max-width: 100%;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__icon-text--provider {
