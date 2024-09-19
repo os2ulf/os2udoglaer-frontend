@@ -247,6 +247,10 @@ const handleSorting = (key: any) => {
       }
     }
 
+    :deep(.nuxt-icon) {
+      padding-top: 0;
+    }
+
     &-item {
       height: 100%;
 
