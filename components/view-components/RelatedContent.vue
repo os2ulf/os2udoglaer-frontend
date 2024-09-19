@@ -84,20 +84,24 @@ const handleSorting = (key: any) => {
     dynamicContent.value = props.data.relatedContent.results.filter(
       (item: any) => {
         if (item.bundle === 'course') {
+          // "Grundskole" for key 12
           if (key.value === 12 && item.field_target_group === 'Grundskole') {
             return true;
           } else if (
+            //  "Ungdomsuddannelse" for key 13
             key.value === 13 &&
             item.field_target_group === 'Ungdomsuddannelse'
           ) {
             return true;
           } else if (
+            // "Dagtilbud" for key 14
             key.value === 14 &&
             item.field_target_group === 'Dagtilbud'
           ) {
             return true;
           }
         } else {
+          // General case for other key values
           return item.bundle === key.label || item.bundle_label === key.label;
         }
       },
