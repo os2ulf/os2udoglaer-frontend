@@ -12,28 +12,48 @@ const componentKey = ref(0);
 
 const processedFilters = computed(() => {
   const targetGroupFilters =
-    ref(relatedContent.value?.exposed_filters?.target_group?.options) || null;
-
+    relatedContent.value?.exposed_filters?.target_group?.options || [];
   const exposedFilters =
-    ref(relatedContent.value?.exposed_filters?.type?.options) || null;
+    relatedContent.value?.exposed_filters?.type?.options || [];
 
-  // remove 'all'
-  const processedExposedFilters = exposedFilters.value.filter(
-    (filter: any) => filter.value !== 'All',
+  const results = relatedContent.value?.results || [];
+
+  const hasResults = (filter: any) => {
+    return results.some((item: any) => {
+      if (filter.value === 'Alle') return true; // Keep the "Alle" option
+
+      if (item.bundle === 'course') {
+        if (
+          (filter.value === 12 && item.field_target_group === 'Grundskole') ||
+          (filter.value === 13 &&
+            item.field_target_group === 'Ungdomsuddannelse') ||
+          (filter.value === 14 && item.field_target_group === 'Dagtilbud')
+        ) {
+          return true;
+        }
+      }
+
+      return item.bundle === filter.value || item.bundle_label === filter.label;
+    });
+  };
+
+  // Filter out 'All' and options without results
+  const processedTargetGroupFilters = targetGroupFilters.filter(
+    (filter: any) => filter.value !== 'All' && hasResults(filter),
   );
-  const processedTargetGroupFilters = targetGroupFilters.value.filter(
-    (filter: any) => filter.value !== 'All',
+  const processedExposedFilters = exposedFilters.filter(
+    (filter: any) => filter.value !== 'All' && hasResults(filter),
   );
 
-  // create a new object, that will have "All" as first value and then add the rest values onto it
-  const allFilterAdded = ref([
+  // Add 'Alle' as the first filter
+  const allFilterAdded = [
     {
       label: 'Alle',
       value: 'Alle',
     },
     ...processedTargetGroupFilters,
     ...processedExposedFilters,
-  ]);
+  ];
 
   return {
     exposedFilters: allFilterAdded,
@@ -64,24 +84,20 @@ const handleSorting = (key: any) => {
     dynamicContent.value = props.data.relatedContent.results.filter(
       (item: any) => {
         if (item.bundle === 'course') {
-          // "Grundskole" for key 12
           if (key.value === 12 && item.field_target_group === 'Grundskole') {
             return true;
           } else if (
-            //  "Ungdomsuddannelse" for key 13
             key.value === 13 &&
             item.field_target_group === 'Ungdomsuddannelse'
           ) {
             return true;
           } else if (
-            // "Dagtilbud" for key 14
             key.value === 14 &&
             item.field_target_group === 'Dagtilbud'
           ) {
             return true;
           }
         } else {
-          // General case for other key values
           return item.bundle === key.label || item.bundle_label === key.label;
         }
       },
