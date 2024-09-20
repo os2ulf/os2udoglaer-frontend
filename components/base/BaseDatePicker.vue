@@ -151,6 +151,10 @@ onUnmounted(() => {
       box-shadow: 0px 0px 0px 4px #297f781a;
       z-index: 9;
       max-width: 166px;
+
+      @media (--viewport-sm-max) {
+        min-width: 100%;
+      }
     }
   }
 
