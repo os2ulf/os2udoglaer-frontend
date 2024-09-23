@@ -58,7 +58,7 @@ onBeforeMount(() => {
 const fetchSchools = async () => {
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/users/school',
+      apiRouteStore.apiRouteEndpoint + '/rest-export/users/theater_contact',
       {
         method: 'GET',
         headers: {
