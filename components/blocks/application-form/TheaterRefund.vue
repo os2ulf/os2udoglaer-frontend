@@ -38,7 +38,6 @@ const phone = ref('');
 const email = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const selectedTheater = ref('');
-const courseDescription = ref('');
 const requestedAmount = ref('');
 const settlementDate = ref('');
 const errorMessage = ref('');
@@ -140,7 +139,6 @@ const resetForm = async () => {
   phone.value = '';
   email.value = '';
   selectedTheater.value = '';
-  courseDescription.value = '';
   requestedAmount.value = '';
   settlementDate.value = '';
   errorMessage.value = '';

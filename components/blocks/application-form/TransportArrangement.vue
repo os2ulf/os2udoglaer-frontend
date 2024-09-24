@@ -15,17 +15,34 @@ const props = defineProps({
 const $route = useRoute();
 
 // Set arrays for select options
-const schools = ref([]);
-const schoolsSelect = ref([]);
-const providers = ref([]);
-const providersSelect = ref([]);
 const courses = ref([]);
 const coursesSelect = ref([]);
-const courseTerms = ref([]);
-const courseTermsSelect = ref([]);
-const subjectTerms = ref([]);
-const subjectTermsSelect = ref([]);
-const coursePriceInfo = ref([]);
+const typeSelect = ref([
+  { text: 'Skole', value: 'school' },
+  { text: 'Børnehave', value: 'tpf_kindergarten' },
+  { text: 'Vuggestue', value: 'tpf_nursery' },
+  { text: 'Dagplejer', value: 'tpf_daycare' },
+]);
+const schools = ref([]);
+const schoolsSelect = ref([]);
+const schoolClassSelect = ref([
+  { text: '0. klasse', value: 'grade_0' },
+  { text: '1. klasse', value: 'grade_1' },
+  { text: '2. klasse', value: 'grade_2' },
+  { text: '3. klasse', value: 'grade_3' },
+  { text: '4. klasse', value: 'grade_4' },
+  { text: '5. klasse', value: 'grade_5' },
+  { text: '6. klasse', value: 'grade_6' },
+  { text: '7. klasse', value: 'grade_7' },
+  { text: '8. klasse', value: 'grade_8' },
+  { text: '9. klasse', value: 'grade_9' },
+  { text: '10. klasse', value: 'grade_10' },
+  { text: 'Specialklasse indskoling', value: 'special_in' },
+  { text: 'Specialklasse mellemtrin', value: 'special_intermediate' },
+  { text: 'Specialklasse udskoling', value: 'special_out' },
+]);
+const institutions = ref([]);
+const institutionsSelect = ref([]);
 
 // Set domain array for form data
 const domains = ref([]);
@@ -41,24 +58,29 @@ if (domainArray.value.length > 0) {
 
 // URL query parameters
 const urlQueryCourseId = ref('');
-const urlQueryProviderId = ref('');
 
 // Form data
-const selectedSchool = ref('');
-const schoolClass = ref('');
-const receivingClass = ref('');
-const fullName = ref('');
-const phone = ref('');
-const email = ref('');
-const mailTo = ref(props.blockData?.field_mail_to);
-const selectedProvider = ref('');
 const selectedCourse = ref('');
-const selectedCourseTerm = ref('');
+const selectedType = ref('');
+const selectedSchool = ref('');
+const selectedSchoolClass = ref('');
+const selectedInstitution = ref('');
 const courseNotInList = ref(false);
 const courseName = ref('');
 const courseDescription = ref('');
+const courseAddress = ref('');
+const coursePostalCode = ref('');
+const courseCity = ref('');
+const validated = ref(false);
+const validationMessage = ref('');
 const requestedAmount = ref('');
+const numberOfStudents = ref('');
 const settlementDate = ref('');
+const fullName = ref('');
+const email = ref('');
+const emailRepeat = ref('');
+const message = ref('');
+const mailTo = ref(props.blockData?.field_mail_to);
 const errorMessage = ref('');
 const agreementCheckbox = ref(true);
 const isSuccess = ref(false);
@@ -67,12 +89,43 @@ const honeypot = ref('');
 
 // Fetch schools and providers on component mount
 onBeforeMount(() => {
-  fetchSchools();
-  fetchProviders();
+  fetchCourses('all');
 });
+
+// Fetch courses from provider UID
+const fetchCourses = async (uid: any) => {
+  coursesSelect.value = [];
+  try {
+    const response = await fetch(
+      apiRouteStore.apiRouteEndpoint + '/rest-export/content/course/' + uid,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (!response.ok) throw new Error(response.status);
+    courses.value = await response.json();
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+  }
+
+  // Push to array for use in select list
+  if (courses.value.length > 0) {
+    for (let i = 0; i < courses.value.length; i++) {
+      coursesSelect.value.push({
+        text: courses.value[i].title,
+        value: courses.value[i].nid,
+      });
+    }
+  }
+};
 
 // Fetch schools
 const fetchSchools = async () => {
+  schoolsSelect.value = [];
+  institutionsSelect.value = [];
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/users/school',
@@ -100,11 +153,13 @@ const fetchSchools = async () => {
   }
 };
 
-// Fetch providers
-const fetchProviders = async () => {
+// Fetch schools
+const fetchInstitutions = async (type: any) => {
+  schoolsSelect.value = [];
+  institutionsSelect.value = [];
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/users/course_provider',
+      apiRouteStore.apiRouteEndpoint + '/rest-export/institutions/' + type,
       {
         method: 'GET',
         headers: {
@@ -113,139 +168,20 @@ const fetchProviders = async () => {
       },
     );
     if (!response.ok) throw new Error(response.status);
-    providers.value = await response.json();
+    institutions.value = await response.json();
   } catch (error) {
-    console.error('Error fetching providers:', error);
+    console.error('Error fetching schools:', error);
   }
 
   // Push to array for use in select list
-  if (providers.value.length > 0) {
-    for (let i = 0; i < providers.value.length; i++) {
-      providersSelect.value.push({
-        text: providers.value[i].name,
-        value: providers.value[i].uid,
+  if (institutions.value.length > 0) {
+    for (let i = 0; i < institutions.value.length; i++) {
+      institutionsSelect.value.push({
+        text: institutions.value[i].name,
+        value: institutions.value[i].uid,
       });
     }
   }
-};
-
-// Fetch courses from provider UID
-const fetchCourses = async (uid) => {
-  coursesSelect.value = [];
-  try {
-    const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/courses/primary-school/' + uid,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    if (!response.ok) throw new Error(response.status);
-    courses.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-  }
-
-  // Push to array for use in select list
-  if (courses.value.length > 0) {
-    for (let i = 0; i < courses.value.length; i++) {
-      coursesSelect.value.push({
-        text: courses.value[i].title,
-        value: courses.value[i].nid,
-      });
-    }
-  }
-};
-
-// Fetch course subjects from course NID
-const fetchCourseSubjects = async (nid) => {
-  courseTermsSelect.value = [];
-  try {
-    const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/content-subject-terms/' + nid,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    if (!response.ok) throw new Error(response.status);
-    courseTerms.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching courseTerms:', error);
-  }
-
-  // Push to array for use in select list
-  if (courseTerms.value.length > 0) {
-    for (let i = 0; i < courseTerms.value.length; i++) {
-      courseTermsSelect.value.push({
-        text: courseTerms.value[i].label,
-        value: courseTerms.value[i].tid,
-      });
-    }
-  }
-};
-
-// Fetch course price info from course NID
-const fetchCoursePriceInfo = async (nid) => {
-  try {
-    const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/course-price/' + nid,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    if (!response.ok) throw new Error(response.status);
-    coursePriceInfo.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching coursePriceInfo:', error);
-  }
-};
-
-// Fetch subjects from taxonomy vocabulary "subject"
-const fetchSubjects = async () => {
-  subjectTermsSelect.value = [];
-  try {
-    const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/terms/subject',
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    if (!response.ok) throw new Error(response.status);
-    subjectTerms.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching subjects:', error);
-  }
-
-  // Push to array for use in select list
-  if (subjectTerms.value.length > 0) {
-    for (let i = 0; i < subjectTerms.value.length; i++) {
-      subjectTermsSelect.value.push({
-        text: subjectTerms.value[i].name,
-        value: subjectTerms.value[i].tid,
-      });
-    }
-  }
-};
-
-// Fetch courses on provider change and empty course selected values
-const handleProviderChange = async (event) => {
-  selectedCourse.value = '';
-  coursesSelect.value = [];
-  selectedCourseTerm.value = '';
-  courseTermsSelect.value = [];
-  coursePriceInfo.value = [];
-  await fetchCourses(event.target.value);
 };
 
 // Handle "Course not in list" logic
@@ -254,75 +190,77 @@ const handleHideCourseSelect = async () => {
     // If the checkbox is checked, hide the select list and clear the v-model value
     selectedCourse.value = '';
     coursesSelect.value = [];
-    selectedCourseTerm.value = '';
-    courseTermsSelect.value = [];
-    coursePriceInfo.value = [];
     courseNotInList.value = true;
-    await fetchSubjects();
   } else {
     // If the checkbox is unchecked fetch courses from selected provider
     courseNotInList.value = false;
-    if (selectedProvider.value) {
-      await fetchCourses(selectedProvider.value);
-    }
+    await fetchCourses('all');
   }
 };
 
-// Fetch course subjects and price info on course change
-const handleCourseChange = async (event) => {
-  coursePriceInfo.value = [];
-  await fetchCourseSubjects(event.target.value);
-  await fetchCoursePriceInfo(event.target.value);
+// Fetch schools/institutions on type change
+const handleTypeChange = async (event: any) => {
+  console.log(event.target.value);
+  if (event.target.value === 'school') {
+    await fetchSchools();
+  } else {
+    await fetchInstitutions(event.target.value);
+  }
 };
 
+// Handle validation
+const handleValidation = async (event: any) => {
+  event.preventDefault();
+  console.log('Validation');
+  // validated.value = true;
+  // validationMessage.value = '';
+}
+
 // Set settlement date on date change
-const settlementDateChange = async (event) => {
+const settlementDateChange = async (event: any) => {
   settlementDate.value = event.target.value;
 };
 
 // Handle modal
-const handleModal = (title, content: any) => {
+const handleModal = (title: any, content: any) => {
   modalStore.showModal({
     title: title,
     content: content,
   });
 };
 
-// Reset form values and fetch schools and providers
+// Reset form values and fetch courses
 const resetForm = async () => {
-  schools.value = [];
-  schoolsSelect.value = [];
-  providers.value = [];
-  providersSelect.value = [];
   courses.value = [];
   coursesSelect.value = [];
-  courseTerms.value = [];
-  courseTermsSelect.value = [];
-  subjectTerms.value = [];
-  subjectTermsSelect.value = [];
-  coursePriceInfo.value = [];
+  schools.value = [];
+  schoolsSelect.value = [];
   domains.value = [];
   selectedSchool.value = '';
-  schoolClass.value = '';
-  receivingClass.value = '';
-  fullName.value = '';
-  phone.value = '';
-  email.value = '';
-  selectedProvider.value = '';
+  selectedSchoolClass.value = '';
   selectedCourse.value = '';
-  selectedCourseTerm.value = '';
+  selectedInstitution.value = '';
   courseNotInList.value = false;
   courseName.value = '';
   courseDescription.value = '';
+  courseAddress.value = '';
+  coursePostalCode.value = '';
+  courseCity.value = '';
+  validated.value = false;
+  validationMessage.value = '';
   requestedAmount.value = '';
+  numberOfStudents.value = '';
   settlementDate.value = '';
+  fullName.value = '';
+  email.value = '';
+  emailRepeat.value = '';
+  message.value = '';
   errorMessage.value = '';
   agreementCheckbox.value = true;
   isSuccess.value = false;
   isLoading.value = false;
   honeypot.value = '';
-  fetchSchools();
-  fetchProviders();
+  await fetchCourses('all');
 };
 
 // Handle submit
@@ -346,11 +284,6 @@ const handleSubmit = async () => {
   const field_rfc_course = [
     {
       target_id: selectedCourse.value,
-    },
-  ];
-  const field_rfc_subject = [
-    {
-      target_id: selectedCourseTerm.value,
     },
   ];
 
@@ -394,7 +327,7 @@ const handleSubmit = async () => {
     ],
     field_rfc_grade: [
       {
-        value: schoolClass.value,
+        value: schoolClassSelect.value,
       },
     ],
     field_rfc_mail: [
@@ -422,26 +355,11 @@ const handleSubmit = async () => {
         target_id: selectedSchool.value,
       },
     ],
-    field_rfc_phone: [
-      {
-        value: phone.value,
-      },
-    ],
-    field_rfc_provider: [
-      {
-        target_id: selectedProvider.value,
-      },
-    ],
   };
 
   // If course is selected add to payload
   if (selectedCourse.value) {
     payload.field_rfc_course = field_rfc_course;
-  }
-
-  // If subject is selected add to payload
-  if (selectedCourseTerm.value) {
-    payload.field_rfc_subject = field_rfc_subject;
   }
 
   try {
@@ -479,12 +397,9 @@ function showHelperText() {
 }
 
 // If the course and provider are in the URL, set default values to URL query parameters
-if ($route.query.course && $route.query.provider) {
+if ($route.query.course) {
   urlQueryCourseId.value = $route.query.course;
-  urlQueryProviderId.value = $route.query.provider;
-  fetchCourses(urlQueryProviderId.value);
-  fetchCourseSubjects(urlQueryCourseId.value);
-  fetchCoursePriceInfo(urlQueryCourseId.value);
+  fetchCourses(urlQueryCourseId.value);
 }
 </script>
 
@@ -492,76 +407,10 @@ if ($route.query.course && $route.query.provider) {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Skole</h3>
-        <BaseSelect
-          v-model="selectedSchool"
-          :options="schoolsSelect"
-          name="Skole"
-          label="Skole"
-          selectLabel="Vælg skole"
-          rules="required"
-        >
-        </BaseSelect>
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="schoolClass"
-          type="text"
-          name="Klasse"
-          label="Klasse"
-          description="Skriv hvilken klasse, der deltager i forløbet - sådan her: 7.B eller 7.ABC)"
-          rules="required"
-        />
-        <BaseCheckbox
-          class="application-form__label"
-          v-model="receivingClass"
-          type="checkbox"
-          name="Modtageklasse"
-          label="Modtageklasse"
-          description="Sæt kryds her, hvis klassen er en modtageklasse"
-          rules=""
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="fullName"
-          type="text"
-          name="Navn"
-          label="Navn"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="phone"
-          type="number"
-          name="Telefonnummer"
-          label="Telefonnummer"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="email"
-          type="text"
-          name="E-mailadresse"
-          label="E-mailadresse"
-          rules="required|email"
-        />
-      </div>
-      <div class="field-group">
         <h3>Forløb</h3>
-        <BaseSelect
-          v-model="selectedProvider"
-          @change="handleProviderChange"
-          :options="providersSelect"
-          :model-value="urlQueryProviderId"
-          name="Udbyder"
-          label="Udbyder"
-          selectLabel="Vælg udbyder"
-          rules="required"
-        >
-        </BaseSelect>
         <BaseSelect
           v-if="!courseNotInList"
           v-model="selectedCourse"
-          @change="handleCourseChange"
           :options="coursesSelect"
           :model-value="urlQueryCourseId"
           name="Forløb"
@@ -576,6 +425,7 @@ if ($route.query.course && $route.query.provider) {
           class="application-form__label"
           type="checkbox"
           name="course_not_in_list"
+          description="Se vilkår i boksen til højre under lokale initiativer"
           label="Forløb findes ikke på listen"
         />
         <BaseInputFloatingLabel
@@ -595,52 +445,110 @@ if ($route.query.course && $route.query.provider) {
           label="Beskrivelse af forløbet"
           rules="required"
         />
+      </div>
+
+      <div class="field-group">
+        <h3>Forløbsadresse</h3>
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="courseAddress"
+          type="text"
+          name="Gade"
+          label="Gade"
+          rules="required"
+        />
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="coursePostalCode"
+          type="text"
+          name="Postnummer"
+          label="Postnummer"
+          rules="required"
+        />
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="courseCity"
+          type="text"
+          name="By"
+          label="By"
+          rules="required"
+        />
+      </div>
+
+      <div class="field-group">
+        <h3>Vælg institution</h3>
         <BaseSelect
-          v-model="selectedCourseTerm"
-          :options="courseNotInList ? subjectTermsSelect : courseTermsSelect"
-          name="Emneområde"
-          label="Emneområde"
-          selectLabel="Vælg emneområde"
+          v-model="selectedType"
+          @change="handleTypeChange"
+          :options="typeSelect"
+          name="Type"
+          label="Type"
+          selectLabel="Vælg type"
           rules="required"
         >
         </BaseSelect>
-        <div
-          v-if="coursePriceInfo.length > 0"
-          class="price-info form-input-wrapper"
+        <BaseSelect
+          v-if="selectedType === 'school'"
+          v-model="selectedSchool"
+          :options="schoolsSelect"
+          name="Skole"
+          label="Skole"
+          selectLabel="Vælg skole"
+          rules="required"
         >
-          <div class="price-info-header" v-if="coursePriceInfo[0].price">
-            Pris
-          </div>
-          <div
-            class="price-info-item"
-            v-for="coursePriceInfoItem in coursePriceInfo"
-          >
-            {{ coursePriceInfoItem?.price ? coursePriceInfoItem?.price : '' }}
-            {{ coursePriceInfoItem?.unit ? coursePriceInfoItem?.unit : '' }}
-            {{
-              coursePriceInfoItem?.vat
-                ? '(' + coursePriceInfoItem?.vat + ')'
-                : ''
-            }}
-          </div>
-          <div
-            v-if="coursePriceInfo[0].field_description_of_price"
-            class="price-info-description"
-            v-html="coursePriceInfo[0]?.field_description_of_price"
-          ></div>
-          <div class="price-info-link">
-            <NuxtLink :to="coursePriceInfo[0]?.view_node" target="_blank"
-              >Læs mere</NuxtLink
-            >
-          </div>
-        </div>
+        </BaseSelect>
+        <BaseSelect
+          v-if="selectedType === 'school'"
+          v-model="selectedSchoolClass"
+          :options="schoolClassSelect"
+          name="Klassetrin"
+          label="Klassetrin"
+          selectLabel="Vælg klassetrin"
+          rules="required"
+        >
+        </BaseSelect>
+        <BaseSelect
+          v-if="selectedType && selectedType !== 'school'"
+          v-model="selectedInstitution"
+          :options="institutionsSelect"
+          name="Institution"
+          label="Institution"
+          selectLabel="Vælg institution"
+          rules="required"
+        >
+        </BaseSelect>
+      </div>
+
+      <div class="field-group">
+        <button
+          @click="handleValidation"
+          class="button button--primary application-form__button"
+          aria-label="Kontroller anmodning"
+        >
+          Kontroller anmodning
+        </button>
+      </div>
+
+      <div v-if="validationMessage" class="field-group">
+        <div class="validation-info" v-html="validationMessage"></div>
+      </div>
+
+      <div v-if="validated" class="field-group">
+        <h3>Transport information</h3>
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="requestedAmount"
           type="number"
-          name="Ansøgt beløb"
-          label="Ansøgt beløb"
-          description="Skriv forløbets totale pris i hele tal - eks. '400'. Det er den pris, der er aftalt med udbyderen af forløbet og som ULF i Aarhus skal betale totalt. Hvis du ansøger for flere klasser, så skriv den samlede pris for alle forløb."
+          name="Udgifter (DKK eks. moms.)"
+          label="Udgifter (DKK eks. moms.)"
+          rules="required"
+        />
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="numberOfStudents"
+          type="number"
+          name="Antal elever"
+          label="Antal elever"
           rules="required"
         />
         <BaseInput
@@ -651,6 +559,41 @@ if ($route.query.course && $route.query.provider) {
           name="Afviklingsdato"
           label="Afviklingsdato"
           rules="required"
+        />
+      </div>
+
+      <div v-if="validated" class="field-group">
+        <h3>Kontakt information</h3>
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="fullName"
+          type="text"
+          name="Navn"
+          label="Navn"
+          rules="required"
+        />
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="email"
+          type="text"
+          name="E-mailadresse"
+          label="E-mailadresse"
+          rules="required|email"
+        />
+        <BaseInputFloatingLabel
+          class="application-form__label"
+          v-model="emailRepeat"
+          type="text"
+          name="Gentag e-mailadresse"
+          label="Gentag e-mailadresse"
+          rules="required|email"
+        />
+        <BaseTextareaFloatingLabel
+          class="application-form__label"
+          v-model="message"
+          name="Evt. besked"
+          label="Evt. besked"
+          rules=""
         />
       </div>
 
@@ -682,16 +625,16 @@ if ($route.query.course && $route.query.provider) {
       <input type="text" v-model="honeypot" class="application-form__website" />
 
       <button
-        v-if="!isLoading"
+        v-if="!isLoading && validated"
         class="button button--primary application-form__button"
         aria-label="Indsend"
         type="submit"
       >
-        Indsend
+        Send anmodning
       </button>
 
       <button
-        v-else
+        v-else-if="isLoading"
         class="button button--primary application-form__button"
         disabled
         aria-label="Loading..."
@@ -855,7 +798,7 @@ if ($route.query.course && $route.query.provider) {
     }
   }
 
-  .price-info {
+  .validation-info {
     padding: 22px 26px;
     border-radius: 32px;
     background-color: var(--color-quaternary-lighten-4);

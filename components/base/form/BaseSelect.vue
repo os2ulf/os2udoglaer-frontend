@@ -12,6 +12,7 @@ const props = defineProps<{
   options: ISelectOptions[];
   rules?: string;
   name: string;
+  description?: string;
   disabled?: boolean;
   multiple?: boolean;
   label?: string;
@@ -59,6 +60,9 @@ const value = computed({
           {{ option.text }}
         </option>
       </Field>
+      <div v-if="description" class="form-description">
+        {{ description }}
+      </div>
     </div>
 
     <span
@@ -76,6 +80,11 @@ const value = computed({
 </template>
 <style lang="postcss" scoped>
 .form-label {
+  padding-left: 26px;
+}
+
+.form-description {
+  padding-right: 26px;
   padding-left: 26px;
 }
 </style>
