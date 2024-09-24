@@ -43,6 +43,13 @@ const schoolClassSelect = ref([
 ]);
 const institutions = ref([]);
 const institutionsSelect = ref([]);
+const validated = ref(false);
+const validationMessage = ref('');
+const courseContent = ref([]);
+const userContent = ref([]);
+const institutionAddress = ref('');
+const institutionPostalCode = ref('');
+const institutionCity = ref('');
 
 // Set domain array for form data
 const domains = ref([]);
@@ -62,17 +69,14 @@ const urlQueryCourseId = ref('');
 // Form data
 const selectedCourse = ref('');
 const selectedType = ref('');
-const selectedSchool = ref('');
-const selectedSchoolClass = ref('');
 const selectedInstitution = ref('');
+const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseName = ref('');
 const courseDescription = ref('');
 const courseAddress = ref('');
 const coursePostalCode = ref('');
 const courseCity = ref('');
-const validated = ref(false);
-const validationMessage = ref('');
 const requestedAmount = ref('');
 const numberOfStudents = ref('');
 const settlementDate = ref('');
@@ -122,6 +126,55 @@ const fetchCourses = async (uid: any) => {
   }
 };
 
+// Fetch courses from provider UID
+const fetchCourseContent = async (nid: any) => {
+  courseContent.value = [];
+  try {
+    const response = await fetch(
+      apiRouteStore.apiRouteEndpoint + '/node/' + nid + '?format=json&region=content',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (!response.ok) throw new Error(response.status);
+    courseContent.value = await response.json();
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+  }
+
+  // Set address, postal code and city from course content
+  if (courseContent.value.content.field_location_street) {
+    courseAddress.value = courseContent.value.content.field_location_street;
+  } else if (courseContent.value.content.provider?.field_location_street) {
+    courseAddress.value = courseContent.value.content.provider?.field_location_street;
+  } else if (courseContent.value.content.corporation?.field_location_street) {
+    courseAddress.value = courseContent.value.content.corporation?.field_location_street;
+  }
+  if (courseContent.value.content.field_location_zipcode) {
+    coursePostalCode.value = courseContent.value.content.field_location_zipcode;
+  } else if (courseContent.value.content.provider?.field_location_zipcode) {
+    coursePostalCode.value = courseContent.value.content.provider?.field_location_zipcode;
+  } else if (courseContent.value.content.corporation?.field_location_zipcode) {
+    coursePostalCode.value = courseContent.value.content.corporation?.field_location_zipcode;
+  }
+  if (courseContent.value.content.field_location_city) {
+    courseCity.value = courseContent.value.content.field_location_city;
+  } else if (courseContent.value.content.provider?.field_location_city) {
+    courseCity.value = courseContent.value.content.provider?.field_location_city;
+  } else if (courseContent.value.content.corporation?.field_location_city) {
+    courseCity.value = courseContent.value.content.corporation?.field_location_city;
+  }
+};
+
 // Fetch schools
 const fetchSchools = async () => {
   schoolsSelect.value = [];
@@ -150,6 +203,43 @@ const fetchSchools = async () => {
         value: schools.value[i].uid,
       });
     }
+  }
+};
+
+// Fetch schools
+const fetchUserContent = async (uid: any) => {
+  userContent.value = [];
+  try {
+    const response = await fetch(
+      apiRouteStore.apiRouteEndpoint + '/rest-export/user/' + uid,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (!response.ok) throw new Error(response.status);
+    userContent.value = await response.json();
+  } catch (error) {
+    console.error('Error fetching schools:', error);
+  }
+
+  // Set address, postal code and city from user content.
+  if (userContent.value[0].field_location_street) {
+    institutionAddress.value = userContent.value[0].field_location_street[0].value;
+  }
+  if (userContent.value[0].field_location_zipcode) {
+    institutionPostalCode.value = userContent.value[0].field_location_zipcode[0].value;
+  }
+  if (userContent.value[0].field_location_city) {
+    institutionCity.value = userContent.value[0].field_location_city[0].value;
   }
 };
 
@@ -184,6 +274,15 @@ const fetchInstitutions = async (type: any) => {
   }
 };
 
+// Handle course change.
+const handleCourseChange = async (event: any) => {
+  selectedCourse.value = event.target.value;
+  courseAddress.value = '';
+  coursePostalCode.value = '';
+  courseCity.value = '';
+  await fetchCourseContent(selectedCourse.value);
+};
+
 // Handle "Course not in list" logic
 const handleHideCourseSelect = async () => {
   if (!courseNotInList.value) {
@@ -200,7 +299,6 @@ const handleHideCourseSelect = async () => {
 
 // Fetch schools/institutions on type change
 const handleTypeChange = async (event: any) => {
-  console.log(event.target.value);
   if (event.target.value === 'school') {
     await fetchSchools();
   } else {
@@ -208,10 +306,26 @@ const handleTypeChange = async (event: any) => {
   }
 };
 
+// Fetch user content on institution change
+const handleInstitutionChange = async (event: any) => {
+  selectedInstitution.value = event.target.value;
+  institutionAddress.value = '';
+  institutionPostalCode.value = '';
+  institutionCity.value = '';
+  await fetchUserContent(selectedInstitution.value);
+};
+
 // Handle validation
 const handleValidation = async (event: any) => {
   event.preventDefault();
   console.log('Validation');
+  console.log(courseAddress.value);
+  console.log(coursePostalCode.value);
+  console.log(courseCity.value);
+  console.log(institutionAddress.value);
+  console.log(institutionPostalCode.value);
+  console.log(institutionCity.value);
+
   // validated.value = true;
   // validationMessage.value = '';
 }
@@ -236,10 +350,9 @@ const resetForm = async () => {
   schools.value = [];
   schoolsSelect.value = [];
   domains.value = [];
-  selectedSchool.value = '';
-  selectedSchoolClass.value = '';
   selectedCourse.value = '';
   selectedInstitution.value = '';
+  selectedSchoolGrade.value = '';
   courseNotInList.value = false;
   courseName.value = '';
   courseDescription.value = '';
@@ -280,10 +393,17 @@ const handleSubmit = async () => {
   const trimmedEmail = email.value.trim();
   const trimmedCourseDescription = courseDescription.value.trim();
 
-  // Set field_rfc_course and field_rfc_subject
+  // Set field_rfc_course
   const field_rfc_course = [
     {
       target_id: selectedCourse.value,
+    },
+  ];
+
+  // Set field_tpf_grade
+  const field_tpf_grade = [
+    {
+      target_id: selectedSchoolGrade.value,
     },
   ];
 
@@ -352,7 +472,7 @@ const handleSubmit = async () => {
     ],
     field_rfc_school: [
       {
-        target_id: selectedSchool.value,
+        target_id: field_tpf_institution.value,
       },
     ],
   };
@@ -360,6 +480,11 @@ const handleSubmit = async () => {
   // If course is selected add to payload
   if (selectedCourse.value) {
     payload.field_rfc_course = field_rfc_course;
+  }
+
+  // If course is selected add to payload
+  if (selectedSchoolGrade.value) {
+    payload.field_tpf_grade = field_tpf_grade;
   }
 
   try {
@@ -384,18 +509,6 @@ const handleSubmit = async () => {
   }
 };
 
-// Text area methods
-const showHelper = ref(true);
-function hideHelperText() {
-  showHelper.value = false;
-}
-
-function showHelperText() {
-  if (courseDescription.value === '') {
-    showHelper.value = true;
-  }
-}
-
 // If the course and provider are in the URL, set default values to URL query parameters
 if ($route.query.course) {
   urlQueryCourseId.value = $route.query.course;
@@ -413,6 +526,7 @@ if ($route.query.course) {
           v-model="selectedCourse"
           :options="coursesSelect"
           :model-value="urlQueryCourseId"
+          @change="handleCourseChange"
           name="Forløb"
           label="Forløb"
           selectLabel="Vælg forløb"
@@ -452,6 +566,7 @@ if ($route.query.course) {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseAddress"
+          :value="courseAddress.value"
           type="text"
           name="Gade"
           label="Gade"
@@ -479,8 +594,8 @@ if ($route.query.course) {
         <h3>Vælg institution</h3>
         <BaseSelect
           v-model="selectedType"
-          @change="handleTypeChange"
           :options="typeSelect"
+          @change="handleTypeChange"
           name="Type"
           label="Type"
           selectLabel="Vælg type"
@@ -489,8 +604,9 @@ if ($route.query.course) {
         </BaseSelect>
         <BaseSelect
           v-if="selectedType === 'school'"
-          v-model="selectedSchool"
+          v-model="selectedInstitution"
           :options="schoolsSelect"
+          @change="handleInstitutionChange"
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
@@ -499,7 +615,7 @@ if ($route.query.course) {
         </BaseSelect>
         <BaseSelect
           v-if="selectedType === 'school'"
-          v-model="selectedSchoolClass"
+          v-model="selectedSchoolGrade"
           :options="schoolClassSelect"
           name="Klassetrin"
           label="Klassetrin"
@@ -511,6 +627,7 @@ if ($route.query.course) {
           v-if="selectedType && selectedType !== 'school'"
           v-model="selectedInstitution"
           :options="institutionsSelect"
+          @change="handleInstitutionChange"
           name="Institution"
           label="Institution"
           selectLabel="Vælg institution"

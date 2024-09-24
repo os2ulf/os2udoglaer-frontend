@@ -352,9 +352,9 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
-          {{ props.blockData.field_information_text_title }}
+      <div v-if="props.blockData?.field_information_text" class="field-group">
+        <h3 v-if="props.blockData?.field_information_text_title">
+          {{ props.blockData?.field_information_text_title }}
         </h3>
         <div
           v-if="!props.blockData.field_show_in_modal"

@@ -466,18 +466,6 @@ const handleSubmit = async () => {
   }
 };
 
-// Text area methods
-const showHelper = ref(true);
-function hideHelperText() {
-  showHelper.value = false;
-}
-
-function showHelperText() {
-  if (courseDescription.value === '') {
-    showHelper.value = true;
-  }
-}
-
 // If the course and provider are in the URL, set default values to URL query parameters
 if ($route.query.course && $route.query.provider) {
   urlQueryCourseId.value = $route.query.course;
