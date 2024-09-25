@@ -3,6 +3,7 @@ import { Form } from 'vee-validate';
 import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { stripHtmlFromString } from '~/utils/stripHtml';
 
 const apiRouteStore = useApiRouteStore();
 
@@ -723,9 +724,9 @@ if ($route.query.course) {
           v-html="props.blockData.field_information_text"
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
-          <div
-            v-html="truncateString(props.blockData.field_information_text, 155)"
-          ></div>
+          <p
+            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+          ></p>
           <NuxtLink
             class="modal__trigger"
             @click="
