@@ -54,7 +54,6 @@ const courseLatLon = ref([]);
 const userContent = ref([]);
 const institutionAddress = ref('');
 const institutionPostalCode = ref('');
-const institutionCity = ref('');
 const institutionLatLon = ref([]);
 const institutionPrivateMunicipal = ref('');
 
@@ -248,9 +247,6 @@ const fetchUserContent = async (uid: any) => {
   if (userContent.value[0].field_location_zipcode) {
     institutionPostalCode.value = userContent.value[0].field_location_zipcode[0].value;
   }
-  if (userContent.value[0].field_location_city) {
-    institutionCity.value = userContent.value[0].field_location_city[0].value;
-  }
   institutionPrivateMunicipal.value = userContent.value[0].field_private_municipal[0].value;
 };
 
@@ -285,10 +281,11 @@ const fetchInstitutions = async (type: any) => {
   }
 };
 
-const getDawaData = async (streetName: any, houseNumber: any, postalCode: any) => {
+const getDawaData = async (queryRaw: any, postalCode: any) => {
   let data = null;
-  if (streetName !== null && houseNumber !== null && postalCode !== null) {
-    const dawaUrl = `https://api.dataforsyningen.dk/adresser?vejnavn=${streetName}&husnr=${houseNumber}&postnr=${postalCode}&per_side=1&struktur=mini`;
+  const query = queryRaw.trim().replace(/\s/g, '+');
+  if (query !== null && postalCode !== null) {
+    const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}&postnr=${postalCode}&per_side=1&struktur=mini`;
     try {
       const response = await fetch(
         dawaUrl,
@@ -301,6 +298,7 @@ const getDawaData = async (streetName: any, houseNumber: any, postalCode: any) =
       );
       if (!response.ok) throw new Error(response.status);
       return data = response.json();
+      console.log(data);
     } catch (error) {
       console.error('Error fetching dawa data:', error);
     }
@@ -359,7 +357,6 @@ const handleInstitutionChange = async (event: any) => {
   selectedInstitution.value = event.target.value;
   institutionAddress.value = '';
   institutionPostalCode.value = '';
-  institutionCity.value = '';
   await fetchUserContent(selectedInstitution.value);
 };
 
@@ -367,20 +364,24 @@ const handleInstitutionChange = async (event: any) => {
 const handleValidation = async (event: any) => {
   event.preventDefault();
   console.log('Validation');
-  getDawaData(addressToStreetAndHouseNr(courseAddress.value).street_name, addressToStreetAndHouseNr(courseAddress.value).house_number, coursePostalCode.value).then((data) => {
-    if (data.length > 0) {
-      courseLatLon.value['longitude'] = data[0].x;
-      courseLatLon.value['latitude'] = data[0].y;
-    }
-  });
-  console.log('courseLatLon: ', courseLatLon.value);
-  getDawaData(addressToStreetAndHouseNr(institutionAddress.value).street_name, addressToStreetAndHouseNr(institutionAddress.value).house_number, institutionPostalCode.value).then((data) => {
-    if (data.length > 0) {
-      institutionLatLon.value['longitude'] = data[0].x;
-      institutionLatLon.value['latitude'] = data[0].y;
-    }
-  });
-  console.log('institutionLatLon: ', institutionLatLon.value);
+  if (courseAddress.value !== '' || coursePostalCode.value !== '') {
+    getDawaData(courseAddress.value, coursePostalCode.value).then((data) => {
+      if (data.length > 0) {
+        courseLatLon.value['longitude'] = data[0].x;
+        courseLatLon.value['latitude'] = data[0].y;
+      }
+    });
+    console.log('courseLatLon: ', courseLatLon.value);
+  }
+  if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
+    getDawaData(institutionAddress.value, institutionPostalCode.value).then((data) => {
+      if (data.length > 0) {
+        institutionLatLon.value['longitude'] = data[0].x;
+        institutionLatLon.value['latitude'] = data[0].y;
+      }
+    });
+    console.log('institutionLatLon: ', institutionLatLon.value);
+  }
 }
 
 // Set settlement date on date change
