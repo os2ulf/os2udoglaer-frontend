@@ -145,12 +145,6 @@ const fetchCourseContent = async (nid: any) => {
           'Content-Type': 'application/json',
         },
       },
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
     );
     if (!response.ok) throw new Error(response.status);
     courseContent.value = await response.json();
@@ -227,12 +221,6 @@ const fetchUserContent = async (uid: any) => {
           'Content-Type': 'application/json',
         },
       },
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
     );
     if (!response.ok) throw new Error(response.status);
     userContent.value = await response.json();
@@ -281,6 +269,27 @@ const fetchInstitutions = async (type: any) => {
   }
 };
 
+// Calculate distance between two coordinates
+const distanceBetween = (lat1, lon1, lat2, lon2)  => {
+  const toRadians = angle => angle * (Math.PI / 180); // Converts degrees to radians
+  const R = 6371; // Radius of the Earth in kilometers (use 3959 for miles)
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+  const lat1Rad = toRadians(lat1);
+  const lat2Rad = toRadians(lat2);
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = R * c; // Distance in kilometers
+
+  return distance;
+}
+
 const getDawaData = async (queryRaw: any, postalCode: any) => {
   let data = null;
   const query = queryRaw.trim().replace(/\s/g, '+');
@@ -305,19 +314,6 @@ const getDawaData = async (queryRaw: any, postalCode: any) => {
   } else {
     console.error('Invalid address data.');
   }
-};
-
-const addressToStreetAndHouseNr = (street: any) => {
-  const streetAddressArray = street.split(/(\d+)/);
-  const streetName = streetAddressArray[0].trim().replace(/\s/g, '+');
-  let houseNumber = null;
-  if (streetAddressArray[1]) {
-    houseNumber = streetAddressArray[1].trim();
-  }
-  return {
-    street_name: streetName,
-    house_number: houseNumber,
-  };
 };
 
 // Handle course change.
@@ -363,24 +359,40 @@ const handleInstitutionChange = async (event: any) => {
 // Handle validation
 const handleValidation = async (event: any) => {
   event.preventDefault();
-  console.log('Validation');
+
+  console.log('courseWhoCanApply: ', courseWhoCanApply.value);
+  console.log('institutionPrivateMunicipal: ', institutionPrivateMunicipal.value);
+
+  // Get course latitude and longitude
   if (courseAddress.value !== '' || coursePostalCode.value !== '') {
-    getDawaData(courseAddress.value, coursePostalCode.value).then((data) => {
-      if (data.length > 0) {
-        courseLatLon.value['longitude'] = data[0].x;
-        courseLatLon.value['latitude'] = data[0].y;
-      }
-    });
-    console.log('courseLatLon: ', courseLatLon.value);
+    const data = await getDawaData(courseAddress.value, coursePostalCode.value)
+    if (data.length > 0) {
+      courseLatLon.value['longitude'] = data[0].x;
+      courseLatLon.value['latitude'] = data[0].y;
+    }
   }
+
+  // Get institution latitude and longitude
   if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
-    getDawaData(institutionAddress.value, institutionPostalCode.value).then((data) => {
-      if (data.length > 0) {
-        institutionLatLon.value['longitude'] = data[0].x;
-        institutionLatLon.value['latitude'] = data[0].y;
-      }
-    });
-    console.log('institutionLatLon: ', institutionLatLon.value);
+    const data = await getDawaData(institutionAddress.value, institutionPostalCode.value);
+    if (data.length > 0) {
+      institutionLatLon.value['longitude'] = data[0].x;
+      institutionLatLon.value['latitude'] = data[0].y;
+    }
+  }
+
+  // Calculate distance between course and institution
+  if (courseLatLon.value.latitude && courseLatLon.value.longitude && institutionLatLon.value.latitude && institutionLatLon.value.longitude) {
+    const distance = distanceBetween(
+      courseLatLon.value.latitude,
+      courseLatLon.value.longitude,
+      institutionLatLon.value.latitude,
+      institutionLatLon.value.longitude
+    );
+    const roundedDistance = distance.toFixed(2); // Rounds to 2 decimal places
+    console.log(`Distance: ${roundedDistance} km`);
+  } else {
+    console.log('Unable to calculate distance due to missing latitude or longitude data');
   }
 }
 
