@@ -53,6 +53,7 @@ const value = computed({
 
         <option
           v-for="(option, index) in options"
+          :disabled="option.value === ''"
           :key="index"
           :selected="props.modelValue === option.value"
           :value="option.value"

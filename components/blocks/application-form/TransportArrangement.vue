@@ -19,6 +19,7 @@ const $route = useRoute();
 const courses = ref([]);
 const coursesSelect = ref([]);
 const typeSelect = ref([
+  { text: 'Vælg type', value: '' },
   { text: 'Skole', value: 'school' },
   { text: 'Børnehave', value: 'tpf_kindergarten' },
   { text: 'Vuggestue', value: 'tpf_nursery' },
@@ -27,6 +28,7 @@ const typeSelect = ref([
 const schools = ref([]);
 const schoolsSelect = ref([]);
 const schoolClassSelect = ref([
+  { text: 'Vælg klassetrin', value: '' },
   { text: '0. klasse', value: 'grade_0' },
   { text: '1. klasse', value: 'grade_1' },
   { text: '2. klasse', value: 'grade_2' },
@@ -47,10 +49,14 @@ const institutionsSelect = ref([]);
 const validated = ref(false);
 const validationMessage = ref('');
 const courseContent = ref([]);
+const courseWhoCanApply = ref('');
+const courseLatLon = ref([]);
 const userContent = ref([]);
 const institutionAddress = ref('');
 const institutionPostalCode = ref('');
 const institutionCity = ref('');
+const institutionLatLon = ref([]);
+const institutionPrivateMunicipal = ref('');
 
 // Set domain array for form data
 const domains = ref([]);
@@ -130,6 +136,7 @@ const fetchCourses = async (uid: any) => {
 // Fetch courses from provider UID
 const fetchCourseContent = async (nid: any) => {
   courseContent.value = [];
+  courseWhoCanApply.value = '';
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/node/' + nid + '?format=json&region=content',
@@ -174,6 +181,7 @@ const fetchCourseContent = async (nid: any) => {
   } else if (courseContent.value.content.corporation?.field_location_city) {
     courseCity.value = courseContent.value.content.corporation?.field_location_city;
   }
+  courseWhoCanApply.value = courseContent.value.content?.field_tpf_who_get_support;
 };
 
 // Fetch schools
@@ -210,6 +218,7 @@ const fetchSchools = async () => {
 // Fetch schools
 const fetchUserContent = async (uid: any) => {
   userContent.value = [];
+  institutionPrivateMunicipal.value = '';
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/user/' + uid,
@@ -242,6 +251,7 @@ const fetchUserContent = async (uid: any) => {
   if (userContent.value[0].field_location_city) {
     institutionCity.value = userContent.value[0].field_location_city[0].value;
   }
+  institutionPrivateMunicipal.value = userContent.value[0].field_private_municipal[0].value;
 };
 
 // Fetch schools
@@ -273,6 +283,43 @@ const fetchInstitutions = async (type: any) => {
       });
     }
   }
+};
+
+const getDawaData = async (streetName: any, houseNumber: any, postalCode: any) => {
+  let data = null;
+  if (streetName !== null && houseNumber !== null && postalCode !== null) {
+    const dawaUrl = `https://api.dataforsyningen.dk/adresser?vejnavn=${streetName}&husnr=${houseNumber}&postnr=${postalCode}&per_side=1&struktur=mini`;
+    try {
+      const response = await fetch(
+        dawaUrl,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      if (!response.ok) throw new Error(response.status);
+      return data = response.json();
+    } catch (error) {
+      console.error('Error fetching dawa data:', error);
+    }
+  } else {
+    console.error('Invalid address data.');
+  }
+};
+
+const addressToStreetAndHouseNr = (street: any) => {
+  const streetAddressArray = street.split(/(\d+)/);
+  const streetName = streetAddressArray[0].trim().replace(/\s/g, '+');
+  let houseNumber = null;
+  if (streetAddressArray[1]) {
+    houseNumber = streetAddressArray[1].trim();
+  }
+  return {
+    street_name: streetName,
+    house_number: houseNumber,
+  };
 };
 
 // Handle course change.
@@ -320,15 +367,20 @@ const handleInstitutionChange = async (event: any) => {
 const handleValidation = async (event: any) => {
   event.preventDefault();
   console.log('Validation');
-  console.log(courseAddress.value);
-  console.log(coursePostalCode.value);
-  console.log(courseCity.value);
-  console.log(institutionAddress.value);
-  console.log(institutionPostalCode.value);
-  console.log(institutionCity.value);
-
-  // validated.value = true;
-  // validationMessage.value = '';
+  getDawaData(addressToStreetAndHouseNr(courseAddress.value).street_name, addressToStreetAndHouseNr(courseAddress.value).house_number, coursePostalCode.value).then((data) => {
+    if (data.length > 0) {
+      courseLatLon.value['longitude'] = data[0].x;
+      courseLatLon.value['latitude'] = data[0].y;
+    }
+  });
+  console.log('courseLatLon: ', courseLatLon.value);
+  getDawaData(addressToStreetAndHouseNr(institutionAddress.value).street_name, addressToStreetAndHouseNr(institutionAddress.value).house_number, institutionPostalCode.value).then((data) => {
+    if (data.length > 0) {
+      institutionLatLon.value['longitude'] = data[0].x;
+      institutionLatLon.value['latitude'] = data[0].y;
+    }
+  });
+  console.log('institutionLatLon: ', institutionLatLon.value);
 }
 
 // Set settlement date on date change
@@ -599,7 +651,6 @@ if ($route.query.course) {
           @change="handleTypeChange"
           name="Type"
           label="Type"
-          selectLabel="Vælg type"
           rules="required"
         >
         </BaseSelect>
@@ -620,7 +671,6 @@ if ($route.query.course) {
           :options="schoolClassSelect"
           name="Klassetrin"
           label="Klassetrin"
-          selectLabel="Vælg klassetrin"
           rules="required"
         >
         </BaseSelect>
