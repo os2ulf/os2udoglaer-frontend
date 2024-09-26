@@ -4,9 +4,11 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
+import { useSettingsDataStore } from '~/stores/settingsData';
 
+// Stores
+const settingsDataStore = useSettingsDataStore();
 const apiRouteStore = useApiRouteStore();
-
 const modalStore = useModalStore();
 
 const props = defineProps({
@@ -15,12 +17,27 @@ const props = defineProps({
 
 const $route = useRoute();
 
+// Set arrays of site messages to use in validation
+const formSettings = {
+  free_choice: computed(() => settingsDataStore.settingsData?.free_choice.value),
+  course_not_found: computed(() => settingsDataStore.settingsData?.course_not_found.value),
+  district_1: computed(() => settingsDataStore.settingsData?.district_1.value),
+  district_2: computed(() => settingsDataStore.settingsData?.district_2.value),
+  district_3: computed(() => settingsDataStore.settingsData?.district_3.value),
+  district_4: computed(() => settingsDataStore.settingsData?.district_4.value),
+  district_5: computed(() => settingsDataStore.settingsData?.district_5.value),
+  no_district: computed(() => settingsDataStore.settingsData?.no_district.value),
+  denied_distance: computed(() => settingsDataStore.settingsData?.denied_distance.value),
+  denied_private: computed(() => settingsDataStore.settingsData?.denied_private.value),
+  confirmation: computed(() => settingsDataStore.settingsData?.confirmation.value),
+};
+
 // Set arrays for select options
 const courses = ref([]);
 const coursesSelect = ref([]);
 const typeSelect = ref([
   { text: 'Vælg type', value: '' },
-  { text: 'Skole', value: 'school' },
+  { text: 'Skole', value: 'tpf_school' },
   { text: 'Børnehave', value: 'tpf_kindergarten' },
   { text: 'Vuggestue', value: 'tpf_nursery' },
   { text: 'Dagplejer', value: 'tpf_daycare' },
@@ -44,6 +61,16 @@ const schoolClassSelect = ref([
   { text: 'Specialklasse mellemtrin', value: 'special_intermediate' },
   { text: 'Specialklasse udskoling', value: 'special_out' },
 ]);
+const schoolClassAllowed = ref([
+  'grade_0',
+  'grade_1',
+  'grade_2',
+  'grade_3',
+  'grade_4',
+  'grade_5',
+  'special_in',
+  'special_intermediate'
+]);
 const institutions = ref([]);
 const institutionsSelect = ref([]);
 const validated = ref(false);
@@ -56,6 +83,7 @@ const institutionAddress = ref('');
 const institutionPostalCode = ref('');
 const institutionLatLon = ref([]);
 const institutionPrivateMunicipal = ref('');
+const institutionDistrict = ref('');
 
 // Set domain array for form data
 const domains = ref([]);
@@ -80,6 +108,7 @@ const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseName = ref('');
 const courseDescription = ref('');
+const coursePurpose = ref('');
 const courseAddress = ref('');
 const coursePostalCode = ref('');
 const courseCity = ref('');
@@ -236,6 +265,7 @@ const fetchUserContent = async (uid: any) => {
     institutionPostalCode.value = userContent.value[0].field_location_zipcode[0].value;
   }
   institutionPrivateMunicipal.value = userContent.value[0].field_private_municipal[0].value;
+  institutionDistrict.value = userContent.value[0].field_district[0].value;
 };
 
 // Fetch schools
@@ -290,11 +320,11 @@ const distanceBetween = (lat1, lon1, lat2, lon2)  => {
   return distance;
 }
 
+// Fetch data from DAWA API
 const getDawaData = async (queryRaw: any, postalCode: any) => {
-  let data = null;
   const query = queryRaw.trim().replace(/\s/g, '+');
   if (query !== null && postalCode !== null) {
-    const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}&postnr=${postalCode}&per_side=1&struktur=mini`;
+    const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}*&postnr=${postalCode}&per_side=1&struktur=mini`;
     try {
       const response = await fetch(
         dawaUrl,
@@ -306,8 +336,7 @@ const getDawaData = async (queryRaw: any, postalCode: any) => {
         },
       );
       if (!response.ok) throw new Error(response.status);
-      return data = response.json();
-      console.log(data);
+      return response.json();
     } catch (error) {
       console.error('Error fetching dawa data:', error);
     }
@@ -329,6 +358,9 @@ const handleCourseChange = async (event: any) => {
 const handleHideCourseSelect = async () => {
   if (!courseNotInList.value) {
     // If the checkbox is checked, hide the select list and clear the v-model value
+    courseAddress.value = '';
+    coursePostalCode.value = '';
+    courseCity.value = '';
     selectedCourse.value = '';
     coursesSelect.value = [];
     courseNotInList.value = true;
@@ -341,7 +373,7 @@ const handleHideCourseSelect = async () => {
 
 // Fetch schools/institutions on type change
 const handleTypeChange = async (event: any) => {
-  if (event.target.value === 'school') {
+  if (event.target.value === 'tpf_school') {
     await fetchSchools();
   } else {
     await fetchInstitutions(event.target.value);
@@ -353,46 +385,107 @@ const handleInstitutionChange = async (event: any) => {
   selectedInstitution.value = event.target.value;
   institutionAddress.value = '';
   institutionPostalCode.value = '';
+  institutionDistrict.value = '';
   await fetchUserContent(selectedInstitution.value);
 };
 
 // Handle validation
 const handleValidation = async (event: any) => {
   event.preventDefault();
+  validationMessage.value = '';
+  const checkDistance = ref(true);
 
   console.log('courseWhoCanApply: ', courseWhoCanApply.value);
   console.log('institutionPrivateMunicipal: ', institutionPrivateMunicipal.value);
+  console.log('selectedSchoolGrade: ', selectedSchoolGrade.value);
+  console.log('selectedType: ', selectedType.value);
+  console.log('courseAddress: ', courseAddress.value);
+  console.log('institutionAddress: ', institutionAddress.value);
+  console.log('institutionDistrict: ', institutionDistrict.value);
+  console.log('courseNotInList: ', courseNotInList.value);
 
-  // Get course latitude and longitude
-  if (courseAddress.value !== '' || coursePostalCode.value !== '') {
-    const data = await getDawaData(courseAddress.value, coursePostalCode.value)
-    if (data.length > 0) {
-      courseLatLon.value['longitude'] = data[0].x;
-      courseLatLon.value['latitude'] = data[0].y;
+  // If private institution and municipal course, or private institution and course not in list
+  if ((institutionPrivateMunicipal.value === 'private' && courseWhoCanApply.value === 'municipal') || (institutionPrivateMunicipal.value === 'private' && courseNotInList.value)) {
+    validationMessage.value = formSettings.denied_private.value;
+    validated.value = false;
+    checkDistance.value = false;
+
+  // If private institution and for all course, or municipal institution and municipal course
+  } else if ((institutionPrivateMunicipal.value === 'private' && courseWhoCanApply.value === 'all') || (institutionPrivateMunicipal.value === 'municipal' && courseWhoCanApply.value === 'municipal')) {
+
+    // If school
+    if (selectedType.value === 'tpf_school') {
+      if (schoolClassAllowed.value.includes(selectedSchoolGrade.value)) {
+        validated.value = true;
+        checkDistance.value = false;
+      }
+
+    // If institution
+    } else {
+      validated.value = true;
     }
   }
 
-  // Get institution latitude and longitude
-  if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
-    const data = await getDawaData(institutionAddress.value, institutionPostalCode.value);
-    if (data.length > 0) {
-      institutionLatLon.value['longitude'] = data[0].x;
-      institutionLatLon.value['latitude'] = data[0].y;
+  // If distance check is enabled
+  if (checkDistance.value) {
+    // Get course latitude and longitude
+    if (courseAddress.value !== '' || coursePostalCode.value !== '') {
+      const data = await getDawaData(courseAddress.value, coursePostalCode.value)
+      if (data.length > 0) {
+        courseLatLon.value['longitude'] = data[0].x;
+        courseLatLon.value['latitude'] = data[0].y;
+      }
+    }
+
+    // Get institution latitude and longitude
+    if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
+      const data = await getDawaData(institutionAddress.value, institutionPostalCode.value);
+      if (data.length > 0) {
+        institutionLatLon.value['longitude'] = data[0].x;
+        institutionLatLon.value['latitude'] = data[0].y;
+      }
+    }
+
+    // Calculate distance between course and institution
+    if (courseLatLon.value.latitude && courseLatLon.value.longitude && institutionLatLon.value.latitude && institutionLatLon.value.longitude) {
+      const distance = distanceBetween(
+        courseLatLon.value.latitude,
+        courseLatLon.value.longitude,
+        institutionLatLon.value.latitude,
+        institutionLatLon.value.longitude
+      );
+      const roundedDistance = distance.toFixed(2); // Rounds to 2 decimal places
+      console.log(`Distance: ${roundedDistance} km`);
+      if (roundedDistance < 6) {
+        validationMessage.value = formSettings.denied_distance.value;
+        validated.value = false;
+      } else {
+        validated.value = true;
+      }
+    } else {
+      validationMessage.value = 'Det er ikke muligt at beregne afstanden mellem institutionen og forløbet. Venligst indtast korrekte adresser eller kontakt os.';
     }
   }
 
-  // Calculate distance between course and institution
-  if (courseLatLon.value.latitude && courseLatLon.value.longitude && institutionLatLon.value.latitude && institutionLatLon.value.longitude) {
-    const distance = distanceBetween(
-      courseLatLon.value.latitude,
-      courseLatLon.value.longitude,
-      institutionLatLon.value.latitude,
-      institutionLatLon.value.longitude
-    );
-    const roundedDistance = distance.toFixed(2); // Rounds to 2 decimal places
-    console.log(`Distance: ${roundedDistance} km`);
-  } else {
-    console.log('Unable to calculate distance due to missing latitude or longitude data');
+  // If validated, set validation message
+  if (validated.value) {
+    if (institutionDistrict.value) {
+      if (institutionDistrict.value === 'district_1') {
+        validationMessage.value = formSettings.district_1.value;
+      } else if (institutionDistrict.value === 'district_2') {
+        validationMessage.value = formSettings.district_2.value;
+      } else if (institutionDistrict.value === 'district_3') {
+        validationMessage.value = formSettings.district_3.value;
+      } else if (institutionDistrict.value === 'district_4') {
+        validationMessage.value = formSettings.district_4.value;
+      } else if (institutionDistrict.value === 'district_5') {
+        validationMessage.value = formSettings.district_5.value;
+      } else {
+        validationMessage.value = formSettings.no_district.value;
+      }
+    } else {
+      validationMessage.value = formSettings.free_choice.value;
+    }
   }
 }
 
@@ -422,6 +515,7 @@ const resetForm = async () => {
   courseNotInList.value = false;
   courseName.value = '';
   courseDescription.value = '';
+  coursePurpose.value = '';
   courseAddress.value = '';
   coursePostalCode.value = '';
   courseCity.value = '';
@@ -452,12 +546,14 @@ const handleSubmit = async () => {
     errorMessage.value =
       'Der blev ikke angivet en e-mailadresse af udbyderen. Dette er ikke din fejl. Venligst kontakt udbyderen på en anden måde.';
     return;
+  } else if (emailRepeat.value !== email.value) {
+    errorMessage.value = 'E-mailadresserne er ikke ens.';
+    return;
   }
 
   isLoading.value = true;
   const trimmedFullName = fullName.value.trim();
   const trimmedEmail = email.value.trim();
-  const trimmedCourseDescription = courseDescription.value.trim();
 
   // Set field_rfc_course
   const field_rfc_course = [
@@ -469,7 +565,28 @@ const handleSubmit = async () => {
   // Set field_tpf_grade
   const field_tpf_grade = [
     {
-      target_id: selectedSchoolGrade.value,
+      value: selectedSchoolGrade.value,
+    },
+  ];
+
+  // Set field_tpf_what_course
+  const field_tpf_what_course = [
+    {
+      value: courseDescription.value,
+    },
+  ];
+
+  // Set field_tpf_purpose_course
+  const field_tpf_purpose_course = [
+    {
+      value: coursePurpose.value,
+    },
+  ];
+
+  // Set field_tpf_message
+  const field_tpf_message = [
+    {
+      value: message.value,
     },
   ];
 
@@ -477,7 +594,7 @@ const handleSubmit = async () => {
   const payload = {
     type: [
       {
-        target_id: 'free_course_request',
+        target_id: 'transport_pool_form',
       },
     ],
     field_domain_access: domains.value,
@@ -491,29 +608,9 @@ const handleSubmit = async () => {
         value: settlementDate.value,
       },
     ],
-    field_rfc_requested_amount: [
+    field_tpf_expense: [
       {
         value: requestedAmount.value,
-      },
-    ],
-    field_rfc_new_course_description: [
-      {
-        value: trimmedCourseDescription,
-      },
-    ],
-    field_rfc_new_course_name: [
-      {
-        value: courseName.value,
-      },
-    ],
-    field_rfc_course_not_found: [
-      {
-        value: false,
-      },
-    ],
-    field_rfc_grade: [
-      {
-        value: schoolClassSelect.value,
       },
     ],
     field_rfc_mail: [
@@ -521,24 +618,39 @@ const handleSubmit = async () => {
         value: trimmedEmail,
       },
     ],
-    field_receiving_class: [
-      {
-        value: false,
-      },
-    ],
     field_rfc_name: [
       {
         value: trimmedFullName,
       },
     ],
-    field_rfc_send_mail: [
+    field_tpf_institution: [
       {
-        value: true,
+        target_id: selectedInstitution.value,
       },
     ],
-    field_rfc_school: [
+    field_tpf_institution_type: [
       {
-        target_id: field_tpf_institution.value,
+        value: selectedType.value,
+      },
+    ],
+    field_location_street: [
+      {
+        value: courseAddress.value,
+      },
+    ],
+    field_location_zipcode: [
+      {
+        value: coursePostalCode.value,
+      },
+    ],
+    field_location_city: [
+      {
+        value: courseCity.value,
+      },
+    ],
+    field_tpf_participants: [
+      {
+        value: numberOfStudents.value,
       },
     ],
   };
@@ -548,9 +660,24 @@ const handleSubmit = async () => {
     payload.field_rfc_course = field_rfc_course;
   }
 
-  // If course is selected add to payload
+  // If school grade is selected add to payload
   if (selectedSchoolGrade.value) {
     payload.field_tpf_grade = field_tpf_grade;
+  }
+
+  // If course description is selected add to payload
+  if (courseDescription.value) {
+    payload.field_tpf_what_course = field_tpf_what_course;
+  }
+
+  // If course purpose is selected add to payload
+  if (courseDescription.value) {
+    payload.field_tpf_purpose_course = field_tpf_purpose_course;
+  }
+
+  // If course is selected add to payload
+  if (message.value) {
+    payload.field_tpf_message = field_tpf_message;
   }
 
   try {
@@ -621,8 +748,16 @@ if ($route.query.course) {
           v-if="courseNotInList"
           class="application-form__label"
           v-model="courseDescription"
-          name="Beskrivelse af forløbet"
-          label="Beskrivelse af forløbet"
+          name="Beskriv kort forløb og angiv formidler"
+          label="Beskriv kort forløb og angiv formidler"
+          rules="required"
+        />
+        <BaseTextareaFloatingLabel
+          v-if="courseNotInList"
+          class="application-form__label"
+          v-model="coursePurpose"
+          name="Beskriv formål med turen – 2-5 linjer om læringsmål"
+          label="Beskriv formål med turen – 2-5 linjer om læringsmål"
           rules="required"
         />
       </div>
@@ -668,7 +803,7 @@ if ($route.query.course) {
         >
         </BaseSelect>
         <BaseSelect
-          v-if="selectedType === 'school'"
+          v-if="selectedType === 'tpf_school'"
           v-model="selectedInstitution"
           :options="schoolsSelect"
           @change="handleInstitutionChange"
@@ -679,7 +814,7 @@ if ($route.query.course) {
         >
         </BaseSelect>
         <BaseSelect
-          v-if="selectedType === 'school'"
+          v-if="selectedType === 'tpf_school'"
           v-model="selectedSchoolGrade"
           :options="schoolClassSelect"
           name="Klassetrin"
@@ -688,7 +823,7 @@ if ($route.query.course) {
         >
         </BaseSelect>
         <BaseSelect
-          v-if="selectedType && selectedType !== 'school'"
+          v-if="selectedType && selectedType !== 'tpf_school'"
           v-model="selectedInstitution"
           :options="institutionsSelect"
           @change="handleInstitutionChange"
