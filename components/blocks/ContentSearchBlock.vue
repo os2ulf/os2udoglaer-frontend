@@ -531,7 +531,7 @@ const handleDatePicker = (date) => {
           >
             <div class="search-block__extra-filters-bar">
               <div class="search-block__results-found">
-                <h4>Viser {{ totalItemsFound }} forløb</h4>
+                <h4>{{ searchBlockData?.result_string }}</h4>
               </div>
               <div class="search-block__sorting">
                 <ClientOnly>

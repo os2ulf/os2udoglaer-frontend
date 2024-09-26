@@ -422,7 +422,7 @@ onMounted(() => {
           >
             <div class="search-block-provider__extra-filters-bar">
               <div class="search-block-provider__results-found">
-                <h4>Viser {{ totalItemsFound }} forløb</h4>
+                <h4>Viser {{ totalItemsFound }} udbydere</h4>
               </div>
               <div class="search-block-provider__sorting">
                 <ClientOnly>
