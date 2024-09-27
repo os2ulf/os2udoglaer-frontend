@@ -106,7 +106,6 @@ const selectedType = ref('');
 const selectedInstitution = ref('');
 const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
-const courseName = ref('');
 const courseDescription = ref('');
 const coursePurpose = ref('');
 const courseAddress = ref('');
@@ -513,7 +512,6 @@ const resetForm = async () => {
   selectedInstitution.value = '';
   selectedSchoolGrade.value = '';
   courseNotInList.value = false;
-  courseName.value = '';
   courseDescription.value = '';
   coursePurpose.value = '';
   courseAddress.value = '';
@@ -706,6 +704,7 @@ const handleSubmit = async () => {
 if ($route.query.course) {
   urlQueryCourseId.value = $route.query.course;
   fetchCourses(urlQueryCourseId.value);
+  fetchCourseContent(urlQueryCourseId.value);
 }
 </script>
 
@@ -734,15 +733,6 @@ if ($route.query.course) {
           name="course_not_in_list"
           description="Se vilkår i boksen til højre under lokale initiativer"
           label="Forløb findes ikke på listen"
-        />
-        <BaseInputFloatingLabel
-          v-if="courseNotInList"
-          class="application-form__label"
-          v-model="courseName"
-          type="text"
-          name="Forløbets navn"
-          label="Forløbets navn"
-          rules="required"
         />
         <BaseTextareaFloatingLabel
           v-if="courseNotInList"
@@ -966,7 +956,7 @@ if ($route.query.course) {
   </div>
 
   <div v-else class="application-form__success">
-    <h2>Din ansøgning er sendt</h2>
+    <div v-html="formSettings.confirmation.value"></div>
     <p><button @click="resetForm" class="button">Send en ny</button></p>
   </div>
 </template>

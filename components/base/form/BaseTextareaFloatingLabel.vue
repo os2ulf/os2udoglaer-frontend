@@ -114,7 +114,6 @@ const hasErrors = useFieldError(props.name);
 
 .form-label {
   display: block;
-  color: var(--color-primary);
 }
 
 .form-input--up + .form-label,

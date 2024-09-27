@@ -21,6 +21,9 @@ const props = defineProps({
 let freeCourseApplicationUrl = computed(() => settingsDataStore.settingsData?.free_course_application_reference);
 freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
 
+let transportApplicationUrl = computed(() => settingsDataStore.settingsData?.transport_pool_application_reference);
+transportApplicationUrl = transportApplicationUrl.value + '?course=' + props.data.id;
+
 if (props.data?.provider) {
   freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
 }
@@ -387,10 +390,13 @@ console.log('courseView', props.data);
                 data.field_target_group === 'Grundskole' &&
                 data.field_practical_info_buttons?.includes(
                   'show_transport_request',
-                )
+                ) && transportApplicationUrl
               "
               class="button--primary"
-              :button-data="{ title: 'Information om transport' }"
+              :button-data="{
+                title: 'Information om transport',
+                url: transportApplicationUrl,
+              }"
               icon-after="ext-link"
               ghost
             />
