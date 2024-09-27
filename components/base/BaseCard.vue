@@ -295,7 +295,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
             {{ data?.field_theme?.label }}
           </BaseLabel>
           <BaseLabel class="label--yellow" v-if="data?.field_is_free">
-            Gratis
+            {{ data?.field_sold_out ? 'Udsolgt' : 'Gratis' }}
           </BaseLabel>
 
           <!-- <BaseLabel class="label--light-yellow">Øvrige</BaseLabel> -->

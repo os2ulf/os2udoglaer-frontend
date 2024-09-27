@@ -240,7 +240,7 @@ console.log('course_educatorsView.vue', props.data);
               <div class="educators__tags-item" v-if="data?.field_is_free">
                 <BaseTag
                   v-if="data?.field_is_free"
-                  :data="{ label: 'Gratis' }"
+                  :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
                   color="secondary"
                 />
               </div>
@@ -266,8 +266,12 @@ console.log('course_educatorsView.vue', props.data);
                 />
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                    (data?.provider &&
+                      data?.provider.link &&
+                      !data?.field_hide_contact_form) ||
+                    (data?.corporation &&
+                      data?.corporation.link &&
+                      !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -302,7 +306,10 @@ console.log('course_educatorsView.vue', props.data);
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
         >
           <SharePage />
-          <PracticalInformation :data="practicalInfoData" />
+          <PracticalInformation
+            :data="practicalInfoData"
+            :sold-out="data?.field_sold_out"
+          />
           <div class="educators__practical-buttons">
             <BaseButton
               v-if="
@@ -322,8 +329,12 @@ console.log('course_educatorsView.vue', props.data);
             />
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                (data?.provider &&
+                  data?.provider.link &&
+                  !data?.field_hide_contact_form) ||
+                (data?.corporation &&
+                  data?.corporation.link &&
+                  !data?.field_hide_contact_form)
               "
               class="button button--ghost educators__contact-button"
               :button-data="{
@@ -435,11 +446,18 @@ console.log('course_educatorsView.vue', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" :currentUrl="currentUrl" :currentTitle="props.data?.label" :contactPersonName="props.data?.provider
-            ? props.data?.provider?.field_name
-            : props.data?.corporation
-              ? props.data?.corporation?.field_name
-              : ''" />
+        <ContactForm
+          :contactPersonEmail="contactPersonEmail"
+          :currentUrl="currentUrl"
+          :currentTitle="props.data?.label"
+          :contactPersonName="
+            props.data?.provider
+              ? props.data?.provider?.field_name
+              : props.data?.corporation
+                ? props.data?.corporation?.field_name
+                : ''
+          "
+        />
       </TheSlotModal>
     </Transition>
   </div>
