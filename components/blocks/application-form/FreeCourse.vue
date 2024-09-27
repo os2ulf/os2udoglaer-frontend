@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Field, Form } from 'vee-validate';
+import { Form } from 'vee-validate';
 import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { stripHtmlFromString } from '~/utils/stripHtml';
 
 const apiRouteStore = useApiRouteStore();
 
@@ -466,18 +467,6 @@ const handleSubmit = async () => {
   }
 };
 
-// Text area methods
-const showHelper = ref(true);
-function hideHelperText() {
-  showHelper.value = false;
-}
-
-function showHelperText() {
-  if (courseDescription.value === '') {
-    showHelper.value = true;
-  }
-}
-
 // If the course and provider are in the URL, set default values to URL query parameters
 if ($route.query.course && $route.query.provider) {
   urlQueryCourseId.value = $route.query.course;
@@ -587,43 +576,14 @@ if ($route.query.course && $route.query.provider) {
           label="Forløbets navn"
           rules="required"
         />
-        <div v-if="courseNotInList" class="application-form__textarea-wrapper">
-          <div class="application-form__textarea-container">
-            <Field
-              v-slot="{ field, errors }"
-              name="Beskrivelse af forløbet"
-              label="Beskrivelse af forløbet"
-              rules="required"
-              v-model="courseDescription"
-              :validate-on-blur="false"
-              :validate-on-input="true"
-            >
-              <textarea
-                :class="`form-input form-input--floating-label ${errors[0] ? 'application-form__styled-textarea--invalid' : ''}`"
-                v-bind="field"
-                class="application-form__label application-form__styled-textarea"
-                @focus="hideHelperText"
-                @blur="showHelperText"
-              ></textarea>
-              <Transition name="fade-input">
-                <span
-                  v-if="showHelper && !courseDescription"
-                  class="application-form__helper-text"
-                >
-                  Beskrivelse af forløbet
-                </span>
-              </Transition>
-              <Transition name="bounce">
-                <span
-                  v-if="errors[0]"
-                  class="form-validation-feedback form-validation-feedback--invalid"
-                >
-                  {{ errors[0] }}
-                </span>
-              </Transition>
-            </Field>
-          </div>
-        </div>
+        <BaseTextareaFloatingLabel
+          v-if="courseNotInList"
+          class="application-form__label"
+          v-model="courseDescription"
+          name="Beskrivelse af forløbet"
+          label="Beskrivelse af forløbet"
+          rules="required"
+        />
         <BaseSelect
           v-model="selectedCourseTerm"
           :options="courseNotInList ? subjectTermsSelect : courseTermsSelect"
@@ -692,9 +652,9 @@ if ($route.query.course && $route.query.provider) {
           v-html="props.blockData.field_information_text"
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
-          <div
-            v-html="truncateString(props.blockData.field_information_text, 155)"
-          ></div>
+          <p
+            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+          ></p>
           <NuxtLink
             class="modal__trigger"
             @click="

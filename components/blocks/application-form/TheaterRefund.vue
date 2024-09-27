@@ -3,6 +3,7 @@ import { Form } from 'vee-validate';
 import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { stripHtmlFromString } from '~/utils/stripHtml';
 
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
@@ -38,7 +39,6 @@ const phone = ref('');
 const email = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const selectedTheater = ref('');
-const courseDescription = ref('');
 const requestedAmount = ref('');
 const settlementDate = ref('');
 const errorMessage = ref('');
@@ -140,7 +140,6 @@ const resetForm = async () => {
   phone.value = '';
   email.value = '';
   selectedTheater.value = '';
-  courseDescription.value = '';
   requestedAmount.value = '';
   settlementDate.value = '';
   errorMessage.value = '';
@@ -354,18 +353,18 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
-          {{ props.blockData.field_information_text_title }}
+      <div v-if="props.blockData?.field_information_text" class="field-group">
+        <h3 v-if="props.blockData?.field_information_text_title">
+          {{ props.blockData?.field_information_text_title }}
         </h3>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
-          <div
-            v-html="truncateString(props.blockData.field_information_text, 155)"
-          ></div>
+          <p
+            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+          ></p>
           <NuxtLink
             class="modal__trigger"
             @click="
