@@ -4,13 +4,21 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
+import { useSettingsDataStore } from '~/stores/settingsData';
 
+// Stores
+const settingsDataStore = useSettingsDataStore();
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
 
 const props = defineProps({
   blockData: Object,
 });
+
+// Set arrays of site messages to use in validation
+const formSettings = {
+  confirmation: computed(() => settingsDataStore.settingsData?.tr_receipt.value),
+};
 
 // Set arrays for select options
 const schools = ref([]);
@@ -408,7 +416,7 @@ const handleSubmit = async () => {
   </div>
 
   <div v-else class="application-form__success">
-    <h2>Din ansøgning er sendt</h2>
+    <div v-html="formSettings.confirmation.value"></div>
     <p><button @click="resetForm" class="button">Send en ny</button></p>
   </div>
 </template>
