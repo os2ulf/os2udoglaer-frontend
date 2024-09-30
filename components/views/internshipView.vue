@@ -172,6 +172,14 @@ console.log('internshipView.vue', props.data);
                   color="secondary"
                 />
               </div>
+
+              <div class="internship__tags-item" v-if="data?.field_sold_out">
+                <BaseTag
+                  v-if="data?.field_sold_out"
+                  :data="{ label: 'Udsolgt' }"
+                  color="secondary"
+                />
+              </div>
             </div>
 
             <div class="internship__page-heading-wrapper">
