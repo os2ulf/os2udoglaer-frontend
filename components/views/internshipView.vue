@@ -165,11 +165,29 @@ console.log('internshipView.vue', props.data);
                   color="primary"
                 />
               </div>
+
               <div class="internship__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
                   :data="{ label: data?.field_theme?.label }"
                   color="secondary"
+                />
+              </div>
+
+              <div
+                class="educators__tags-item"
+                v-if="data?.field_banner || data?.field_industry"
+              >
+                <BaseTag
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
+                />
+
+                <BaseTag
+                  v-else-if="data?.field_industry"
+                  :data="{ label: data?.field_industry[0] }"
+                  color="primary-lighten"
                 />
               </div>
 

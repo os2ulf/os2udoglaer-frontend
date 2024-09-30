@@ -57,11 +57,20 @@ const practicalInfoData = computed(() => {
                   color="primary"
                 />
               </div>
+
               <div class="news__tags-item" v-if="data?.field_theme?.label">
                 <BaseTag
                   v-if="data?.field_theme?.label"
                   :data="{ label: data?.field_theme?.label }"
                   color="secondary"
+                />
+              </div>
+
+              <div class="news__tags-item" v-if="data?.field_banner">
+                <BaseTag
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
                 />
               </div>
             </div>
