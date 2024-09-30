@@ -266,11 +266,20 @@ console.log('courseView', props.data);
                 />
               </div>
 
-              <div class="course__tags-item" v-if="data?.field_theme">
+              <div
+                class="course__tags-item"
+                v-if="data?.field_banner || data?.field_theme"
+              >
                 <BaseTag
-                  v-if="data?.field_theme"
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
+                />
+
+                <BaseTag
+                  v-else-if="data?.field_theme"
                   :data="{ label: data?.field_theme }"
-                  color="secondary"
+                  color="primary-lighten"
                 />
               </div>
 

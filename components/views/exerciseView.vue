@@ -135,14 +135,34 @@ console.log('exerciseView', props.data);
                   color="primary"
                 />
               </div>
+
+              <div class="exercise__tags-item" v-if="data?.field_focus">
+                <BaseTag
+                  v-if="data?.field_focus"
+                  :data="{ label: data?.field_focus[0] }"
+                  color="primary-lighten"
+                />
+              </div>
+
+              <div class="exercise__tags-item" v-if="data?.field_banner">
+                <BaseTag
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
+                />
+              </div>
             </div>
             <div class="exercise__page-heading-wrapper">
               <h1 class="exercise__page-title">{{ data?.label }}</h1>
               <div class="exercise__page-heading-button-container">
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                    (data?.provider &&
+                      data?.provider.link &&
+                      !data?.field_hide_contact_form) ||
+                    (data?.corporation &&
+                      data?.corporation.link &&
+                      !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -215,8 +235,12 @@ console.log('exerciseView', props.data);
           <div class="exercise__practical-buttons">
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                (data?.provider &&
+                  data?.provider.link &&
+                  !data?.field_hide_contact_form) ||
+                (data?.corporation &&
+                  data?.corporation.link &&
+                  !data?.field_hide_contact_form)
               "
               class="button button--ghost exercise__contact-button"
               :button-data="{
@@ -312,11 +336,18 @@ console.log('exerciseView', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" :currentUrl="currentUrl" :currentTitle="props.data?.label" :contactPersonName="props.data?.provider
-            ? props.data?.provider?.field_name
-            : props.data?.corporation
-              ? props.data?.corporation?.field_name
-              : ''" />
+        <ContactForm
+          :contactPersonEmail="contactPersonEmail"
+          :currentUrl="currentUrl"
+          :currentTitle="props.data?.label"
+          :contactPersonName="
+            props.data?.provider
+              ? props.data?.provider?.field_name
+              : props.data?.corporation
+                ? props.data?.corporation?.field_name
+                : ''
+          "
+        />
       </TheSlotModal>
     </Transition>
   </div>

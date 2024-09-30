@@ -215,6 +215,75 @@ const processedSubjectOrThemeString = ref(
 );
 
 const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
+
+// Card labels
+const getStatusLabel = (data: any) => {
+  if (data?.field_sold_out) return { text: 'Udsolgt', class: 'secondary' };
+  if (data?.field_is_free) return { text: 'Gratis', class: 'secondary' };
+  return null;
+};
+
+const getBannerLabel = (data: any) => {
+  if (data?.field_banner)
+    return { text: data.field_banner, class: 'secondary-lighten' };
+  return null;
+};
+
+const getThemeLabel = (data: any) => {
+  if (data?.field_theme)
+    return { text: data.field_theme, class: 'primary-lighten' };
+  return null;
+};
+
+const getFocusLabel = (data: any) => {
+  if (data?.field_focus)
+    return { text: data.field_focus[0], class: 'primary-lighten' };
+  return null;
+};
+
+const getIndustryLabel = (data: any) => {
+  if (data?.field_industry)
+    return { text: data.field_industry[0], class: 'primary-lighten' };
+  return null;
+};
+
+const cardLabels = computed(() => {
+  const labels: any = [];
+
+  // Define label generators for different bundles
+  const bundleLabelGenerators = {
+    course: () => {
+      labels.push(getThemeLabel(props.data));
+      labels.push(getStatusLabel(props.data));
+      labels.push(getBannerLabel(props.data));
+    },
+    course_educators: () => {
+      labels.push(getThemeLabel(props.data));
+      labels.push(getStatusLabel(props.data));
+      labels.push(getBannerLabel(props.data));
+    },
+    exercise: () => {
+      labels.push(getFocusLabel(props.data));
+      labels.push(getBannerLabel(props.data));
+    },
+    news: () => {
+      labels.push(getBannerLabel(props.data));
+    },
+    internship: () => {
+      labels.push(getIndustryLabel(props.data));
+      labels.push(getStatusLabel(props.data));
+      labels.push(getBannerLabel(props.data));
+    },
+  };
+
+  // Call the relevant label generator based on the bundle type
+  const generateLabels = bundleLabelGenerators[props.data?.bundle];
+  if (generateLabels) {
+    generateLabels();
+  }
+
+  return labels.filter(Boolean);
+});
 </script>
 
 <template>
@@ -287,18 +356,17 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
           </div>
         </div>
 
-        <div
-          class="card__footer"
-          v-if="data?.field_theme || data?.field_is_free"
-        >
-          <BaseLabel class="label--green" v-if="data?.field_theme?.label">
-            {{ data?.field_theme?.label }}
-          </BaseLabel>
-          <BaseLabel class="label--yellow" v-if="data?.field_is_free">
-            {{ data?.field_sold_out ? 'Udsolgt' : 'Gratis' }}
-          </BaseLabel>
-
-          <!-- <BaseLabel class="label--light-yellow">Øvrige</BaseLabel> -->
+        <div class="card__footer" v-if="cardLabels.length > 0">
+          <BaseTag
+            v-for="(label, index) in cardLabels"
+            :key="index"
+            :color="label.class"
+            :data="{
+              label: label.text,
+            }"
+            class="card__base-tag"
+          >
+          </BaseTag>
         </div>
       </div>
     </div>
@@ -445,7 +513,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
     display: flex;
     gap: 4px;
     margin-top: auto;
-    padding-top: 24px;
+    padding-top: 18px;
     flex-wrap: wrap;
   }
 
@@ -454,6 +522,10 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
   }
   ul {
     margin: 0;
+  }
+
+  &__base-tag {
+    margin-top: 6px;
   }
 }
 </style>
