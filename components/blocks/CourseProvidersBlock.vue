@@ -283,6 +283,10 @@ const handleSortingChange = (item) => {
   };
 };
 
+const searchResultSuffix = computed(() => {
+  return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
+});
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
@@ -422,7 +426,7 @@ onMounted(() => {
           >
             <div class="search-block-provider__extra-filters-bar">
               <div class="search-block-provider__results-found">
-                <h4>Viser {{ totalItemsFound }} udbydere</h4>
+                <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
               </div>
               <div class="search-block-provider__sorting">
                 <ClientOnly>
