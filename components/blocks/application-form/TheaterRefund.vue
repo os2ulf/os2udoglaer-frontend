@@ -272,7 +272,6 @@ const handleSubmit = async () => {
           v-model="selectedSchool"
           :options="schoolsSelect"
           name="Skole"
-          label="Skole"
           selectLabel="Vælg skole"
           rules="required"
         >
@@ -317,7 +316,6 @@ const handleSubmit = async () => {
           v-model="selectedTheater"
           :options="theatersSelect"
           name="Teater"
-          label="Teater"
           selectLabel="Vælg teater"
           rules="required"
         >

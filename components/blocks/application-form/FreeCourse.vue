@@ -499,7 +499,6 @@ if ($route.query.course && $route.query.provider) {
           v-model="selectedSchool"
           :options="schoolsSelect"
           name="Skole"
-          label="Skole"
           selectLabel="Vælg skole"
           rules="required"
         >
@@ -520,7 +519,6 @@ if ($route.query.course && $route.query.provider) {
           name="Modtageklasse"
           label="Modtageklasse"
           description="Sæt kryds her, hvis klassen er en modtageklasse"
-          rules=""
         />
         <BaseInputFloatingLabel
           class="application-form__label"
@@ -555,7 +553,6 @@ if ($route.query.course && $route.query.provider) {
           :options="providersSelect"
           :model-value="urlQueryProviderId"
           name="Udbyder"
-          label="Udbyder"
           selectLabel="Vælg udbyder"
           rules="required"
         >
@@ -567,7 +564,6 @@ if ($route.query.course && $route.query.provider) {
           :options="coursesSelect"
           :model-value="urlQueryCourseId"
           name="Forløb"
-          label="Forløb"
           selectLabel="Vælg forløb"
           rules="required"
         >
@@ -601,7 +597,6 @@ if ($route.query.course && $route.query.provider) {
           v-model="selectedCourseTerm"
           :options="courseNotInList ? subjectTermsSelect : courseTermsSelect"
           name="Emneområde"
-          label="Emneområde"
           selectLabel="Vælg emneområde"
           rules="required"
         >

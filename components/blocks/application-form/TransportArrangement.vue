@@ -768,7 +768,6 @@ if ($route.query.course) {
           :model-value="urlQueryCourseId"
           @change="handleCourseChange"
           name="Forløb"
-          label="Forløb"
           selectLabel="Vælg forløb"
           rules="required"
         >
@@ -836,7 +835,6 @@ if ($route.query.course) {
           :options="typeSelect"
           @change="handleTypeChange"
           name="Type"
-          label="Type"
           rules="required"
         >
         </BaseSelect>
