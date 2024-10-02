@@ -19,7 +19,9 @@ const $route = useRoute();
 
 // Set arrays of site messages to use in validation
 const formSettings = {
-  confirmation: computed(() => settingsDataStore.settingsData?.ufcr_receipt.value),
+  confirmation: computed(
+    () => settingsDataStore.settingsData?.ufcr_receipt.value,
+  ),
 };
 
 // Set arrays for select options
@@ -142,7 +144,9 @@ const fetchCourses = async (uid) => {
   coursesSelect.value = [];
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/courses/primary-school/' + uid,
+      apiRouteStore.apiRouteEndpoint +
+        '/rest-export/courses/primary-school/' +
+        uid,
       {
         method: 'GET',
         headers: {
@@ -172,7 +176,9 @@ const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/content-subject-terms/' + nid,
+      apiRouteStore.apiRouteEndpoint +
+        '/rest-export/content-subject-terms/' +
+        nid,
       {
         method: 'GET',
         headers: {
@@ -362,7 +368,7 @@ const handleSubmit = async () => {
     },
   ];
 
-// Payload
+  // Payload
   const payload = {
     type: [
       {
@@ -660,7 +666,12 @@ if ($route.query.course && $route.query.provider) {
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
           <p
-            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+            v-html="
+              truncateString(
+                stripHtmlFromString(props.blockData.field_information_text),
+                155,
+              )
+            "
           ></p>
           <NuxtLink
             class="modal__trigger"
@@ -714,7 +725,7 @@ if ($route.query.course && $route.query.provider) {
   flex-flow: column;
 
   .field-group {
-    margin-bottom: 32px;
+    margin-bottom: 62px;
   }
 
   form {

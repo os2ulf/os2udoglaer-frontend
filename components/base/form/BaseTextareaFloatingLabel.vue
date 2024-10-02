@@ -121,6 +121,11 @@ const hasErrors = useFieldError(props.name);
   color: var(--color-primary);
 }
 
+.form-input--floating-label.form-input--up ~ .form-label,
+.form-input--floating-label:focus ~ .form-label {
+  color: var(--color-primary);
+}
+
 .form-description {
   padding-right: 26px;
   padding-left: 26px;

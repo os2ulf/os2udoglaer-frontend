@@ -19,17 +19,29 @@ const $route = useRoute();
 
 // Set arrays of site messages to use in validation
 const formSettings = {
-  free_choice: computed(() => settingsDataStore.settingsData?.free_choice.value),
-  course_not_found: computed(() => settingsDataStore.settingsData?.course_not_found.value),
+  free_choice: computed(
+    () => settingsDataStore.settingsData?.free_choice.value,
+  ),
+  course_not_found: computed(
+    () => settingsDataStore.settingsData?.course_not_found.value,
+  ),
   district_1: computed(() => settingsDataStore.settingsData?.district_1.value),
   district_2: computed(() => settingsDataStore.settingsData?.district_2.value),
   district_3: computed(() => settingsDataStore.settingsData?.district_3.value),
   district_4: computed(() => settingsDataStore.settingsData?.district_4.value),
   district_5: computed(() => settingsDataStore.settingsData?.district_5.value),
-  no_district: computed(() => settingsDataStore.settingsData?.no_district.value),
-  denied_distance: computed(() => settingsDataStore.settingsData?.denied_distance.value),
-  denied_private: computed(() => settingsDataStore.settingsData?.denied_private.value),
-  confirmation: computed(() => settingsDataStore.settingsData?.confirmation.value),
+  no_district: computed(
+    () => settingsDataStore.settingsData?.no_district.value,
+  ),
+  denied_distance: computed(
+    () => settingsDataStore.settingsData?.denied_distance.value,
+  ),
+  denied_private: computed(
+    () => settingsDataStore.settingsData?.denied_private.value,
+  ),
+  confirmation: computed(
+    () => settingsDataStore.settingsData?.confirmation.value,
+  ),
 };
 
 // Set arrays for select options
@@ -69,7 +81,7 @@ const schoolClassAllowed = ref([
   'grade_4',
   'grade_5',
   'special_in',
-  'special_intermediate'
+  'special_intermediate',
 ]);
 const institutions = ref([]);
 const institutionsSelect = ref([]);
@@ -166,7 +178,10 @@ const fetchCourseContent = async (nid: any) => {
   courseWhoCanApply.value = '';
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/node/' + nid + '?format=json&region=content',
+      apiRouteStore.apiRouteEndpoint +
+        '/node/' +
+        nid +
+        '?format=json&region=content',
       {
         method: 'GET',
         headers: {
@@ -184,25 +199,32 @@ const fetchCourseContent = async (nid: any) => {
   if (courseContent.value.content.field_location_street) {
     courseAddress.value = courseContent.value.content.field_location_street;
   } else if (courseContent.value.content.provider?.field_location_street) {
-    courseAddress.value = courseContent.value.content.provider?.field_location_street;
+    courseAddress.value =
+      courseContent.value.content.provider?.field_location_street;
   } else if (courseContent.value.content.corporation?.field_location_street) {
-    courseAddress.value = courseContent.value.content.corporation?.field_location_street;
+    courseAddress.value =
+      courseContent.value.content.corporation?.field_location_street;
   }
   if (courseContent.value.content.field_location_zipcode) {
     coursePostalCode.value = courseContent.value.content.field_location_zipcode;
   } else if (courseContent.value.content.provider?.field_location_zipcode) {
-    coursePostalCode.value = courseContent.value.content.provider?.field_location_zipcode;
+    coursePostalCode.value =
+      courseContent.value.content.provider?.field_location_zipcode;
   } else if (courseContent.value.content.corporation?.field_location_zipcode) {
-    coursePostalCode.value = courseContent.value.content.corporation?.field_location_zipcode;
+    coursePostalCode.value =
+      courseContent.value.content.corporation?.field_location_zipcode;
   }
   if (courseContent.value.content.field_location_city) {
     courseCity.value = courseContent.value.content.field_location_city;
   } else if (courseContent.value.content.provider?.field_location_city) {
-    courseCity.value = courseContent.value.content.provider?.field_location_city;
+    courseCity.value =
+      courseContent.value.content.provider?.field_location_city;
   } else if (courseContent.value.content.corporation?.field_location_city) {
-    courseCity.value = courseContent.value.content.corporation?.field_location_city;
+    courseCity.value =
+      courseContent.value.content.corporation?.field_location_city;
   }
-  courseWhoCanApply.value = courseContent.value.content?.field_tpf_who_get_support;
+  courseWhoCanApply.value =
+    courseContent.value.content?.field_tpf_who_get_support;
 };
 
 // Fetch schools
@@ -258,12 +280,15 @@ const fetchUserContent = async (uid: any) => {
 
   // Set address, postal code and city from user content.
   if (userContent.value[0].field_location_street) {
-    institutionAddress.value = userContent.value[0].field_location_street[0].value;
+    institutionAddress.value =
+      userContent.value[0].field_location_street[0].value;
   }
   if (userContent.value[0].field_location_zipcode) {
-    institutionPostalCode.value = userContent.value[0].field_location_zipcode[0].value;
+    institutionPostalCode.value =
+      userContent.value[0].field_location_zipcode[0].value;
   }
-  institutionPrivateMunicipal.value = userContent.value[0].field_private_municipal[0].value;
+  institutionPrivateMunicipal.value =
+    userContent.value[0].field_private_municipal[0].value;
   institutionDistrict.value = userContent.value[0].field_district[0].value;
 };
 
@@ -299,8 +324,8 @@ const fetchInstitutions = async (type: any) => {
 };
 
 // Calculate distance between two coordinates
-const distanceBetween = (lat1, lon1, lat2, lon2)  => {
-  const toRadians = angle => angle * (Math.PI / 180); // Converts degrees to radians
+const distanceBetween = (lat1, lon1, lat2, lon2) => {
+  const toRadians = (angle) => angle * (Math.PI / 180); // Converts degrees to radians
   const R = 6371; // Radius of the Earth in kilometers (use 3959 for miles)
 
   const dLat = toRadians(lat2 - lat1);
@@ -308,16 +333,19 @@ const distanceBetween = (lat1, lon1, lat2, lon2)  => {
   const lat1Rad = toRadians(lat1);
   const lat2Rad = toRadians(lat2);
 
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1Rad) *
+      Math.cos(lat2Rad) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   const distance = R * c; // Distance in kilometers
 
   return distance;
-}
+};
 
 // Fetch data from DAWA API
 const getDawaData = async (queryRaw: any, postalCode: any) => {
@@ -325,15 +353,12 @@ const getDawaData = async (queryRaw: any, postalCode: any) => {
   if (query !== null && postalCode !== null) {
     const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}*&postnr=${postalCode}&per_side=1&struktur=mini`;
     try {
-      const response = await fetch(
-        dawaUrl,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(dawaUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
       if (!response.ok) throw new Error(response.status);
       return response.json();
     } catch (error) {
@@ -395,7 +420,10 @@ const handleValidation = async (event: any) => {
   const checkDistance = ref(true);
 
   console.log('courseWhoCanApply: ', courseWhoCanApply.value);
-  console.log('institutionPrivateMunicipal: ', institutionPrivateMunicipal.value);
+  console.log(
+    'institutionPrivateMunicipal: ',
+    institutionPrivateMunicipal.value,
+  );
   console.log('selectedSchoolGrade: ', selectedSchoolGrade.value);
   console.log('selectedType: ', selectedType.value);
   console.log('courseAddress: ', courseAddress.value);
@@ -404,14 +432,22 @@ const handleValidation = async (event: any) => {
   console.log('courseNotInList: ', courseNotInList.value);
 
   // If private institution and municipal course, or private institution and course not in list
-  if ((institutionPrivateMunicipal.value === 'private' && courseWhoCanApply.value === 'municipal') || (institutionPrivateMunicipal.value === 'private' && courseNotInList.value)) {
+  if (
+    (institutionPrivateMunicipal.value === 'private' &&
+      courseWhoCanApply.value === 'municipal') ||
+    (institutionPrivateMunicipal.value === 'private' && courseNotInList.value)
+  ) {
     validationMessage.value = formSettings.denied_private.value;
     validated.value = false;
     checkDistance.value = false;
 
-  // If private institution and for all course, or municipal institution and municipal course
-  } else if ((institutionPrivateMunicipal.value === 'private' && courseWhoCanApply.value === 'all') || (institutionPrivateMunicipal.value === 'municipal' && courseWhoCanApply.value === 'municipal')) {
-
+    // If private institution and for all course, or municipal institution and municipal course
+  } else if (
+    (institutionPrivateMunicipal.value === 'private' &&
+      courseWhoCanApply.value === 'all') ||
+    (institutionPrivateMunicipal.value === 'municipal' &&
+      courseWhoCanApply.value === 'municipal')
+  ) {
     // If school
     if (selectedType.value === 'tpf_school') {
       if (schoolClassAllowed.value.includes(selectedSchoolGrade.value)) {
@@ -419,7 +455,7 @@ const handleValidation = async (event: any) => {
         checkDistance.value = false;
       }
 
-    // If institution
+      // If institution
     } else {
       validated.value = true;
     }
@@ -429,7 +465,10 @@ const handleValidation = async (event: any) => {
   if (checkDistance.value) {
     // Get course latitude and longitude
     if (courseAddress.value !== '' || coursePostalCode.value !== '') {
-      const data = await getDawaData(courseAddress.value, coursePostalCode.value)
+      const data = await getDawaData(
+        courseAddress.value,
+        coursePostalCode.value,
+      );
       if (data.length > 0) {
         courseLatLon.value['longitude'] = data[0].x;
         courseLatLon.value['latitude'] = data[0].y;
@@ -438,7 +477,10 @@ const handleValidation = async (event: any) => {
 
     // Get institution latitude and longitude
     if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
-      const data = await getDawaData(institutionAddress.value, institutionPostalCode.value);
+      const data = await getDawaData(
+        institutionAddress.value,
+        institutionPostalCode.value,
+      );
       if (data.length > 0) {
         institutionLatLon.value['longitude'] = data[0].x;
         institutionLatLon.value['latitude'] = data[0].y;
@@ -446,12 +488,17 @@ const handleValidation = async (event: any) => {
     }
 
     // Calculate distance between course and institution
-    if (courseLatLon.value.latitude && courseLatLon.value.longitude && institutionLatLon.value.latitude && institutionLatLon.value.longitude) {
+    if (
+      courseLatLon.value.latitude &&
+      courseLatLon.value.longitude &&
+      institutionLatLon.value.latitude &&
+      institutionLatLon.value.longitude
+    ) {
       const distance = distanceBetween(
         courseLatLon.value.latitude,
         courseLatLon.value.longitude,
         institutionLatLon.value.latitude,
-        institutionLatLon.value.longitude
+        institutionLatLon.value.longitude,
       );
       const roundedDistance = distance.toFixed(2); // Rounds to 2 decimal places
       console.log(`Distance: ${roundedDistance} km`);
@@ -462,7 +509,8 @@ const handleValidation = async (event: any) => {
         validated.value = true;
       }
     } else {
-      validationMessage.value = 'Det er ikke muligt at beregne afstanden mellem institutionen og forløbet. Venligst indtast korrekte adresser eller kontakt os.';
+      validationMessage.value =
+        'Det er ikke muligt at beregne afstanden mellem institutionen og forløbet. Venligst indtast korrekte adresser eller kontakt os.';
     }
   }
 
@@ -486,7 +534,7 @@ const handleValidation = async (event: any) => {
       validationMessage.value = formSettings.free_choice.value;
     }
   }
-}
+};
 
 // Set settlement date on date change
 const settlementDateChange = async (event: any) => {
@@ -588,7 +636,7 @@ const handleSubmit = async () => {
     },
   ];
 
-// Payload
+  // Payload
   const payload = {
     type: [
       {
@@ -913,7 +961,12 @@ if ($route.query.course) {
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
           <p
-            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+            v-html="
+              truncateString(
+                stripHtmlFromString(props.blockData.field_information_text),
+                155,
+              )
+            "
           ></p>
           <NuxtLink
             class="modal__trigger"
@@ -967,7 +1020,7 @@ if ($route.query.course) {
   flex-flow: column;
 
   .field-group {
-    margin-bottom: 32px;
+    margin-bottom: 62px;
   }
 
   form {

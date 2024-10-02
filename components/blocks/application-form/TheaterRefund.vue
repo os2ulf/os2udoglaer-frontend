@@ -17,7 +17,9 @@ const props = defineProps({
 
 // Set arrays of site messages to use in validation
 const formSettings = {
-  confirmation: computed(() => settingsDataStore.settingsData?.tr_receipt.value),
+  confirmation: computed(
+    () => settingsDataStore.settingsData?.tr_receipt.value,
+  ),
 };
 
 // Set arrays for select options
@@ -371,7 +373,12 @@ const handleSubmit = async () => {
         ></div>
         <div v-if="props.blockData.field_show_in_modal">
           <p
-            v-html="truncateString(stripHtmlFromString(props.blockData.field_information_text), 155)"
+            v-html="
+              truncateString(
+                stripHtmlFromString(props.blockData.field_information_text),
+                155,
+              )
+            "
           ></p>
           <NuxtLink
             class="modal__trigger"
@@ -427,7 +434,7 @@ const handleSubmit = async () => {
   flex-flow: column;
 
   .field-group {
-    margin-bottom: 32px;
+    margin-bottom: 62px;
   }
 
   form {
