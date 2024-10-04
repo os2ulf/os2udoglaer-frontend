@@ -83,6 +83,7 @@ const practicalInfoData = computed(() => {
                   icon-after="arrow-right"
                   :button-data="{ title: 'Find forløb' }"
                   class="button button--secondary"
+                  role="button"
                 />
               </div>
             </div>

@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
   },
-
   devtools: {
     enabled: true,
 
@@ -37,6 +36,9 @@ export default defineNuxtConfig({
           async: true,
         },
       ],
+      htmlAttrs: {
+        lang: 'da',
+      },
     },
   },
 

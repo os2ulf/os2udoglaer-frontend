@@ -8,7 +8,8 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'Maintenance in progress',
+      content:
+        'Vi beklager, vi udfører i øjeblikket vedligeholdelse. Kom venligst tilbage senere.',
     },
     {
       name: 'robots',
@@ -25,8 +26,8 @@ useHead({
         <div class="maintenance__wrapper">
           <h1 class="maintenance__heading">Maintenance in progress</h1>
           <p class="maintenance__subtext">
-            We're sorry, we're currently performing maintenance. Please check
-            back later.
+            Vi beklager, vi udfører i øjeblikket vedligeholdelse. Kom venligst
+            tilbage senere.
           </p>
         </div>
       </div>
@@ -36,6 +37,8 @@ useHead({
 
 <style lang="postcss" scoped>
 .maintenance {
+  color: var(--theme-color);
+
   &__wrapper {
     margin-top: 20px;
   }

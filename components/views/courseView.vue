@@ -244,8 +244,6 @@ const contactPersonEmail = ref(
 const currentUrl = computed(() => {
   return process.client ? window.location.href : '';
 });
-
-console.log('courseView', props.data);
 </script>
 
 <template>
@@ -309,6 +307,7 @@ console.log('courseView', props.data);
                   }"
                   @click="scrollTo('course-registration')"
                   class="button button--secondary"
+                  role="button"
                 />
                 <BaseButton
                   v-if="
@@ -328,6 +327,7 @@ console.log('courseView', props.data);
                         : '',
                   }"
                   @click="showModal = true"
+                  role="button"
                 />
               </div>
             </div>
@@ -392,6 +392,7 @@ console.log('courseView', props.data);
               @click="scrollTo('course-registration')"
               icon-after="arrow-right"
               class="button button--secondary"
+              role="button"
             />
             <BaseButton
               v-if="
@@ -411,6 +412,7 @@ console.log('courseView', props.data);
                     : '',
               }"
               @click="showModal = true"
+              role="button"
             />
             <BaseButton
               v-if="
@@ -427,6 +429,7 @@ console.log('courseView', props.data);
               }"
               icon-after="ext-link"
               ghost
+              role="button"
             />
             <BaseButton
               v-if="
@@ -443,6 +446,7 @@ console.log('courseView', props.data);
               }"
               icon-after="ext-link"
               ghost
+              role="button"
             />
           </div>
         </div>

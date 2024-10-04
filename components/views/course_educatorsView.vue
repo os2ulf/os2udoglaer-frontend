@@ -210,8 +210,6 @@ const contactPersonEmail = ref(
 const currentUrl = computed(() => {
   return process.client ? window.location.href : '';
 });
-
-console.log('course_educatorsView.vue', props.data);
 </script>
 
 <template>
@@ -272,6 +270,7 @@ console.log('course_educatorsView.vue', props.data);
                   }"
                   @click="scrollTo('course-registration')"
                   class="button button--secondary"
+                  role="button"
                 />
                 <BaseButton
                   v-if="
@@ -291,6 +290,7 @@ console.log('course_educatorsView.vue', props.data);
                         : '',
                   }"
                   @click="showModal = true"
+                  role="button"
                 />
               </div>
             </div>
@@ -335,6 +335,7 @@ console.log('course_educatorsView.vue', props.data);
               @click="scrollTo('course-registration')"
               icon-after="arrow-right"
               class="button button--secondary"
+              role="button"
             />
             <BaseButton
               v-if="
@@ -354,6 +355,7 @@ console.log('course_educatorsView.vue', props.data);
                     : '',
               }"
               @click="showModal = true"
+              role="button"
             />
           </div>
         </div>

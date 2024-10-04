@@ -9,8 +9,6 @@ const props = defineProps({
     default: true,
   },
 });
-
-console.log('image', props.image);
 </script>
 
 <template>

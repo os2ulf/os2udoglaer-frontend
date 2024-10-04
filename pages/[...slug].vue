@@ -80,7 +80,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: openGraph.value.description?.attributes?.content,
+      content: openGraph.value.og_description?.attributes?.content,
     },
     { name: 'robots', content: openGraph.value.robots?.attributes?.content },
     {
@@ -335,6 +335,14 @@ useHead({
       ),
     },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
+    {
+      rel: 'alternate',
+      hreflang: 'da-dk',
+      href: seoCanonicalUrlHandler(
+        openGraph.value.canonical_url?.attributes?.href,
+        viewData?.is_frontpage,
+      ),
+    },
   ],
 });
 </script>
