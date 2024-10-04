@@ -25,7 +25,7 @@ useHead({
         <div class="forbidden__wrapper">
           <h1 class="forbidden__heading">Forbidden</h1>
           <p class="forbidden__subtext">
-            You don't have permission to access this page.
+            Du har ikke tilladelse til at få adgang til denne side.
           </p>
         </div>
       </div>
@@ -35,6 +35,8 @@ useHead({
 
 <style lang="postcss" scoped>
 .forbidden {
+  color: var(--theme-color);
+
   &__wrapper {
     margin-top: 20px;
   }

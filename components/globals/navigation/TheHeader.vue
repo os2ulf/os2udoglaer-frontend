@@ -162,6 +162,7 @@ onBeforeUnmount(() => {
               }"
               @click="handleNavigationItemClick(item)"
               :aria-label="'Link til ' + item.title"
+              :role="!item?.link?.url ? 'button' : ''"
             >
               <button class="header__link-text">
                 {{ item.title }}

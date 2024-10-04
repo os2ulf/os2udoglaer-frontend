@@ -73,6 +73,7 @@ const closeOffCanvas = () => {
                   : 'javascript:void(0)'
               "
               :aria-label="'Link til ' + metaItem?.title"
+              :role="!metaItem.url ? 'button' : ''"
               @click="handleNavigationItemClick(metaItem)"
             >
               <div class="meta-menu__item-wrapper">

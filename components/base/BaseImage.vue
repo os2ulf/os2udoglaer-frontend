@@ -19,7 +19,11 @@ const props = defineProps({
       </template>
       <img
         :src="image?.img_element?.uri"
-        :alt="image?.img_element?.alt ? image?.img_element?.alt : image?.label"
+        :alt="
+          image?.img_element?.alt
+            ? image?.img_element?.alt
+            : image?.label || 'bilede'
+        "
         loading="lazy"
         :width="image?.width"
         :height="image?.height"

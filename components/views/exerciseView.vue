@@ -114,8 +114,6 @@ const contactPersonEmail = ref(
 const currentUrl = computed(() => {
   return process.client ? window.location.href : '';
 });
-
-console.log('exerciseView', props.data);
 </script>
 
 <template>
@@ -173,6 +171,7 @@ console.log('exerciseView', props.data);
                         : '',
                   }"
                   @click="showModal = true"
+                  role="button"
                 />
               </div>
             </div>
@@ -251,6 +250,7 @@ console.log('exerciseView', props.data);
                     : '',
               }"
               @click="showModal = true"
+              role="button"
             />
           </div>
         </div>
