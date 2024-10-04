@@ -17,6 +17,11 @@ useHead({
     },
   ],
 });
+
+// Attempt to redirect to homepage every 30s
+setTimeout(() => {
+  window.location.href = '/';
+}, 30000);
 </script>
 
 <template>
@@ -24,7 +29,7 @@ useHead({
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="maintenance__wrapper">
-          <h1 class="maintenance__heading">Maintenance in progress</h1>
+          <h1 class="maintenance__heading">Maintenance in Progress</h1>
           <p class="maintenance__subtext">
             Vi beklager, vi udfører i øjeblikket vedligeholdelse. Kom venligst
             tilbage senere.
