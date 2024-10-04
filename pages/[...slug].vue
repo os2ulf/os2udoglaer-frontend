@@ -335,14 +335,6 @@ useHead({
       ),
     },
     { rel: 'image_src', href: openGraph.value.image_src?.attributes?.href },
-    {
-      rel: 'alternate',
-      hreflang: 'da',
-      href: seoCanonicalUrlHandler(
-        openGraph.value.canonical_url?.attributes?.href,
-        viewData?.is_frontpage,
-      ),
-    },
   ],
 });
 </script>
