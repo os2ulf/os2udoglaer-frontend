@@ -20,7 +20,7 @@ const isLoading = ref(true);
 const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');
 const dynamicContent = ref(searchBlockData?.value?.results);
-const totalItemsFound = ref(searchBlockData?.value?.pager?.items);
+const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
 const allSortingOptions = ref(searchBlockData?.value?.facets);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
@@ -115,7 +115,7 @@ const getFilteredPageResults = async (
     const data = await response.json();
 
     dynamicContent.value = data.results;
-    totalItemsFound.value = data.pager.items;
+    searchResultString.value = data.result_string;
     pager.value = data.pager;
     allSortingOptions.value = data.facets;
   } catch (error) {
@@ -297,7 +297,7 @@ const handleExtractedFilters = async () => {
     const data = await response.json();
 
     dynamicContent.value = data.results;
-    totalItemsFound.value = data.pager.items;
+    searchResultString.value = data.result_string;
     pager.value = data.pager;
     allSortingOptions.value = data.facets;
     isLoading.value = false;
@@ -531,7 +531,7 @@ const handleDatePicker = (date) => {
           >
             <div class="search-block__extra-filters-bar">
               <div class="search-block__results-found">
-                <h4>{{ searchBlockData?.result_string }}</h4>
+                <h4>{{ searchResultString }}</h4>
               </div>
               <div class="search-block__sorting">
                 <ClientOnly>
