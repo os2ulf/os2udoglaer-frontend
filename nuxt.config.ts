@@ -4,6 +4,12 @@ import postcssConfig from '@novicell/postcss-config';
 export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
+    cache: {
+      '/': {
+        swr: true,
+        maxAge: 150,
+      },
+    },
   },
   devtools: {
     enabled: true,
@@ -15,6 +21,7 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
+    prefetchLinks: true,
 
     head: {
       meta: [
@@ -94,7 +101,17 @@ export default defineNuxtConfig({
 
   optimization: {
     splitChunks: {
-      maxSize: 300000,
+      chunks: 'all',
+      maxSize: 250000,
+      cacheGroups: {
+        default: false,
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: -10,
+        },
+      },
     },
   },
 });
