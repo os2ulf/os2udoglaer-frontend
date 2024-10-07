@@ -71,6 +71,9 @@ Add these to .env file
 ```bash
 # A root endpoint to the API backend server
 API_BASE_URL = ""
+LOCAL_API_BASE_URL="" # BE staging endpooint
+REST_API_USER=""
+REST_API_USER_PASS=""
 ```
 
 # Useless incrementor
