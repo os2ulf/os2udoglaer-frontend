@@ -187,6 +187,11 @@ const handleSubmit = async () => {
         target_id: 'theater_refund',
       },
     ],
+    field_mailto: [
+      {
+        value: mailTo.value,
+      },
+    ],
     field_domain_access: domains.value,
     field_rfc_date: [
       {
