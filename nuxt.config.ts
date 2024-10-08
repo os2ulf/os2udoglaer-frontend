@@ -5,9 +5,9 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
   },
+
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true,
     },
@@ -26,17 +26,7 @@ export default defineNuxtConfig({
           content: "script-src 'self';",
         },
       ],
-      link: [{ rel: 'preconnect', href: 'https://consent.cookiebot.com' }],
-      script: [
-        {
-          id: 'Cookiebot',
-          src: 'https://consent.cookiebot.com/uc.js',
-          'data-cbid': '226ecb7b-1eba-45cf-a066-6c4a0ce13318',
-          'data-framework': 'IAB',
-          type: 'text/javascript',
-          async: true,
-        },
-      ],
+
       htmlAttrs: {
         lang: 'da',
       },
@@ -87,11 +77,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: [
-    ['@nuxtjs/robots', { configPath: '~/config/robots.config' }],
-    '@pinia/nuxt',
-    'nuxt-icons',
-  ],
+  modules: ['@pinia/nuxt', 'nuxt-icons'],
 
   optimization: {
     splitChunks: {
