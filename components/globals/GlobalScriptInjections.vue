@@ -41,7 +41,7 @@ const loadCookieService = (cookieServiceType: string) => {
   let scriptSrc = '';
   let scriptAttributes: Record<string, string> = {};
 
-  console.log('Loading cookie service:', cookieServiceType);
+  console.log('Loading cookie service now:', cookieServiceType);
 
   if (cookieServiceType === 'cookiebot') {
     scriptSrc = 'https://consent.cookiebot.com/uc.js';
@@ -56,6 +56,7 @@ const loadCookieService = (cookieServiceType: string) => {
     scriptAttributes = {
       id: 'CookieConsent',
       'data-culture': 'DA',
+      'data-gcm-version': '2.0',
       type: 'text/javascript',
     };
   } else {
