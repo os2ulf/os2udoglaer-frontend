@@ -4,12 +4,6 @@ import postcssConfig from '@novicell/postcss-config';
 export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
-    cache: {
-      '/': {
-        swr: true,
-        maxAge: 150,
-      },
-    },
   },
   devtools: {
     enabled: true,
