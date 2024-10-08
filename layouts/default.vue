@@ -6,5 +6,5 @@
   </div>
   <TheFooterParent />
   <TheModal />
-  <SiteTracking />
+  <GlobalScriptInjections />
 </template>
