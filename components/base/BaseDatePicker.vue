@@ -130,7 +130,8 @@ onUnmounted(() => {
   }
 
   &__trigger {
-    display: block;
+    display: flex;
+    align-items: center;
     text-align: left;
     width: 100%;
     border: 1px solid #707070;
