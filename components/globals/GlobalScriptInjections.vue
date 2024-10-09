@@ -1,94 +1,69 @@
 <script setup lang="ts">
 import { useSettingsDataStore } from '~/stores/settingsData';
 const settingsDataStore = useSettingsDataStore();
+const settingsData = ref(settingsDataStore.settingsData);
 
-const { useRegion } = useRegionApi();
-
-const { data } = await useAsyncData('settings', () =>
-  useRegion('settings').catch((err) => {
-    console.error('Failed to fetch settings', err);
-  }),
-);
-
-if (settingsDataStore.settingsData === null) {
-  settingsDataStore.setSettingsData(data.value.settings);
+if (settingsData.value === null) {
+  settingsDataStore.getSettingsData().then(() => {
+    settingsData.value = settingsDataStore.settingsData;
+  });
 }
 
-if (data.value?.settings.site_tracking_script !== null) {
-  const scriptSrcFull = ref(data.value?.settings.site_tracking_script.trim());
+const data = ref(settingsData.value);
+const cookieScript = ref(data.value?.site_cookie_script);
+const isCookieScriptLoaded = ref(false);
+const siteTrackingScript = ref(data.value?.site_tracking_script);
 
-  const extractScriptSrc = (scriptString: string) => {
-    const srcMatch = scriptString.match(/src=['"]?([^'"> ]+)['"]?/i);
-    return srcMatch ? srcMatch[1] : '';
+const injectScript = (scriptString: string, scriptType: string) => {
+  // Extracting the src and other attributes from the script string
+  const scriptTagRegex = /<script\s+([^>]*)>(.*?)<\/script>/i;
+  const attrRegex = /(\w+[-\w]*)=["']([^"']+)["']/g;
+
+  const matches = scriptString.match(scriptTagRegex);
+  if (!matches) {
+    console.error('Invalid script string');
+    return;
+  }
+
+  const attributesString = matches[1]; // The attributes inside the script tag
+  const scriptAttributes = {};
+
+  let match;
+  while ((match = attrRegex.exec(attributesString)) !== null) {
+    scriptAttributes[match[1]] = match[2];
+  }
+
+  const headScript = {
+    src: scriptAttributes.src,
+    async: scriptAttributes.async === 'true',
+    ...(scriptAttributes.id && { id: scriptAttributes.id }), // optional id
+    ...(scriptAttributes.type && { type: scriptAttributes.type }), // optional type
+    ...(scriptAttributes['data-*'] && { 'data-*': scriptAttributes['data-*'] }), // data attributes
   };
 
-  let scriptSrc = extractScriptSrc(scriptSrcFull.value);
-
+  // Inject the script using useHead
   useHead({
-    script: [
-      {
-        src: scriptSrc,
-        async: true,
-      },
-    ],
-  });
-}
-
-const serviceType = ref('cookieinformation'); // or 'cookieinformation' TODO: Make a checker
-const cookieToken = ref('226ecb7b-1eba-45cf-a066-6c4a0ce13318');
-
-const loadCookieService = (cookieServiceType: string) => {
-  let scriptSrc = '';
-  let scriptAttributes: Record<string, string> = {};
-
-  console.log('Loading cookie service now:', cookieServiceType);
-
-  if (cookieServiceType === 'cookiebot') {
-    scriptSrc = 'https://consent.cookiebot.com/uc.js';
-    scriptAttributes = {
-      'data-cbid': cookieToken.value,
-      'data-framework': 'IAB',
-      'data-blockingmode': 'auto',
-      type: 'text/javascript',
-    };
-  } else if (cookieServiceType === 'cookieinformation') {
-    scriptSrc = 'https://policy.app.cookieinformation.com/uc.js';
-    scriptAttributes = {
-      id: 'CookieConsent',
-      'data-culture': 'DA',
-      'data-gcm-version': '2.0',
-      type: 'text/javascript',
-    };
-  } else {
-    console.error('Invalid cookie service type:', cookieServiceType);
-    return;
-  }
-
-  // If exists, do nothing
-  if (document.querySelector(`script[src="${scriptSrc}"]`)) {
-    console.log(`${cookieServiceType} script is already loaded`);
-    return;
-  }
-
-  useHead({
-    script: [
-      {
-        src: scriptSrc,
-        async: true,
-        ...scriptAttributes,
-      },
-    ],
+    script: [headScript],
   });
 
-  console.log(
-    `Loaded ${cookieServiceType} script`,
-    scriptAttributes,
-    scriptSrc,
-  );
+  console.log(`Injected script: ${headScript.src}`);
+
+  if (scriptType === 'cookie') {
+    // Once cookie script is loaded, mark it as loaded
+    isCookieScriptLoaded.value = true;
+  }
 };
 
+watch(isCookieScriptLoaded, () => {
+  if (isCookieScriptLoaded.value && siteTrackingScript.value) {
+    injectScript(siteTrackingScript.value, 'tracking');
+  }
+});
+
 onMounted(() => {
-  loadCookieService(serviceType.value);
+  if (cookieScript.value) {
+    injectScript(cookieScript.value, 'cookie');
+  }
 });
 </script>
 
