@@ -15,17 +15,16 @@ const isCookieScriptLoaded = ref(false);
 const siteTrackingScript = ref(data.value?.site_tracking_script);
 
 const injectScript = (scriptString: string, scriptType: string) => {
-  // Extracting the src and other attributes from the script string
   const scriptTagRegex = /<script\s+([^>]*)>(.*?)<\/script>/i;
   const attrRegex = /(\w+[-\w]*)=["']([^"']+)["']/g;
 
   const matches = scriptString.match(scriptTagRegex);
   if (!matches) {
-    console.error('Invalid script string');
+    console.error('GlobalInjections.vue: Invalid script string');
     return;
   }
 
-  const attributesString = matches[1]; // The attributes inside the script tag
+  const attributesString = matches[1];
   const scriptAttributes = {};
 
   let match;
@@ -36,17 +35,15 @@ const injectScript = (scriptString: string, scriptType: string) => {
   const headScript = {
     src: scriptAttributes.src,
     async: scriptAttributes.async === 'true',
-    ...(scriptAttributes.id && { id: scriptAttributes.id }), // optional id
-    ...(scriptAttributes.type && { type: scriptAttributes.type }), // optional type
-    ...(scriptAttributes['data-*'] && { 'data-*': scriptAttributes['data-*'] }), // data attributes
+    ...(scriptAttributes.id && { id: scriptAttributes.id }),
+    ...(scriptAttributes.type && { type: scriptAttributes.type }),
+    ...(scriptAttributes['data-*'] && { 'data-*': scriptAttributes['data-*'] }),
   };
 
   // Inject the script using useHead
   useHead({
     script: [headScript],
   });
-
-  console.log(`Injected script: ${headScript.src}`);
 
   if (scriptType === 'cookie') {
     // Once cookie script is loaded, mark it as loaded
