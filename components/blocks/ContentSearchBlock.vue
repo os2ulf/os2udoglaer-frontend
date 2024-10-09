@@ -679,6 +679,7 @@ const handleDatePicker = (date) => {
     position: relative;
     transition: all 0.3s ease-in-out;
     border: 1px solid transparent;
+    font-weight: 700;
 
     &--mobile {
       display: none;
