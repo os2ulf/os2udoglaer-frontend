@@ -22,7 +22,34 @@ const searchKeyword = ref('');
 const dynamicContent = ref(searchBlockData?.value?.results);
 const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
-const allSortingOptions = ref(searchBlockData?.value?.facets);
+const defaultSortingOptions = ref(searchBlockData?.value?.facets);
+
+const filteredOutFreeFilters = (allFilterData) => {
+  if (allFilterData.value) {
+    return Object.keys(allFilterData.value)
+      .filter(
+        (key) =>
+          ![
+            'course_is_free_primary_school',
+            'course_is_free',
+            'course_is_free_youth_education',
+            'course_educators_is_free',
+          ].includes(allFilterData.value[key]?.facet_id),
+      )
+      .reduce((acc, key) => {
+        acc[key] = allFilterData.value[key];
+        return acc;
+      }, {});
+  } else {
+    return {};
+  }
+};
+
+const computedFilters = computed(() => {
+  return filteredOutFreeFilters(defaultSortingOptions);
+});
+
+const allSortingOptions = ref(computedFilters);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
 const showAllFilters = ref(false);
@@ -65,6 +92,11 @@ const handleFilterChange = (
 
         updateURLParameters();
       }
+    }
+
+    // if is free filter
+    if (selectedFilterOption.source === 'isFreeFilter') {
+      selectedPriceFilter.value = '';
     }
 
     // Check if selectedFilterOption already exists in selectedFiltersData
@@ -117,7 +149,7 @@ const getFilteredPageResults = async (
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
-    allSortingOptions.value = data.facets;
+    defaultSortingOptions.value = data.facets;
   } catch (error) {
     console.error('Error fetching filtered results:', error);
   } finally {
@@ -299,7 +331,7 @@ const handleExtractedFilters = async () => {
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
-    allSortingOptions.value = data.facets;
+    defaultSortingOptions.value = data.facets;
     isLoading.value = false;
 
     setSelectedFiltersDataWithExtractedFilters();
@@ -315,6 +347,7 @@ watch(selectedFiltersData, () => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
+  selectedPriceFilter.value = '';
 
   if (datePickerStartDate.value && datePickerEndDate.value) {
     datePickerStartDate.value = '';
@@ -398,6 +431,45 @@ const handleDatePicker = (date) => {
     });
   }
 };
+
+const allFilterData = ref(searchBlockData?.value?.facets || {});
+const isFreeFilterData = computed(() => {
+  // Computed property to filter out only "is free" filters
+  return Object.values(allFilterData.value).filter((item) =>
+    [
+      'course_is_free_primary_school',
+      'course_is_free',
+      'course_is_free_youth_education',
+      'course_educators_is_free',
+    ].includes(item?.facet_id),
+  );
+});
+const selectedPriceFilter = ref('all');
+const isFreeUrlAlias = ref(isFreeFilterData?.value[0]?.url_alias || '');
+const selectedPriceLabel = ref();
+
+watch(selectedPriceFilter, () => {
+  const matchedItem = isFreeFilterData.value[0]?.items.find(
+    (item) => item.value === selectedPriceFilter.value,
+  );
+
+  if (matchedItem) {
+    const existingFilterIndex = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === isFreeUrlAlias.value,
+    );
+
+    if (existingFilterIndex !== -1) {
+      selectedFiltersData.splice(existingFilterIndex, 1);
+    }
+
+    selectedFiltersData.push({
+      searchQueryUrlAlias: isFreeUrlAlias.value,
+      value: selectedPriceFilter.value,
+      label: matchedItem.label,
+      source: 'isFreeFilter',
+    });
+  }
+});
 </script>
 
 <template>
@@ -425,7 +497,7 @@ const handleDatePicker = (date) => {
               <div
                 class="search-block__dropdown"
                 v-for="(item, name, idx) in allSortingOptions"
-                :key="item"
+                :key="item || idx"
                 :class="{
                   'search-block__dropdown--is-hidden':
                     idx >= 4 && !showAllFilters,
@@ -455,6 +527,7 @@ const handleDatePicker = (date) => {
                   />
                 </ClientOnly>
               </div>
+
               <button
                 class="search-block__show-all-filters search-block__show-all-filters--desktop"
                 v-if="
@@ -490,7 +563,35 @@ const handleDatePicker = (date) => {
                   {{ Object.keys(allSortingOptions).length }}
                 </div>
               </button>
+
+              <div
+                v-if="isFreeFilterData.length > 0"
+                v-for="item in isFreeFilterData"
+                :key="item"
+                class="search-block__price-filter"
+              >
+                <div
+                  v-for="(item, idx) in isFreeFilterData[0]?.items"
+                  :key="idx"
+                  class="search-block__price-filter__radio"
+                >
+                  <input
+                    class="search-block__price-filter__input"
+                    type="radio"
+                    :id="id + item.label + item.value"
+                    name="price"
+                    :value="item.value"
+                    v-model="selectedPriceFilter"
+                  />
+                  <label
+                    class="search-block__price-filter__label"
+                    :for="id + item.label + item.value"
+                    >{{ item.label }}</label
+                  >
+                </div>
+              </div>
             </div>
+
             <div v-else class="search-block__skeleton">
               <BaseLoading />
             </div>
@@ -718,6 +819,67 @@ const handleDatePicker = (date) => {
       font-size: 14px;
       font-weight: 600;
       display: block @(--sm) none;
+    }
+  }
+
+  .search-block__price-filter {
+    padding-top: 10px;
+    padding-left: 2px;
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    text-align: left;
+
+    &__radio {
+      display: flex;
+      align-items: center;
+    }
+
+    &__input {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--color-border);
+      border-radius: 50%;
+      position: relative;
+      outline: none;
+      cursor: pointer;
+      transition: border 0.2s ease-in-out;
+      display: inline-block;
+      vertical-align: middle;
+
+      /* Custom checked state */
+      &:checked::before {
+        content: '';
+        display: block;
+        width: 10px;
+        height: 10px;
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &:checked {
+        border-color: var(--color-primary);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.3);
+      }
+    }
+
+    &__label {
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--color-tertiary);
+      cursor: pointer;
+      vertical-align: middle;
+      padding-left: 8px;
     }
   }
 
