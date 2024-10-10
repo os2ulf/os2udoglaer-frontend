@@ -1,15 +1,19 @@
 <script setup>
 import { useHeaderDataStore } from '~/stores/headerData';
-const headerDataStore = useHeaderDataStore();
-
 import { useSettingsDataStore } from '~/stores/settingsData';
+
+const headerDataStore = useHeaderDataStore();
 const settingsDataStore = useSettingsDataStore();
 
 if (headerDataStore.headerData === null) {
   headerDataStore.getHeaderData();
 }
 
-const metaMenuData = computed(() => headerDataStore?.headerData?.metamenu);
+const metaMenuData = computed(() => {
+  const metaKey = Object.keys(headerDataStore?.headerData || {}).find(key => key.includes('meta'));
+  return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
+});
+
 const isHeaderFixed = computed(() => settingsDataStore?.isHeaderFixed);
 
 // Close the meta-menu offcanvas if the header is fixed (off screen)
@@ -62,7 +66,7 @@ const closeOffCanvas = () => {
           <div class="meta-menu__items-wrapper">
             <NuxtLink
               class="meta-menu__item"
-              v-for="metaItem in metaMenuData.items"
+              v-for="metaItem in metaMenuData?.items"
               :class="{
                 'meta-menu__item--active': activeNavItem === metaItem,
               }"

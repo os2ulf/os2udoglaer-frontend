@@ -147,9 +147,9 @@ onBeforeUnmount(() => {
             </NuxtLink>
           </div>
 
-          <nav class="header__right-content" v-if="data">
+          <nav class="header__right-content">
             <NuxtLink
-              v-for="(item, index) in data.primaernavigation_2?.items"
+              v-for="(item, index) in data?.items"
               :key="index"
               :to="
                 item?.link?.url && item?.below?.length === 0
