@@ -21,18 +21,21 @@ const props = defineProps({
 let freeCourseApplicationUrl = computed(
   () => settingsDataStore.settingsData?.free_course_application_reference,
 );
-freeCourseApplicationUrl =
-  freeCourseApplicationUrl.value + '?course=' + props.data.id;
+
+if (freeCourseApplicationUrl.value) {
+  freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
+
+  if (props.data?.provider) {
+    freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+  }
+}
 
 let transportApplicationUrl = computed(
   () => settingsDataStore.settingsData?.transport_pool_application_reference,
 );
-transportApplicationUrl =
-  transportApplicationUrl.value + '?course=' + props.data.id;
 
-if (props.data?.provider) {
-  freeCourseApplicationUrl =
-    freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+if (transportApplicationUrl.value) {
+  transportApplicationUrl = transportApplicationUrl.value + '?course=' + props.data.id;
 }
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
