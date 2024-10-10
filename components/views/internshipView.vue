@@ -147,8 +147,6 @@ const contactPersonEmail = ref(
 const currentUrl = computed(() => {
   return process.client ? window.location.href : '';
 });
-
-console.log('internshipView.vue', props.data);
 </script>
 
 <template>
@@ -165,10 +163,36 @@ console.log('internshipView.vue', props.data);
                   color="primary"
                 />
               </div>
+
               <div class="internship__tags-item" v-if="data?.field_theme">
                 <BaseTag
                   v-if="data?.field_theme"
-                  :data="{ label: data?.field_theme.label }"
+                  :data="{ label: data?.field_theme?.label }"
+                  color="secondary"
+                />
+              </div>
+
+              <div
+                class="educators__tags-item"
+                v-if="data?.field_banner || data?.field_industry"
+              >
+                <BaseTag
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
+                />
+
+                <BaseTag
+                  v-else-if="data?.field_industry"
+                  :data="{ label: data?.field_industry[0] }"
+                  color="primary-lighten"
+                />
+              </div>
+
+              <div class="internship__tags-item" v-if="data?.field_sold_out">
+                <BaseTag
+                  v-if="data?.field_sold_out"
+                  :data="{ label: 'Udsolgt' }"
                   color="secondary"
                 />
               </div>
@@ -192,11 +216,16 @@ console.log('internshipView.vue', props.data);
                   }"
                   @click="scrollTo('course-registration')"
                   class="button button--secondary"
+                  role="button"
                 />
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                    (data?.provider &&
+                      data?.provider.link &&
+                      !data?.field_hide_contact_form) ||
+                    (data?.corporation &&
+                      data?.corporation.link &&
+                      !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -207,6 +236,7 @@ console.log('internshipView.vue', props.data);
                         : '',
                   }"
                   @click="showModal = true"
+                  role="button"
                 />
               </div>
             </div>
@@ -264,11 +294,16 @@ console.log('internshipView.vue', props.data);
               }"
               @click="scrollTo('course-registration')"
               class="button button--secondary"
+              role="button"
             />
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                (data?.provider &&
+                  data?.provider.link &&
+                  !data?.field_hide_contact_form) ||
+                (data?.corporation &&
+                  data?.corporation.link &&
+                  !data?.field_hide_contact_form)
               "
               class="button button--ghost internship__contact-button"
               :button-data="{
@@ -279,6 +314,7 @@ console.log('internshipView.vue', props.data);
                     : '',
               }"
               @click="showModal = true"
+              role="button"
             />
           </div>
         </div>
@@ -378,11 +414,18 @@ console.log('internshipView.vue', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" :currentUrl="currentUrl" :currentTitle="props.data?.label" :contactPersonName="props.data?.provider
-            ? props.data?.provider?.field_name
-            : props.data?.corporation
-              ? props.data?.corporation?.field_name
-              : ''" />
+        <ContactForm
+          :contactPersonEmail="contactPersonEmail"
+          :currentUrl="currentUrl"
+          :currentTitle="props.data?.label"
+          :contactPersonName="
+            props.data?.provider
+              ? props.data?.provider?.field_name
+              : props.data?.corporation
+                ? props.data?.corporation?.field_name
+                : ''
+          "
+        />
       </TheSlotModal>
     </Transition>
   </div>

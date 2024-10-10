@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { productionDomains } from './config/productionDomains';
+
 defineProps({
   error: { type: Object, required: true },
 });
@@ -16,6 +18,16 @@ useHead({
     },
   ],
 });
+
+const showErrorMessageOnDev = computed(() => {
+  if (typeof window !== 'undefined') {
+    return (
+      window.location.hostname === 'localhost' ||
+      !productionDomains.includes(window.location.hostname)
+    );
+  }
+  return false;
+});
 </script>
 
 <template>
@@ -24,9 +36,16 @@ useHead({
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-12 col-sm-12">
-          <h1>Page Not Found</h1>
-          <p>We're sorry, we couldn't find the page you requested.</p>
-          {{ error }}
+          <div class="error">
+            <h1>Siden blev ikke fundet</h1>
+            <p>Vi beklager, vi kunne ikke finde den side, du anmodede om.</p>
+
+            <ClientOnly>
+              <pre class="error__message" v-if="showErrorMessageOnDev">
+                {{ error }}
+              </pre>
+            </ClientOnly>
+          </div>
         </div>
       </div>
     </div>
@@ -45,5 +64,13 @@ useHead({
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+.error {
+  color: var(--theme-color);
+  padding-top: 40px;
+  &__message {
+    padding-top: 20px;
+  }
 }
 </style>

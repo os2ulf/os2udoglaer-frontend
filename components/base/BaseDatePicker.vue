@@ -130,7 +130,8 @@ onUnmounted(() => {
   }
 
   &__trigger {
-    display: block;
+    display: flex;
+    align-items: center;
     text-align: left;
     width: 100%;
     border: 1px solid #707070;
@@ -151,6 +152,10 @@ onUnmounted(() => {
       box-shadow: 0px 0px 0px 4px #297f781a;
       z-index: 9;
       max-width: 166px;
+
+      @media (--viewport-sm-max) {
+        min-width: 100%;
+      }
     }
   }
 

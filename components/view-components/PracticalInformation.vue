@@ -12,6 +12,12 @@ const props = defineProps({
     required: false,
     default: null,
   },
+
+  soldOut: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 </script>
 
@@ -76,12 +82,18 @@ const props = defineProps({
 
         <!-- User Profile element -->
         <div v-else-if="item.type === 'user_profile'">
-          <div class="practical-information__item-container practical-information__item-container--profile">
-            <div class="practical-information__item-heading practical-information__item-heading--profile">
+          <div
+            class="practical-information__item-container practical-information__item-container--profile"
+          >
+            <div
+              class="practical-information__item-heading practical-information__item-heading--profile"
+            >
               {{ item.title }}
             </div>
 
-            <div class="practical-information__item-value practical-information__item-value--profile">
+            <div
+              class="practical-information__item-value practical-information__item-value--profile"
+            >
               <div v-for="(content, index) in item.content" :key="index">
                 <div v-if="content" v-html="content"></div>
               </div>
@@ -135,7 +147,10 @@ const props = defineProps({
             v-else-if="item.type === 'price' && item.free"
             class="practical-information__item-value"
           >
-            <BaseTag :data="{ label: 'Gratis' }" color="secondary" />
+            <BaseTag
+              :data="{ label: props.soldOut ? 'Udsolgt' : 'Gratis' }"
+              color="secondary"
+            />
           </div>
 
           <!-- Basic element content array loop -->

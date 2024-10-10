@@ -27,13 +27,13 @@
     "vite-plugin-compression": "^0.5.1"
   },
   "dependencies": {
-    "@nuxtjs/robots": "^3.0.0",
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/i18n": "^4.7.3",
     "@vee-validate/rules": "^4.7.3",
     "@vuepic/vue-datepicker": "^9.0.2",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
+    "fast-xml-parser": "^4.5.0",
     "nuxt-icons": "^3.2.1",
     "pinia": "^2.1.7",
     "sitemap": "^7.1.1",

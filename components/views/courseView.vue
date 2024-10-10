@@ -18,11 +18,24 @@ const props = defineProps({
   },
 });
 
-let freeCourseApplicationUrl = computed(() => settingsDataStore.settingsData?.free_course_application_reference);
-freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
+let freeCourseApplicationUrl = computed(
+  () => settingsDataStore.settingsData?.free_course_application_reference,
+);
 
-if (props.data?.provider) {
-  freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+if (freeCourseApplicationUrl.value) {
+  freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
+
+  if (props.data?.provider) {
+    freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+  }
+}
+
+let transportApplicationUrl = computed(
+  () => settingsDataStore.settingsData?.transport_pool_application_reference,
+);
+
+if (transportApplicationUrl.value) {
+  transportApplicationUrl = transportApplicationUrl.value + '?course=' + props.data.id;
 }
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
@@ -234,8 +247,6 @@ const contactPersonEmail = ref(
 const currentUrl = computed(() => {
   return process.client ? window.location.href : '';
 });
-
-console.log('courseView', props.data);
 </script>
 
 <template>
@@ -256,18 +267,27 @@ console.log('courseView', props.data);
                 />
               </div>
 
-              <div class="course__tags-item" v-if="data?.field_theme">
+              <div
+                class="course__tags-item"
+                v-if="data?.field_banner || data?.field_theme"
+              >
                 <BaseTag
-                  v-if="data?.field_theme"
+                  v-if="data?.field_banner"
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
+                />
+
+                <BaseTag
+                  v-else-if="data?.field_theme"
                   :data="{ label: data?.field_theme }"
-                  color="secondary"
+                  color="primary-lighten"
                 />
               </div>
 
               <div class="course__tags-item" v-if="data?.field_is_free">
                 <BaseTag
                   v-if="data?.field_is_free"
-                  :data="{ label: 'Gratis' }"
+                  :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
                   color="secondary"
                 />
               </div>
@@ -290,11 +310,16 @@ console.log('courseView', props.data);
                   }"
                   @click="scrollTo('course-registration')"
                   class="button button--secondary"
+                  role="button"
                 />
                 <BaseButton
                   v-if="
-                    (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                    (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                    (data?.provider &&
+                      data?.provider.link &&
+                      !data?.field_hide_contact_form) ||
+                    (data?.corporation &&
+                      data?.corporation.link &&
+                      !data?.field_hide_contact_form)
                   "
                   class="button button--secondary--ghost"
                   :button-data="{
@@ -305,6 +330,7 @@ console.log('courseView', props.data);
                         : '',
                   }"
                   @click="showModal = true"
+                  role="button"
                 />
               </div>
             </div>
@@ -349,7 +375,10 @@ console.log('courseView', props.data);
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
         >
           <SharePage />
-          <PracticalInformation :data="practicalInfoData" />
+          <PracticalInformation
+            :data="practicalInfoData"
+            :sold-out="data?.field_sold_out"
+          />
           <div class="course__practical-buttons">
             <BaseButton
               v-if="
@@ -366,11 +395,16 @@ console.log('courseView', props.data);
               @click="scrollTo('course-registration')"
               icon-after="arrow-right"
               class="button button--secondary"
+              role="button"
             />
             <BaseButton
               v-if="
-                (data?.provider && data?.provider.link && !data?.field_hide_contact_form) ||
-                (data?.corporation && data?.corporation.link && !data?.field_hide_contact_form)
+                (data?.provider &&
+                  data?.provider.link &&
+                  !data?.field_hide_contact_form) ||
+                (data?.corporation &&
+                  data?.corporation.link &&
+                  !data?.field_hide_contact_form)
               "
               class="button button--ghost course__contact-button"
               :button-data="{
@@ -381,33 +415,41 @@ console.log('courseView', props.data);
                     : '',
               }"
               @click="showModal = true"
+              role="button"
             />
             <BaseButton
               v-if="
                 data.field_target_group === 'Grundskole' &&
                 data.field_practical_info_buttons?.includes(
                   'show_transport_request',
-                )
+                ) &&
+                transportApplicationUrl
               "
               class="button--primary"
-              :button-data="{ title: 'Information om transport' }"
+              :button-data="{
+                title: 'Information om transport',
+                url: transportApplicationUrl,
+              }"
               icon-after="ext-link"
               ghost
+              role="button"
             />
             <BaseButton
               v-if="
                 data.field_target_group === 'Grundskole' &&
                 data.field_practical_info_buttons?.includes(
                   'show_free_course_request',
-                ) && freeCourseApplicationUrl
+                ) &&
+                freeCourseApplicationUrl
               "
               class="button--primary"
               :button-data="{
-                title: 'Ansøg om betaling af dette forløb!' ,
+                title: 'Ansøg om betaling af dette forløb!',
                 url: freeCourseApplicationUrl,
               }"
               icon-after="ext-link"
               ghost
+              role="button"
             />
           </div>
         </div>
@@ -508,11 +550,18 @@ console.log('courseView', props.data);
         :isOpen="showModal"
         @update:isOpen="showModal = $event"
       >
-        <ContactForm :contactPersonEmail="contactPersonEmail" :currentUrl="currentUrl" :currentTitle="props.data?.label" :contactPersonName="props.data?.provider
-            ? props.data?.provider?.field_name
-            : props.data?.corporation
-              ? props.data?.corporation?.field_name
-              : ''" />
+        <ContactForm
+          :contactPersonEmail="contactPersonEmail"
+          :currentUrl="currentUrl"
+          :currentTitle="props.data?.label"
+          :contactPersonName="
+            props.data?.provider
+              ? props.data?.provider?.field_name
+              : props.data?.corporation
+                ? props.data?.corporation?.field_name
+                : ''
+          "
+        />
       </TheSlotModal>
     </Transition>
   </div>

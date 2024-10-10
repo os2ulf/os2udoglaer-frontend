@@ -283,6 +283,10 @@ const handleSortingChange = (item) => {
   };
 };
 
+const searchResultSuffix = computed(() => {
+  return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
+});
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
@@ -422,7 +426,7 @@ onMounted(() => {
           >
             <div class="search-block-provider__extra-filters-bar">
               <div class="search-block-provider__results-found">
-                <h4>Viser {{ totalItemsFound }} forløb</h4>
+                <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
               </div>
               <div class="search-block-provider__sorting">
                 <ClientOnly>
@@ -457,11 +461,19 @@ onMounted(() => {
                       <div class="search-block-provider__card">
                         <div
                           class="search-block-provider__card-image-container"
-                          v-if="item?.field_image.length !== 0"
+                          v-if="item?.field_logo.length !== 0"
                         >
                           <BaseImage
                             class="search-block-provider__card-image"
-                            v-if="item?.field_image"
+                            :image="item?.field_logo"
+                          />
+                        </div>
+                        <div
+                          class="search-block-provider__card-image-container"
+                          v-else-if="item?.field_image.length !== 0"
+                        >
+                          <BaseImage
+                            class="search-block-provider__card-image"
                             :image="item?.field_image"
                           />
                         </div>
@@ -607,6 +619,7 @@ onMounted(() => {
     position: relative;
     transition: all 0.3s ease-in-out;
     border: 1px solid transparent;
+    font-weight: 700;
 
     &--mobile {
       display: none;
@@ -758,11 +771,19 @@ onMounted(() => {
   }
 
   &__card-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__card-link {
+    display: flex;
+    color: var(--color-tertiary);
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
     background: var(--color-white);
-    color: var(--color-text);
     border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
-    height: 100%;
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
     padding: 24px @(--sm) 32px;
     transition: all 0.3s ease-in-out;
@@ -787,19 +808,13 @@ onMounted(() => {
 
   &__card {
     display: flex;
-    flex-direction: column @(--sm) row;
-  }
-
-  &__card-link {
-    color: var(--color-tertiary);
-    text-decoration: none;
-    width: 100%;
+    flex-direction: column @(--md) row;
+    gap: 0 @(--sm) 24px;
   }
 
   &__card-label {
     color: var(--color-tertiary);
     transition: color 0.3s ease-in-out;
-    padding-left: 0 @(--sm) 24px;
 
     h4 {
       margin: 0;
@@ -808,6 +823,8 @@ onMounted(() => {
 
   &__card-image-container {
     position: relative;
+    flex: auto @(--md) 0 0 129px @(--lg) 0 0 188px;
+    width: 180px @(--sm) 160px @(--md) 129px @(--lg) 188px;
     margin-bottom: 24px @(--sm) 0;
     border-radius: 4px;
     overflow: hidden;

@@ -4,12 +4,10 @@ import { Field, ErrorMessage, useFieldError } from 'vee-validate';
 
 const props = withDefaults(
   defineProps<{
-    type?: string | 'text' | 'password' | 'number' | 'tel' | 'url';
     name: string;
     description?: string;
     rules?: string;
     label: string;
-    inputMode?: string | 'none' | 'text ' | 'numeric' | 'tel' | 'url';
     modelValue: string | number | null | any | any[] | undefined;
     maxlength?: string;
     validateOnBlur?: boolean;
@@ -20,11 +18,8 @@ const props = withDefaults(
     isSearch?: boolean;
   }>(),
   {
-    fieldType: 'input',
-    type: 'text',
     name: '',
     description: '',
-    inputMode: '',
     rules: '',
     label: '',
     modelValue: '',
@@ -68,15 +63,12 @@ const hasErrors = useFieldError(props.name);
       :id="id"
       ref="input"
       v-model="value"
-      as="input"
-      :type="type"
+      as="textarea"
       :rules="rules"
       :class="`form-input form-input--floating-label ${inputClass} ${hasErrors ? 'form-element-feedback--invalid' : ''}`"
       :label="label"
       :name="name"
-      :autocomplete="$attrs.autocomplete"
       :maxlength="maxlength"
-      :inputmode="inputMode"
       :validate-on-input="validateOnInput"
       :validate-on-blur="validateOnBlur"
       :validate-on-change="validateOnChange"
@@ -86,21 +78,13 @@ const hasErrors = useFieldError(props.name);
       @input="$emit('input', value)"
       @animationstart="checkAnimation"
     />
-    <label
-      v-if="label"
-      class="form-label"
-      :class="props.isSearch ? 'form-label--search' : ''"
-      :for="id"
-    >
-      <span class="form-input-icon" v-if="props.isSearch"
-        ><NuxtIcon name="search" filled
-      /></span>
-      {{ label }}</label
-    >
+    <label v-if="label" class="form-label" :for="id">{{ label }}</label>
+
     <div v-if="description" class="form-description">
       {{ description }}
     </div>
   </div>
+
   <Transition name="bounce">
     <span
       v-if="customError"
@@ -125,30 +109,21 @@ const hasErrors = useFieldError(props.name);
 .form-input--floating-label {
   position: relative;
   margin-top: -2px;
-}
-
-.form-input-icon {
-  margin-top: -2px;
-  padding-right: 2px;
-  font-size: 24px;
+  min-height: 150px;
 }
 
 .form-label {
-  display: flex;
-  align-items: center;
-
-  &--search {
-    margin-top: -4px !important;
-  }
+  display: block;
 }
 
 .form-input--up + .form-label,
 .form-input:focus + .form-label {
   color: var(--color-primary);
+}
 
-  path {
-    stroke: var(--color-primary);
-  }
+.form-input--floating-label.form-input--up ~ .form-label,
+.form-input--floating-label:focus ~ .form-label {
+  color: var(--color-primary);
 }
 
 .form-description {

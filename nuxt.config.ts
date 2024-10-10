@@ -8,7 +8,6 @@ export default defineNuxtConfig({
 
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true,
     },
@@ -16,6 +15,7 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
+    prefetchLinks: true,
 
     head: {
       meta: [
@@ -26,17 +26,10 @@ export default defineNuxtConfig({
           content: "script-src 'self';",
         },
       ],
-      link: [{ rel: 'preconnect', href: 'https://consent.cookiebot.com' }],
-      script: [
-        {
-          id: 'Cookiebot',
-          src: 'https://consent.cookiebot.com/uc.js',
-          'data-cbid': '226ecb7b-1eba-45cf-a066-6c4a0ce13318',
-          'data-framework': 'IAB',
-          type: 'text/javascript',
-          async: true,
-        },
-      ],
+
+      htmlAttrs: {
+        lang: 'da',
+      },
     },
   },
 
@@ -84,15 +77,21 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: [
-    ['@nuxtjs/robots', { configPath: '~/config/robots.config' }],
-    '@pinia/nuxt',
-    'nuxt-icons',
-  ],
+  modules: ['@pinia/nuxt', 'nuxt-icons'],
 
   optimization: {
     splitChunks: {
-      maxSize: 300000,
+      chunks: 'all',
+      maxSize: 250000,
+      cacheGroups: {
+        default: false,
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: -10,
+        },
+      },
     },
   },
 });

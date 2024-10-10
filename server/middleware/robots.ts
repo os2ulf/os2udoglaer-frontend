@@ -13,8 +13,6 @@ export default defineEventHandler((event) => {
     Allow: /
     Disallow: /node/*
     Disallow: /search*
-    Disallow: /maintenance
-    Disallow: /forbidden
 
 
 

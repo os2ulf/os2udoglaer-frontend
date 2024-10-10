@@ -80,7 +80,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: openGraph.value.description?.attributes?.content,
+      content: openGraph.value.og_description?.attributes?.content,
     },
     { name: 'robots', content: openGraph.value.robots?.attributes?.content },
     {

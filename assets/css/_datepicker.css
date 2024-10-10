@@ -11,7 +11,8 @@
 
 @media (max-width: 768px) {
   :root {
-    --dp-menu-min-width: 300px !important; /* Adjust the min width of the menu */
+    --dp-menu-min-width: 300px !important;
+    --dp-cell-size: 40px !important;
   }
 }
 
@@ -35,6 +36,16 @@
 
 .dp__calendar_header_item {
   text-transform: capitalize;
+}
+
+.dp__calendar {
+  .dp__calendar_header_item:first-child {
+    visibility: hidden;
+  }
+}
+
+.dp__instance_calendar:first-child {
+  padding-right: 0 @(--sm) 32px;
 }
 
 .dp__month_year_wrap {
