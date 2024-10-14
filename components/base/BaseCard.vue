@@ -284,8 +284,6 @@ const cardLabels = computed(() => {
 
   return labels.filter(Boolean);
 });
-
-console.log('all data', props.data);
 </script>
 
 <template>
