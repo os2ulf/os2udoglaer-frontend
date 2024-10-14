@@ -284,7 +284,11 @@ const handleSortingChange = (item) => {
 };
 
 const searchResultSuffix = computed(() => {
-  return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
+  if (props.blockData.display_id === 'block_1') {
+    return totalItemsFound.value > 1 ? 'udbyder' : 'udbydere';
+  } else {
+    return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
+  }
 });
 
 onBeforeMount(() => {
