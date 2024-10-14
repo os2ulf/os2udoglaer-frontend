@@ -10,7 +10,9 @@ if (headerDataStore.headerData === null) {
 }
 
 const metaMenuData = computed(() => {
-  const metaKey = Object.keys(headerDataStore?.headerData || {}).find(key => key.includes('meta'));
+  const metaKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+    key.includes('meta'),
+  );
   return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
 });
 
