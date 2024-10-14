@@ -3,6 +3,8 @@ const props = defineProps({
   blockData: Object,
   sectionWidth: String,
 });
+
+const appetizerContent = ref(props.blockData?.field_appetizer_text || null);
 </script>
 <template>
   <div
@@ -39,11 +41,9 @@ const props = defineProps({
               <div class="appetizer__title">
                 {{ blockData.field_appetizer_headline }}
               </div>
-              <div
-                v-if="blockData.field_appetizer_text !== null"
-                class="appetizer__text"
-                v-html="blockData.field_appetizer_text"
-              ></div>
+              <div v-if="appetizerContent !== null" class="appetizer__text">
+                <BaseRte :content="appetizerContent" />
+              </div>
 
               <div class="appetizer__cta">
                 <BaseButton
