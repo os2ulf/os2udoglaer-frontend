@@ -58,6 +58,7 @@ const closeOffCanvas = () => {
   isOpen.value = false;
   activeNavItem.value = null;
 };
+console.log(metaMenuData);
 </script>
 
 <template>
@@ -74,12 +75,12 @@ const closeOffCanvas = () => {
               }"
               :key="metaItem.title"
               :to="
-                metaItem.url && metaItem.below.length === 0
-                  ? metaItem.url
+                metaItem.link.url && metaItem.below.length === 0
+                  ? metaItem.link.url
                   : 'javascript:void(0)'
               "
               :aria-label="'Link til ' + metaItem?.title"
-              :role="!metaItem.url ? 'button' : ''"
+              :role="!metaItem.link.url ? 'button' : ''"
               @click="handleNavigationItemClick(metaItem)"
             >
               <div class="meta-menu__item-wrapper">
