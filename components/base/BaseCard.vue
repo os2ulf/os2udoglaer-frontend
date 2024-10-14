@@ -284,6 +284,8 @@ const cardLabels = computed(() => {
 
   return labels.filter(Boolean);
 });
+
+console.log('all data', props.data);
 </script>
 
 <template>
@@ -329,8 +331,10 @@ const cardLabels = computed(() => {
               >
                 <div class="card__icon-group card__icon-group--provider">
                   <NuxtIcon name="home-alt" filled />
-                  <div class="card__icon-text card__icon-text--provider">
-                    {{ providerData?.label }}
+                  <div class="card__icon-text" v-if="providerData?.field_name">
+                    <span class="card__icon-text--provider">
+                      {{ providerData?.field_name }}</span
+                    >
                   </div>
                 </div>
               </NuxtLink>
