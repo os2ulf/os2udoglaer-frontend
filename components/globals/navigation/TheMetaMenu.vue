@@ -58,7 +58,6 @@ const closeOffCanvas = () => {
   isOpen.value = false;
   activeNavItem.value = null;
 };
-console.log(metaMenuData);
 </script>
 
 <template>
