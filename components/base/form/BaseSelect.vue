@@ -65,9 +65,8 @@ const closeDropdown = () => {
 
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
-  const dropdownElement = document.getElementById(id.value);
 
-  if (dropdownElement && !dropdownElement.contains(target)) {
+  if (!target.closest(`#.custom-select`)) {
     closeDropdown();
   }
 };
