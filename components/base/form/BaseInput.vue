@@ -122,6 +122,7 @@ const hasErrors = useFieldError(props.name);
 .form-input--floating-label {
   position: relative;
   margin-top: -2px;
+  color: var(--form-label-color);
 }
 
 .form-input-icon {
