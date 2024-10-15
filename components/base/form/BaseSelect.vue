@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
 import { Field, ErrorMessage } from 'vee-validate';
+import { openDropdownId } from '~/stores/dropdownStore';
 
 interface ISelectOptions {
   text: string;
@@ -24,7 +25,7 @@ const emit = defineEmits(['update:modelValue']);
 const id = ref(uuidv4());
 const searchQuery = ref('');
 const dropdownOptions = ref(props.options);
-const dropdownOpen = ref(false);
+const dropdownOpen = computed(() => openDropdownId.value === id.value); // Use the global openDropdownId
 
 const filteredOptions = computed(() =>
   dropdownOptions.value.filter((option) =>
@@ -45,8 +46,14 @@ const value = computed({
 });
 
 const searchInput = ref(null);
+// Toggle dropdown and focus on input if open
 const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value;
+  if (dropdownOpen.value) {
+    openDropdownId.value = null;
+  } else {
+    openDropdownId.value = id.value;
+  }
+
   searchQuery.value = '';
 
   if (dropdownOpen.value) {
@@ -59,7 +66,7 @@ const toggleDropdown = () => {
 };
 
 const closeDropdown = () => {
-  dropdownOpen.value = false;
+  openDropdownId.value = null;
   searchQuery.value = '';
 };
 
