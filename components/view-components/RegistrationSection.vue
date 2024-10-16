@@ -6,6 +6,18 @@ const props = defineProps({
     default: null,
   },
 });
+
+const formatDeadlineString = computed(() => {
+  const deadlineString = ref(props.data.deadline.text);
+  const dateMatch = deadlineString.value.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
+
+  if (dateMatch) {
+    const date = dateMatch[0];
+    return date;
+  } else {
+    return null;
+  }
+});
 </script>
 
 <template>
@@ -44,8 +56,8 @@ const props = defineProps({
       class="course__registration__description"
       v-html="props.data.description"
     />
-    <div v-if="props.data.deadline" class="course__registration__description">
-      Tilmeldingsfrist: {{ props.data.deadline.text }}
+    <div v-if="formatDeadlineString" class="course__registration__description">
+      Tilmeldingsfrist: {{ formatDeadlineString }}
     </div>
     <div v-if="props.data.phone" class="course__registration__phone">
       Tlf.: {{ props.data.phone }}
