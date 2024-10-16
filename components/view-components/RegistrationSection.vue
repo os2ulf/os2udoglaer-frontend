@@ -47,15 +47,17 @@ const formatDeadlineString = computed(() => {
       </div>
     </div>
     <div
-      v-if="props.data.description"
+      v-if="props.data.price_description"
       class="course__registration__price-description"
-      v-html="props.data.price_description"
-    />
+    >
+      <div v-html="props.data.price_description"></div>
+    </div>
     <div
-      v-if="props.data.description"
+      v-if="props.data.description != null"
       class="course__registration__description"
       v-html="props.data.description"
-    />
+    ></div>
+
     <div v-if="formatDeadlineString" class="course__registration__description">
       Tilmeldingsfrist: {{ formatDeadlineString }}
     </div>
