@@ -8,7 +8,10 @@ const props = defineProps({
 });
 
 const formatDeadlineString = computed(() => {
-  const deadlineString = ref(props.data.deadline.text);
+  const deadlineString = ref(props.data?.deadline?.text);
+
+  if (!deadlineString.value) return null;
+
   const dateMatch = deadlineString.value.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
 
   if (dateMatch) {
