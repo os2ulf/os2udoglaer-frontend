@@ -28,6 +28,7 @@ const props = defineProps({
   &__title {
     color: var(--color-text);
     line-height: 38px;
+    word-break: break-word;
   }
 
   &__description {

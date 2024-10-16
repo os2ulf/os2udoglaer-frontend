@@ -89,6 +89,7 @@ const props = defineProps({
 
   &__title {
     margin-bottom: 22px @(--md) 44px;
+    word-break: break-word;
   }
 
   &__card-container-wrapper {

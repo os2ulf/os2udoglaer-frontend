@@ -376,6 +376,7 @@ const relatedContent = ref(props.data?.related_content);
 
   &__page-title {
     font-weight: 700;
+    word-break: break-word;
   }
 
   &__page-heading-button-container {

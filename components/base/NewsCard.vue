@@ -161,6 +161,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   }
 
   &__title {
+    word-break: break-word;
     padding-top: 8px;
     color: var(--color-tertiary);
     margin-bottom: 0;

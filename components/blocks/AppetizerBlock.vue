@@ -72,7 +72,7 @@ const appetizerContent = ref(props.blockData?.field_appetizer_text || null);
     font-weight: 700;
     font-size: var(--font-size-h3);
     color: var(--theme-color);
-    word-break: break-all;
+    word-break: break-word;
   }
 
   &__text {

@@ -71,6 +71,7 @@ const computedItems = computed(() => {
 .accordion {
   &__title {
     margin-bottom: 14px;
+    word-break: break-word;
 
     @media (--viewport-sm-min) {
       margin-bottom: 28px;

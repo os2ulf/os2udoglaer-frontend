@@ -23,10 +23,12 @@ let freeCourseApplicationUrl = computed(
 );
 
 if (freeCourseApplicationUrl.value) {
-  freeCourseApplicationUrl = freeCourseApplicationUrl.value + '?course=' + props.data.id;
+  freeCourseApplicationUrl =
+    freeCourseApplicationUrl.value + '?course=' + props.data.id;
 
   if (props.data?.provider) {
-    freeCourseApplicationUrl = freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+    freeCourseApplicationUrl =
+      freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
   }
 }
 
@@ -35,7 +37,8 @@ let transportApplicationUrl = computed(
 );
 
 if (transportApplicationUrl.value) {
-  transportApplicationUrl = transportApplicationUrl.value + '?course=' + props.data.id;
+  transportApplicationUrl =
+    transportApplicationUrl.value + '?course=' + props.data.id;
 }
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
@@ -597,6 +600,7 @@ const currentUrl = computed(() => {
 
   &__page-title {
     font-weight: 700;
+    word-break: break-word;
   }
 
   &__page-heading-button-container {

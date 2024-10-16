@@ -242,6 +242,7 @@ const props = defineProps({
 
   &__title {
     margin: 0;
+    word-break: break-word;
   }
 
   &__item-heading {
