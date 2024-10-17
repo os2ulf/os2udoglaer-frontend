@@ -285,7 +285,7 @@ const handleSortingChange = (item) => {
 
 const searchResultSuffix = computed(() => {
   if (props.blockData.display_id === 'block_1') {
-    return totalItemsFound.value > 1 ? 'udbyder' : 'udbydere';
+    return totalItemsFound.value > 1 ? 'udbydere' : 'udbyder';
   } else {
     return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
   }
