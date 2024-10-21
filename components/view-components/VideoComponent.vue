@@ -103,6 +103,7 @@ const props = defineProps({
 
   &__layout-carousel {
     &__title {
+      word-break: break-word;
       line-height: 48px;
     }
   }

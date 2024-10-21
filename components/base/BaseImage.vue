@@ -22,7 +22,7 @@ const props = defineProps({
         :alt="
           image?.img_element?.alt
             ? image?.img_element?.alt
-            : image?.label || 'bilede'
+            : image?.label || 'Billede'
         "
         loading="lazy"
         :width="image?.width"

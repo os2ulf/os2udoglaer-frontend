@@ -30,7 +30,7 @@ const props = defineProps({
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-8 col-xl-7">
             <div class="page-header__content-wrapper">
-              <h1>
+              <h1 class="page-header__title">
                 {{ props.pageBlockHeaderData?.field_title }}
               </h1>
             </div>
@@ -90,6 +90,10 @@ const props = defineProps({
   position: relative;
   padding-top: 36px @(--md) 64px;
   padding-bottom: 0 @(--sm) 116px;
+
+  &__title {
+    word-break: break-word;
+  }
 
   &__container {
     background-color: var(--color-primary);

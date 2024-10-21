@@ -174,6 +174,7 @@ const handleSorting = (key: any) => {
 .related-content {
   &__title-container {
     margin-bottom: 18px @(--sm) 36px;
+    word-break: break-word;
   }
 
   &__description {

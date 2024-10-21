@@ -5,11 +5,16 @@ const headerDataStore = useHeaderDataStore();
 if (headerDataStore.headerData === null) {
   headerDataStore.getHeaderData();
 }
+
+const mainMenuData = computed(() => {
+  const mainKey = Object.keys(headerDataStore?.headerData || {}).find(key => key.includes('main'));
+  return mainKey ? headerDataStore?.headerData?.[mainKey] : null;
+});
 </script>
 
 <template>
   <div class="header-parent">
-    <TheHeader :data="headerDataStore.headerData" />
+    <TheHeader v-if="mainMenuData" :data="mainMenuData" />
   </div>
 </template>
 

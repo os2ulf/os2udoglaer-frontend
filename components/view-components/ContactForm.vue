@@ -102,7 +102,7 @@ function showHelperText() {
 
 <template>
   <div class="contact-form" v-if="!isSuccess">
-  <h3 class="contact-form__title">Send besked til {{ contactPersonName }}</h3>
+    <h3 class="contact-form__title">Send besked til {{ contactPersonName }}</h3>
     <Form @submit="handleSubmit()">
       <BaseInputFloatingLabel
         class="contact-form__label"
@@ -164,7 +164,13 @@ function showHelperText() {
               </span>
             </Transition>
           </Field>
-          <div class="contact-form__textarea-description">Angiv din besked. Hvis du vil booke et forløb, så angiv venligst så mange informationer som muligt - f.eks. skole eller institution, klassetrin eller alder, antal børn, forslag til dato, dit tlf. nr. og andre informationer, der kan være gavnlige for udbyderen. Send ikke personfølsomme oplysninger i denne formular.</div>
+          <div class="contact-form__textarea-description">
+            Angiv din besked. Hvis du vil booke et forløb, så angiv venligst så
+            mange informationer som muligt - f.eks. skole eller institution,
+            klassetrin eller alder, antal børn, forslag til dato, dit tlf. nr.
+            og andre informationer, der kan være gavnlige for udbyderen. Send
+            ikke personfølsomme oplysninger i denne formular.
+          </div>
         </div>
       </div>
 
@@ -196,7 +202,9 @@ function showHelperText() {
   </div>
 
   <div v-else>
-    <h2 class="contact-form__success">Tak! Din besked er sendt til {{ contactPersonName }}.</h2>
+    <h2 class="contact-form__success">
+      Tak! Din besked er sendt til {{ contactPersonName }}.
+    </h2>
   </div>
 </template>
 
@@ -204,6 +212,10 @@ function showHelperText() {
 .contact-form {
   display: flex;
   flex-flow: column;
+
+  &__title {
+    word-break: break-word;
+  }
 
   form {
     display: grid;

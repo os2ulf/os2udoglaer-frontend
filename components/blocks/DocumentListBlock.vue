@@ -66,6 +66,10 @@ const props = defineProps({
 .document-list {
   color: var(--theme-color);
 
+  &__title {
+    word-break: break-word;
+  }
+
   &__heading-wrapper {
     margin-bottom: 24px;
   }

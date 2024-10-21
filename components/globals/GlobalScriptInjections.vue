@@ -32,9 +32,11 @@ const injectScript = (scriptString: string, scriptType: string) => {
     scriptAttributes[match[1]] = match[2];
   }
 
+  // Determine if the script should be async or defer based on type
   const headScript = {
     src: scriptAttributes.src,
-    async: scriptAttributes.async === 'true',
+    ...(scriptType === 'cookie' && { async: true }),
+    ...(scriptType === 'tracking' && { defer: true }), // Defer for tracking scripts
     ...(scriptAttributes.id && { id: scriptAttributes.id }),
     ...(scriptAttributes.type && { type: scriptAttributes.type }),
     ...(scriptAttributes['data-*'] && { 'data-*': scriptAttributes['data-*'] }),

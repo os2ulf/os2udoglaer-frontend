@@ -86,6 +86,7 @@ const props = defineProps({
     &__title {
       font-size: 16px @(--sm) 20px;
       text-align: start;
+      word-break: break-word;
     }
   }
 }

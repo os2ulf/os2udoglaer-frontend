@@ -114,6 +114,10 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
     color: var(--theme-color);
   }
 
+  &__card-title {
+    word-break: break-word;
+  }
+
   &__card-item {
     height: 100%;
     padding: 32px;
@@ -199,6 +203,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
   &__card-compact-title {
     margin-bottom: 0;
     line-height: 28px;
+    word-break: break-word;
   }
 
   &__card-compact-icon-container {

@@ -197,6 +197,7 @@ const practicalInfoData = computed(() => {
 
   &__page-title {
     font-weight: 700;
+    word-break: break-word;
   }
 
   &__page-heading-button-container {

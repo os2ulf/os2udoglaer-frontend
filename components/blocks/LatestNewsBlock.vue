@@ -97,6 +97,7 @@ const newsData = ref(props.blockData?.results);
   &__title {
     color: var(--theme-color);
     margin-bottom: 24px @(--sm) 44px;
+    word-break: break-word;
   }
 
   &__card {

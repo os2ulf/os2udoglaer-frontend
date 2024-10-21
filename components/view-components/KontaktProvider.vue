@@ -28,7 +28,10 @@ const props = defineProps({
               {{ person?.field_title ? person?.field_title + ' - ' : '' }}
               {{ person?.field_name }}
             </h4>
-            <div class="contact__contact-hours" v-if="person?.field_office_availability_text">
+            <div
+              class="contact__contact-hours"
+              v-if="person?.field_office_availability_text"
+            >
               Træffetid:
               {{ person?.field_office_availability_text }}
             </div>
@@ -68,6 +71,7 @@ const props = defineProps({
   &__title {
     margin-bottom: 32px;
     text-align: center @(--sm) left;
+    word-break: break-word;
   }
 
   &__item-section {

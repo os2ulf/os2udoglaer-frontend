@@ -42,5 +42,6 @@ const props = defineProps({
 .page-title {
   padding-top: 48px @(--md) 96px;
   margin-bottom: 32px @(--md) 64px;
+  word-break: break-word;
 }
 </style>
