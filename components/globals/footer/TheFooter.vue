@@ -52,8 +52,9 @@ const footerData = ref(filterFooterData[0]);
             <div
               v-if="footerData?.field_contact_info"
               class="footer__contact-info"
-              v-html="footerData?.field_contact_info"
-            ></div>
+            >
+              <BaseRte :content="footerData?.field_contact_info" />
+            </div>
 
             <div
               class="footer__contact-info-button"
@@ -208,13 +209,6 @@ const footerData = ref(filterFooterData[0]);
               class="footer__privacy-buttons"
               v-if="footerData?.field_privacy_terms?.length > 0"
             >
-              <!-- <button
-                aria-label="Cookiepolitik"
-                class="footer__privacy-button-item"
-                @click="handleUpdateCookieConsent"
-              >
-                Cookiepolitik
-              </button> -->
               <NuxtLink
                 class="footer__privacy-button-item"
                 v-for="item in footerData?.field_privacy_terms"
