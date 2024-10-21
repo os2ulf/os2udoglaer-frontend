@@ -14,9 +14,15 @@ const formatDeadlineString = computed(() => {
 
   const dateMatch = deadlineString.value.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
 
+  if (!dateMatch) {
+    return null;
+  }
+
   if (dateMatch) {
     const date = dateMatch[0];
-    return date;
+    const formattedDate = date.replace(/\//g, '.');
+
+    return formattedDate;
   } else {
     return null;
   }
