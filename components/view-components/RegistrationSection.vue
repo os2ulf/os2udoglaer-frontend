@@ -90,6 +90,10 @@ const formatDeadlineString = computed(() => {
   padding: 48px var(--grid-gutter-half) @(--md) 96px var(--grid-gutter-half);
   background: var(--color-secondary-lighten-5);
 
+  &__prices {
+    margin-bottom: 16px;
+  }
+
   & h2 {
     margin-bottom: 16px;
   }
