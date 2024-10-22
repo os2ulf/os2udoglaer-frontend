@@ -73,14 +73,12 @@ const footerData = ref(filterFooterData[0]);
               </NuxtLink>
             </div>
 
-            <!-- Social media - desktop version -->
             <div
-              class="footer__contact-social-media footer__contact-social-media--desktop"
+              class="footer__contact-social-media"
               v-if="
                 footerData?.field_facebook_url ||
                 footerData?.field_instagram_url ||
-                footerData?.field_linkedin_url ||
-                footerData?.field_youtube_url
+                footerData?.field_linkedin_url
               "
             >
               <NuxtLink
@@ -102,18 +100,10 @@ const footerData = ref(filterFooterData[0]);
               <NuxtLink
                 class="footer__contact-social-media-icon"
                 v-if="footerData.field_linkedin_url"
-                :to="footerData?.field_facebook_url?.field_linkedin_url"
+                :to="footerData?.field_linkedin_url?.url"
                 aria-label="link to linkedin"
               >
                 <NuxtIcon filled name="footer-linkedin" />
-              </NuxtLink>
-              <NuxtLink
-                class="footer__contact-social-media-icon"
-                v-if="footerData.field_youtube_url"
-                :to="footerData?.field_youtube_url?.url"
-                aria-label="link to youtube"
-              >
-                <NuxtIcon filled name="footer-youtube" />
               </NuxtLink>
             </div>
           </div>
@@ -137,50 +127,6 @@ const footerData = ref(filterFooterData[0]);
                 {{ item?.label }}
               </NuxtLink>
             </div>
-          </div>
-
-          <!-- Social media - desktop version -->
-          <div
-            class="footer__contact-social-media footer__contact-social-media--mobile"
-            v-if="
-              footerData?.field_facebook_url ||
-              footerData?.field_instagram_url ||
-              footerData?.field_linkedin_url ||
-              footerData?.field_youtube_url
-            "
-          >
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_facebook_url"
-              :to="footerData?.field_facebook_url?.url"
-              aria-label="link to facebook"
-            >
-              <NuxtIcon filled name="footer-facebook" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_instagram_url"
-              :to="footerData?.field_instagram_url?.url"
-              aria-label="link to instagram"
-            >
-              <NuxtIcon filled name="footer-instagram" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_linkedin_url"
-              :to="footerData?.field_facebook_url?.field_linkedin_url"
-              aria-label="link to linkedin"
-            >
-              <NuxtIcon filled name="footer-linkedin" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_youtube_url"
-              :to="footerData?.field_youtube_url?.url"
-              aria-label="link to youtube"
-            >
-              <NuxtIcon filled name="footer-youtube" />
-            </NuxtLink>
           </div>
         </div>
 
@@ -302,14 +248,6 @@ const footerData = ref(filterFooterData[0]);
     font-size: 32px;
     display: flex;
     gap: 24px;
-
-    &--desktop {
-      display: none @(--md) flex;
-    }
-
-    &--mobile {
-      display: flex @(--md) none;
-    }
   }
 
   &__contact-social-media-icon {
