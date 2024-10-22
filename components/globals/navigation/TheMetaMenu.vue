@@ -16,6 +16,8 @@ const metaMenuData = computed(() => {
   return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
 });
 
+console.log('metaMenuData', metaMenuData);
+
 const isHeaderFixed = computed(() => settingsDataStore?.isHeaderFixed);
 
 // Close the meta-menu offcanvas if the header is fixed (off screen)
