@@ -118,6 +118,7 @@ const props = defineProps({
   &__card-item-button {
     display: flex;
     align-items: center;
+    width: fit-content;
     text-decoration: none;
     font-weight: 700;
     color: var(--color-text);
