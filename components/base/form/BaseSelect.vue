@@ -24,8 +24,9 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue']);
 const id = ref(uuidv4());
 const searchQuery = ref('');
-const dropdownOptions = ref(props.options);
+const dropdownOptions = computed(() => props.options);
 const dropdownOpen = computed(() => openDropdownId.value === id.value); // Use the global openDropdownId
+const selectLabel = computed(() => props.selectLabel || 'Select');
 
 const filteredOptions = computed(() =>
   dropdownOptions.value.filter((option) =>
@@ -79,14 +80,17 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 const dynamicFieldTitle = computed(() => {
-  return props.modelValue
-    ? props.options.find((option) => option.value === props.modelValue)?.text
-    : props.selectLabel || 'Select';
+  const selectedOption = props.options.find(
+    (option) => option.value === props.modelValue,
+  );
+
+  return selectedOption?.text || selectLabel.value || 'Select';
 });
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
 });
+
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
 });
@@ -112,8 +116,8 @@ onBeforeUnmount(() => {
         :disabled="disabled"
         :multiple="props.multiple"
       >
-        <option v-if="props.selectLabel" value="" disabled>
-          {{ props.selectLabel }}
+        <option v-if="selectLabel" value="" disabled>
+          {{ selectLabel }}
         </option>
 
         <option

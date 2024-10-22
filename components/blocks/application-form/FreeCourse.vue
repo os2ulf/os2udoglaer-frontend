@@ -485,6 +485,7 @@ if ($route.query.course && $route.query.provider) {
   urlQueryCourseId.value = $route.query.course;
   urlQueryProviderId.value = $route.query.provider;
   selectedProvider.value = urlQueryProviderId.value;
+  selectedCourse.value = urlQueryCourseId.value;
   fetchCourses(urlQueryProviderId.value);
   fetchCourseSubjects(urlQueryCourseId.value);
   fetchCoursePriceInfo(urlQueryCourseId.value);
