@@ -28,28 +28,45 @@ const props = defineProps({
         class="document-list__card-item"
         v-for="item in props.blockData.field_material_paragraph"
       >
-        <div class="document-list__card-item-button">
-          <!-- icon -->
+        <NuxtLink
+          v-if="item.field_material_file || item.field_material_url?.url"
+          class="document-list__card-item-button"
+          aria-label="Link til download"
+          :to="
+            item.field_material_file
+              ? item.field_material_file
+              : item?.field_material_url?.url
+          "
+          :target="!item?.field_material_file ? '_blank' : ''"
+        >
           <NuxtIcon
             class="document-list__card-item-button--icon"
-            :name="item.field_material_file ? 'link-download' : 'ext-link'"
+            :name="item.field_material_file ? 'link-download' : item.field_literature_suggestion ? 'book-opened' : 'ext-link'"
             filled
           />
           <div>
-            <NuxtLink
-              class="document-list__card-link"
-              aria-label="Link til download"
-              :to="
-                item.field_material_file
-                  ? item.field_material_file
-                  : item?.field_material_url?.url
-              "
-              :target="!item?.field_material_file ? '_blank' : ''"
-            >
-              <span class="document-list__card-link-text">
-                {{ item?.field_material_download_text }}
+            <div class="document-list__card-link">
+              <span class="document-list__card-link-text" v-text="item.field_literature_suggestion ? item.field_literature_suggestion : item.field_material_download_text ? item.field_material_download_text : item.field_material_title">
               </span>
-            </NuxtLink>
+            </div>
+            <div
+              v-if="item.field_material_description"
+              class="document-list__card-item-description"
+              v-html="item.field_material_description"
+            ></div>
+          </div>
+        </NuxtLink>
+        <div v-else class="document-list__card-item-button">
+          <NuxtIcon
+            class="document-list__card-item-button--icon"
+            :name="item.field_material_file ? 'link-download' : item.field_literature_suggestion ? 'book-opened' : 'ext-link'"
+            filled
+          />
+          <div>
+            <div class="document-list__card-link">
+              <span class="document-list__card-link-text" v-text="item.field_literature_suggestion ? item.field_literature_suggestion : item.field_material_download_text ? item.field_material_download_text : item.field_material_title">
+              </span>
+            </div>
             <div
               v-if="item.field_material_description"
               class="document-list__card-item-description"
@@ -101,12 +118,9 @@ const props = defineProps({
   &__card-item-button {
     display: flex;
     align-items: center;
-
-    a {
-      text-decoration: none;
-      font-weight: 700;
-      color: var(--color-text);
-    }
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--color-text);
 
     &--icon {
       margin-right: 12px;
@@ -125,8 +139,8 @@ const props = defineProps({
     }
   }
 
-  &__card-link:hover {
-    .educational-materials__card-link-text {
+  a:hover {
+    .document-list__card-link-text {
       border-bottom: 1px solid currentColor;
     }
   }
@@ -135,15 +149,10 @@ const props = defineProps({
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
     word-break: break-all;
-
-    &:hover {
-      border-bottom: 1px solid currentColor;
-    }
   }
 
   &__card-item-description {
     :deep(p) {
-      padding-top: 5px;
       font-weight: 300;
       font-size: 14px;
       margin: 0;
