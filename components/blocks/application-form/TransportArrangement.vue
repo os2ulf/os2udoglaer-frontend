@@ -353,13 +353,8 @@ const distanceBetween = (
 
 // Fetch data from DAWA API
 const getDawaData = async (queryRaw: any, postalCode: any) => {
-  if (!queryRaw || !postalCode) {
-    console.error('getDawaData Invalid address data.');
-    return;
-  }
-
-  const query = queryRaw?.trim().replace(/\s/g, '+');
-  if (query !== null && postalCode !== null) {
+  if (queryRaw !== null && postalCode !== null) {
+    const query = queryRaw?.trim().replace(/\s/g, '+');
     const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}*&postnr=${postalCode}&per_side=1&struktur=mini`;
     try {
       const response = await fetch(dawaUrl, {
