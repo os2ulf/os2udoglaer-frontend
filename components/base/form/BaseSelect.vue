@@ -171,9 +171,8 @@ onBeforeUnmount(() => {
               value = option.value;
               closeDropdown();
             "
-          >
-            <div v-html="option.text"></div>
-          </li>
+            v-html="option.text"
+          ></li>
         </TransitionGroup>
 
         <div v-if="filteredOptions.length === 0">
