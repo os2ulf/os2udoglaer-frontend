@@ -2,33 +2,37 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const id = uuidv4();
-const value = ref(props.value);
-
 const props = defineProps({
   id: String,
-  type: String,
+  type: {
+    type: String,
+    default: 'checkbox',
+  },
   placeholder: String,
   label: String,
   description: String,
-  value: String,
+  modelValue: Boolean,
   isError: String,
   maxlength: Number,
 });
+const emit = defineEmits(['update:modelValue']);
+
+const handleChange = (event) => {
+  emit('update:modelValue', event.target.checked);
+};
 </script>
 
 <template>
   <div class="form-input-wrapper input__wrapper">
     <label :for="id">
       <input
+        @change="handleChange"
+        :checked="modelValue"
         :id="id"
-        v-model="value"
         :maxlength="maxlength"
         :type="type"
         :placeholder="placeholder"
-        :value="value"
         :class="isError ? 'input__error' : ''"
-        @input="$emit('inputValue', $event.target.value)"
-        @keyup.enter="$emit('enterPressed')"
       />
       <span :class="'label--' + type">{{ label }}</span>
     </label>
@@ -66,7 +70,7 @@ const props = defineProps({
     border-radius: 32px;
     transition-duration: 0.3s;
 
-    &[type="checkbox"] {
+    &[type='checkbox'] {
       width: 20px;
       height: 20px;
       padding: 0;

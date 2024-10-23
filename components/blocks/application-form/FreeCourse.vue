@@ -6,6 +6,8 @@ import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { useSettingsDataStore } from '~/stores/settingsData';
 
+const $route = useRoute();
+
 // Stores
 const settingsDataStore = useSettingsDataStore();
 const apiRouteStore = useApiRouteStore();
@@ -14,8 +16,6 @@ const modalStore = useModalStore();
 const props = defineProps({
   blockData: Object,
 });
-
-const $route = useRoute();
 
 // Set arrays of site messages to use in validation
 const formSettings = {
@@ -56,7 +56,7 @@ const urlQueryProviderId = ref('');
 // Form data
 const selectedSchool = ref('');
 const schoolClass = ref('');
-const receivingClass = ref('');
+const receivingClass = ref(false);
 const fullName = ref('');
 const phone = ref('');
 const email = ref('');
@@ -74,12 +74,6 @@ const agreementCheckbox = ref(true);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
-
-// Fetch schools and providers on component mount
-onBeforeMount(() => {
-  fetchSchools();
-  fetchProviders();
-});
 
 // Fetch schools
 const fetchSchools = async () => {
@@ -174,6 +168,7 @@ const fetchCourses = async (uid) => {
 // Fetch course subjects from course NID
 const fetchCourseSubjects = async (nid) => {
   courseTermsSelect.value = [];
+
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint +
@@ -186,7 +181,9 @@ const fetchCourseSubjects = async (nid) => {
         },
       },
     );
+
     if (!response.ok) throw new Error(response.status);
+
     courseTerms.value = await response.json();
   } catch (error) {
     console.error('Error fetching courseTerms:', error);
@@ -204,7 +201,7 @@ const fetchCourseSubjects = async (nid) => {
 };
 
 // Fetch course price info from course NID
-const fetchCoursePriceInfo = async (nid) => {
+const fetchCoursePriceInfo = async (nid: string) => {
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/course-price/' + nid,
@@ -225,6 +222,7 @@ const fetchCoursePriceInfo = async (nid) => {
 // Fetch subjects from taxonomy vocabulary "subject"
 const fetchSubjects = async () => {
   subjectTermsSelect.value = [];
+
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/terms/subject',
@@ -235,7 +233,9 @@ const fetchSubjects = async () => {
         },
       },
     );
+
     if (!response.ok) throw new Error(response.status);
+
     subjectTerms.value = await response.json();
   } catch (error) {
     console.error('Error fetching subjects:', error);
@@ -253,13 +253,14 @@ const fetchSubjects = async () => {
 };
 
 // Fetch courses on provider change and empty course selected values
-const handleProviderChange = async (event) => {
+const handleProviderChange = async () => {
   selectedCourse.value = '';
   coursesSelect.value = [];
   selectedCourseTerm.value = '';
   courseTermsSelect.value = [];
   coursePriceInfo.value = [];
-  await fetchCourses(event.target.value);
+
+  await fetchCourses(selectedProvider.value);
 };
 
 // Handle "Course not in list" logic
@@ -283,19 +284,14 @@ const handleHideCourseSelect = async () => {
 };
 
 // Fetch course subjects and price info on course change
-const handleCourseChange = async (event) => {
+const handleCourseChange = async () => {
   coursePriceInfo.value = [];
-  await fetchCourseSubjects(event.target.value);
-  await fetchCoursePriceInfo(event.target.value);
-};
-
-// Set settlement date on date change
-const settlementDateChange = async (event) => {
-  settlementDate.value = event.target.value;
+  await fetchCourseSubjects(selectedCourse.value);
+  await fetchCoursePriceInfo(selectedCourse.value);
 };
 
 // Handle modal
-const handleModal = (title, content: any) => {
+const handleModal = (title: string, content: any) => {
   modalStore.showModal({
     title: title,
     content: content,
@@ -318,7 +314,7 @@ const resetForm = async () => {
   domains.value = [];
   selectedSchool.value = '';
   schoolClass.value = '';
-  receivingClass.value = '';
+  receivingClass.value = false;
   fullName.value = '';
   phone.value = '';
   email.value = '';
@@ -490,6 +486,12 @@ if ($route.query.course && $route.query.provider) {
   fetchCourseSubjects(urlQueryCourseId.value);
   fetchCoursePriceInfo(urlQueryCourseId.value);
 }
+
+// Fetch schools and providers before DOM mount
+onBeforeMount(() => {
+  fetchSchools();
+  fetchProviders();
+});
 </script>
 
 <template>
@@ -515,8 +517,8 @@ if ($route.query.course && $route.query.provider) {
           rules="required"
         />
         <BaseCheckbox
-          class="application-form__label"
           v-model="receivingClass"
+          class="application-form__label"
           type="checkbox"
           name="Modtageklasse"
           label="Modtageklasse"
@@ -551,8 +553,8 @@ if ($route.query.course && $route.query.provider) {
         <h3>Forløb</h3>
         <BaseSelect
           v-model="selectedProvider"
-          @change="handleProviderChange"
           :options="providersSelect"
+          @update:model-value="handleProviderChange"
           name="Udbyder"
           selectLabel="Vælg udbyder"
           rules="required"
@@ -561,7 +563,7 @@ if ($route.query.course && $route.query.provider) {
         <BaseSelect
           v-if="!courseNotInList"
           v-model="selectedCourse"
-          @change="handleCourseChange"
+          @update:model-value="handleCourseChange"
           :options="coursesSelect"
           name="Forløb"
           selectLabel="Vælg forløb"
@@ -569,7 +571,7 @@ if ($route.query.course && $route.query.provider) {
         >
         </BaseSelect>
         <BaseCheckbox
-          v-model="courseNotInList"
+          :checked="courseNotInList"
           @change="handleHideCourseSelect"
           class="application-form__label"
           type="checkbox"
@@ -587,7 +589,6 @@ if ($route.query.course && $route.query.provider) {
         />
         <BaseTextareaFloatingLabel
           v-if="courseNotInList"
-          class="application-form__label"
           v-model="courseDescription"
           name="Beskrivelse af forløbet"
           label="Beskrivelse af forløbet"
@@ -643,7 +644,6 @@ if ($route.query.course && $route.query.provider) {
         <BaseInput
           class="application-form__label"
           v-model="settlementDate"
-          @change="settlementDateChange"
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"

@@ -123,11 +123,6 @@ const fetchTheatres = async () => {
   }
 };
 
-// Set settlement date on date change
-const settlementDateChange = async (event) => {
-  settlementDate.value = event.target.value;
-};
-
 // Handle modal
 const handleModal = (title: string, content: any) => {
   modalStore.showModal({
@@ -358,7 +353,6 @@ const handleSubmit = async () => {
         <BaseInput
           class="application-form__label"
           v-model="settlementDate"
-          @change="settlementDateChange"
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
