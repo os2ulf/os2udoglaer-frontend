@@ -24,29 +24,8 @@ const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
 const defaultSortingOptions = ref(searchBlockData?.value?.facets);
 
-const filteredOutFreeFilters = (allFilterData) => {
-  if (allFilterData.value) {
-    return Object.keys(allFilterData.value)
-      .filter(
-        (key) =>
-          ![
-            'course_is_free_primary_school',
-            'course_is_free',
-            'course_is_free_youth_education',
-            'course_educators_is_free',
-          ].includes(allFilterData.value[key]?.facet_id),
-      )
-      .reduce((acc, key) => {
-        acc[key] = allFilterData.value[key];
-        return acc;
-      }, {});
-  } else {
-    return {};
-  }
-};
-
 const computedFilters = computed(() => {
-  return filteredOutFreeFilters(defaultSortingOptions);
+  return defaultSortingOptions.value;
 });
 
 const allSortingOptions = ref(computedFilters);
