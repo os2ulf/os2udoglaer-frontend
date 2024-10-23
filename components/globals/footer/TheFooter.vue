@@ -214,6 +214,17 @@ const footerData = ref(filterFooterData[0]);
       padding-bottom: 0;
       margin-bottom: 0;
     }
+
+    :deep(p) {
+      a {
+        color: var(--theme-footer-text-color) !important;
+        transition: color 0.3s ease-in-out;
+
+        &:hover {
+          color: var(--color-primary-darken-5) !important;
+        }
+      }
+    }
   }
 
   &__contact-info-button {
