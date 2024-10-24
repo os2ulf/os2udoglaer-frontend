@@ -218,7 +218,11 @@ const footerData = ref(filterFooterData[0]);
     :deep(p) {
       a {
         color: var(--theme-footer-text-color) !important;
-        transition: color 0.3s ease-in-out;
+        border-bottom: 1px solid transparent;
+
+        &:hover {
+          border-bottom: 1px solid transparent;
+        }
       }
     }
   }
