@@ -251,8 +251,6 @@ const cardLabels = computed(() => {
   const labels: any = [];
 
   // Define label generators for different bundles
-  console.log('getBannerLabel', getBannerLabel(props.data));
-  console.log('props.data', props.data);
   const bundleLabelGenerators = {
     course: () => {
       getBannerLabel(props.data) === null ? labels.push(getThemeLabel(props.data)) : '';
