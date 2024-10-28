@@ -155,7 +155,6 @@ const currentUrl = computed(() => {
             <div class="internship__tags-wrapper">
               <div class="internship__tags-item" v-if="data?.bundle_label">
                 <BaseTag
-                  v-if="data?.bundle_label"
                   :data="{ label: data?.bundle_label }"
                   color="primary"
                 />
