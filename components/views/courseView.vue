@@ -263,7 +263,6 @@ const currentUrl = computed(() => {
                 v-if="data?.field_target_group"
               >
                 <BaseTag
-                  v-if="data?.field_target_group"
                   :data="{ label: data?.field_target_group }"
                   color="primary"
                 />
@@ -271,26 +270,28 @@ const currentUrl = computed(() => {
 
               <div
                 class="course__tags-item"
-                v-if="data?.field_banner || data?.field_theme"
+                v-if="data?.field_theme && !data?.field_banner"
               >
                 <BaseTag
-                  v-if="data?.field_banner"
-                  :data="{ label: data?.field_banner }"
-                  color="secondary-lighten"
-                />
-
-                <BaseTag
-                  v-else-if="data?.field_theme"
                   :data="{ label: data?.field_theme }"
                   color="primary-lighten"
                 />
               </div>
 
-              <div class="course__tags-item" v-if="data?.field_is_free">
+              <div class="course__tags-item" v-if="data?.field_is_free || data?.field_sold_out">
                 <BaseTag
-                  v-if="data?.field_is_free"
                   :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
                   color="secondary"
+                />
+              </div>
+
+              <div
+                class="course__tags-item"
+                v-if="data?.field_banner"
+              >
+                <BaseTag
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
                 />
               </div>
             </div>
