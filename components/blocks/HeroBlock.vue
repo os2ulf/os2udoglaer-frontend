@@ -54,10 +54,12 @@ const heroData = ref(props.blockData);
   &__image-wrapper {
     display: flex;
     position: relative;
+    background: #000;
     overflow: hidden;
 
     :deep(img) {
       object-fit: cover;
+      opacity: 0.8;
     }
   }
 
