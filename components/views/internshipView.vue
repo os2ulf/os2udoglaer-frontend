@@ -161,26 +161,11 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div class="internship__tags-item" v-if="data?.field_theme">
-                <BaseTag
-                  v-if="data?.field_theme"
-                  :data="{ label: data?.field_theme?.label }"
-                  color="secondary"
-                />
-              </div>
-
               <div
                 class="educators__tags-item"
-                v-if="data?.field_banner || data?.field_industry"
+                v-if="data?.field_industry && !data?.field_banner"
               >
                 <BaseTag
-                  v-if="data?.field_banner"
-                  :data="{ label: data?.field_banner }"
-                  color="secondary-lighten"
-                />
-
-                <BaseTag
-                  v-else-if="data?.field_industry"
                   :data="{ label: data?.field_industry[0] }"
                   color="primary-lighten"
                 />
@@ -188,9 +173,18 @@ const currentUrl = computed(() => {
 
               <div class="internship__tags-item" v-if="data?.field_sold_out">
                 <BaseTag
-                  v-if="data?.field_sold_out"
                   :data="{ label: 'Udsolgt' }"
                   color="secondary"
+                />
+              </div>
+
+              <div
+                class="educators__tags-item"
+                v-if="data?.field_banner"
+              >
+                <BaseTag
+                  :data="{ label: data?.field_banner }"
+                  color="secondary-lighten"
                 />
               </div>
             </div>

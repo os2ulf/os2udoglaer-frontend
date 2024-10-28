@@ -251,26 +251,28 @@ const cardLabels = computed(() => {
   const labels: any = [];
 
   // Define label generators for different bundles
+  console.log('getBannerLabel', getBannerLabel(props.data));
+  console.log('props.data', props.data);
   const bundleLabelGenerators = {
     course: () => {
-      labels.push(getThemeLabel(props.data));
+      getBannerLabel(props.data) === null ? labels.push(getThemeLabel(props.data)) : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     course_educators: () => {
-      labels.push(getThemeLabel(props.data));
+      getBannerLabel(props.data) === null ? labels.push(getThemeLabel(props.data)) : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     exercise: () => {
-      labels.push(getFocusLabel(props.data));
+      getBannerLabel(props.data) === null ? labels.push(getFocusLabel(props.data)) : '';
       labels.push(getBannerLabel(props.data));
     },
     news: () => {
       labels.push(getBannerLabel(props.data));
     },
     internship: () => {
-      labels.push(getIndustryLabel(props.data));
+      getBannerLabel(props.data) === null ? labels.push(getIndustryLabel(props.data)) : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
