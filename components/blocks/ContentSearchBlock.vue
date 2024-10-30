@@ -450,7 +450,6 @@ const isFreeFilterData = computed(() => {
 });
 const selectedPriceFilter = ref('all');
 const isFreeUrlAlias = ref(isFreeFilterData?.value[0]?.url_alias || '');
-const selectedPriceLabel = ref();
 
 watch(selectedPriceFilter, () => {
   const matchedItem = isFreeFilterData.value[0]?.items.find(
@@ -493,7 +492,7 @@ watch(selectedGuaranteePartnerFilter, () => {
 
   if (matchedItem) {
     const existingFilterIndex = selectedFiltersData.findIndex(
-      (filter) => filter.searchQueryUrlAlias === selectedGuaranteePartnerFilter.value,
+      (filter) => filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value,
     );
 
     if (existingFilterIndex !== -1) {
