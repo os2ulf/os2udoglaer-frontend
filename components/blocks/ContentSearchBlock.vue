@@ -24,8 +24,27 @@ const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
 const defaultSortingOptions = ref(searchBlockData?.value?.facets);
 
+// Exclude facet from default sorting options if facet_id is on of the below:
+// 'course_is_free'
+// 'course_is_free_primary_school'
+// 'course_is_free_youth_education'
+// 'course_educators_is_free'
+// 'internship_company_guarantee_partner'
+const defaultSortingOptionsFiltered = ref(
+  Object.values(defaultSortingOptions.value).filter(
+    (facet) => facet.facet_id !== 'course_is_free' && facet.facet_id !== 'course_is_free_primary_school' && facet.facet_id !== 'course_is_free_youth_education' && facet.facet_id !== 'course_educators_is_free' && facet.facet_id !== 'period' && facet.facet_id !== 'internship_company_guarantee_partner',
+  ),
+);
+
+// Set hidden sorting options to use for showing the "Alle filtre" button
+const hiddenSortingOptions = ref(
+  Object.values(defaultSortingOptions.value).filter(
+    (facet) => facet.hidden === true,
+  ),
+);
+
 const computedFilters = computed(() => {
-  return defaultSortingOptions.value;
+  return defaultSortingOptionsFiltered.value;
 });
 
 const allSortingOptions = ref(computedFilters);
@@ -76,6 +95,11 @@ const handleFilterChange = (
     // if is free filter
     if (selectedFilterOption.source === 'isFreeFilter') {
       selectedPriceFilter.value = '';
+    }
+
+    // if Guarantee Partner filter
+    if (selectedFilterOption.source === 'guaranteePartnerFilter') {
+      selectedGuaranteePartnerFilter.value = '';
     }
 
     // Check if selectedFilterOption already exists in selectedFiltersData
@@ -412,6 +436,7 @@ const handleDatePicker = (date) => {
 };
 
 const allFilterData = ref(searchBlockData?.value?.facets || {});
+
 const isFreeFilterData = computed(() => {
   // Computed property to filter out only "is free" filters
   return Object.values(allFilterData.value).filter((item) =>
@@ -449,6 +474,40 @@ watch(selectedPriceFilter, () => {
     });
   }
 });
+
+const guaranteePartnerFilterData = computed(() => {
+  // Computed property to filter out only "is free" filters
+  return Object.values(allFilterData.value).filter((item) =>
+    [
+      'internship_company_guarantee_partner',
+    ].includes(item?.facet_id),
+  );
+});
+const selectedGuaranteePartnerFilter = ref('all');
+const guaranteePartnerUrlAlias = ref(guaranteePartnerFilterData?.value[0]?.url_alias || '');
+
+watch(selectedGuaranteePartnerFilter, () => {
+  const matchedItem = guaranteePartnerFilterData.value[0]?.items.find(
+    (item) => item.value === selectedGuaranteePartnerFilter.value,
+  );
+
+  if (matchedItem) {
+    const existingFilterIndex = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === selectedGuaranteePartnerFilter.value,
+    );
+
+    if (existingFilterIndex !== -1) {
+      selectedFiltersData.splice(existingFilterIndex, 1);
+    }
+
+    selectedFiltersData.push({
+      searchQueryUrlAlias: guaranteePartnerUrlAlias.value,
+      value: selectedGuaranteePartnerFilter.value,
+      label: matchedItem.label,
+      source: 'guaranteePartnerFilter',
+    });
+  }
+});
 </script>
 
 <template>
@@ -479,7 +538,7 @@ watch(selectedPriceFilter, () => {
                 :key="item || idx"
                 :class="{
                   'search-block__dropdown--is-hidden':
-                    idx >= 4 && !showAllFilters,
+                    item.hidden && !showAllFilters,
                   'search-block__dropdown--is-hidden-mobile': !showAllFilters
                     ? 'search-block__dropdown--is-hidden-mobile'
                     : '',
@@ -510,7 +569,7 @@ watch(selectedPriceFilter, () => {
               <button
                 class="search-block__show-all-filters search-block__show-all-filters--desktop"
                 v-if="
-                  Object.keys(allSortingOptions).length > 4 && !showAllFilters
+                  Object.keys(hiddenSortingOptions).length > 0 && !showAllFilters
                 "
                 @click="showAllFilters = true"
               >
@@ -561,6 +620,33 @@ watch(selectedPriceFilter, () => {
                     name="price"
                     :value="item.value"
                     v-model="selectedPriceFilter"
+                  />
+                  <label
+                    class="search-block__price-filter__label"
+                    :for="id + item.label + item.value"
+                    >{{ item.label }}</label
+                  >
+                </div>
+              </div>
+
+              <div
+                v-if="guaranteePartnerFilterData.length > 0"
+                v-for="item in guaranteePartnerFilterData"
+                :key="item"
+                class="search-block__price-filter"
+              >
+                <div
+                  v-for="(item, idx) in guaranteePartnerFilterData[0]?.items"
+                  :key="idx"
+                  class="search-block__price-filter__radio"
+                >
+                  <input
+                    class="search-block__price-filter__input"
+                    type="radio"
+                    :id="id + item.label + item.value"
+                    name="price"
+                    :value="item.value"
+                    v-model="selectedGuaranteePartnerFilter"
                   />
                   <label
                     class="search-block__price-filter__label"
