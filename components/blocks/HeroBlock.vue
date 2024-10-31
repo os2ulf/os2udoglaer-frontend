@@ -8,7 +8,7 @@ const heroData = ref(props.blockData);
 
 <template>
   <div class="hero">
-    <div class="hero__image-wrapper">
+    <div class="hero__image-wrapper" :class="heroData?.field_image_overlay ? 'hero__image-wrapper--overlay' : ''">
       <BaseImage
         v-if="heroData?.field_image_media"
         :image="heroData?.field_image_media"
@@ -57,9 +57,11 @@ const heroData = ref(props.blockData);
     background: #000;
     overflow: hidden;
 
-    :deep(img) {
-      object-fit: cover;
-      opacity: 0.8;
+    &--overlay {
+      :deep(img) {
+        object-fit: cover;
+        opacity: 0.8;
+      }
     }
   }
 
