@@ -132,18 +132,26 @@ const footerData = ref(filterFooterData[0]);
 
         <div class="col-xs-12 col-sm-12 col-md-6 footer__section">
           <div class="footer__big-icons-container">
-            <NuxtLink
-              class="footer__big-icon-item"
-              v-for="item in footerData?.field_logos_and_links"
-              :key="item.id"
-              :to="item?.field_link?.url"
-              aria-label="link to logo"
-            >
-              <img
-                :src="item?.field_image?.src"
-                :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
-              />
-            </NuxtLink>
+            <div v-for="item in footerData?.field_logos_and_links">
+              <NuxtLink
+                v-if="item?.field_internal_link !== null"
+                class="footer__big-icon-item"
+                :key="item.id"
+                :to="item?.field_internal_link?.url"
+                aria-label="link to logo"
+              >
+                <img
+                  :src="item?.field_image?.src"
+                  :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
+                />
+              </NuxtLink>
+              <a v-else-if="item?.field_external_link !== null" :href="item?.field_external_link.url" target="_blank" aria-label="link to logo" class="footer__big-icon-item">
+                <img
+                  :src="item?.field_image?.src"
+                  :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -153,17 +161,22 @@ const footerData = ref(filterFooterData[0]);
           <div class="footer__privacy">
             <div
               class="footer__privacy-buttons"
-              v-if="footerData?.field_privacy_terms?.length > 0"
+              v-if="footerData?.field_paragraph_links?.length > 0"
             >
-              <NuxtLink
-                class="footer__privacy-button-item"
-                v-for="item in footerData?.field_privacy_terms"
-                :key="item?.id"
-                :to="item?.url"
-                :aria-label="item?.title"
-              >
-                {{ item?.title }}
-              </NuxtLink>
+              <div v-for="item in footerData?.field_paragraph_links">
+                <NuxtLink
+                  v-if="item?.field_internal_link !== null && item?.field_link_text !== null"
+                  class="footer__privacy-button-item"
+                  :key="item.key"
+                  :to="item?.field_internal_link?.url"
+                  :aria-label="item?.field_link_text"
+                >
+                  {{ item?.field_link_text }}
+                </NuxtLink>
+                <a v-else-if="item?.field_external_link !== null && item?.field_link_text !== null" :href="item?.field_external_link.url" target="_blank" :aria-label="item?.field_link_text" class="footer__privacy-button-item">
+                  {{ item?.field_link_text }}
+                </a>
+              </div>
             </div>
 
             <div class="footer__privacy-terms">
