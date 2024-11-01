@@ -17,7 +17,7 @@ const props = defineProps({
       >
         <NuxtLink
           :aria-label="'Link til ' + item.title"
-          :to="item.url"
+          :to="item.link.url"
           class="meta-offcanvas__item-link"
         >
           {{ item.title }}
@@ -26,8 +26,6 @@ const props = defineProps({
     </div>
   </div>
 </template>
-
-<script setup></script>
 
 <style lang="postcss" scoped>
 .meta-offcanvas {
