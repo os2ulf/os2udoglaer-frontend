@@ -281,8 +281,7 @@ const relatedContent = ref(props.data?.related_content);
           class="user__section-user-info"
           v-if="
             data?.field_other_info_description !== null ||
-            data?.field_other_info[0]?.field_file !== null ||
-            data?.field_other_info[0]?.field_link !== null
+            data?.field_other_info[0]?.field_external_link !== null
           "
         >
           <div class="col-xs-12 col-sm-12 col-md-5">
@@ -316,19 +315,19 @@ const relatedContent = ref(props.data?.related_content);
                   :key="button"
                 >
                   <NuxtLink
-                    v-if="button?.field_file || button?.field_link?.url"
+                    v-if="button?.field_file || button?.field_external_link?.url"
                     class="user__info-description__button-item__link button button--ghost"
                     :to="
                       button?.field_file
                         ? button?.field_file
-                        : button?.field_link?.url
+                        : button?.field_external_link?.url
                     "
                     aria-label="Download link"
                   >
                     <span
                       class="user__info-description--button-item__link-text"
                     >
-                      {{ button?.field_link?.title }}
+                      {{ button?.field_external_link?.title }}
                     </span>
                     <NuxtIcon
                       class="user__info-description--button-item__icon"

@@ -16,14 +16,23 @@ const cardItem = ref(props.cardItem);
       <div class="page-header-card__description">
         {{ cardItem?.field_description }}
       </div>
-      <div class="page-header-card__link" v-if="cardItem?.field_link !== null">
-        <NuxtLink :to="cardItem?.field_link.url" aria-label="Læs mere">
+      <div class="page-header-card__link" v-if="cardItem?.field_internal_link !== null">
+        <NuxtLink :to="cardItem?.field_internal_link.url" aria-label="Læs mere">
           <NuxtIcon
             class="page-header-card__link--icon"
             name="arrow-right"
             filled
           />
         </NuxtLink>
+      </div>
+      <div class="page-header-card__link" v-else-if="cardItem?.field_external_link !== null">
+        <a :href="cardItem?.field_external_link.url" target="_blank" aria-label="Læs mere" class="page-header-card__link--icon">
+          <NuxtIcon
+            class="page-header-card__link--icon"
+            name="arrow-right"
+            filled
+          />
+        </a>
       </div>
     </div>
   </div>

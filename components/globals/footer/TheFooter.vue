@@ -52,8 +52,9 @@ const footerData = ref(filterFooterData[0]);
             <div
               v-if="footerData?.field_contact_info"
               class="footer__contact-info"
-              v-html="footerData?.field_contact_info"
-            ></div>
+            >
+              <BaseRte :content="footerData?.field_contact_info" />
+            </div>
 
             <div
               class="footer__contact-info-button"
@@ -72,14 +73,12 @@ const footerData = ref(filterFooterData[0]);
               </NuxtLink>
             </div>
 
-            <!-- Social media - desktop version -->
             <div
-              class="footer__contact-social-media footer__contact-social-media--desktop"
+              class="footer__contact-social-media"
               v-if="
                 footerData?.field_facebook_url ||
                 footerData?.field_instagram_url ||
-                footerData?.field_linkedin_url ||
-                footerData?.field_youtube_url
+                footerData?.field_linkedin_url
               "
             >
               <NuxtLink
@@ -101,18 +100,10 @@ const footerData = ref(filterFooterData[0]);
               <NuxtLink
                 class="footer__contact-social-media-icon"
                 v-if="footerData.field_linkedin_url"
-                :to="footerData?.field_facebook_url?.field_linkedin_url"
+                :to="footerData?.field_linkedin_url?.url"
                 aria-label="link to linkedin"
               >
                 <NuxtIcon filled name="footer-linkedin" />
-              </NuxtLink>
-              <NuxtLink
-                class="footer__contact-social-media-icon"
-                v-if="footerData.field_youtube_url"
-                :to="footerData?.field_youtube_url?.url"
-                aria-label="link to youtube"
-              >
-                <NuxtIcon filled name="footer-youtube" />
               </NuxtLink>
             </div>
           </div>
@@ -137,66 +128,30 @@ const footerData = ref(filterFooterData[0]);
               </NuxtLink>
             </div>
           </div>
-
-          <!-- Social media - desktop version -->
-          <div
-            class="footer__contact-social-media footer__contact-social-media--mobile"
-            v-if="
-              footerData?.field_facebook_url ||
-              footerData?.field_instagram_url ||
-              footerData?.field_linkedin_url ||
-              footerData?.field_youtube_url
-            "
-          >
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_facebook_url"
-              :to="footerData?.field_facebook_url?.url"
-              aria-label="link to facebook"
-            >
-              <NuxtIcon filled name="footer-facebook" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_instagram_url"
-              :to="footerData?.field_instagram_url?.url"
-              aria-label="link to instagram"
-            >
-              <NuxtIcon filled name="footer-instagram" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_linkedin_url"
-              :to="footerData?.field_facebook_url?.field_linkedin_url"
-              aria-label="link to linkedin"
-            >
-              <NuxtIcon filled name="footer-linkedin" />
-            </NuxtLink>
-            <NuxtLink
-              class="footer__contact-social-media-icon"
-              v-if="footerData.field_youtube_url"
-              :to="footerData?.field_youtube_url?.url"
-              aria-label="link to youtube"
-            >
-              <NuxtIcon filled name="footer-youtube" />
-            </NuxtLink>
-          </div>
         </div>
 
         <div class="col-xs-12 col-sm-12 col-md-6 footer__section">
           <div class="footer__big-icons-container">
-            <NuxtLink
-              class="footer__big-icon-item"
-              v-for="item in footerData?.field_logos_and_links"
-              :key="item.id"
-              :to="item?.field_link?.url"
-              aria-label="link to logo"
-            >
-              <img
-                :src="item?.field_image?.src"
-                :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
-              />
-            </NuxtLink>
+            <div v-for="item in footerData?.field_logos_and_links">
+              <NuxtLink
+                v-if="item?.field_internal_link !== null"
+                class="footer__big-icon-item"
+                :key="item.id"
+                :to="item?.field_internal_link?.url"
+                aria-label="link to logo"
+              >
+                <img
+                  :src="item?.field_image?.src"
+                  :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
+                />
+              </NuxtLink>
+              <a v-else-if="item?.field_external_link !== null" :href="item?.field_external_link.url" target="_blank" aria-label="link to logo" class="footer__big-icon-item">
+                <img
+                  :src="item?.field_image?.src"
+                  :alt="item?.field_image?.alt ? item?.field_image?.alt : 'logo'"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -206,24 +161,22 @@ const footerData = ref(filterFooterData[0]);
           <div class="footer__privacy">
             <div
               class="footer__privacy-buttons"
-              v-if="footerData?.field_privacy_terms?.length > 0"
+              v-if="footerData?.field_paragraph_links?.length > 0"
             >
-              <!-- <button
-                aria-label="Cookiepolitik"
-                class="footer__privacy-button-item"
-                @click="handleUpdateCookieConsent"
-              >
-                Cookiepolitik
-              </button> -->
-              <NuxtLink
-                class="footer__privacy-button-item"
-                v-for="item in footerData?.field_privacy_terms"
-                :key="item?.id"
-                :to="item?.url"
-                :aria-label="item?.title"
-              >
-                {{ item?.title }}
-              </NuxtLink>
+              <div v-for="item in footerData?.field_paragraph_links">
+                <NuxtLink
+                  v-if="item?.field_internal_link !== null && item?.field_link_text !== null"
+                  class="footer__privacy-button-item"
+                  :key="item.key"
+                  :to="item?.field_internal_link?.url"
+                  :aria-label="item?.field_link_text"
+                >
+                  {{ item?.field_link_text }}
+                </NuxtLink>
+                <a v-else-if="item?.field_external_link !== null && item?.field_link_text !== null" :href="item?.field_external_link.url" target="_blank" :aria-label="item?.field_link_text" class="footer__privacy-button-item">
+                  {{ item?.field_link_text }}
+                </a>
+              </div>
             </div>
 
             <div class="footer__privacy-terms">
@@ -274,6 +227,17 @@ const footerData = ref(filterFooterData[0]);
       padding-bottom: 0;
       margin-bottom: 0;
     }
+
+    :deep(p) {
+      a {
+        color: var(--theme-footer-text-color) !important;
+        border-bottom: 1px solid transparent;
+
+        &:hover {
+          border-bottom: 1px solid transparent;
+        }
+      }
+    }
   }
 
   &__contact-info-button {
@@ -308,14 +272,6 @@ const footerData = ref(filterFooterData[0]);
     font-size: 32px;
     display: flex;
     gap: 24px;
-
-    &--desktop {
-      display: none @(--md) flex;
-    }
-
-    &--mobile {
-      display: flex @(--md) none;
-    }
   }
 
   &__contact-social-media-icon {

@@ -11,20 +11,22 @@ const formatDeadlineString = computed(() => {
   const deadlineString = ref(props.data?.deadline?.text);
 
   if (!deadlineString.value) return null;
-
+  // the format with ". . .""
+  const dateMatch2 = deadlineString.value.match(/\b(\d{2}.\d{2}.\d{4})\b/);
+  // the format with "/ / /"
   const dateMatch = deadlineString.value.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
 
-  if (!dateMatch) {
-    return null;
-  }
+  if (dateMatch2[0]) {
+    const formattedDate = dateMatch2[0];
 
-  if (dateMatch) {
+    return formattedDate;
+  } else if (dateMatch[0]) {
     const date = dateMatch[0];
     const formattedDate = date.replace(/\//g, '.');
 
     return formattedDate;
   } else {
-    return null;
+    return deadlineString.value;
   }
 });
 </script>
@@ -89,6 +91,10 @@ const formatDeadlineString = computed(() => {
   text-align: center;
   padding: 48px var(--grid-gutter-half) @(--md) 96px var(--grid-gutter-half);
   background: var(--color-secondary-lighten-5);
+
+  &__prices {
+    margin-bottom: 16px;
+  }
 
   & h2 {
     margin-bottom: 16px;

@@ -8,7 +8,7 @@ const heroData = ref(props.blockData);
 
 <template>
   <div class="hero">
-    <div class="hero__image-wrapper">
+    <div class="hero__image-wrapper" :class="heroData?.field_image_overlay ? 'hero__image-wrapper--overlay' : ''">
       <BaseImage
         v-if="heroData?.field_image_media"
         :image="heroData?.field_image_media"
@@ -28,14 +28,16 @@ const heroData = ref(props.blockData);
 
         <div
           class="hero__button-wrapper"
-          v-if="heroData?.field_hero_link?.length > 0"
+          v-if="heroData?.field_paragraph_links?.length > 0"
         >
-          <BaseButton
-            class="hero__button-ghost"
-            v-for="link in heroData?.field_hero_link"
-            :key="link"
-            :button-data="link"
-          />
+          <div v-for="link in heroData?.field_paragraph_links" :key="link">
+            <NuxtLink v-if="link.field_internal_link !== null && link.field_link_text !== null" :to="link.field_internal_link.url" aria-label="Læs mere" class="button hero__button-ghost">
+              {{ link.field_link_text }}
+            </NuxtLink>
+            <a v-else-if="link.field_external_link !== null && link.field_link_text !== null" :href="link.field_external_link.url" target="_blank" aria-label="Læs mere" class="button hero__button-ghost">
+              {{ link.field_link_text }}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -54,10 +56,14 @@ const heroData = ref(props.blockData);
   &__image-wrapper {
     display: flex;
     position: relative;
+    background: #000;
     overflow: hidden;
 
-    :deep(img) {
-      object-fit: cover;
+    &--overlay {
+      :deep(img) {
+        object-fit: cover;
+        opacity: 0.8;
+      }
     }
   }
 

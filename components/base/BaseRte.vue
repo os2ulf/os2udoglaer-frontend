@@ -54,17 +54,13 @@ if (alteredData !== null) {
 
 <style lang="postcss" scoped>
 .base-rte {
+  color: var(--theme-color);
   word-wrap: break-word;
+  hyphens: auto;
 
   :deep(a) {
-    color: var(--color-primary-darken-1);
+    color: var(--theme-color);
     text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-bottom 0.3s ease-in-out;
-
-    &:hover {
-      border-bottom: 1px solid var(--color-primary);
-    }
   }
 
   :deep(.text-align-right) {

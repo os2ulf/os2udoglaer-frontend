@@ -6,6 +6,8 @@ import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { useSettingsDataStore } from '~/stores/settingsData';
 
+const $route = useRoute();
+
 // Stores
 const settingsDataStore = useSettingsDataStore();
 const apiRouteStore = useApiRouteStore();
@@ -14,8 +16,6 @@ const modalStore = useModalStore();
 const props = defineProps({
   blockData: Object,
 });
-
-const $route = useRoute();
 
 // Set arrays of site messages to use in validation
 const formSettings = {
@@ -137,11 +137,6 @@ const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
 
-// Fetch schools and providers on component mount
-onBeforeMount(() => {
-  fetchCourses('all');
-});
-
 // Fetch courses from provider UID
 const fetchCourses = async (uid: any) => {
   coursesSelect.value = [];
@@ -231,6 +226,7 @@ const fetchCourseContent = async (nid: any) => {
 const fetchSchools = async () => {
   schoolsSelect.value = [];
   institutionsSelect.value = [];
+
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/users/school',
@@ -262,6 +258,7 @@ const fetchSchools = async () => {
 const fetchUserContent = async (uid: any) => {
   userContent.value = [];
   institutionPrivateMunicipal.value = '';
+
   try {
     const response = await fetch(
       apiRouteStore.apiRouteEndpoint + '/rest-export/user/' + uid,
@@ -272,7 +269,9 @@ const fetchUserContent = async (uid: any) => {
         },
       },
     );
+
     if (!response.ok) throw new Error(response.status);
+
     userContent.value = await response.json();
   } catch (error) {
     console.error('Error fetching schools:', error);
@@ -281,15 +280,15 @@ const fetchUserContent = async (uid: any) => {
   // Set address, postal code and city from user content.
   if (userContent.value[0].field_location_street) {
     institutionAddress.value =
-      userContent.value[0].field_location_street[0].value;
+      userContent.value[0]?.field_location_street[0]?.value;
   }
   if (userContent.value[0].field_location_zipcode) {
     institutionPostalCode.value =
-      userContent.value[0].field_location_zipcode[0].value;
+      userContent.value[0]?.field_location_zipcode[0]?.value;
   }
   institutionPrivateMunicipal.value =
-    userContent.value[0].field_private_municipal[0].value;
-  institutionDistrict.value = userContent.value[0].field_district[0].value;
+    userContent.value[0]?.field_private_municipal[0]?.value;
+  institutionDistrict.value = userContent.value[0]?.field_district[0]?.value;
 };
 
 // Fetch schools
@@ -324,8 +323,13 @@ const fetchInstitutions = async (type: any) => {
 };
 
 // Calculate distance between two coordinates
-const distanceBetween = (lat1, lon1, lat2, lon2) => {
-  const toRadians = (angle) => angle * (Math.PI / 180); // Converts degrees to radians
+const distanceBetween = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+) => {
+  const toRadians = (angle: number) => angle * (Math.PI / 180); // Converts degrees to radians
   const R = 6371; // Radius of the Earth in kilometers (use 3959 for miles)
 
   const dLat = toRadians(lat2 - lat1);
@@ -349,8 +353,8 @@ const distanceBetween = (lat1, lon1, lat2, lon2) => {
 
 // Fetch data from DAWA API
 const getDawaData = async (queryRaw: any, postalCode: any) => {
-  const query = queryRaw.trim().replace(/\s/g, '+');
-  if (query !== null && postalCode !== null) {
+  if (queryRaw !== null && postalCode !== null) {
+    const query = queryRaw?.trim().replace(/\s/g, '+');
     const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}*&postnr=${postalCode}&per_side=1&struktur=mini`;
     try {
       const response = await fetch(dawaUrl, {
@@ -370,43 +374,41 @@ const getDawaData = async (queryRaw: any, postalCode: any) => {
 };
 
 // Handle course change.
-const handleCourseChange = async (event: any) => {
-  selectedCourse.value = event.target.value;
+const handleCourseChange = async () => {
   courseAddress.value = '';
   coursePostalCode.value = '';
   courseCity.value = '';
+
   await fetchCourseContent(selectedCourse.value);
 };
 
 // Handle "Course not in list" logic
 const handleHideCourseSelect = async () => {
-  if (!courseNotInList.value) {
-    // If the checkbox is checked, hide the select list and clear the v-model value
+  if (courseNotInList.value) {
     courseAddress.value = '';
     coursePostalCode.value = '';
     courseCity.value = '';
     selectedCourse.value = '';
     coursesSelect.value = [];
-    courseNotInList.value = true;
   } else {
-    // If the checkbox is unchecked fetch courses from selected provider
-    courseNotInList.value = false;
     await fetchCourses('all');
   }
 };
 
 // Fetch schools/institutions on type change
-const handleTypeChange = async (event: any) => {
-  if (event.target.value === 'tpf_school') {
+const handleTypeChange = async () => {
+  if (selectedType.value === '') {
+    return;
+  } else if (selectedType.value === 'tpf_school') {
     await fetchSchools();
   } else {
-    await fetchInstitutions(event.target.value);
+    await fetchInstitutions(selectedType.value);
   }
 };
 
 // Fetch user content on institution change
-const handleInstitutionChange = async (event: any) => {
-  selectedInstitution.value = event.target.value;
+const handleInstitutionChange = async () => {
+  console.log('handleInstitutionChange', selectedInstitution.value);
   institutionAddress.value = '';
   institutionPostalCode.value = '';
   institutionDistrict.value = '';
@@ -536,11 +538,6 @@ const handleValidation = async (event: any) => {
   }
 };
 
-// Set settlement date on date change
-const settlementDateChange = async (event: any) => {
-  settlementDate.value = event.target.value;
-};
-
 // Handle modal
 const handleModal = (title: any, content: any) => {
   modalStore.showModal({
@@ -598,8 +595,8 @@ const handleSubmit = async () => {
   }
 
   isLoading.value = true;
-  const trimmedFullName = fullName.value.trim();
-  const trimmedEmail = email.value.trim();
+  const trimmedFullName = fullName?.value?.trim();
+  const trimmedEmail = email?.value?.trim();
 
   // Set field_rfc_course
   const field_rfc_course = [
@@ -748,12 +745,18 @@ const handleSubmit = async () => {
   }
 };
 
-// If the course and provider are in the URL, set default values to URL query parameters
+// If the course is in the URL, fetch course content lists
 if ($route.query.course) {
   urlQueryCourseId.value = $route.query.course;
+  selectedCourse.value = urlQueryCourseId.value;
   fetchCourses(urlQueryCourseId.value);
   fetchCourseContent(urlQueryCourseId.value);
 }
+
+// Fetch schools and providers on component mount
+onBeforeMount(() => {
+  fetchCourses('all');
+});
 </script>
 
 <template>
@@ -765,8 +768,7 @@ if ($route.query.course) {
           v-if="!courseNotInList"
           v-model="selectedCourse"
           :options="coursesSelect"
-          :model-value="urlQueryCourseId"
-          @change="handleCourseChange"
+          @update:model-value="handleCourseChange"
           name="Forløb"
           selectLabel="Vælg forløb"
           rules="required"
@@ -781,22 +783,21 @@ if ($route.query.course) {
           description="Se vilkår i boksen til højre under lokale initiativer"
           label="Forløb findes ikke på listen"
         />
-        <BaseTextareaFloatingLabel
-          v-if="courseNotInList"
-          class="application-form__label"
-          v-model="courseDescription"
-          name="Beskriv kort forløb og angiv formidler"
-          label="Beskriv kort forløb og angiv formidler"
-          rules="required"
-        />
-        <BaseTextareaFloatingLabel
-          v-if="courseNotInList"
-          class="application-form__label"
-          v-model="coursePurpose"
-          name="Beskriv formål med turen – 2-5 linjer om læringsmål"
-          label="Beskriv formål med turen – 2-5 linjer om læringsmål"
-          rules="required"
-        />
+
+        <div v-if="courseNotInList">
+          <BaseTextareaFloatingLabel
+            v-model="courseDescription"
+            name="Beskriv kort forløb og angiv formidler"
+            label="Beskriv kort forløb og angiv formidler"
+            rules="required"
+          />
+          <BaseTextareaFloatingLabel
+            v-model="coursePurpose"
+            name="Beskriv formål med turen – 2-5 linjer om læringsmål"
+            label="Beskriv formål med turen – 2-5 linjer om læringsmål"
+            rules="required"
+          />
+        </div>
       </div>
 
       <div class="field-group">
@@ -833,22 +834,21 @@ if ($route.query.course) {
         <BaseSelect
           v-model="selectedType"
           :options="typeSelect"
-          @change="handleTypeChange"
+          @update:model-value="handleTypeChange"
           name="Type"
           rules="required"
-        >
-        </BaseSelect>
+        />
+
         <BaseSelect
           v-if="selectedType === 'tpf_school'"
           v-model="selectedInstitution"
           :options="schoolsSelect"
-          @change="handleInstitutionChange"
+          @update:model-value="handleInstitutionChange"
           name="Skole"
           label="Skole"
           selectLabel="Vælg skole"
           rules="required"
-        >
-        </BaseSelect>
+        />
         <BaseSelect
           v-if="selectedType === 'tpf_school'"
           v-model="selectedSchoolGrade"
@@ -856,19 +856,18 @@ if ($route.query.course) {
           name="Klassetrin"
           label="Klassetrin"
           rules="required"
-        >
-        </BaseSelect>
+        />
+
         <BaseSelect
           v-if="selectedType && selectedType !== 'tpf_school'"
           v-model="selectedInstitution"
           :options="institutionsSelect"
-          @change="handleInstitutionChange"
+          @update:model-value="handleInstitutionChange"
           name="Institution"
           label="Institution"
           selectLabel="Vælg institution"
           rules="required"
-        >
-        </BaseSelect>
+        />
       </div>
 
       <div class="field-group">
@@ -906,7 +905,6 @@ if ($route.query.course) {
         <BaseInput
           class="application-form__label"
           v-model="settlementDate"
-          @change="settlementDateChange"
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
@@ -941,11 +939,9 @@ if ($route.query.course) {
           rules="required|email"
         />
         <BaseTextareaFloatingLabel
-          class="application-form__label"
           v-model="message"
           name="Evt. besked"
           label="Evt. besked"
-          rules=""
         />
       </div>
 

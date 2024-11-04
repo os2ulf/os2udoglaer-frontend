@@ -128,15 +128,13 @@ const currentUrl = computed(() => {
                 v-if="data?.bundle_label"
               >
                 <BaseTag
-                  v-if="data?.bundle_label"
                   :data="{ label: data?.bundle_label }"
                   color="primary"
                 />
               </div>
 
-              <div class="exercise__tags-item" v-if="data?.field_focus">
+              <div class="exercise__tags-item" v-if="data?.field_focus && !data?.field_banner">
                 <BaseTag
-                  v-if="data?.field_focus"
                   :data="{ label: data?.field_focus[0] }"
                   color="primary-lighten"
                 />
@@ -144,7 +142,6 @@ const currentUrl = computed(() => {
 
               <div class="exercise__tags-item" v-if="data?.field_banner">
                 <BaseTag
-                  v-if="data?.field_banner"
                   :data="{ label: data?.field_banner }"
                   color="secondary-lighten"
                 />
