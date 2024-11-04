@@ -77,6 +77,8 @@ const registrationData = computed(() => {
     price: props.data?.field_price,
     price_description: props.data?.field_description_of_price,
     free: props.data?.field_is_free,
+    event_shop_url: props.data?.event_shop_url,
+    field_pretix_widget_type: props.data?.field_pretix_widget_type,
   };
 });
 
@@ -420,40 +422,42 @@ const currentUrl = computed(() => {
               @click="showModal = true"
               role="button"
             />
-            <BaseButton
-              v-if="
-                data.field_target_group === 'Grundskole' &&
-                data.field_practical_info_buttons?.includes(
-                  'show_transport_request',
-                ) &&
-                transportApplicationUrl
-              "
-              class="button--primary"
-              :button-data="{
-                title: 'Information om transport',
-                url: transportApplicationUrl,
-              }"
-              icon-after="ext-link"
-              ghost
-              role="button"
-            />
-            <BaseButton
-              v-if="
-                data.field_target_group === 'Grundskole' &&
-                data.field_practical_info_buttons?.includes(
-                  'show_free_course_request',
-                ) &&
-                freeCourseApplicationUrl
-              "
-              class="button--primary"
-              :button-data="{
-                title: 'Ansøg om betaling af dette forløb!',
-                url: freeCourseApplicationUrl,
-              }"
-              icon-after="ext-link"
-              ghost
-              role="button"
-            />
+            <ClientOnly>
+              <BaseButton
+                v-if="
+                  data.field_target_group === 'Grundskole' &&
+                  data.field_practical_info_buttons?.includes(
+                    'show_transport_request',
+                  ) &&
+                  transportApplicationUrl
+                "
+                class="button--primary"
+                :button-data="{
+                  title: 'Information om transport',
+                  url: transportApplicationUrl,
+                }"
+                icon-after="ext-link"
+                ghost
+                role="button"
+              />
+              <BaseButton
+                v-if="
+                  data.field_target_group === 'Grundskole' &&
+                  data.field_practical_info_buttons?.includes(
+                    'show_free_course_request',
+                  ) &&
+                  freeCourseApplicationUrl
+                "
+                class="button--primary"
+                :button-data="{
+                  title: 'Ansøg om betaling af dette forløb!',
+                  url: freeCourseApplicationUrl,
+                }"
+                icon-after="ext-link"
+                ghost
+                role="button"
+              />
+            </ClientOnly>
           </div>
         </div>
 
@@ -512,8 +516,8 @@ const currentUrl = computed(() => {
             data.field_registration_email ||
             data.field_registration_phone ||
             data.field_registration_title ||
-            data.field_registration_url
-          "
+            data.field_registration_url ||
+            data.event_shop_url && data.field_pretix_widget_type"
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 course__section-registration"
         >
