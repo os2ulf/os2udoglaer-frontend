@@ -71,6 +71,25 @@ const renderLayoutBlock = (viewName: string) => {
 
 const openGraph = ref(viewData?.field_meta_tags?.html_head);
 
+const canonicalUrl = computed(() => {
+  const currentPath = route.path;
+  const homeCanonicalPath =
+    useGetCurrentDomain() +
+    removeBEdomain(openGraph?.value?.og_url?.attributes?.content ?? '');
+
+  if (
+    currentPath === '/' ||
+    currentPath === homeCanonicalPath.replace(useGetCurrentDomain(), '')
+  ) {
+    return homeCanonicalPath;
+  } else {
+    return seoCanonicalUrlHandler(
+      openGraph?.value?.canonical_url?.attributes?.href ?? '',
+      viewData?.is_frontpage,
+    );
+  }
+});
+
 useHead({
   htmlAttrs: {
     lang: 'da',
@@ -337,10 +356,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: seoCanonicalUrlHandler(
-        openGraph?.value?.canonical_url?.attributes?.href ?? '',
-        viewData?.is_frontpage,
-      ),
+      href: canonicalUrl.value,
     },
     {
       rel: 'image_src',
