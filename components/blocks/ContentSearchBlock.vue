@@ -25,16 +25,20 @@ const pager = ref(searchBlockData?.value?.pager);
 const defaultSortingOptions = ref(searchBlockData?.value?.facets);
 
 // Exclude facet from default sorting options if facet_id is on of the below:
-// 'course_is_free'
-// 'course_is_free_primary_school'
-// 'course_is_free_youth_education'
-// 'course_educators_is_free'
-// 'internship_company_guarantee_partner'
-const defaultSortingOptionsFiltered = ref(
-  Object.values(defaultSortingOptions.value).filter(
-    (facet) => facet.facet_id !== 'course_is_free' && facet.facet_id !== 'course_is_free_primary_school' && facet.facet_id !== 'course_is_free_youth_education' && facet.facet_id !== 'course_educators_is_free' && facet.facet_id !== 'period' && facet.facet_id !== 'internship_company_guarantee_partner',
-  ),
-);
+const excludedFacetIds = [
+  'course_is_free',
+  'course_is_free_primary_school',
+  'course_is_free_youth_education',
+  'course_educators_is_free',
+  'period',
+  'internship_company_guarantee_partner',
+];
+
+const defaultSortingOptionsFiltered = computed(() => {
+  return Object.values(defaultSortingOptions.value).filter(
+    (facet) => !excludedFacetIds.includes(facet.facet_id),
+  );
+});
 
 // Set hidden sorting options to use for showing the "Alle filtre" button
 const hiddenSortingOptions = ref(
@@ -389,17 +393,6 @@ const handleSortingChange = (item) => {
   };
 };
 
-onBeforeMount(() => {
-  if (window.location.search) {
-    parseUrlParameters();
-  }
-});
-
-onMounted(() => {
-  isLoading.value = false;
-  isLoadingPageResults.value = false;
-});
-
 const formatDate = (isoString) => {
   const date = new Date(isoString);
 
@@ -437,17 +430,20 @@ const handleDatePicker = (date) => {
 
 const allFilterData = ref(searchBlockData?.value?.facets || {});
 
+// Filter out only "is free" filters
+const isFreeFacetIds = [
+  'course_is_free_primary_school',
+  'course_is_free',
+  'course_is_free_youth_education',
+  'course_educators_is_free',
+];
+
 const isFreeFilterData = computed(() => {
-  // Computed property to filter out only "is free" filters
   return Object.values(allFilterData.value).filter((item) =>
-    [
-      'course_is_free_primary_school',
-      'course_is_free',
-      'course_is_free_youth_education',
-      'course_educators_is_free',
-    ].includes(item?.facet_id),
+    isFreeFacetIds.includes(item?.facet_id),
   );
 });
+
 const selectedPriceFilter = ref('all');
 const isFreeUrlAlias = ref(isFreeFilterData?.value[0]?.url_alias || '');
 
@@ -475,15 +471,15 @@ watch(selectedPriceFilter, () => {
 });
 
 const guaranteePartnerFilterData = computed(() => {
-  // Computed property to filter out only "is free" filters
   return Object.values(allFilterData.value).filter((item) =>
-    [
-      'internship_company_guarantee_partner',
-    ].includes(item?.facet_id),
+    ['internship_company_guarantee_partner'].includes(item?.facet_id),
   );
 });
+
 const selectedGuaranteePartnerFilter = ref('all');
-const guaranteePartnerUrlAlias = ref(guaranteePartnerFilterData?.value[0]?.url_alias || '');
+const guaranteePartnerUrlAlias = ref(
+  guaranteePartnerFilterData?.value[0]?.url_alias || '',
+);
 
 watch(selectedGuaranteePartnerFilter, () => {
   const matchedItem = guaranteePartnerFilterData.value[0]?.items.find(
@@ -506,6 +502,17 @@ watch(selectedGuaranteePartnerFilter, () => {
       source: 'guaranteePartnerFilter',
     });
   }
+});
+
+onBeforeMount(() => {
+  if (window.location.search) {
+    parseUrlParameters();
+  }
+});
+
+onMounted(() => {
+  isLoading.value = false;
+  isLoadingPageResults.value = false;
 });
 </script>
 
@@ -543,32 +550,31 @@ watch(selectedGuaranteePartnerFilter, () => {
                     : '',
                 }"
               >
-                <ClientOnly>
-                  <div v-if="item.exposed_filter === 'period'">
-                    <BaseDatePicker
-                      @datepicker-value="handleDatePicker"
-                      :startAndEndDates="{
-                        startDate: datePickerStartDate,
-                        endDate: datePickerEndDate,
-                      }"
-                      :filter-name="datePickerLabel"
-                    />
-                  </div>
-
-                  <BaseSearchDropdown
-                    v-else
-                    @dropdown-value="handleFilterChange"
-                    :allFilters="item"
-                    :last-interacted-filter-data="lastInteractedFilterReference"
-                    :isLoading="isLoadingPageResults"
+                <div v-if="item.exposed_filter === 'period'">
+                  <BaseDatePicker
+                    @datepicker-value="handleDatePicker"
+                    :startAndEndDates="{
+                      startDate: datePickerStartDate,
+                      endDate: datePickerEndDate,
+                    }"
+                    :filter-name="datePickerLabel"
                   />
-                </ClientOnly>
+                </div>
+
+                <BaseSearchDropdown
+                  v-else
+                  @dropdown-value="handleFilterChange"
+                  :allFilters="item"
+                  :last-interacted-filter-data="lastInteractedFilterReference"
+                  :isLoading="isLoadingPageResults"
+                />
               </div>
 
               <button
                 class="search-block__show-all-filters search-block__show-all-filters--desktop"
                 v-if="
-                  Object.keys(hiddenSortingOptions).length > 0 && !showAllFilters
+                  Object.keys(hiddenSortingOptions).length > 0 &&
+                  !showAllFilters
                 "
                 @click="showAllFilters = true"
               >
