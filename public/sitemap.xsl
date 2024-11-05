@@ -31,6 +31,7 @@
       </head>
       <body>
         <h1>Sitemap</h1>
+
         <xsl:choose>
           <!-- Case for sitemap index -->
           <xsl:when test="sitemapindex">
