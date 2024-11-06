@@ -38,13 +38,12 @@ const toggleDropdown = () => {
 };
 
 const select = (item) => {
-  item = {
+  item.selected = !item.selected;
+  emit('dropdownValue', {
     ...item,
     searchQueryUrlAlias: searchQueryUrlAlias.value,
     isDropdownOpen: true,
-  };
-
-  emit('dropdownValue', item);
+  });
 };
 
 const handleClickOutside = (e) => {
@@ -140,7 +139,7 @@ onUnmounted(() => {
           <TransitionGroup name="list">
             <li
               class="dropdown__item"
-              v-for="item in filteredOptions"
+              v-for="(item, index) in filteredOptions"
               :key="item"
             >
               <label

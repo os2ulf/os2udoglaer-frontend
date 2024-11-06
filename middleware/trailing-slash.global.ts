@@ -5,6 +5,8 @@ export default function ({ path, query, hash }) {
   const nextPath = path.replace(/\/+$/, '').toLowerCase() || '/';
   const nextRoute = { path: nextPath, query, hash };
 
+  // console.log('nextPath', nextPath, 'nextRoute', nextRoute);
+
   if (path !== nextPath) {
     return navigateTo(nextRoute, { redirectCode: 301 });
   }

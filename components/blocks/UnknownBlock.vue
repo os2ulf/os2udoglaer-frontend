@@ -14,7 +14,7 @@ const props = defineProps({
   blockData: Object,
 });
 
-console.log('UnknownBlock data', props.blockData);
+// console.log('UnknownBlock data', props.blockData);
 </script>
 
 <style lang="postcss" scoped>

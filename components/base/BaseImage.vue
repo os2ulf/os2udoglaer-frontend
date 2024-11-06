@@ -24,6 +24,11 @@ const props = defineProps({
             ? image?.img_element?.alt
             : image?.label || 'Billede'
         "
+        :title="
+          image?.img_element?.alt
+            ? image?.img_element?.alt
+            : image?.label || 'Billede'
+        "
         loading="lazy"
         :width="image?.width"
         :height="image?.height"

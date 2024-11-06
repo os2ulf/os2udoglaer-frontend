@@ -36,18 +36,9 @@ export default defineEventHandler(async (event) => {
 
     if (xmlData.urlset?.url) {
       xmlData.urlset.url.forEach((urlEntry) => {
+        // Remove <xhtml:link> from each URL entry
         if (urlEntry['xhtml:link']) {
-          if (!Array.isArray(urlEntry['xhtml:link'])) {
-            urlEntry['xhtml:link'] = [urlEntry['xhtml:link']];
-          }
-
-          // new 'translations' array to store the language link pairs
-          urlEntry['translation'] = urlEntry['xhtml:link'].map((link) => {
-            return {
-              lang: link['@_hreflang'],
-              link: link['@_href'],
-            };
-          });
+          delete urlEntry['xhtml:link'];
         }
       });
     }
@@ -86,18 +77,9 @@ export default defineEventHandler(async (event) => {
 
     if (xmlData.urlset?.url) {
       xmlData.urlset.url.forEach((urlEntry) => {
+        // Remove <xhtml:link> if present
         if (urlEntry['xhtml:link']) {
-          if (!Array.isArray(urlEntry['xhtml:link'])) {
-            urlEntry['xhtml:link'] = [urlEntry['xhtml:link']];
-          }
-
-          // new 'translations' array to store the language link pairs
-          urlEntry['translation'] = urlEntry['xhtml:link'].map((link) => {
-            return {
-              lang: link['@_hreflang'],
-              link: link['@_href'],
-            };
-          });
+          delete urlEntry['xhtml:link'];
         }
       });
     }
@@ -113,6 +95,7 @@ export default defineEventHandler(async (event) => {
 
     // if table of sitemap pagination
     if (response.includes('<sitemapindex')) {
+      const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
       const parser = new XMLParser();
       const xmlData = parser.parse(response);
       const sitemaps = xmlData.sitemapindex.sitemap;
@@ -123,15 +106,15 @@ export default defineEventHandler(async (event) => {
         suppressEmptyNode: true,
       });
 
+      // Add the xmlns attribute only to <sitemapindex>
       const xmlBody = builder.build({
         sitemapindex: {
+          '@_xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
           sitemap: sitemaps,
         },
       });
 
-      const xml = `<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n${xmlBody}`;
-
-      return xml;
+      return xmlDeclaration + '\n' + xmlBody;
     }
 
     return response;

@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useModalStore } from '~~/stores/modal';
+
+interface ModalData {
+  title?: string;
+  content?: string;
+  video_overlay_text?: string;
+}
+
 const modalStore = useModalStore();
 
-const isVisible = computed(() => modalStore.isVisible);
+const isVisible = computed<boolean>(() => modalStore.isVisible);
 
-const modalContent = computed(() => {
+const modalContent = computed<ModalData | null>(() => {
   return modalStore.modalData;
 });
 
-// listen to escape key
-const handleEscapeKey = (e) => {
+const handleEscapeKey = (e: KeyboardEvent) => {
   if (isVisible.value === true && e.key === 'Escape') {
     modalStore.hideModal();
   }
@@ -39,7 +45,14 @@ onUnmounted(() => {
         </div>
         <div v-show="modalContent" class="the-modal__content-body">
           <h3 v-if="modalContent?.title">{{ modalContent?.title }}</h3>
-          <div v-if="modalContent?.content" v-html="modalContent?.content"></div>
+          <div
+            v-if="modalContent?.content"
+            v-html="modalContent?.content"
+          ></div>
+          <div
+            v-if="modalContent?.video_overlay_text"
+            v-html="modalContent?.video_overlay_text"
+          ></div>
         </div>
       </div>
     </div>
