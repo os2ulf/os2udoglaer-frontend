@@ -11,7 +11,8 @@
     "eslint:fix": "eslint --ext .js,.vue,.ts --ignore-path .gitignore . --fix",
     "stylelint": "stylelint **/*.{css,vue}",
     "stylelint:fix": "stylelint **/*.{css,vue} --fix",
-    "build:debug": "npm run build && NODE_OPTIONS=--max-old-space-size=64 node --expose-gc --inspect .output/server/index.mjs"
+    "build:debug": "npm run build && NODE_OPTIONS=--max-old-space-size=64 node --expose-gc --inspect .output/server/index.mjs",
+    "start": "node .output/server/index.mjs"
   },
   "devDependencies": {
     "@novicell/eslint-config-nuxt": "^0.2.5",

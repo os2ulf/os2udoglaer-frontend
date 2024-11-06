@@ -98,6 +98,6 @@ export default defineNuxtConfig({
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => tag === 'pretix-widget',
-    }
+    },
   },
 });

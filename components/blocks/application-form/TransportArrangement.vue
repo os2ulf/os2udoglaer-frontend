@@ -408,7 +408,7 @@ const handleTypeChange = async () => {
 
 // Fetch user content on institution change
 const handleInstitutionChange = async () => {
-  console.log('handleInstitutionChange', selectedInstitution.value);
+  // console.log('handleInstitutionChange', selectedInstitution.value);
   institutionAddress.value = '';
   institutionPostalCode.value = '';
   institutionDistrict.value = '';
@@ -421,17 +421,17 @@ const handleValidation = async (event: any) => {
   validationMessage.value = '';
   const checkDistance = ref(true);
 
-  console.log('courseWhoCanApply: ', courseWhoCanApply.value);
-  console.log(
-    'institutionPrivateMunicipal: ',
-    institutionPrivateMunicipal.value,
-  );
-  console.log('selectedSchoolGrade: ', selectedSchoolGrade.value);
-  console.log('selectedType: ', selectedType.value);
-  console.log('courseAddress: ', courseAddress.value);
-  console.log('institutionAddress: ', institutionAddress.value);
-  console.log('institutionDistrict: ', institutionDistrict.value);
-  console.log('courseNotInList: ', courseNotInList.value);
+  // console.log('courseWhoCanApply: ', courseWhoCanApply.value);
+  // console.log(
+  //   'institutionPrivateMunicipal: ',
+  //   institutionPrivateMunicipal.value,
+  // );
+  // console.log('selectedSchoolGrade: ', selectedSchoolGrade.value);
+  // console.log('selectedType: ', selectedType.value);
+  // console.log('courseAddress: ', courseAddress.value);
+  // console.log('institutionAddress: ', institutionAddress.value);
+  // console.log('institutionDistrict: ', institutionDistrict.value);
+  // console.log('courseNotInList: ', courseNotInList.value);
 
   // If private institution and municipal course, or private institution and course not in list
   if (
@@ -503,7 +503,7 @@ const handleValidation = async (event: any) => {
         institutionLatLon.value.longitude,
       );
       const roundedDistance = distance.toFixed(2); // Rounds to 2 decimal places
-      console.log(`Distance: ${roundedDistance} km`);
+      // console.log(`Distance: ${roundedDistance} km`);
       if (roundedDistance < 6) {
         validationMessage.value = formSettings.denied_distance.value;
         validated.value = false;
