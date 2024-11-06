@@ -30,6 +30,16 @@ const props = defineProps({
 });
 
 const newsData = ref(props.blockData?.results);
+
+const smartLabel = computed(() => {
+  if (props.blockData?.label === '') {
+    return 'Seneste nyheder';
+  } else if (props.blockData?.label?.length > 0) {
+    return props.blockData?.label;
+  } else {
+    return null;
+  }
+});
 </script>
 
 <template>
@@ -46,7 +56,9 @@ const newsData = ref(props.blockData?.results);
       "
     >
       <div class="latest-news__carousel">
-        <h2 class="latest-news__title">Seneste nyheder</h2>
+        <h2 class="latest-news__title" v-if="smartLabel">
+          {{ smartLabel }}
+        </h2>
         <ClientOnly>
           <Swiper
             :modules="modules"
