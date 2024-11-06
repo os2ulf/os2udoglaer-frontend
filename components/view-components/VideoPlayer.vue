@@ -1,16 +1,44 @@
 <script setup lang="ts">
 import { useModalStore } from '~/stores/modal';
+
+interface VideoThumbnail {
+  type: string;
+  responsive_image_style_id: string;
+  width: string;
+  height: string;
+  attributes: Record<string, any>;
+}
+
+interface VideoUrl {
+  url: string;
+}
+
+interface VideoItem {
+  bundle: string;
+  entity_type: string;
+  field_video_thumbnail?: VideoThumbnail;
+  field_video_url?: VideoUrl;
+  id: string;
+  label: string;
+  transform_mode: string;
+  type: string;
+  video_overlay_text?: string;
+}
+
 const modalStore = useModalStore();
 
-const props = defineProps({
-  videoArr: {
-    required: true,
-    default: null,
-  },
-});
+const props = defineProps<{
+  videoArr: VideoItem | VideoItem[] | null;
+}>();
 
-const handleVideo = (videoItem: any) => {
+const handleVideo = (videoItem: VideoItem) => {
   modalStore.showModal(videoItem);
+
+  if (videoItem?.field_video_url?.url) {
+    setTimeout(() => {
+      window.open(videoItem?.field_video_url?.url, '_blank');
+    }, 750);
+  }
 };
 </script>
 
@@ -19,7 +47,7 @@ const handleVideo = (videoItem: any) => {
     <div
       v-if="Array.isArray(props.videoArr)"
       v-for="videoItem in props.videoArr"
-      :key="videoItem"
+      :key="videoItem.id"
       class="video__wrapper"
       @click="handleVideo(videoItem)"
     >
