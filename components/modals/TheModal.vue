@@ -5,6 +5,13 @@ interface ModalData {
   title?: string;
   content?: string;
   video_overlay_text?: string;
+  field_video_url?: {
+    url: url;
+  };
+}
+
+interface url {
+  url: string;
 }
 
 const modalStore = useModalStore();
@@ -37,7 +44,12 @@ onUnmounted(() => {
       class="the-modal"
       @click.self="modalStore.hideModal"
     >
-      <div class="the-modal__wrapper">
+      <div
+        class="the-modal__wrapper"
+        :class="{
+          'the-modal__wrapper--video': modalContent?.field_video_url?.url,
+        }"
+      >
         <div class="the-modal__header">
           <button class="the-modal__button-close" @click="modalStore.hideModal">
             <NuxtIcon class="the-modal__close-icon" name="close" />
@@ -54,6 +66,17 @@ onUnmounted(() => {
             v-html="modalContent?.video_overlay_text"
           ></div>
         </div>
+        <BaseButton
+          v-if="modalContent?.field_video_url?.url"
+          type="button"
+          :button-data="{
+            title: 'Se video',
+            url: modalContent?.field_video_url.url,
+            target: '_blank',
+          }"
+          class="the-modal__button"
+          @click="modalStore.hideModal"
+        />
       </div>
     </div>
   </Transition>
@@ -86,6 +109,10 @@ onUnmounted(() => {
     align-items: center;
     border-radius: 32px;
     transition: all 0.3s ease-in-out;
+
+    &--video {
+      justify-content: space-around;
+    }
   }
 
   &__header {
@@ -120,6 +147,10 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     text-align: left;
+  }
+
+  &__button {
+    margin: 20px 0;
   }
 
   svg {

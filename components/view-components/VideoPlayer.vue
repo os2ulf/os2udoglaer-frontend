@@ -33,12 +33,6 @@ const props = defineProps<{
 
 const handleVideo = (videoItem: VideoItem) => {
   modalStore.showModal(videoItem);
-
-  if (videoItem?.field_video_url?.url) {
-    setTimeout(() => {
-      window.open(videoItem?.field_video_url?.url, '_blank');
-    }, 750);
-  }
 };
 </script>
 
