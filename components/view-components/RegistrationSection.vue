@@ -30,8 +30,8 @@ const formatDeadlineString = computed(() => {
   }
 });
 
-if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
-  onMounted(() => {
+onMounted(() => {
+  if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
     // Inject a script dynamically if needed.
     const script = document.createElement('script');
     script.src = 'https://pretix.eu/widget/v1.da.js';
@@ -43,8 +43,8 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
     link.rel = 'stylesheet';
     link.href = props.data.event_shop_url + 'widget/v1.css';
     document.head.appendChild(link);
-  });
-}
+  }
+});
 </script>
 
 <template>
@@ -94,23 +94,34 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
     <div v-if="props.data.email" class="course__registration__email">
       Email: <a :href="'mailto:' + props.data.email">{{ props.data.email }}</a>
     </div>
-    <div v-if="props.data.event_shop_url && props.data.field_pretix_widget_type" class="course__registration__pretix">
+    <div
+      v-if="props.data.event_shop_url && props.data.field_pretix_widget_type"
+      class="course__registration__pretix"
+    >
       <ClientOnly>
-        <pretix-widget :event="props.data.event_shop_url" :list-type="props.data.field_pretix_widget_type"></pretix-widget>
+        <pretix-widget
+          :event="props.data.event_shop_url"
+          :list-type="props.data.field_pretix_widget_type"
+        ></pretix-widget>
         <noscript>
-         <div class="pretix-widget">
+          <div class="pretix-widget">
             <div class="pretix-widget-info-message">
-              JavaScript is disabled in your browser. To access our ticket shop without JavaScript,
-              please <a target="_blank" :href="props.data.event_shop_url">click here</a>.
+              JavaScript is disabled in your browser. To access our ticket shop
+              without JavaScript, please
+              <a target="_blank" :href="props.data.event_shop_url">click here</a
+              >.
             </div>
           </div>
         </noscript>
       </ClientOnly>
     </div>
     <div v-if="props.data.url" class="course__registration__url">
-      <a :href="props.data.url" class="button button--secondary" target="_blank">{{
-        props.data.title ? props.data.title : props.data.url
-      }}</a>
+      <a
+        :href="props.data.url"
+        class="button button--secondary"
+        target="_blank"
+        >{{ props.data.title ? props.data.title : props.data.url }}</a
+      >
     </div>
   </div>
 </template>
@@ -154,7 +165,7 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
 /* Pretix widget styling */
 :deep(.pretix-widget) {
   margin: 30px 0;
-  border:none;
+  border: none;
 }
 
 :deep(.pretix-widget .pretix-widget-event-calendar) {
@@ -163,19 +174,33 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
   padding: 5px;
   background: #fff;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
+  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
 }
 
-:deep(.pretix-widget .pretix-widget-event-calendar .pretix-widget-event-calendar-table td) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-calendar
+      .pretix-widget-event-calendar-table
+      td
+  ) {
   background: #f9f9f9;
 }
 
-:deep(.pretix-widget .pretix-widget-event-calendar .pretix-widget-event-calendar-event) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-calendar
+      .pretix-widget-event-calendar-event
+  ) {
   font-size: 14px;
   line-height: 1.3;
 }
 
-:deep(.pretix-widget .pretix-widget-event-calendar .pretix-widget-event-calendar-event strong) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-calendar
+      .pretix-widget-event-calendar-event
+      strong
+  ) {
   font-weight: 400;
 }
 
@@ -185,7 +210,7 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
   padding: 0;
   background: #fff;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
+  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
 }
 
 :deep(.pretix-widget .pretix-widget-event-list-entry) {
@@ -196,22 +221,42 @@ if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
   border-bottom: 1px solid #ccc;
 }
 
-:deep(.pretix-widget .pretix-widget-event-list-entry .pretix-widget-event-list-entry-name) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-list-entry
+      .pretix-widget-event-list-entry-name
+  ) {
   font-weight: 700;
 }
 
-:deep(.pretix-widget .pretix-widget-event-list-entry .pretix-widget-event-list-entry-name),
-:deep(.pretix-widget .pretix-widget-event-list-entry .pretix-widget-event-list-entry-date) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-list-entry
+      .pretix-widget-event-list-entry-name
+  ),
+:deep(
+    .pretix-widget
+      .pretix-widget-event-list-entry
+      .pretix-widget-event-list-entry-date
+  ) {
   text-align: left;
   width: auto;
   padding-right: 20px;
 }
 
-:deep(.pretix-widget .pretix-widget-event-list-entry .pretix-widget-event-list-entry-date) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-list-entry
+      .pretix-widget-event-list-entry-date
+  ) {
   color: #9b9b9b;
 }
 
-:deep(.pretix-widget .pretix-widget-event-list-entry .pretix-widget-event-list-entry-availability) {
+:deep(
+    .pretix-widget
+      .pretix-widget-event-list-entry
+      .pretix-widget-event-list-entry-availability
+  ) {
   text-align: right;
   width: auto;
   margin-left: auto;
