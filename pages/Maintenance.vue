@@ -18,10 +18,10 @@ useHead({
   ],
 });
 
-// Attempt to redirect to homepage every 30s
+// Attempt to redirect to homepage every 90s
 setTimeout(() => {
   window.location.href = '/';
-}, 30000);
+}, 90000);
 </script>
 
 <template>

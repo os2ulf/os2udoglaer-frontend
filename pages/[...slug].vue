@@ -72,22 +72,10 @@ const renderLayoutBlock = (viewName: string) => {
 const openGraph = ref(viewData?.field_meta_tags?.html_head);
 
 const canonicalUrl = computed(() => {
-  const currentPath = route.path;
-  const homeCanonicalPath =
-    useGetCurrentDomain() +
-    removeBEdomain(openGraph?.value?.og_url?.attributes?.content ?? '');
-
-  if (
-    currentPath === '/' ||
-    currentPath === homeCanonicalPath.replace(useGetCurrentDomain(), '')
-  ) {
-    return homeCanonicalPath;
-  } else {
-    return seoCanonicalUrlHandler(
-      openGraph?.value?.canonical_url?.attributes?.href ?? '',
-      viewData?.is_frontpage,
-    );
-  }
+  return seoCanonicalUrlHandler(
+    openGraph?.value?.canonical_url?.attributes?.href ?? '',
+    viewData?.is_frontpage,
+  );
 });
 
 useHead({

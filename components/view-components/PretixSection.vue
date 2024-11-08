@@ -5,13 +5,7 @@ const props = defineProps({
     required: true,
     default: null,
   },
-  widgetType: {
-    type: String,
-    required: true,
-    default: null,
-  },
 });
-
 </script>
 
 <template>

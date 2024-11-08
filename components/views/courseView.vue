@@ -199,10 +199,10 @@ const practicalInfoData = computed(() => {
           title: 'Varighed',
           content:
             props.data?.field_duration &&
-            props.data?.field_duration_unit_taxonomy?.label
+            props.data?.field_duration_unit_taxonomy
               ? props.data?.field_duration +
                 ' ' +
-                props.data?.field_duration_unit_taxonomy?.label
+                props.data?.field_duration_unit_taxonomy
               : '',
           description: props.data?.field_description_of_duration,
         },
@@ -280,17 +280,17 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div class="course__tags-item" v-if="data?.field_is_free || data?.field_sold_out">
+              <div
+                class="course__tags-item"
+                v-if="data?.field_is_free || data?.field_sold_out"
+              >
                 <BaseTag
                   :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
                   color="secondary"
                 />
               </div>
 
-              <div
-                class="course__tags-item"
-                v-if="data?.field_banner"
-              >
+              <div class="course__tags-item" v-if="data?.field_banner">
                 <BaseTag
                   :data="{ label: data?.field_banner }"
                   color="secondary-lighten"
@@ -517,7 +517,8 @@ const currentUrl = computed(() => {
             data.field_registration_phone ||
             data.field_registration_title ||
             data.field_registration_url ||
-            data.event_shop_url && data.field_pretix_widget_type"
+            (data.event_shop_url && data.field_pretix_widget_type)
+          "
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 course__section-registration"
         >
