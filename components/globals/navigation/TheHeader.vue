@@ -210,10 +210,7 @@ onBeforeUnmount(() => {
     <ClientOnly>
       <Teleport to=".header-parent">
         <Transition name="slide-left">
-          <TheOffCanvasMobileNavigation
-            v-if="showMobileNavigation"
-            :data="props.data"
-          />
+          <TheOffCanvasMobileNavigation v-if="showMobileNavigation" />
         </Transition>
       </Teleport>
     </ClientOnly>
