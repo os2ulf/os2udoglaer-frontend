@@ -66,12 +66,22 @@ onUnmounted(() => {
             v-html="modalContent?.video_overlay_text"
           ></div>
         </div>
+
+        <div v-if="modalContent?.field_video_url?.url">
+          <NuxtLink
+            :to="modalContent?.field_video_url?.url"
+            target="_blank"
+            class="the-modal__link"
+          >
+            {{ modalContent?.field_video_url?.url }}
+          </NuxtLink>
+        </div>
         <BaseButton
           v-if="modalContent?.field_video_url?.url"
           type="button"
           :button-data="{
             title: 'Se video',
-            url: modalContent?.field_video_url.url,
+            url: modalContent?.field_video_url?.url,
             target: '_blank',
           }"
           class="the-modal__button"
@@ -151,6 +161,16 @@ onUnmounted(() => {
 
   &__button {
     margin: 20px 0;
+  }
+
+  &__link {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: var(--color-primary);
+    }
   }
 
   svg {
