@@ -1,10 +1,19 @@
 <script setup lang="ts">
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true,
-    default: null,
-  },
+import { useHeaderDataStore } from '~/stores/headerData';
+const headerDataStore = useHeaderDataStore();
+
+const navigationMenuData = computed(() => {
+  const mainKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+    key.includes('main'),
+  );
+  return mainKey ? headerDataStore?.headerData?.[mainKey] : null;
+});
+
+const metaMenuData = computed(() => {
+  const metaKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+    key.includes('meta'),
+  );
+  return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
 });
 
 const showSubItems = ref(false);
@@ -48,9 +57,6 @@ const backButtonLabel = computed(() => {
   return `${selectedParentItem?.value?.title}`;
 });
 
-const navigationMenuData = props.data.primaernavigation_2;
-const metaMenuData = props.data.metamenu;
-
 onMounted(() => {
   document.body.style.overflow = 'hidden';
 });
@@ -82,7 +88,7 @@ onUnmounted(() => {
                   "
                   :aria-label="'Link til ' + node?.title"
                 >
-                  {{ node.title }}
+                  {{ node?.title }}
                   <span v-if="node.below.length > 0">
                     <NuxtIcon filled name="chevron-right"
                   /></span>
@@ -101,7 +107,7 @@ onUnmounted(() => {
                   :to="metaItem.url"
                   :aria-label="'Link til ' + metaItem?.title"
                 >
-                  {{ metaItem.title }}
+                  {{ metaItem?.title }}
                   <span v-if="metaItem.below.length > 0">
                     <NuxtIcon filled name="chevron-right" />
                   </span>
@@ -181,6 +187,7 @@ onUnmounted(() => {
     overflow-x: hidden;
     background-color: var(--color-tertiary-lighten-6);
     transition: background-color 0.3s ease-in-out;
+    padding-bottom: 62px;
 
     &--white-bg {
       background-color: var(--color-white);
