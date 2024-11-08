@@ -166,7 +166,7 @@ onUnmounted(() => {
   &__link {
     color: var(--color-text);
     text-decoration: none;
-    transition: color 0.3s ease-in-out;
+    transition: color 0.3s ease;
 
     &:hover {
       color: var(--color-primary);
