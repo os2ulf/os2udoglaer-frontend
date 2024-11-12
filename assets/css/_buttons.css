@@ -46,11 +46,11 @@
   &--secondary {
     background-color: var(--color-tertiary);
     color: var(--color-secondary-lighten-4);
-    border-color:var(--color-tertiary);
+    border-color: var(--color-tertiary);
 
     &:hover {
       background-color: var(--color-tertiary-darken-2);
-      border-color:var(--color-tertiary);
+      border-color: var(--color-tertiary);
       color: var(--color-secondary);
     }
 

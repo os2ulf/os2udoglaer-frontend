@@ -315,7 +315,9 @@ const relatedContent = ref(props.data?.related_content);
                   :key="button"
                 >
                   <NuxtLink
-                    v-if="button?.field_file || button?.field_external_link?.url"
+                    v-if="
+                      button?.field_file || button?.field_external_link?.url
+                    "
                     class="user__info-description__button-item__link button button--ghost"
                     :to="
                       button?.field_file
@@ -357,13 +359,9 @@ const relatedContent = ref(props.data?.related_content);
 
   &__tags-wrapper {
     padding-top: 24px;
-
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 12px @(--sm) 16px;
     margin-bottom: 32px;
-  }
-
-  &__tags-item {
-    margin-right: 16px;
   }
 
   &__page-heading-wrapper {
@@ -380,11 +378,12 @@ const relatedContent = ref(props.data?.related_content);
 
   &__page-heading-button-container {
     margin-top: 10px @(--md) 0;
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 10px @(--sm) 0;
 
     .button {
-      margin-right: 12px @(--md) 0;
       margin-left: 0 @(--md) 12px;
+      white-space: normal @(--sm) nowrap;
     }
   }
 
