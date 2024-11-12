@@ -179,12 +179,9 @@ const practicalInfoData = computed(() => {
 
   &__tags-wrapper {
     padding-top: 24px;
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 12px @(--sm) 16px;
     margin-bottom: 32px;
-  }
-
-  &__tags-item {
-    margin-right: 16px;
   }
 
   &__page-heading-wrapper {
@@ -201,11 +198,12 @@ const practicalInfoData = computed(() => {
 
   &__page-heading-button-container {
     margin-top: 10px @(--md) 0;
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 10px @(--sm) 0;
 
     .button {
-      margin-right: 12px @(--md) 0;
       margin-left: 0 @(--md) 12px;
+      white-space: normal @(--sm) nowrap;
     }
   }
 

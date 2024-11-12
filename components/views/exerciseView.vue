@@ -133,7 +133,10 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div class="exercise__tags-item" v-if="data?.field_focus && !data?.field_banner">
+              <div
+                class="exercise__tags-item"
+                v-if="data?.field_focus && !data?.field_banner"
+              >
                 <BaseTag
                   :data="{ label: data?.field_focus[0] }"
                   color="primary-lighten"
@@ -361,13 +364,9 @@ const currentUrl = computed(() => {
 
   &__tags-wrapper {
     padding-top: 24px;
-
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 12px @(--sm) 16px;
     margin-bottom: 32px;
-  }
-
-  &__tags-item {
-    margin-right: 16px;
   }
 
   &__page-heading-wrapper {
@@ -384,11 +383,12 @@ const currentUrl = computed(() => {
 
   &__page-heading-button-container {
     margin-top: 10px @(--md) 0;
-    display: flex;
+    display: grid @(--sm) flex;
+    gap: 10px @(--sm) 0;
 
     .button {
-      margin-right: 12px @(--md) 0;
       margin-left: 0 @(--md) 12px;
+      white-space: normal @(--sm) nowrap;
     }
   }
 
