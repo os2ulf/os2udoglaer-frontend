@@ -30,7 +30,13 @@ const formatDeadlineString = computed(() => {
   }
 });
 
-onMounted(() => {
+const pretixRef = ref(null);
+const observer = ref<IntersectionObserver | null>(null);
+const invokePretix = () => {
+  window.PretixWidget.buildWidgets();
+};
+
+onBeforeMount(() => {
   if (props.data?.event_shop_url && props.data?.field_pretix_widget_type) {
     // Inject a script dynamically if needed.
     const script = document.createElement('script');
@@ -44,6 +50,29 @@ onMounted(() => {
     link.href = props.data.event_shop_url + 'widget/v1.css';
     document.head.appendChild(link);
   }
+});
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    observer.value = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        invokePretix();
+        observer.value?.disconnect();
+      }
+    });
+
+    if (pretixRef.value) {
+      observer.value.observe(pretixRef.value);
+    }
+
+    return () => {
+      observer.value?.disconnect();
+    };
+  }
+});
+
+onBeforeUnmount(() => {
+  observer.value?.disconnect();
 });
 </script>
 
@@ -97,6 +126,7 @@ onMounted(() => {
     <div
       v-if="props.data.event_shop_url && props.data.field_pretix_widget_type"
       class="course__registration__pretix"
+      ref="pretixRef"
     >
       <ClientOnly>
         <pretix-widget
