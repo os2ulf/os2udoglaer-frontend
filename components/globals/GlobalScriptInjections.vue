@@ -21,6 +21,7 @@ const injectScript = (scriptString: string, scriptType: string) => {
   const matches = scriptString.match(scriptTagRegex);
   if (!matches) {
     console.error('GlobalInjections.vue: Invalid script string');
+    // console.log(scriptString);
     return;
   }
 
