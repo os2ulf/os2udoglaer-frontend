@@ -399,10 +399,18 @@ const cleanEmptyFilters = () => {
                         }}
                       </div>
 
-                      <div class="search__card-label" v-if="item?.label">
-                        <h4>{{ item?.label }}</h4>
+                      <div
+                        class="search__card-label"
+                        v-if="item?.label || item?.field_name"
+                      >
+                        <h4>
+                          {{
+                            item?.bundle == 'user'
+                              ? item?.field_name
+                              : item?.label
+                          }}
+                        </h4>
                       </div>
-
                       <div
                         class="search__card-description"
                         v-if="item?.body || item?.field_description"
