@@ -445,8 +445,7 @@ const handleValidation = async (event: any) => {
 
     // If private institution and for all course, or municipal institution and municipal course
   } else if (
-    (institutionPrivateMunicipal.value === 'private' &&
-      courseWhoCanApply.value === 'all') ||
+    (courseWhoCanApply.value === 'all') ||
     (institutionPrivateMunicipal.value === 'municipal' &&
       courseWhoCanApply.value === 'municipal')
   ) {
@@ -1156,17 +1155,11 @@ onBeforeMount(() => {
     border-radius: 32px;
     background-color: var(--color-quaternary-lighten-4);
 
-    &-header {
-      font-weight: 700;
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
+    :deep(p) {
+      margin-bottom: 8px;
 
-    &-description {
-      padding-top: 8px;
-
-      :deep(p) {
-        margin-bottom: 8px;
+      &:last-child {
+        margin-bottom: 0;
       }
     }
   }
