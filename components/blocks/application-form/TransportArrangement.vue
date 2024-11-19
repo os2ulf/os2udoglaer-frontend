@@ -397,6 +397,8 @@ const handleHideCourseSelect = async () => {
 
 // Fetch schools/institutions on type change
 const handleTypeChange = async () => {
+  validated.value = false;
+  validationMessage.value = '';
   if (selectedType.value === '') {
     return;
   } else if (selectedType.value === 'tpf_school') {
@@ -412,6 +414,8 @@ const handleInstitutionChange = async () => {
   institutionAddress.value = '';
   institutionPostalCode.value = '';
   institutionDistrict.value = '';
+  validated.value = false;
+  validationMessage.value = '';
   await fetchUserContent(selectedInstitution.value);
 };
 
