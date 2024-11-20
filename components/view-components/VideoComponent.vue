@@ -38,7 +38,7 @@ const props = defineProps({
   <div class="video-component">
     <div
       class="row video-component__layout-flex"
-      v-if="props.layoutType === 'flex' && data?.videoArr?.length == 1"
+      v-if="props.layoutType === 'flex'"
     >
       <div class="col-xs-12 col-sm-6">
         <VideoContent
