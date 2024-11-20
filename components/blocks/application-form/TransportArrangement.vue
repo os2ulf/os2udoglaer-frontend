@@ -85,6 +85,7 @@ const schoolClassAllowed = ref([
 ]);
 const institutions = ref([]);
 const institutionsSelect = ref([]);
+const checkDistance = ref(true);
 const validated = ref(false);
 const validationMessage = ref('');
 const courseContent = ref([]);
@@ -142,7 +143,7 @@ const fetchCourses = async (uid: any) => {
   coursesSelect.value = [];
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/content/course/' + uid,
+      apiRouteStore.apiRouteEndpoint + '/rest-export/courses-applicable/' + uid,
       {
         method: 'GET',
         headers: {
@@ -378,7 +379,9 @@ const handleCourseChange = async () => {
   courseAddress.value = '';
   coursePostalCode.value = '';
   courseCity.value = '';
-
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
   await fetchCourseContent(selectedCourse.value);
 };
 
@@ -390,6 +393,9 @@ const handleHideCourseSelect = async () => {
     courseCity.value = '';
     selectedCourse.value = '';
     coursesSelect.value = [];
+    checkDistance.value = true;
+    validated.value = false;
+    validationMessage.value = '';
   } else {
     await fetchCourses('all');
   }
@@ -397,6 +403,7 @@ const handleHideCourseSelect = async () => {
 
 // Fetch schools/institutions on type change
 const handleTypeChange = async () => {
+  checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
   if (selectedType.value === '') {
@@ -408,22 +415,46 @@ const handleTypeChange = async () => {
   }
 };
 
+const handleCourseAddress = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
+const handleCoursePostalcode = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
+const handleCourseCity = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
 // Fetch user content on institution change
 const handleInstitutionChange = async () => {
   // console.log('handleInstitutionChange', selectedInstitution.value);
   institutionAddress.value = '';
   institutionPostalCode.value = '';
   institutionDistrict.value = '';
+  checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
   await fetchUserContent(selectedInstitution.value);
+};
+
+const handleSchoolGradeChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
 };
 
 // Handle validation
 const handleValidation = async (event: any) => {
   event.preventDefault();
   validationMessage.value = '';
-  const checkDistance = ref(true);
 
   // console.log('courseWhoCanApply: ', courseWhoCanApply.value);
   // console.log(
@@ -455,15 +486,22 @@ const handleValidation = async (event: any) => {
   ) {
     // If school
     if (selectedType.value === 'tpf_school') {
-      if (schoolClassAllowed.value.includes(selectedSchoolGrade.value)) {
+      if (schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())) {
         validated.value = true;
         checkDistance.value = false;
+      } else {
+        validated.value = false;
+        checkDistance.value = true;
       }
 
       // If institution
     } else {
       validated.value = true;
+      checkDistance.value = false;
     }
+  } else if (!courseWhoCanApply.value) {
+    validationMessage.value = formSettings.course_not_found.value;
+    validated.value = false;
   }
 
   // If distance check is enabled
@@ -809,6 +847,7 @@ onBeforeMount(() => {
           class="application-form__label"
           v-model="courseAddress"
           :value="courseAddress.value"
+          @update:model-value="handleCourseAddress"
           type="text"
           name="Gade"
           label="Gade"
@@ -817,6 +856,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="coursePostalCode"
+          @update:model-value="handleCoursePostalcode"
           type="text"
           name="Postnummer"
           label="Postnummer"
@@ -825,6 +865,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseCity"
+          @update:model-value="handleCourseCity"
           type="text"
           name="By"
           label="By"
@@ -856,6 +897,7 @@ onBeforeMount(() => {
           v-if="selectedType === 'tpf_school'"
           v-model="selectedSchoolGrade"
           :options="schoolClassSelect"
+          @update:model-value="handleSchoolGradeChange"
           name="Klassetrin"
           label="Klassetrin"
           rules="required"
