@@ -76,15 +76,6 @@ const practicalInfoData = computed(() => {
 
             <div class="news__page-heading-wrapper">
               <h1 class="news__page-title">{{ data?.label }}</h1>
-              <div class="news__page-heading-button-container">
-                <!-- TODO: connect buttons -->
-                <BaseButton
-                  icon-after="arrow-right"
-                  :button-data="{ title: 'Find forløb' }"
-                  class="button button--secondary"
-                  role="button"
-                />
-              </div>
             </div>
 
             <div class="news__banner-image">
