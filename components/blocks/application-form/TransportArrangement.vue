@@ -127,9 +127,12 @@ const courseCity = ref('');
 const requestedAmount = ref('');
 const numberOfStudents = ref('');
 const settlementDate = ref('');
+const departureTime = ref('');
+const returnTime = ref('');
 const fullName = ref('');
 const email = ref('');
 const emailRepeat = ref('');
+const phone = ref('');
 const message = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const errorMessage = ref('');
@@ -415,19 +418,19 @@ const handleTypeChange = async () => {
   }
 };
 
-const handleCourseAddress = async () => {
+const handleCourseAddressChange = async () => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
 };
 
-const handleCoursePostalcode = async () => {
+const handleCoursePostalcodeChange = async () => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
 };
 
-const handleCourseCity = async () => {
+const handleCourseCityChange = async () => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
@@ -608,9 +611,12 @@ const resetForm = async () => {
   requestedAmount.value = '';
   numberOfStudents.value = '';
   settlementDate.value = '';
+  departureTime.value = '';
+  returnTime.value = '';
   fullName.value = '';
   email.value = '';
   emailRepeat.value = '';
+  phone.value = '';
   message.value = '';
   errorMessage.value = '';
   agreementCheckbox.value = true;
@@ -674,6 +680,20 @@ const handleSubmit = async () => {
     },
   ];
 
+  // Set field_rfc_departure_time
+  const field_rfc_departure_time = [
+    {
+      value: departureTime.value,
+    },
+  ];
+
+  // Set field_rfc_return_time
+  const field_rfc_return_time = [
+    {
+      value: returnTime.value,
+    },
+  ];
+
   // Payload
   const payload = {
     type: [
@@ -700,6 +720,11 @@ const handleSubmit = async () => {
     field_rfc_mail: [
       {
         value: trimmedEmail,
+      },
+    ],
+    field_rfc_phone: [
+      {
+        value: phone.value,
       },
     ],
     field_rfc_name: [
@@ -762,6 +787,16 @@ const handleSubmit = async () => {
   // If course is selected add to payload
   if (message.value) {
     payload.field_tpf_message = field_tpf_message;
+  }
+
+  // If field_rfc_departure_time add to payload
+  if (departureTime.value) {
+    payload.field_rfc_departure_time = field_rfc_departure_time;
+  }
+
+  // If field_rfc_return_time add to payload
+  if (returnTime.value) {
+    payload.field_rfc_return_time = field_rfc_return_time;
   }
 
   try {
@@ -846,8 +881,8 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseAddress"
-          :value="courseAddress.value"
-          @update:model-value="handleCourseAddress"
+          :value="courseAddress"
+          @update:model-value="handleCourseAddressChange"
           type="text"
           name="Gade"
           label="Gade"
@@ -856,7 +891,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="coursePostalCode"
-          @update:model-value="handleCoursePostalcode"
+          @update:model-value="handleCoursePostalcodeChange"
           type="text"
           name="Postnummer"
           label="Postnummer"
@@ -865,7 +900,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseCity"
-          @update:model-value="handleCourseCity"
+          @update:model-value="handleCourseCityChange"
           type="text"
           name="By"
           label="By"
@@ -955,39 +990,67 @@ onBeforeMount(() => {
           label="Afviklingsdato"
           rules="required"
         />
+        <BaseInput
+          class="application-form__label"
+          v-model="departureTime"
+          type="time"
+          name="Afhentningstidspunkt for udrejse"
+          label="Afhentningstidspunkt for udrejse"
+        />
+        <BaseInput
+          class="application-form__label"
+          v-model="returnTime"
+          type="time"
+          name="Afhentningstidspunkt for hjemrejse"
+          label="Afhentningstidspunkt for hjemrejse"
+        />
       </div>
 
-      <div v-if="validated" class="field-group">
-        <h3>Kontakt information</h3>
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="fullName"
-          type="text"
-          name="Navn"
-          label="Navn"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="email"
-          type="text"
-          name="E-mailadresse"
-          label="E-mailadresse"
-          rules="required|email"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="emailRepeat"
-          type="text"
-          name="Gentag e-mailadresse"
-          label="Gentag e-mailadresse"
-          rules="required|email"
-        />
-        <BaseTextareaFloatingLabel
-          v-model="message"
-          name="Evt. besked"
-          label="Evt. besked"
-        />
+      <div v-if="validated">
+        <div class="field-group">
+          <h3>Kontakt information</h3>
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="fullName"
+            type="text"
+            name="Navn på medfølgende voksen"
+            label="Navn på medfølgende voksen"
+            rules="required"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="email"
+            type="text"
+            name="E-mailadresse på medfølgende voksen"
+            label="E-mailadresse på medfølgende voksen"
+            rules="required|email"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="emailRepeat"
+            type="text"
+            name="Gentag e-mailadresse på medfølgende voksen"
+            label="Gentag e-mailadresse på medfølgende voksen"
+            rules="required|email"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="phone"
+            type="text"
+            name="Telefonnummer på medfølgende voksen"
+            label="Telefonnummer på medfølgende voksen"
+            rules="required"
+          />
+        </div>
+        <div class="field-group">
+          <h3>Besked</h3>
+          <BaseTextareaFloatingLabel
+            v-model="message"
+            name="Evt. besked"
+            label="Evt. besked"
+            description="Fx kun transport én vej, ekstra plads til hjælpemidler eller bagage, særlige oplysninger om afhentningssted m.m."
+          />
+        </div>
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
@@ -1068,6 +1131,16 @@ onBeforeMount(() => {
 
   :deep(.form-input-wrapper) {
     margin-top: 18px @(--sm) 32px;
+
+    &--inline {
+      display: flex;
+      gap: 16px @(--sm) 24px;
+      margin-top: 0 !important;
+
+      .form-label {
+        padding-right: 26px;
+      }
+    }
   }
 
   &__textarea-wrapper {
