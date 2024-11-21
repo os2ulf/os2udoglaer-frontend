@@ -117,6 +117,7 @@ const practicalInfoData = computed(() => {
         >
           <ClientOnly>
             <VideoComponent
+              class="news__video-section"
               v-if="
                 data?.field_video_title ||
                 data?.field_video_description ||
@@ -134,17 +135,17 @@ const practicalInfoData = computed(() => {
 
         <!-- Section cards -->
         <div
-          class="col-xs-12 col-sm-12 col-md-12 news__section"
+          class="col-xs-12 col-sm-12 col-md-12"
           v-if="
-            data.field_other_info.length > 1 ||
-            data.field_other_info[0].field_literature_suggestion ||
-            data.field_other_info[0].field_material_description ||
-            data.field_other_info[0].field_material_title ||
-            data.field_other_info[0].field_material_file ||
-            data.field_other_info[0].field_material_url
+            data?.field_other_info.length > 1 ||
+            data?.field_other_info[0]?.field_literature_suggestion ||
+            data?.field_other_info[0]?.field_material_description ||
+            data?.field_other_info[0]?.field_material_title ||
+            data?.field_other_info[0]?.field_material_file ||
+            data?.field_other_info[0]?.field_material_url
           "
         >
-          <div class="news__educational-cards">
+          <div class="news__educational-cards news__section">
             <EducationalCards
               :data="{
                 field_materials: data.field_other_info,
@@ -161,7 +162,6 @@ const practicalInfoData = computed(() => {
 .news {
   background-color: var(--color-tertiary-lighten-6);
   color: var(--color-text);
-  margin-bottom: 24px;
 
   &__top-section {
     padding: 32px 0 @(--sm) 0 0 64px 0;
@@ -203,8 +203,8 @@ const practicalInfoData = computed(() => {
   }
 
   &__divider {
-    padding-top: 43px @(--sm) 97px;
-    margin-bottom: 43px @(--sm) 97px;
+    padding-top: 43px @(--sm) 96px;
+    margin-bottom: 43px @(--sm) 96px;
   }
 
   &__link {
@@ -218,9 +218,12 @@ const practicalInfoData = computed(() => {
     }
   }
 
-  &__section-video,
   &__section {
-    padding-top: 48px @(--md) 96px;
+    margin-bottom: 48px @(--md) 96px;
+  }
+
+  &__video-section {
+    margin-bottom: 43px @(--sm) 96px;
   }
 }
 </style>
