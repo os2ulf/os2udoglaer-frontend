@@ -235,10 +235,16 @@ const currentUrl = computed(() => {
 
               <div
                 class="educators__tags-item"
-                v-if="data?.field_is_free || data?.field_sold_out"
+                v-if="data?.field_is_free || data?.sales_banner"
               >
                 <BaseTag
-                  :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
+                  :data="{
+                    label: data?.sales_banner
+                      ? data?.sales_banner
+                      : data?.field_is_free
+                        ? 'Gratis'
+                        : '',
+                  }"
                   color="secondary"
                 />
               </div>
@@ -315,7 +321,7 @@ const currentUrl = computed(() => {
           <SharePage />
           <PracticalInformation
             :data="practicalInfoData"
-            :sold-out="data?.field_sold_out"
+            :salesBanner="data?.sales_banner"
           />
           <div class="educators__practical-buttons">
             <BaseButton
