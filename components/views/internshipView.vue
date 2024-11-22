@@ -170,8 +170,11 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div class="internship__tags-item" v-if="data?.field_sold_out">
-                <BaseTag :data="{ label: 'Udsolgt' }" color="secondary" />
+              <div class="internship__tags-item" v-if="data?.sales_banner">
+                <BaseTag
+                  :data="{ label: data?.sales_banner }"
+                  color="secondary"
+                />
               </div>
 
               <div class="internship__tags-item" v-if="data?.field_banner">

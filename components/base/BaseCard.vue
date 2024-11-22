@@ -218,7 +218,9 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
 
 // Card labels
 const getStatusLabel = (data: any) => {
-  if (data?.field_sold_out) return { text: 'Udsolgt', class: 'secondary' };
+  if (data?.sales_banner) {
+    return { text: data.sales_banner, class: 'secondary' };
+  }
   if (data?.field_is_free) return { text: 'Gratis', class: 'secondary' };
   return null;
 };
@@ -253,24 +255,32 @@ const cardLabels = computed(() => {
   // Define label generators for different bundles
   const bundleLabelGenerators = {
     course: () => {
-      getBannerLabel(props.data) === null ? labels.push(getThemeLabel(props.data)) : '';
+      getBannerLabel(props.data) === null
+        ? labels.push(getThemeLabel(props.data))
+        : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     course_educators: () => {
-      getBannerLabel(props.data) === null ? labels.push(getThemeLabel(props.data)) : '';
+      getBannerLabel(props.data) === null
+        ? labels.push(getThemeLabel(props.data))
+        : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     exercise: () => {
-      getBannerLabel(props.data) === null ? labels.push(getFocusLabel(props.data)) : '';
+      getBannerLabel(props.data) === null
+        ? labels.push(getFocusLabel(props.data))
+        : '';
       labels.push(getBannerLabel(props.data));
     },
     news: () => {
       labels.push(getBannerLabel(props.data));
     },
     internship: () => {
-      getBannerLabel(props.data) === null ? labels.push(getIndustryLabel(props.data)) : '';
+      getBannerLabel(props.data) === null
+        ? labels.push(getIndustryLabel(props.data))
+        : '';
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
