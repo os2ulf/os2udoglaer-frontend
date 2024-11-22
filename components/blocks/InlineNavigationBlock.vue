@@ -204,6 +204,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
     margin-bottom: 0;
     line-height: 28px;
     word-break: break-word;
+    hyphens: auto;
   }
 
   &__card-compact-icon-container {
