@@ -116,6 +116,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
 
   &__card-title {
     word-break: break-word;
+    hyphens: auto;
   }
 
   &__card-item {
