@@ -274,7 +274,6 @@ onUnmounted(() => {
     position: absolute;
     z-index: 9;
     width: 100%;
-    overflow: scroll;
     padding: 0;
     background: var(--color-white);
     box-shadow: 0px 4px 30px 0px #0000001a;
@@ -287,7 +286,7 @@ onUnmounted(() => {
       visibility: visible;
       transition: all 0.15s ease;
       max-height: 600px;
-      overflow: scroll;
+      overflow: auto;
     }
 
     &__hidden {
