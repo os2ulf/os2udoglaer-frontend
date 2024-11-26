@@ -1,6 +1,4 @@
 <script setup>
-const config = useRuntimeConfig();
-
 const props = defineProps({
   blockData: Object,
 });

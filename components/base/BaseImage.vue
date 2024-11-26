@@ -1,13 +1,18 @@
 <script setup lang="ts">
 const props = defineProps({
   image: Object,
-  caption: String,
-  isOverlay: Boolean,
-  componentTypeClass: String,
-  copyrightEnabled: {
-    type: Boolean,
-    default: true,
-  },
+  captionData: Object,
+});
+
+const noTheme = 'theme-default'; // This acts as a no theme trigger
+const hasTheme = computed(() => {
+  if (!props.captionData?.selectedTheme) {
+    return false;
+  } else if (props.captionData?.selectedTheme[1] === noTheme) {
+    return false;
+  } else {
+    return props.captionData?.selectedTheme[1];
+  }
 });
 </script>
 
@@ -34,6 +39,16 @@ const props = defineProps({
         :height="image?.height"
       />
     </picture>
+    <figcaption
+      v-if="props.captionData?.imageCaption"
+      class="image__caption"
+      :class="[
+        hasTheme ? 'image__caption--has-theme' : '',
+        hasTheme ? hasTheme : '',
+      ]"
+    >
+      {{ props.captionData?.imageCaption }}
+    </figcaption>
   </figure>
 </template>
 
@@ -49,6 +64,23 @@ const props = defineProps({
     width: 100%;
     height: auto;
     object-fit: cover;
+  }
+
+  &__caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: white;
+    font-size: 1rem;
+    text-align: left;
+    padding: 8px 12px;
+    box-sizing: border-box;
+
+    &--has-theme {
+      background-color: var(--theme-background-color);
+      color: var(--theme-color);
+    }
   }
 }
 </style>
