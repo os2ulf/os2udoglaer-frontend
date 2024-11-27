@@ -2,6 +2,7 @@
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 const apiRouteStore = useApiRouteStore();
+const router = useRouter();
 
 useHead({
   title: 'Søg',
@@ -179,9 +180,9 @@ const updateURLParameters = () => {
   // Add selected page to URL parameters
   params.set('page', selectedPage.value.toString());
 
-  // Use history.pushState to update the URL without reloading the page
-  const newURL = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(null, '', newURL);
+  // Update the URL using Vue Router's replace method
+  const newQuery = Object.fromEntries(params.entries());
+  router.replace({ query: newQuery });
 };
 
 // Parse URL parameters
@@ -228,12 +229,16 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
   extractedFilters.value.forEach((filter) => {
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => facet.facet_id === filter.searchQueryUrlAlias,
+      (facet) => {
+        return facet.url_alias === filter.searchQueryUrlAlias;
+      },
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items
-      const selectedItem = matchingFacet.items[filter.value];
+      // Find the specific item in the matching facet's items array
+      const selectedItem = matchingFacet.items.find(
+        (item) => item.value === filter.value,
+      );
 
       if (selectedItem) {
         // Push the filter object with necessary properties
