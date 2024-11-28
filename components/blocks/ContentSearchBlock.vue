@@ -321,8 +321,9 @@ const parseUrlParameters = () => {
 
 // populates selectedFiltersData with extracted filters
 const setSelectedFiltersDataWithExtractedFilters = () => {
-  // TODO: apparently this is not needed anymore and rather it introduces issues.
-  // Leaving this here until QA confirm everything is fine. Otherwise, remove this.
+  // TODO: Apparently this is not needed anymore and rather it introduces issues.
+  // Leaving this here until QA confirm everything is fine. Otherwise, remove the line below for clearing filters.
+
   // Clear previous selections
   // selectedFiltersData.splice(0, selectedFiltersData.length);
 
@@ -387,7 +388,6 @@ const handleExtractedFilters = async () => {
     defaultSortingOptions.value = data.facets;
     isLoading.value = false;
 
-    console.log('handleExtractedFilters');
     setSelectedFiltersDataWithExtractedFilters();
   } catch (error) {
     console.error('Error fetching filtered results:', error);
