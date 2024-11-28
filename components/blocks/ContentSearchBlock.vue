@@ -139,7 +139,7 @@ const getFilteredPageResults = async (
 
     let filterString = '';
     selectedFiltersData.forEach((filter, index) => {
-      // remove date from filter
+      // Exclude date from filters - different format
       if (filter.searchQueryUrlAlias === 'period') {
         return;
       }
@@ -222,7 +222,7 @@ const updateURLParameters = () => {
   const plainState = {
     searchKeyword: searchKeyword.value,
     sortingString: sortingString.value,
-    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)), // Clone as plain object
+    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)),
     selectedPage: selectedPage.value,
   };
 
@@ -286,21 +286,45 @@ const parseUrlParameters = () => {
   // extract date range
   const minDate = params.get('period[min]');
   const maxDate = params.get('period[max]');
+
+  // sets date to chips & datepicker component
   if (minDate && maxDate) {
     datePickerStartDate.value = minDate;
     datePickerEndDate.value = maxDate;
+
+    // Add the calendar filter back to selected filters
+    const index = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === 'period',
+    );
+
+    if (index !== -1) {
+      selectedFiltersData.splice(index, 1);
+    } else {
+      selectedFiltersData.push({
+        searchQueryUrlAlias: 'period',
+        value: `period[min]=${minDate}&period[max]=${maxDate}`,
+        label: `Fra ${minDate} til ${maxDate}`,
+      });
+    }
   }
 
   // if finds anything - fetches data.
-  if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
+  if (
+    extractedFilters.value.length > 0 ||
+    searchKeyword.value ||
+    page ||
+    (minDate && maxDate)
+  ) {
     handleExtractedFilters();
   }
 };
 
 // populates selectedFiltersData with extracted filters
 const setSelectedFiltersDataWithExtractedFilters = () => {
+  // TODO: apparently this is not needed anymore and rather it introduces issues.
+  // Leaving this here until QA confirm everything is fine. Otherwise, remove this.
   // Clear previous selections
-  selectedFiltersData.splice(0, selectedFiltersData.length);
+  // selectedFiltersData.splice(0, selectedFiltersData.length);
 
   // Iterate through extractedFilters
   extractedFilters.value.forEach((filter) => {
@@ -363,6 +387,7 @@ const handleExtractedFilters = async () => {
     defaultSortingOptions.value = data.facets;
     isLoading.value = false;
 
+    console.log('handleExtractedFilters');
     setSelectedFiltersDataWithExtractedFilters();
   } catch (error) {
     console.error('Error fetching filtered results:', error);
