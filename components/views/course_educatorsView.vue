@@ -38,8 +38,9 @@ const periodPriceDurationDescription = computed(() => {
 
 const registrationData = computed(() => {
   return {
+    bundle: props.data?.bundle,
     deadline: props.data?.field_registration_deadline,
-    description: props.data?.field_registration_procedure,
+    description: props.data?.field_registration_description,
     email: props.data?.field_registration_email,
     phone: props.data?.field_registration_phone,
     title: props.data?.field_registration_title,
@@ -47,8 +48,11 @@ const registrationData = computed(() => {
     price: props.data?.field_price,
     price_description: props.data?.field_description_of_price,
     free: props.data?.field_is_free,
+    event_shop_url: props.data?.event_shop_url,
+    field_pretix_widget_type: props.data?.field_pretix_widget_type,
   };
 });
+
 const practicalInfoData = computed(() => {
   const data = [
     {
@@ -415,11 +419,12 @@ const currentUrl = computed(() => {
         <div
           v-if="
             data.field_registration_deadline ||
-            data.field_registration_procedure ||
+            data.field_registration_description ||
             data.field_registration_email ||
             data.field_registration_phone ||
             data.field_registration_title ||
-            data.field_registration_url
+            data.field_registration_url ||
+            (data.event_shop_url && data.field_pretix_widget_type)
           "
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 educators__section-registration"
