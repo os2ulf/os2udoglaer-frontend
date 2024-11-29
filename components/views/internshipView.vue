@@ -367,6 +367,7 @@ const currentUrl = computed(() => {
 
         <!-- Section related articles -->
         <div
+          v-if="props.data.field_related_courses.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 internship__section-related-articles"
         >
           <div class="internship__related-articles">
