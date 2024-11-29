@@ -70,7 +70,7 @@ const hasChildren = computed(() => {
   }
 
   &__link {
-    color: var(--color-secondary-text);
+    color: var(--color-tertiary);
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
