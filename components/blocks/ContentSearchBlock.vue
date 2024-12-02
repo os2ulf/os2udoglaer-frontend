@@ -263,6 +263,17 @@ const parseUrlParameters = () => {
         value: filterValue,
       });
     }
+
+    if (
+      extractedFilters?.value[0]?.searchQueryUrlAlias === isFreeUrlAlias.value
+    ) {
+      selectedPriceFilter.value = extractedFilters?.value[0]?.value;
+    } else if (
+      extractedFilters?.value[0]?.searchQueryUrlAlias ===
+      guaranteePartnerUrlAlias.value
+    ) {
+      selectedGuaranteePartnerFilter.value = extractedFilters?.value[0]?.value;
+    }
   });
 
   // extract page
@@ -321,12 +332,6 @@ const parseUrlParameters = () => {
 
 // populates selectedFiltersData with extracted filters
 const setSelectedFiltersDataWithExtractedFilters = () => {
-  // TODO: Apparently this is not needed anymore and rather it introduces issues.
-  // Leaving this here until QA confirm everything is fine. Otherwise, remove the line below for clearing filters.
-
-  // Clear previous selections
-  // selectedFiltersData.splice(0, selectedFiltersData.length);
-
   // Iterate through extractedFilters
   extractedFilters.value.forEach((filter) => {
     // Find the matching facet in allSortingOptions
@@ -402,6 +407,7 @@ watch(selectedFiltersData, () => {
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
   selectedPriceFilter.value = '';
+  selectedGuaranteePartnerFilter.value = '';
 
   if (datePickerStartDate.value && datePickerEndDate.value) {
     datePickerStartDate.value = '';
