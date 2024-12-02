@@ -264,15 +264,20 @@ const parseUrlParameters = () => {
       });
     }
 
-    if (
-      extractedFilters?.value[0]?.searchQueryUrlAlias === isFreeUrlAlias.value
-    ) {
-      selectedPriceFilter.value = extractedFilters?.value[0]?.value;
-    } else if (
-      extractedFilters?.value[0]?.searchQueryUrlAlias ===
-      guaranteePartnerUrlAlias.value
-    ) {
-      selectedGuaranteePartnerFilter.value = extractedFilters?.value[0]?.value;
+    const isFreeFilter = extractedFilters.value.find(
+      (filter) => filter.searchQueryUrlAlias === isFreeUrlAlias.value,
+    );
+
+    const guaranteePartnerFilter = extractedFilters.value.find(
+      (filter) => filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value,
+    );
+
+    if (isFreeFilter) {
+      selectedPriceFilter.value = isFreeFilter.value;
+    }
+
+    if (guaranteePartnerFilter) {
+      selectedGuaranteePartnerFilter.value = guaranteePartnerFilter.value;
     }
   });
 
