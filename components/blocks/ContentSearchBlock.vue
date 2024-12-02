@@ -98,12 +98,12 @@ const handleFilterChange = (
 
     // if is free filter
     if (selectedFilterOption.source === 'isFreeFilter') {
-      selectedPriceFilter.value = '';
+      selectedPriceFilter.value = 'all';
     }
 
     // if Guarantee Partner filter
     if (selectedFilterOption.source === 'guaranteePartnerFilter') {
-      selectedGuaranteePartnerFilter.value = '';
+      selectedGuaranteePartnerFilter.value = 'all';
     }
 
     // Check if selectedFilterOption already exists in selectedFiltersData
@@ -406,8 +406,8 @@ watch(selectedFiltersData, () => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
-  selectedPriceFilter.value = '';
-  selectedGuaranteePartnerFilter.value = '';
+  selectedPriceFilter.value = 'all';
+  selectedGuaranteePartnerFilter.value = 'all';
 
   if (datePickerStartDate.value && datePickerEndDate.value) {
     datePickerStartDate.value = '';
