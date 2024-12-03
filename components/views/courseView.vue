@@ -388,7 +388,7 @@ const currentUrl = computed(() => {
           <SharePage />
           <PracticalInformation
             :data="practicalInfoData"
-            :salesBanner="data?.sales_banner"
+            :isFree="data.field_is_free"
           />
           <div class="course__practical-buttons">
             <BaseButton
