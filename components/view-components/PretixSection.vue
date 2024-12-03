@@ -24,7 +24,7 @@ const props = defineProps({
     >
       <BaseTag
         v-if="props.data.free"
-        :data="{ label: data?.sales_banner ? data?.sales_banner : 'Gratis' }"
+        :data="{ label: 'Gratis' }"
         color="secondary"
       />
       <div

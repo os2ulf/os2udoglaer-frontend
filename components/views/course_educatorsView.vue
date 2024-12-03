@@ -237,17 +237,10 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div
-                class="educators__tags-item"
-                v-if="data?.field_is_free || data?.sales_banner"
-              >
+              <div class="educators__tags-item" v-if="data?.sales_banner">
                 <BaseTag
                   :data="{
-                    label: data?.sales_banner
-                      ? data?.sales_banner
-                      : data?.field_is_free
-                        ? 'Gratis'
-                        : '',
+                    label: data?.sales_banner ? data?.sales_banner : '',
                   }"
                   color="secondary"
                 />
