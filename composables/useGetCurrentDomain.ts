@@ -3,16 +3,11 @@ export default function useGetCurrentDomain() {
 
   if (process.server) {
     const hostHeader = useRequestHeaders();
-    currentDomain = hostHeader['x-forwarded-host'] || hostHeader.host;
-
-    if (
-      !currentDomain.startsWith('http://') ||
-      !currentDomain.startsWith('https://')
-    ) {
-      currentDomain = 'https://' + currentDomain;
-    }
+    const rawDomain = hostHeader['x-forwarded-host'] || hostHeader.host || '';
+    currentDomain = `https://${rawDomain}`;
   } else if (process.client) {
-    currentDomain = window.location.protocol + '//' + window.location.hostname;
+    const rawDomain = window.location.hostname;
+    currentDomain = `https://${rawDomain}`;
   }
 
   return currentDomain;
