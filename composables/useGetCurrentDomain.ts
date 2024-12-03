@@ -6,13 +6,13 @@ export default function useGetCurrentDomain() {
     currentDomain = hostHeader['x-forwarded-host'] || hostHeader.host;
 
     if (
-      !currentDomain.startsWith('http://') &&
+      !currentDomain.startsWith('http://') ||
       !currentDomain.startsWith('https://')
     ) {
       currentDomain = 'https://' + currentDomain;
     }
   } else if (process.client) {
-    currentDomain = window.location.hostname;
+    currentDomain = window.location.protocol + '//' + window.location.hostname;
   }
 
   return currentDomain;
