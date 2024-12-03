@@ -6,8 +6,6 @@ export const seoCanonicalUrlHandler = (url: string, isFrontPage: boolean) => {
   }
 
   const currentDomain = useGetCurrentDomain();
-  console.log('seoCanonicalUrlHandler from the composable:', currentDomain);
-
 
   if (isFrontPage) {
     return currentDomain;
