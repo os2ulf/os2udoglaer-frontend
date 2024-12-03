@@ -145,10 +145,37 @@ const updateURLParameters = () => {
   // Add selected page to URL parameters
   params.set('page', selectedPage.value.toString());
 
-  // Use history.pushState to update the URL without reloading the page
+  // update state
   const newURL = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(null, '', newURL);
+
+  // Convert reactive objects to plain objects
+  const plainState = {
+    searchKeyword: searchKeyword.value,
+    sortingString: sortingString.value,
+    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)), // Clone as plain object
+    selectedPage: selectedPage.value,
+  };
+
+  history.replaceState(plainState, '', newURL);
 };
+
+if (process.client) {
+  window.onpopstate = (event) => {
+    if (event.state) {
+      searchKeyword.value = event.state.searchKeyword || '';
+      sortingString.value = event.state.sortingString || '';
+      selectedPage.value = event.state.selectedPage || 0;
+
+      selectedFiltersData.splice(
+        0,
+        selectedFiltersData.length,
+        ...(event.state.selectedFiltersData || []),
+      );
+
+      updateURLParameters();
+    }
+  };
+}
 
 // Parse URL parameters
 const extractedFilters = reactive([]);
@@ -200,12 +227,16 @@ const setSelectedFiltersDataWithExtractedFilters = () => {
   extractedFilters.value.forEach((filter) => {
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => facet.url_alias === filter.searchQueryUrlAlias,
+      (facet) => {
+        return facet.url_alias === filter.searchQueryUrlAlias;
+      },
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items
-      const selectedItem = matchingFacet.items[filter.value];
+      // Find the specific item in the matching facet's items array
+      const selectedItem = matchingFacet.items.find(
+        (item) => item.value === filter.value,
+      );
 
       if (selectedItem) {
         // Push the filter object with necessary properties

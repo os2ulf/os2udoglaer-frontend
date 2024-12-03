@@ -113,6 +113,7 @@ onUnmounted(() => {
 .datepicker {
   position: relative;
   width: inherit;
+  min-width: 300px;
 
   &__icon {
     margin-right: 8px;
@@ -134,6 +135,8 @@ onUnmounted(() => {
     align-items: center;
     text-align: left;
     width: 100%;
+    min-width: 300px;
+
     border: 1px solid #707070;
     border-radius: 32px;
     background: none;
@@ -143,7 +146,6 @@ onUnmounted(() => {
     font-weight: 400;
     font-size: var(--font-size-paragraph-sm);
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     z-index: 2;
     padding: 18px 32px;
 

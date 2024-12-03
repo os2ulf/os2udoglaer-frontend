@@ -34,6 +34,8 @@ const registrationData = computed(() => {
     price: '',
     price_description: '',
     free: '',
+    event_shop_url: props.data?.event_shop_url,
+    field_pretix_widget_type: props.data?.field_pretix_widget_type,
   };
 });
 
@@ -170,8 +172,11 @@ const currentUrl = computed(() => {
                 />
               </div>
 
-              <div class="internship__tags-item" v-if="data?.field_sold_out">
-                <BaseTag :data="{ label: 'Udsolgt' }" color="secondary" />
+              <div class="internship__tags-item" v-if="data?.sales_banner">
+                <BaseTag
+                  :data="{ label: data?.sales_banner }"
+                  color="secondary"
+                />
               </div>
 
               <div class="internship__tags-item" v-if="data?.field_banner">
@@ -357,7 +362,8 @@ const currentUrl = computed(() => {
             data.field_desc_application_procedure ||
             data.field_application_email ||
             data.field_application_phone ||
-            data.field_application_url
+            data.field_application_url ||
+            (data.event_shop_url && data.field_pretix_widget_type)
           "
           id="course-registration"
           class="col-xs-12 col-sm-12 col-md-12 internship__section-registration"

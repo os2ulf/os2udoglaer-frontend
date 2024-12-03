@@ -116,6 +116,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
 
   &__card-title {
     word-break: break-word;
+    hyphens: auto;
   }
 
   &__card-item {
@@ -204,6 +205,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
     margin-bottom: 0;
     line-height: 28px;
     word-break: break-word;
+    hyphens: auto;
   }
 
   &__card-compact-icon-container {

@@ -98,12 +98,12 @@ const handleFilterChange = (
 
     // if is free filter
     if (selectedFilterOption.source === 'isFreeFilter') {
-      selectedPriceFilter.value = '';
+      selectedPriceFilter.value = 'all';
     }
 
     // if Guarantee Partner filter
     if (selectedFilterOption.source === 'guaranteePartnerFilter') {
-      selectedGuaranteePartnerFilter.value = '';
+      selectedGuaranteePartnerFilter.value = 'all';
     }
 
     // Check if selectedFilterOption already exists in selectedFiltersData
@@ -139,7 +139,7 @@ const getFilteredPageResults = async (
 
     let filterString = '';
     selectedFiltersData.forEach((filter, index) => {
-      // remove date from filter
+      // Exclude date from filters - different format
       if (filter.searchQueryUrlAlias === 'period') {
         return;
       }
@@ -216,10 +216,36 @@ const updateURLParameters = () => {
   // Add selected page to URL parameters
   params.set('page', selectedPage.value.toString());
 
-  // Use history.pushState to update the URL without reloading the page
   const newURL = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(null, '', newURL);
+
+  // Convert reactive objects to plain objects
+  const plainState = {
+    searchKeyword: searchKeyword.value,
+    sortingString: sortingString.value,
+    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)),
+    selectedPage: selectedPage.value,
+  };
+
+  history.replaceState(plainState, '', newURL);
 };
+
+if (process.client) {
+  window.onpopstate = (event) => {
+    if (event.state) {
+      searchKeyword.value = event.state.searchKeyword || '';
+      sortingString.value = event.state.sortingString || '';
+      selectedPage.value = event.state.selectedPage || 0;
+
+      selectedFiltersData.splice(
+        0,
+        selectedFiltersData.length,
+        ...(event.state.selectedFiltersData || []),
+      );
+
+      updateURLParameters();
+    }
+  };
+}
 
 // Parse URL parameters
 const extractedFilters = reactive([]);
@@ -236,6 +262,22 @@ const parseUrlParameters = () => {
         searchQueryUrlAlias,
         value: filterValue,
       });
+    }
+
+    const isFreeFilter = extractedFilters.value.find(
+      (filter) => filter.searchQueryUrlAlias === isFreeUrlAlias.value,
+    );
+
+    const guaranteePartnerFilter = extractedFilters.value.find(
+      (filter) => filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value,
+    );
+
+    if (isFreeFilter) {
+      selectedPriceFilter.value = isFreeFilter.value;
+    }
+
+    if (guaranteePartnerFilter) {
+      selectedGuaranteePartnerFilter.value = guaranteePartnerFilter.value;
     }
   });
 
@@ -260,37 +302,52 @@ const parseUrlParameters = () => {
   // extract date range
   const minDate = params.get('period[min]');
   const maxDate = params.get('period[max]');
+
+  // sets date to chips & datepicker component
   if (minDate && maxDate) {
     datePickerStartDate.value = minDate;
     datePickerEndDate.value = maxDate;
+
+    // Add the calendar filter back to selected filters
+    const index = selectedFiltersData.findIndex(
+      (filter) => filter.searchQueryUrlAlias === 'period',
+    );
+
+    if (index !== -1) {
+      selectedFiltersData.splice(index, 1);
+    } else {
+      selectedFiltersData.push({
+        searchQueryUrlAlias: 'period',
+        value: `period[min]=${minDate}&period[max]=${maxDate}`,
+        label: `Fra ${minDate} til ${maxDate}`,
+      });
+    }
   }
 
   // if finds anything - fetches data.
-  if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
+  if (
+    extractedFilters.value.length > 0 ||
+    searchKeyword.value ||
+    page ||
+    (minDate && maxDate)
+  ) {
     handleExtractedFilters();
   }
 };
 
-// populates selectedFiltersData with extracted filters - CHIPS
+// populates selectedFiltersData with extracted filters
 const setSelectedFiltersDataWithExtractedFilters = () => {
-  selectedFiltersData.splice(0, selectedFiltersData.length);
-
+  // Iterate through extractedFilters
   extractedFilters.value.forEach((filter) => {
-    if (filter.searchQueryUrlAlias === 'period') {
-      selectedFiltersData.push({
-        searchQueryUrlAlias: filter.searchQueryUrlAlias,
-        value: filter.value,
-        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
-      });
-    }
-
     // Find the matching facet in allSortingOptions
     const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => facet.url_alias === filter.searchQueryUrlAlias,
+      (facet) => {
+        return facet.url_alias === filter.searchQueryUrlAlias;
+      },
     );
 
     if (matchingFacet) {
-      // Find the specific item in the matching facet's items array by value
+      // Find the specific item in the matching facet's items array
       const selectedItem = matchingFacet.items.find(
         (item) => item.value === filter.value,
       );
@@ -354,7 +411,8 @@ watch(selectedFiltersData, () => {
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
-  selectedPriceFilter.value = '';
+  selectedPriceFilter.value = 'all';
+  selectedGuaranteePartnerFilter.value = 'all';
 
   if (datePickerStartDate.value && datePickerEndDate.value) {
     datePickerStartDate.value = '';

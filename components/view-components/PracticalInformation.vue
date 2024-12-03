@@ -13,8 +13,8 @@ const props = defineProps({
     default: null,
   },
 
-  soldOut: {
-    type: Boolean,
+  isFree: {
+    type: [String, Boolean],
     required: false,
     default: false,
   },
@@ -148,7 +148,9 @@ const props = defineProps({
             class="practical-information__item-value"
           >
             <BaseTag
-              :data="{ label: props.soldOut ? 'Udsolgt' : 'Gratis' }"
+              :data="{
+                label: 'Gratis',
+              }"
               color="secondary"
             />
           </div>

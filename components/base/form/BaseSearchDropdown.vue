@@ -224,6 +224,8 @@ onUnmounted(() => {
     padding: 0 24px;
     color: var(--color-gray-62);
     font-size: var(--font-size-paragraph-sm);
+    /* widen the button size, so it fits longer filter labels */
+    min-width: 300px;
   }
 
   &__checkbox-label {
@@ -231,6 +233,8 @@ onUnmounted(() => {
     line-height: 1.125;
     color: #212121;
     margin-left: 8px;
+    word-break: break-word;
+    hyphens: auto;
 
     &--disabled {
       color: #9b9b9b;
@@ -261,12 +265,15 @@ onUnmounted(() => {
     }
   }
 
+  &__item {
+    position: relative;
+    z-index: 9;
+  }
+
   &__list {
-    z-index: 8;
     position: absolute;
     z-index: 9;
-    width: 100% @(--sm) max-content;
-    min-width: -webkit-fill-available;
+    width: 100%;
     padding: 0;
     background: var(--color-white);
     box-shadow: 0px 4px 30px 0px #0000001a;
@@ -278,6 +285,8 @@ onUnmounted(() => {
     &__visible {
       visibility: visible;
       transition: all 0.15s ease;
+      max-height: 600px;
+      overflow: auto;
     }
 
     &__hidden {

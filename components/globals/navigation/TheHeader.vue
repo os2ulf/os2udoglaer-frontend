@@ -259,10 +259,16 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding-right: 10px;
 
     @media (--viewport-sm-min) {
       flex: 1;
     }
+  }
+
+  &__logo {
+    max-width: 170px;
+    width: max-content;
   }
 
   &__right-content {
