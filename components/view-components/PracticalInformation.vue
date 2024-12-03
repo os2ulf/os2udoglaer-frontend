@@ -13,7 +13,7 @@ const props = defineProps({
     default: null,
   },
 
-  salesBanner: {
+  isFree: {
     type: [String, Boolean],
     required: false,
     default: false,
@@ -149,7 +149,7 @@ const props = defineProps({
           >
             <BaseTag
               :data="{
-                label: props.salesBanner ? props.salesBanner : 'Gratis',
+                label: 'Gratis',
               }"
               color="secondary"
             />

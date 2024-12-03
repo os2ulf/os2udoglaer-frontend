@@ -371,6 +371,7 @@ const currentUrl = computed(() => {
         <!-- Section related articles -->
         <div
           class="col-xs-12 col-sm-12 col-md-12 internship__section-related-articles"
+          v-if="data.field_related_courses.length > 0"
         >
           <div class="internship__related-articles">
             <h3>Relaterede forløb</h3>
