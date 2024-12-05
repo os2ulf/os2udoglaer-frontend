@@ -85,6 +85,7 @@ const schoolClassAllowed = ref([
 ]);
 const institutions = ref([]);
 const institutionsSelect = ref([]);
+const checkDistance = ref(true);
 const validated = ref(false);
 const validationMessage = ref('');
 const courseContent = ref([]);
@@ -126,9 +127,12 @@ const courseCity = ref('');
 const requestedAmount = ref('');
 const numberOfStudents = ref('');
 const settlementDate = ref('');
+const departureTime = ref('');
+const returnTime = ref('');
 const fullName = ref('');
 const email = ref('');
 const emailRepeat = ref('');
+const phone = ref('');
 const message = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const errorMessage = ref('');
@@ -142,7 +146,7 @@ const fetchCourses = async (uid: any) => {
   coursesSelect.value = [];
   try {
     const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/rest-export/content/course/' + uid,
+      apiRouteStore.apiRouteEndpoint + '/rest-export/courses-applicable/' + uid,
       {
         method: 'GET',
         headers: {
@@ -378,7 +382,9 @@ const handleCourseChange = async () => {
   courseAddress.value = '';
   coursePostalCode.value = '';
   courseCity.value = '';
-
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
   await fetchCourseContent(selectedCourse.value);
 };
 
@@ -390,6 +396,9 @@ const handleHideCourseSelect = async () => {
     courseCity.value = '';
     selectedCourse.value = '';
     coursesSelect.value = [];
+    checkDistance.value = true;
+    validated.value = false;
+    validationMessage.value = '';
   } else {
     await fetchCourses('all');
   }
@@ -397,6 +406,9 @@ const handleHideCourseSelect = async () => {
 
 // Fetch schools/institutions on type change
 const handleTypeChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
   if (selectedType.value === '') {
     return;
   } else if (selectedType.value === 'tpf_school') {
@@ -406,20 +418,46 @@ const handleTypeChange = async () => {
   }
 };
 
+const handleCourseAddressChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
+const handleCoursePostalcodeChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
+const handleCourseCityChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+};
+
 // Fetch user content on institution change
 const handleInstitutionChange = async () => {
   // console.log('handleInstitutionChange', selectedInstitution.value);
   institutionAddress.value = '';
   institutionPostalCode.value = '';
   institutionDistrict.value = '';
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
   await fetchUserContent(selectedInstitution.value);
+};
+
+const handleSchoolGradeChange = async () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
 };
 
 // Handle validation
 const handleValidation = async (event: any) => {
   event.preventDefault();
   validationMessage.value = '';
-  const checkDistance = ref(true);
 
   // console.log('courseWhoCanApply: ', courseWhoCanApply.value);
   // console.log(
@@ -445,22 +483,28 @@ const handleValidation = async (event: any) => {
 
     // If private institution and for all course, or municipal institution and municipal course
   } else if (
-    (institutionPrivateMunicipal.value === 'private' &&
-      courseWhoCanApply.value === 'all') ||
+    (courseWhoCanApply.value === 'all') ||
     (institutionPrivateMunicipal.value === 'municipal' &&
       courseWhoCanApply.value === 'municipal')
   ) {
     // If school
     if (selectedType.value === 'tpf_school') {
-      if (schoolClassAllowed.value.includes(selectedSchoolGrade.value)) {
+      if (schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())) {
         validated.value = true;
         checkDistance.value = false;
+      } else {
+        validated.value = false;
+        checkDistance.value = true;
       }
 
       // If institution
     } else {
       validated.value = true;
+      checkDistance.value = false;
     }
+  } else if (!courseWhoCanApply.value) {
+    validationMessage.value = formSettings.course_not_found.value;
+    validated.value = false;
   }
 
   // If distance check is enabled
@@ -567,9 +611,12 @@ const resetForm = async () => {
   requestedAmount.value = '';
   numberOfStudents.value = '';
   settlementDate.value = '';
+  departureTime.value = '';
+  returnTime.value = '';
   fullName.value = '';
   email.value = '';
   emailRepeat.value = '';
+  phone.value = '';
   message.value = '';
   errorMessage.value = '';
   agreementCheckbox.value = true;
@@ -633,6 +680,20 @@ const handleSubmit = async () => {
     },
   ];
 
+  // Set field_rfc_departure_time
+  const field_rfc_departure_time = [
+    {
+      value: departureTime.value,
+    },
+  ];
+
+  // Set field_rfc_return_time
+  const field_rfc_return_time = [
+    {
+      value: returnTime.value,
+    },
+  ];
+
   // Payload
   const payload = {
     type: [
@@ -659,6 +720,11 @@ const handleSubmit = async () => {
     field_rfc_mail: [
       {
         value: trimmedEmail,
+      },
+    ],
+    field_rfc_phone: [
+      {
+        value: phone.value,
       },
     ],
     field_rfc_name: [
@@ -721,6 +787,16 @@ const handleSubmit = async () => {
   // If course is selected add to payload
   if (message.value) {
     payload.field_tpf_message = field_tpf_message;
+  }
+
+  // If field_rfc_departure_time add to payload
+  if (departureTime.value) {
+    payload.field_rfc_departure_time = field_rfc_departure_time;
+  }
+
+  // If field_rfc_return_time add to payload
+  if (returnTime.value) {
+    payload.field_rfc_return_time = field_rfc_return_time;
   }
 
   try {
@@ -805,7 +881,8 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseAddress"
-          :value="courseAddress.value"
+          :value="courseAddress"
+          @update:model-value="handleCourseAddressChange"
           type="text"
           name="Gade"
           label="Gade"
@@ -814,6 +891,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="coursePostalCode"
+          @update:model-value="handleCoursePostalcodeChange"
           type="text"
           name="Postnummer"
           label="Postnummer"
@@ -822,6 +900,7 @@ onBeforeMount(() => {
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseCity"
+          @update:model-value="handleCourseCityChange"
           type="text"
           name="By"
           label="By"
@@ -853,6 +932,7 @@ onBeforeMount(() => {
           v-if="selectedType === 'tpf_school'"
           v-model="selectedSchoolGrade"
           :options="schoolClassSelect"
+          @update:model-value="handleSchoolGradeChange"
           name="Klassetrin"
           label="Klassetrin"
           rules="required"
@@ -910,39 +990,67 @@ onBeforeMount(() => {
           label="Afviklingsdato"
           rules="required"
         />
+        <BaseInput
+          class="application-form__label"
+          v-model="departureTime"
+          type="time"
+          name="Afhentningstidspunkt for udrejse"
+          label="Afhentningstidspunkt for udrejse"
+        />
+        <BaseInput
+          class="application-form__label"
+          v-model="returnTime"
+          type="time"
+          name="Afhentningstidspunkt for hjemrejse"
+          label="Afhentningstidspunkt for hjemrejse"
+        />
       </div>
 
-      <div v-if="validated" class="field-group">
-        <h3>Kontakt information</h3>
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="fullName"
-          type="text"
-          name="Navn"
-          label="Navn"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="email"
-          type="text"
-          name="E-mailadresse"
-          label="E-mailadresse"
-          rules="required|email"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="emailRepeat"
-          type="text"
-          name="Gentag e-mailadresse"
-          label="Gentag e-mailadresse"
-          rules="required|email"
-        />
-        <BaseTextareaFloatingLabel
-          v-model="message"
-          name="Evt. besked"
-          label="Evt. besked"
-        />
+      <div v-if="validated">
+        <div class="field-group">
+          <h3>Kontakt information</h3>
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="fullName"
+            type="text"
+            name="Navn på medfølgende voksen"
+            label="Navn på medfølgende voksen"
+            rules="required"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="email"
+            type="text"
+            name="E-mailadresse på medfølgende voksen"
+            label="E-mailadresse på medfølgende voksen"
+            rules="required|email"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="emailRepeat"
+            type="text"
+            name="Gentag e-mailadresse på medfølgende voksen"
+            label="Gentag e-mailadresse på medfølgende voksen"
+            rules="required|email"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="phone"
+            type="text"
+            name="Telefonnummer på medfølgende voksen"
+            label="Telefonnummer på medfølgende voksen"
+            rules="required"
+          />
+        </div>
+        <div class="field-group">
+          <h3>Besked</h3>
+          <BaseTextareaFloatingLabel
+            v-model="message"
+            name="Evt. besked"
+            label="Evt. besked"
+            description="Fx kun transport én vej, ekstra plads til hjælpemidler eller bagage, særlige oplysninger om afhentningssted m.m."
+          />
+        </div>
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
@@ -1023,6 +1131,16 @@ onBeforeMount(() => {
 
   :deep(.form-input-wrapper) {
     margin-top: 18px @(--sm) 32px;
+
+    &--inline {
+      display: flex;
+      gap: 16px @(--sm) 24px;
+      margin-top: 0 !important;
+
+      .form-label {
+        padding-right: 26px;
+      }
+    }
   }
 
   &__textarea-wrapper {
@@ -1156,17 +1274,11 @@ onBeforeMount(() => {
     border-radius: 32px;
     background-color: var(--color-quaternary-lighten-4);
 
-    &-header {
-      font-weight: 700;
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
+    :deep(p) {
+      margin-bottom: 8px;
 
-    &-description {
-      padding-top: 8px;
-
-      :deep(p) {
-        margin-bottom: 8px;
+      &:last-child {
+        margin-bottom: 0;
       }
     }
   }

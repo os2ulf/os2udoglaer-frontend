@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
+    default: null,
+  },
+
   widgetType: {
     type: String,
     required: true,
@@ -18,7 +24,7 @@ const props = defineProps({
     >
       <BaseTag
         v-if="props.data.free"
-        :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
+        :data="{ label: 'Gratis' }"
         color="secondary"
       />
       <div

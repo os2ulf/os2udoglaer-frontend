@@ -85,8 +85,8 @@ onBeforeUnmount(() => {
       class="course__registration__prices"
     >
       <BaseTag
-        v-if="props.data.free"
-        :data="{ label: data?.field_sold_out ? 'Udsolgt' : 'Gratis' }"
+        v-if="props?.data?.free"
+        :data="{ label: 'Gratis' }"
         color="secondary"
       />
       <div

@@ -303,6 +303,7 @@ const relatedContent = ref(props.data?.related_content);
               <div
                 v-if="data?.field_other_info_description"
                 v-html="data?.field_other_info_description"
+                class="user__info-description--text"
               ></div>
 
               <div
@@ -316,7 +317,7 @@ const relatedContent = ref(props.data?.related_content);
                 >
                   <NuxtLink
                     v-if="
-                      button?.field_file || button?.field_external_link?.url
+                      button?.field_file || button?.field_external_link?.url && button?.field_material_download_text
                     "
                     class="user__info-description__button-item__link button button--ghost"
                     :to="
@@ -329,7 +330,7 @@ const relatedContent = ref(props.data?.related_content);
                     <span
                       class="user__info-description--button-item__link-text"
                     >
-                      {{ button?.field_external_link?.title }}
+                      {{ button?.field_material_download_text }}
                     </span>
                     <NuxtIcon
                       class="user__info-description--button-item__icon"
@@ -454,13 +455,16 @@ const relatedContent = ref(props.data?.related_content);
   }
 
   &__info-description {
-    &--buttons {
-      display: flex;
-      flex-flow: column @(--sm) row @(--md) column @(--xl) row;
-      gap: 24px;
+    &--text {
+      margin-bottom: 24px;
     }
 
     &--button-item {
+      display: block;
+      float: left;
+      margin-right: 24px;
+      margin-bottom: 24px;
+
       &__link {
         display: flex;
         align-items: center;
