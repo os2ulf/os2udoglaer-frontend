@@ -267,7 +267,7 @@ onBeforeUnmount(() => {
   }
 
   &__logo {
-    max-width: 300px;
+    max-width: 170px @(--sm) 300px;
     width: max-content;
   }
 
