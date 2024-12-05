@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "@popperjs/core": "^2.11.8",
     "@vee-validate/i18n": "^4.7.3",
     "@vee-validate/rules": "^4.7.3",
     "@vuepic/vue-datepicker": "^9.0.2",

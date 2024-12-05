@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { v4 as uuidv4 } from 'uuid';
+import { createPopper } from '@popperjs/core';
 
 const id = `datepicker-${uuidv4()}`;
 
@@ -17,6 +18,7 @@ const props = defineProps({
 
 const datepicker = ref();
 const date = ref();
+let popperInstance = null;
 
 const emit = defineEmits(['datepickerValue']);
 
@@ -24,12 +26,61 @@ const handleDateChange = (newDate: object) => {
   emit('datepickerValue', newDate);
   setTimeout(() => {
     showDatepicker.value = false;
+    destroyPopper();
   }, 200);
 };
 
 const showDatepicker = ref(false);
 const toggleDatepicker = () => {
   showDatepicker.value = !showDatepicker.value;
+
+  if (showDatepicker.value) {
+    nextTick(() => {
+      initPopper();
+    });
+  } else {
+    destroyPopper();
+  }
+};
+
+const initPopper = () => {
+  const triggerEl = document.getElementById(id);
+  const datePickerEl = datepicker.value?.$el;
+
+  if (triggerEl && datePickerEl) {
+    popperInstance = createPopper(triggerEl, datePickerEl, {
+      placement: 'bottom',
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 8],
+          },
+        },
+        {
+          name: 'preventOverflow',
+          options: {
+            boundary: 'viewport',
+          },
+        },
+        {
+          name: 'flip',
+          options: {
+            fallbackPlacements: ['bottom-start'],
+          },
+        },
+      ],
+    });
+  } else {
+    console.warn('Popper.js: Unable to initialize due to missing elements');
+  }
+};
+
+const destroyPopper = () => {
+  if (popperInstance) {
+    popperInstance.destroy();
+    popperInstance = null;
+  }
 };
 
 const setDate = (dates: object) => {
@@ -53,6 +104,7 @@ const convertToISO = (dateString) => {
 const handleClickOutside = (e) => {
   if (!e.target.closest('.datepicker')) {
     showDatepicker.value = false;
+    destroyPopper();
   }
 };
 
@@ -69,6 +121,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
+  destroyPopper();
 });
 </script>
 
@@ -111,7 +164,6 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .datepicker {
-  position: relative;
   width: inherit;
   min-width: 313px;
 
@@ -162,9 +214,8 @@ onUnmounted(() => {
   }
 
   &__component {
-    padding-top: 3px;
-    width: 100%;
     z-index: 8;
+    width: auto;
   }
 }
 </style>
