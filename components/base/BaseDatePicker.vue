@@ -188,6 +188,7 @@ onUnmounted(() => {
     text-align: left;
     width: 100%;
     min-width: 313px;
+    height: 55px;
 
     border: 1px solid #707070;
     border-radius: 32px;
