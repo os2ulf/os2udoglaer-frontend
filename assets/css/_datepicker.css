@@ -48,6 +48,10 @@
   padding-right: 0 @(--sm) 32px;
 }
 
+.dp__instance_calendar:last-child {
+  padding-right: 0 !important;
+}
+
 .dp__month_year_wrap {
   font-size: 16px;
   font-weight: 700;
