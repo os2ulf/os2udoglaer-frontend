@@ -194,7 +194,6 @@ onUnmounted(() => {
     border-radius: 32px;
     background: none;
     line-height: 18px;
-    height: inherit;
     color: var(--color-gray-62);
     font-weight: 400;
     font-size: var(--font-size-paragraph-sm);
