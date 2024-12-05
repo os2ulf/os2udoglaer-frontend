@@ -113,7 +113,7 @@ onUnmounted(() => {
 .datepicker {
   position: relative;
   width: inherit;
-  min-width: 300px;
+  min-width: 313px;
 
   &__icon {
     margin-right: 8px;
@@ -135,7 +135,7 @@ onUnmounted(() => {
     align-items: center;
     text-align: left;
     width: 100%;
-    min-width: 300px;
+    min-width: 313px;
 
     border: 1px solid #707070;
     border-radius: 32px;
