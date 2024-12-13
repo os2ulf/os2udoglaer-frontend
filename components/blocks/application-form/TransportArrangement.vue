@@ -409,6 +409,7 @@ const handleTypeChange = async () => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
+  selectedInstitution.value = '';
   if (selectedType.value === '') {
     return;
   } else if (selectedType.value === 'tpf_school') {
@@ -459,17 +460,40 @@ const handleValidation = async (event: any) => {
   event.preventDefault();
   validationMessage.value = '';
 
-  // console.log('courseWhoCanApply: ', courseWhoCanApply.value);
-  // console.log(
-  //   'institutionPrivateMunicipal: ',
-  //   institutionPrivateMunicipal.value,
-  // );
-  // console.log('selectedSchoolGrade: ', selectedSchoolGrade.value);
-  // console.log('selectedType: ', selectedType.value);
-  // console.log('courseAddress: ', courseAddress.value);
-  // console.log('institutionAddress: ', institutionAddress.value);
-  // console.log('institutionDistrict: ', institutionDistrict.value);
-  // console.log('courseNotInList: ', courseNotInList.value);
+  // Validation for course address, postal code and city
+  if (courseAddress.value === '' || coursePostalCode.value === '' || courseCity.value === '') {
+    console.log('no course address or postal code');
+    validated.value = false;
+    validationMessage.value = 'Vælg forløb eller indtast forløbsadresse';
+    checkDistance.value = false;
+    return;
+  }
+
+  // Validation for institution type
+  if (selectedType.value === '') {
+    validated.value = false;
+    validationMessage.value = 'Vælg institutionstype';
+    checkDistance.value = false;
+    return;
+  }
+
+  // Validation for institution type school
+  if (selectedType.value === 'tpf_school' && (selectedInstitution.value === '' || selectedSchoolGrade.value === '')) {
+    console.log('school selected but no institution or grade selected');
+    validated.value = false;
+    validationMessage.value = 'Vælg en skole og et klassetrin';
+    checkDistance.value = false;
+    return;
+  }
+
+  // Validation for institution type kindergarten, nursery or daycare
+  if ((selectedType.value === 'tpf_kindergarten' || selectedType.value === 'tpf_nursery' || selectedType.value === 'tpf_daycare') && selectedInstitution.value === '') {
+    console.log('school selected but no institution or grade selected');
+    validated.value = false;
+    validationMessage.value = 'Vælg institution';
+    checkDistance.value = false;
+    return;
+  }
 
   // If private institution and municipal course, or private institution and course not in list
   if (
@@ -760,6 +784,11 @@ const handleSubmit = async () => {
     field_tpf_participants: [
       {
         value: numberOfStudents.value,
+      },
+    ],
+    field_tpf_course_not_found: [
+      {
+        value: courseNotInList.value,
       },
     ],
   };
