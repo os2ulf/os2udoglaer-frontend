@@ -410,6 +410,7 @@ const handleTypeChange = async () => {
   validated.value = false;
   validationMessage.value = '';
   selectedInstitution.value = '';
+  selectedSchoolGrade.value = '';
   if (selectedType.value === '') {
     return;
   } else if (selectedType.value === 'tpf_school') {
@@ -462,7 +463,6 @@ const handleValidation = async (event: any) => {
 
   // Validation for course address, postal code and city
   if (courseAddress.value === '' || coursePostalCode.value === '' || courseCity.value === '') {
-    console.log('no course address or postal code');
     validated.value = false;
     validationMessage.value = 'Vælg forløb eller indtast forløbsadresse';
     checkDistance.value = false;
@@ -479,7 +479,6 @@ const handleValidation = async (event: any) => {
 
   // Validation for institution type school
   if (selectedType.value === 'tpf_school' && (selectedInstitution.value === '' || selectedSchoolGrade.value === '')) {
-    console.log('school selected but no institution or grade selected');
     validated.value = false;
     validationMessage.value = 'Vælg en skole og et klassetrin';
     checkDistance.value = false;
@@ -488,7 +487,6 @@ const handleValidation = async (event: any) => {
 
   // Validation for institution type kindergarten, nursery or daycare
   if ((selectedType.value === 'tpf_kindergarten' || selectedType.value === 'tpf_nursery' || selectedType.value === 'tpf_daycare') && selectedInstitution.value === '') {
-    console.log('school selected but no institution or grade selected');
     validated.value = false;
     validationMessage.value = 'Vælg institution';
     checkDistance.value = false;
@@ -527,8 +525,25 @@ const handleValidation = async (event: any) => {
       checkDistance.value = false;
     }
   } else if (!courseWhoCanApply.value) {
-    validationMessage.value = formSettings.course_not_found.value;
-    validated.value = false;
+    if (courseNotInList.value) {
+      if (selectedType.value === 'tpf_school') {
+        if (schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())) {
+          validated.value = true;
+          checkDistance.value = false;
+        } else {
+          validated.value = false;
+          checkDistance.value = true;
+        }
+
+        // If institution
+      } else {
+        validated.value = true;
+        checkDistance.value = false;
+      }
+    } else {
+      validationMessage.value = formSettings.course_not_found.value;
+      validated.value = false;
+    }
   }
 
   // If distance check is enabled
