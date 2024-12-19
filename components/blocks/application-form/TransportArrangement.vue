@@ -806,6 +806,11 @@ const handleSubmit = async () => {
         value: courseNotInList.value,
       },
     ],
+    field_rfc_send_mail: [
+      {
+        value: true,
+      },
+    ],
   };
 
   // If course is selected add to payload
