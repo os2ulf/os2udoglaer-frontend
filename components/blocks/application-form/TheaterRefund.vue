@@ -223,6 +223,11 @@ const handleSubmit = async () => {
         value: trimmedFullName,
       },
     ],
+    field_rfc_send_mail: [
+      {
+        value: true,
+      },
+    ],
     field_rfc_school: [
       {
         target_id: selectedSchool.value,
