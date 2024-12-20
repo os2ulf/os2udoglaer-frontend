@@ -60,7 +60,7 @@ if (alteredData !== null) {
 
   :deep(a) {
     color: var(--theme-color);
-    text-decoration: none;
+    text-decoration: underline;
   }
 
   :deep(.text-align-right) {

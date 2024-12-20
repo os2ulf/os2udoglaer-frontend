@@ -1,3 +1,9 @@
+<script setup>
+const props = defineProps({
+  blockData: Object,
+});
+</script>
+
 <template>
   <div v-if="props.blockData.field_text !== null" class="rte">
     <BaseRte
@@ -6,9 +12,3 @@
     />
   </div>
 </template>
-
-<script setup>
-const props = defineProps({
-  blockData: Object,
-});
-</script>
