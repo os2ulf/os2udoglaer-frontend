@@ -8,8 +8,8 @@
 
 @import 'variables/_theme-colors.css';
 @import 'themes/theme.css';
-@import 'themes/theme-grey.css';
-@import 'themes/theme-brown.css';
-@import 'themes/theme-black.css';
-@import 'themes/theme-secondary.css';
 @import 'themes/theme-primary.css';
+@import 'themes/theme-secondary.css';
+@import 'themes/theme-tertiary.css';
+@import 'themes/theme-grey.css';
+@import 'themes/theme-black.css';
