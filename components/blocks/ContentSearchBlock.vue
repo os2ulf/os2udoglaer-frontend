@@ -830,7 +830,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .search-block {
   &__label {
     color: var(--color-tertiary);
@@ -1150,14 +1150,5 @@ onMounted(() => {
 
 body {
   background-color: var(--color-tertiary-lighten-6);
-}
-
-/* overwrites */
-.header-parent {
-  background-color: var(--color-tertiary-lighten-6) !important;
-}
-
-.section {
-  background-color: var(--color-tertiary-lighten-6) !important;
 }
 </style>
