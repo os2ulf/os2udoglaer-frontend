@@ -95,7 +95,7 @@ onUnmounted(() => {
                 </NuxtLink>
               </li>
 
-              <!-- Meta menu -->
+              <!-- Meta menu mobile -->
               <li
                 class="offcanvas-mobile__items-wrapper offcanvas-mobile__items-wrapper--meta-menu"
               >
@@ -104,7 +104,7 @@ onUnmounted(() => {
                   :key="metaItem.title"
                   class="offcanvas-mobile__item-link offcanvas-mobile__item-link--meta-menu"
                   @click="handleItemClick(metaItem)"
-                  :to="metaItem.url"
+                  :to="metaItem?.link?.url"
                   :aria-label="'Link til ' + metaItem?.title"
                 >
                   {{ metaItem?.title }}
