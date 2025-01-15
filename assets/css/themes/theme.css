@@ -1,7 +1,7 @@
 /* default vars - no theme */
 
 :root {
-  --theme-background-color: var(--color-white);
+  --theme-background-color: var(--color-tertiary-lighten-6);
   --theme-color: var(--color-text);
 
   /* button - filled */

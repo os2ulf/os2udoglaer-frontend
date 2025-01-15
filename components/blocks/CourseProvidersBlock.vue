@@ -893,8 +893,4 @@ onMounted(() => {
     color: var(--color-tertiary);
   }
 }
-
-body {
-  background-color: var(--color-tertiary-lighten-6);
-}
 </style>
