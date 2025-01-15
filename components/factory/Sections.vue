@@ -51,9 +51,9 @@ const assignMdCollumnsHandler = (
         section.layout_settings.column_widths
           ? 'column-widths--' + section.layout_settings.column_widths
           : '',
-        section.layout_settings.color_theme
+        section.layout_settings.color_theme.length > 0
           ? section.layout_settings.color_theme
-          : '',
+          : 'theme-none',
         section.layout_settings.column_spacing_top,
         section.layout_settings.column_spacing_bottom,
       ]"
@@ -110,6 +110,10 @@ const assignMdCollumnsHandler = (
   transition: background-color 0.3s ease-in-out;
   overflow-y: visible;
   overflow-x: clip;
+
+  &.theme-none {
+    background-color: #fff;
+  }
 
   @media (--viewport-md-min) {
     padding-top: var(--section-spacing);
