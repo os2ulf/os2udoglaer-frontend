@@ -239,7 +239,7 @@ const props = defineProps({
   &__group {
     margin-top: 22px;
     padding-top: 14px;
-    border-top: 1px solid var(--color-tertiary-lighten-4);
+    border-top: 1px solid var(--color-gray-20);
   }
 
   &__title {

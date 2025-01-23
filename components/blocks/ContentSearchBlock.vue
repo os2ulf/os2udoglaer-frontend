@@ -833,7 +833,7 @@ onMounted(() => {
 <style lang="postcss" scoped>
 .search-block {
   &__label {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -842,7 +842,7 @@ onMounted(() => {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-tertiary);
+  color: var(--color-text);
 
   &__skeleton {
     height: 100%;
@@ -854,7 +854,7 @@ onMounted(() => {
 
   &__heading {
     margin-bottom: 0;
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 
   /* Filters stuff */
@@ -940,7 +940,7 @@ onMounted(() => {
       width: 24px;
       border-radius: 50%;
       background-color: var(--color-secondary);
-      color: var(--color-tertiary);
+      color: var(--color-secondary-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1004,7 +1004,7 @@ onMounted(() => {
       line-height: 18px;
       font-weight: 600;
       letter-spacing: 1px;
-      color: var(--color-tertiary);
+      color: var(--color-text);
       cursor: pointer;
       vertical-align: middle;
       padding-left: 8px;
@@ -1127,15 +1127,15 @@ onMounted(() => {
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
   .form-input {
-    background-color: var(--color-tertiary-lighten-6);
+    background-color: var(--color-gray-8);
 
     &:focus {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
@@ -1144,7 +1144,7 @@ onMounted(() => {
   }
 
   .card {
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 }
 </style>

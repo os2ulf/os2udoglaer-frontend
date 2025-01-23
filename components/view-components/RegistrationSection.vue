@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
   &__description {
     width: 100% @(--sm) 684px;
     margin: 0 auto;
-    color: var(--color-tertiary);
+    color: var(--color-text);
 
     :deep(p) {
       font-size: 16px @(--md) 22px;

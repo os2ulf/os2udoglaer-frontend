@@ -160,7 +160,7 @@ const practicalInfoData = computed(() => {
 
 <style lang="postcss" scoped>
 .news {
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: var(--color-gray-8);
   color: var(--color-text);
 
   &__top-section {

@@ -47,7 +47,7 @@ const handleSearch = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--color-tertiary);
+  color: var(--color-text);
   cursor: pointer;
 
   :deep(svg) {
@@ -65,7 +65,7 @@ const handleSearch = () => {
   }
 
   input {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     box-sizing: border-box;
     width: 100%;
     height: 48px;

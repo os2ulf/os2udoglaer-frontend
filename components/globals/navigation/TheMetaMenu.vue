@@ -117,7 +117,7 @@ const closeOffCanvas = () => {
   position: relative;
   display: none @(--md) flex;
   align-items: center;
-  background: var(--color-tertiary-lighten-6);
+  background: var(--color-gray-8);
   z-index: 11;
 
   .meta-menu__items-wrapper {
@@ -132,7 +132,7 @@ const closeOffCanvas = () => {
 
   &__item {
     position: relative;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     font-size: 14px;
     font-weight: 600;
     padding: 15px 24px;
