@@ -62,6 +62,7 @@
       &:hover {
         color: var(--color-secondary);
         background-color: var(--color-tertiary-darken-2);
+        border-color: var(--color-tertiary);
       }
     }
   }

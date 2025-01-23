@@ -42,22 +42,22 @@ const props = defineProps({
   }
 
   &__item {
-    border-bottom: 1px solid var(--color-tertiary-lighten-6);
+    border-bottom: 1px solid var(--color-gray-8);
     transition: all 0.2s;
 
     a {
       text-decoration: none;
-      color: var(--color-tertiary);
+      color: var(--color-text);
     }
 
     &:hover {
-      background-color: var(--color-tertiary-lighten-5);
+      background-color: var(--color-gray-8);
     }
   }
 
   &__item-link {
     padding: 16px 24px;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     width: 100%;
     display: block;
 

@@ -1,6 +1,6 @@
 .theme-grey {
   --theme-background-color: #d1cfcd;
-  --theme-color: var(--color-tertiary);
+  --theme-color: var(--color-text);
 
   /* button - filled */
   --theme-button-border-color: var(--color-primary);
@@ -23,12 +23,12 @@
   --theme-button-ghost-text-color-hover: var(--color-primary-darken-3);
 
   /* Footer */
-  --theme-footer-text-color: var(--color-tertiary);
+  --theme-footer-text-color: var(--color-text);
 
   /* Inline Navigation */
-  --theme-inline-navigation-color: var(--color-tertiary);
+  --theme-inline-navigation-color: var(--color-text);
 
   /* Swiper */
-  --theme-swiper-primary-color: var(--color-tertiary);
-  --theme-swiper-secondary-color: var(--color-tertiary-lighten-3);
+  --theme-swiper-primary-color: var(--color-text);
+  --theme-swiper-secondary-color: var(--color-gray-32);
 }

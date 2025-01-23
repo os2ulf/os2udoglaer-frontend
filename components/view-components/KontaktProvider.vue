@@ -64,7 +64,7 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .contact {
   color: var(--color-text);
-  background-color: var(--color-tertiary-lighten-4);
+  background-color: var(--color-gray-20);
   padding: 20px 20px @(--sm) 96px 168px;
   box-shadow: 0px 4px 10px 15px #40362e1a;
 

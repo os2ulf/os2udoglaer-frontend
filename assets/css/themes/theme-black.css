@@ -26,7 +26,7 @@
   --theme-footer-text-color: var(--color-white);
 
   /* Inline Navigation */
-  --theme-inline-navigation-color: var(--color-tertiary);
+  --theme-inline-navigation-color: var(--color-white);
 
   /* Swiper */
   --theme-swiper-primary-color: var(--color-white);

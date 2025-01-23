@@ -476,8 +476,8 @@ const cleanEmptyFilters = () => {
 .search {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
-  background-color: var(--color-tertiary-lighten-6);
-  color: var(--color-tertiary);
+  background-color: var(--color-gray-8);
+  color: var(--color-text);
 
   &__skeleton {
     height: 100%;
@@ -489,7 +489,7 @@ const cleanEmptyFilters = () => {
 
   &__heading {
     margin-bottom: 0;
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 
   /* Filters stuff */
@@ -558,7 +558,7 @@ const cleanEmptyFilters = () => {
       width: 24px;
       border-radius: 50%;
       background-color: var(--color-secondary);
-      color: var(--color-tertiary);
+      color: var(--color-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -693,7 +693,7 @@ const cleanEmptyFilters = () => {
   }
 
   &__card-link {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     text-decoration: none;
   }
 
@@ -722,15 +722,15 @@ const cleanEmptyFilters = () => {
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
   .form-input {
-    background-color: var(--color-tertiary-lighten-6);
+    background-color: var(--color-gray-8);
 
     &:focus {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
@@ -739,15 +739,15 @@ const cleanEmptyFilters = () => {
   }
 
   .card {
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 }
 
 body {
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: var(--color-gray-8);
 }
 
 .header-parent {
-  background-color: var(--color-tertiary-lighten-6) !important;
+  background-color: var(--color-gray-8) !important;
 }
 </style>

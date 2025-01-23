@@ -148,7 +148,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   &__content {
     padding-top: 16px;
     flex-grow: 1;
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 
   &__date {
@@ -163,7 +163,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   &__title {
     word-break: break-word;
     padding-top: 8px;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     margin-bottom: 0;
   }
 

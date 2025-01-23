@@ -289,7 +289,7 @@ onBeforeUnmount(() => {
   &__button {
     padding-bottom: 14px;
     margin: 0 10px 0 10px;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     white-space: nowrap;
     text-decoration: none;
     background: none;
@@ -328,7 +328,7 @@ onBeforeUnmount(() => {
     padding: 0;
     background: transparent;
     border: none;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     text-transform: uppercase;
     font-weight: 600;
     display: inline-flex;
