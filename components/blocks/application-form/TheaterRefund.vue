@@ -28,18 +28,6 @@ const schoolsSelect = ref([]);
 const providers = ref([]);
 const theatersSelect = ref([]);
 
-// Set domain array for form data
-const domains = ref([]);
-const domainArray = ref(props.blockData?.field_domain_access);
-
-if (domainArray.value.length > 0) {
-  for (let i = 0; i < domainArray.value.length; i++) {
-    domains.value.push({
-      target_id: domainArray.value[i],
-    });
-  }
-}
-
 // Form data
 const selectedSchool = ref('');
 const schoolClass = ref('');
@@ -137,7 +125,6 @@ const resetForm = async () => {
   schoolsSelect.value = [];
   providers.value = [];
   theatersSelect.value = [];
-  domains.value = [];
   selectedSchool.value = '';
   schoolClass.value = '';
   receivingClass.value = '';
@@ -187,7 +174,6 @@ const handleSubmit = async () => {
         value: mailTo.value,
       },
     ],
-    field_domain_access: domains.value,
     field_rfc_date: [
       {
         value: settlementDate.value,

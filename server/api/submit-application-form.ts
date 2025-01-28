@@ -1,8 +1,12 @@
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+
+const apiRouteStore = useApiRouteStore();
+const matchedBeDomain = ref(apiRouteStore.apiRouteEndpoint)
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
   const body = await readBody(event);
-  const beDataWellEndpoint = config.public.API_BASE_URL;
   const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
   const encodedCredentials = btoa(credentials);
 
@@ -27,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await fetch(beDataWellEndpoint + '/node?_format=json', {
+    const response = await fetch(matchedBeDomain + '/node?_format=json', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
