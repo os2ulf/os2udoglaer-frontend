@@ -37,18 +37,6 @@ const subjectTerms = ref([]);
 const subjectTermsSelect = ref([]);
 const coursePriceInfo = ref([]);
 
-// Set domain array for form data
-const domains = ref([]);
-const domainArray = ref(props.blockData?.field_domain_access);
-
-if (domainArray.value.length > 0) {
-  for (let i = 0; i < domainArray.value.length; i++) {
-    domains.value.push({
-      target_id: domainArray.value[i],
-    });
-  }
-}
-
 // URL query parameters
 const urlQueryCourseId = ref('');
 const urlQueryProviderId = ref('');
@@ -311,7 +299,6 @@ const resetForm = async () => {
   subjectTerms.value = [];
   subjectTermsSelect.value = [];
   coursePriceInfo.value = [];
-  domains.value = [];
   selectedSchool.value = '';
   schoolClass.value = '';
   receivingClass.value = false;
@@ -371,7 +358,6 @@ const handleSubmit = async () => {
         target_id: 'free_course_request',
       },
     ],
-    field_domain_access: domains.value,
     field_mailto: [
       {
         value: mailTo.value,

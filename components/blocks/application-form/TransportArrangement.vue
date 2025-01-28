@@ -98,18 +98,6 @@ const institutionLatLon = ref([]);
 const institutionPrivateMunicipal = ref('');
 const institutionDistrict = ref('');
 
-// Set domain array for form data
-const domains = ref([]);
-const domainArray = ref(props.blockData?.field_domain_access);
-
-if (domainArray.value.length > 0) {
-  for (let i = 0; i < domainArray.value.length; i++) {
-    domains.value.push({
-      target_id: domainArray.value[i],
-    });
-  }
-}
-
 // URL query parameters
 const urlQueryCourseId = ref('');
 
@@ -635,7 +623,6 @@ const resetForm = async () => {
   coursesSelect.value = [];
   schools.value = [];
   schoolsSelect.value = [];
-  domains.value = [];
   selectedCourse.value = '';
   selectedInstitution.value = '';
   selectedSchoolGrade.value = '';
@@ -740,7 +727,6 @@ const handleSubmit = async () => {
         target_id: 'transport_pool_form',
       },
     ],
-    field_domain_access: domains.value,
     field_mailto: [
       {
         value: mailTo.value,
