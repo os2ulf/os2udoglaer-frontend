@@ -1,7 +1,9 @@
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 const apiRouteStore = useApiRouteStore();
-const matchedBeDomain = ref(apiRouteStore.apiRouteEndpoint)
+const matchedBeDomain = apiRouteStore.apiRouteEndpoint;
+
+console.log('matchedBeDomain', matchedBeDomain);
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
