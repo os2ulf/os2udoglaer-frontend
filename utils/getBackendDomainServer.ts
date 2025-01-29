@@ -31,11 +31,9 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
   };
 
   const onlyBackendRoutes = extractBackendRoutes();
-  console.log('Only backend routes:', onlyBackendRoutes);
 
   const getDomainName = (url: string) => {
     const fullUrl = url.startsWith('http') ? url : `https://${url}`;
-    console.log(`Parsed URL fullUrl: ${fullUrl}`);
     return new URL(fullUrl).hostname.replace(/^www\./, '');
   };
 
@@ -44,13 +42,12 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
     if (!onlyBackendRoutes) return;
 
     const currentDomain = getDomainName(currentFrontendDomain);
-    console.log('Current domain:', currentDomain);
 
     let selectedBackend = null;
 
     for (const route of onlyBackendRoutes) {
       const backendDomain = getDomainName(route);
-      console.log('Checking backend domain:', backendDomain);
+
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBackend = route;
         break;
