@@ -1,9 +1,8 @@
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { useGetBackendDomain } from '~/composables/useGetBackendDomain';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const apiRouteStore = useApiRouteStore();
-  const backEndDomain = apiRouteStore.apiRouteEndpoint;
+  const beEndpoint = useGetBackendDomain();
 
   const body = await readBody(event);
   const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
@@ -30,27 +29,16 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log(
-      'back end domain in the try method',
-      backEndDomain + '/node?_format=json',
-    );
+    console.log('beEndpoint', beEndpoint + '/node?_format=json');
 
-    console.log(
-      'apiRouteStore.apiRouteEndpoint',
-      apiRouteStore.apiRouteEndpoint,
-    );
-
-    const response = await fetch(
-      apiRouteStore.apiRouteEndpoint + '/node?_format=json',
-      {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: `Basic ${encodedCredentials}`,
-        },
-        body: JSON.stringify(body),
+    const response = await fetch(beEndpoint + '/node?_format=json', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Basic ${encodedCredentials}`,
       },
-    );
+      body: JSON.stringify(body),
+    });
 
     const responseData = await response.json();
     const responseStatus = response.status;
