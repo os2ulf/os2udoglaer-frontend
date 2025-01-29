@@ -1,55 +1,48 @@
 import { decodeBase64 } from '~/utils/base64';
 import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 export function useGetBackendDomain() {
-  const allRoutes = ref<Record<string, any> | null>(null);
-  const beEndpoint = ref<string | null>(null);
-  const devEnv = ref<string | null>('https://localhost:3000');
-  const config = useRuntimeConfig();
+  let allRoutes: Record<string, any> | null = null;
+  let beEndpoint: string | null = null;
+  const devEnv = 'https://localhost:3000';
 
   if (process.env.PLATFORM_ROUTES) {
     try {
       const encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
       const decodedRoutes = decodeBase64(encodedPlatformRoutes);
-      allRoutes.value = JSON.parse(decodedRoutes);
+      allRoutes = JSON.parse(decodedRoutes);
     } catch (error) {
       console.error('Error decoding or parsing PLATFORM_ROUTES:', error);
-      allRoutes.value = null;
+      allRoutes = null;
     }
   }
 
   const extractBackendRoutes = () => {
-    if (!allRoutes.value) {
-      return null;
-    }
-
-    const backendUrls = Object.keys(allRoutes.value).filter(
+    if (!allRoutes) return null;
+    const backendUrls = Object.keys(allRoutes).filter(
       (url) =>
-        allRoutes.value![url]?.upstream === 'backend' &&
+        allRoutes![url]?.upstream === 'backend' &&
         !excludeEndpoints.includes(url),
     );
-
     return backendUrls.length > 0 ? backendUrls : null;
   };
 
-  const onlyBackendRoutes = ref(extractBackendRoutes());
+  const onlyBackendRoutes = extractBackendRoutes();
+  const currentFrontendDomain = useGetCurrentDomain();
 
-  const currentFrontendDomain = ref(useGetCurrentDomain());
-
-  const getDomainName = (url: string) => {
-    const parsedUrl = new URL(url);
-    return parsedUrl.hostname.replace(/^www\./, '');
-  };
+  const getDomainName = (url: string) =>
+    new URL(url).hostname.replace(/^www\./, '');
 
   const assignBackendEndpoint = () => {
-    const currentDomain = getDomainName(currentFrontendDomain.value);
+    if (!onlyBackendRoutes) return;
+
+    const currentDomain = getDomainName(currentFrontendDomain);
     let selectedBackend = null;
 
-    for (const route of onlyBackendRoutes.value!) {
+    for (const route of onlyBackendRoutes) {
       const backendDomain = getDomainName(route);
-
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBackend = route;
         break;
@@ -62,26 +55,22 @@ export function useGetBackendDomain() {
       );
     }
 
-    beEndpoint.value = selectedBackend.endsWith('/')
+    beEndpoint = selectedBackend.endsWith('/')
       ? selectedBackend.slice(0, -1)
       : selectedBackend;
   };
 
-  // Change BE endpoint you want to develop on here:
-  if (currentFrontendDomain.value === devEnv.value) {
-    beEndpoint.value =
-      config.public.LOCAL_API_BASE_URL ||
+  if (currentFrontendDomain === devEnv) {
+    beEndpoint =
       'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
   } else {
     const apiRouteStore = useApiRouteStore();
-
-    if (apiRouteStore.apiRouteEndpoint === '') {
+    if (!apiRouteStore.apiRouteEndpoint) {
       assignBackendEndpoint();
     } else {
-      beEndpoint.value = apiRouteStore.apiRouteEndpoint;
+      beEndpoint = apiRouteStore.apiRouteEndpoint;
     }
   }
 
-  // Return the backend domain
-  return beEndpoint.value;
+  return beEndpoint;
 }
