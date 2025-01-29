@@ -8,13 +8,11 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
   // Assuming PLATFORM_ROUTES is already decoded in the config
   let allRoutes: Record<string, any> | null = null;
 
-  console.log('PLATFORM_ROUTES:', process.env.PLATFORM_ROUTES);
   if (process.env.PLATFORM_ROUTES) {
     try {
       const encodedPlatformRoutes = process.env.PLATFORM_ROUTES;
       const decodedRoutes = decodeBase64(encodedPlatformRoutes);
       allRoutes = JSON.parse(decodedRoutes);
-      console.log('Decoded PLATFORM_ROUTES:', allRoutes);
     } catch (error) {
       console.error('Error decoding or parsing PLATFORM_ROUTES:', error);
       allRoutes = null;
@@ -35,8 +33,11 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
   const onlyBackendRoutes = extractBackendRoutes();
   console.log('Only backend routes:', onlyBackendRoutes);
 
-  const getDomainName = (url: string) =>
-    new URL(url).hostname.replace(/^www\./, '');
+  const getDomainName = (url: string) => {
+    const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+    console.log(`Parsed URL fullUrl: ${fullUrl}`);
+    return new URL(fullUrl).hostname.replace(/^www\./, '');
+  };
 
   // Assign backend endpoint based on the frontend domain
   const assignBackendEndpoint = () => {
@@ -49,6 +50,7 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
 
     for (const route of onlyBackendRoutes) {
       const backendDomain = getDomainName(route);
+      console.log('Checking backend domain:', backendDomain);
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBackend = route;
         break;
