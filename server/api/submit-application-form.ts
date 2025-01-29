@@ -1,16 +1,16 @@
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
-const apiRouteStore = useApiRouteStore();
-const matchedBeDomain = apiRouteStore.apiRouteEndpoint;
-
-console.log('matchedBeDomain', matchedBeDomain);
-
 export default defineEventHandler(async (event) => {
+  const apiRouteStore = useApiRouteStore();
+  const backEndDomain = apiRouteStore.apiRouteEndpoint;
+  console.log('backEndDomain', backEndDomain);
+
   const config = useRuntimeConfig();
 
   const body = await readBody(event);
   const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
   const encodedCredentials = btoa(credentials);
+  console.log('body', body);
 
   const normalizeDomain = (domain: string) => {
     if (!domain) {
@@ -22,6 +22,8 @@ export default defineEventHandler(async (event) => {
 
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
+  console.log('currentDomain', currentDomain);
+  console.log('requestOrigin', requestOrigin);
 
   // BASIC ORIGIN HEADER CHECK
   // This is only a basic measure protection, real protection (if needed) should be implemented in the BE.
@@ -33,7 +35,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await fetch(matchedBeDomain + '/node?_format=json', {
+    const response = await fetch(backEndDomain + '/node?_format=json', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
