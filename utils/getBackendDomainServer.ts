@@ -1,3 +1,6 @@
+import { decodeBase64 } from '~/utils/base64';
+import { excludeEndpoints } from '~/config/excludedEndpoints';
+
 export function getBackendDomain(currentFrontendDomain: string): string | null {
   const devEnv = 'localhost';
   let beEndpoint: string | null = null;
