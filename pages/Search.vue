@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+const { sharedSearchKeyword } = useSharedSearchKeyword();
 
 const apiRouteStore = useApiRouteStore();
 const router = useRouter();
@@ -20,7 +21,11 @@ useHead({
 
 const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
-const searchKeyword = ref('');
+const searchKeyword = computed({
+  get: () => sharedSearchKeyword.value,
+  set: (value) => (sharedSearchKeyword.value = value),
+});
+
 const dynamicContent = ref(null);
 const totalItemsFound = ref(null);
 const pager = ref(null);
@@ -142,6 +147,10 @@ const handleSearchByKeyword = computed(() => {
     updateURLParameters();
     getFilteredPageResults(true, true);
   }, 800);
+});
+
+watch(searchKeyword, () => {
+  handleSearchByKeyword.value();
 });
 
 const handlePager = (page: number) => {
@@ -286,6 +295,10 @@ onBeforeMount(() => {
   }
 });
 
+onBeforeUnmount(() => {
+  searchKeyword.value = '';
+});
+
 const cleanEmptyFilters = () => {
   if (!allSortingOptions.value) return;
 
@@ -321,7 +334,6 @@ const cleanEmptyFilters = () => {
                 name="search"
                 label="Søg"
                 :is-search="true"
-                @input="handleSearchByKeyword"
               />
             </div>
 
