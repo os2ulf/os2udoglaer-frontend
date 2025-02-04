@@ -36,7 +36,7 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .page-title-wrapper {
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: var(--theme-background-color);
 }
 
 .page-title {

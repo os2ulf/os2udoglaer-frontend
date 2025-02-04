@@ -1,12 +1,12 @@
 import { decodeBase64 } from '~/utils/base64';
-import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
-export function useGetBackendDomain() {
-  let allRoutes: Record<string, any> | null = null;
+export function getBackendDomain(currentFrontendDomain: string): string | null {
+  const devEnv = 'localhost';
   let beEndpoint: string | null = null;
-  const devEnv = 'https://localhost:3000';
+
+  // Assuming PLATFORM_ROUTES is already decoded in the config
+  let allRoutes: Record<string, any> | null = null;
 
   if (process.env.PLATFORM_ROUTES) {
     try {
@@ -19,6 +19,7 @@ export function useGetBackendDomain() {
     }
   }
 
+  // Extract backend routes
   const extractBackendRoutes = () => {
     if (!allRoutes) return null;
     const backendUrls = Object.keys(allRoutes).filter(
@@ -30,19 +31,23 @@ export function useGetBackendDomain() {
   };
 
   const onlyBackendRoutes = extractBackendRoutes();
-  const currentFrontendDomain = useGetCurrentDomain();
 
-  const getDomainName = (url: string) =>
-    new URL(url).hostname.replace(/^www\./, '');
+  const getDomainName = (url: string) => {
+    const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+    return new URL(fullUrl).hostname.replace(/^www\./, '');
+  };
 
+  // Assign backend endpoint based on the frontend domain
   const assignBackendEndpoint = () => {
     if (!onlyBackendRoutes) return;
 
     const currentDomain = getDomainName(currentFrontendDomain);
+
     let selectedBackend = null;
 
     for (const route of onlyBackendRoutes) {
       const backendDomain = getDomainName(route);
+
       if (currentDomain.includes(backendDomain.replace('api.', ''))) {
         selectedBackend = route;
         break;
@@ -60,16 +65,12 @@ export function useGetBackendDomain() {
       : selectedBackend;
   };
 
+  // If devEnv is detected, use the dev endpoint
   if (currentFrontendDomain === devEnv) {
     beEndpoint =
       'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
   } else {
-    const apiRouteStore = useApiRouteStore();
-    if (!apiRouteStore.apiRouteEndpoint) {
-      assignBackendEndpoint();
-    } else {
-      beEndpoint = apiRouteStore.apiRouteEndpoint;
-    }
+    assignBackendEndpoint();
   }
 
   return beEndpoint;

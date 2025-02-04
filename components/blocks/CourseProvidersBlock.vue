@@ -579,7 +579,7 @@ onMounted(() => {
 <style lang="postcss">
 .search-block-provider {
   &__label {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -588,7 +588,7 @@ onMounted(() => {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-tertiary);
+  color: var(--color-text);
 
   &__skeleton {
     height: 100%;
@@ -600,7 +600,7 @@ onMounted(() => {
 
   &__heading {
     margin-bottom: 0;
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 
   /* Filters stuff */
@@ -686,7 +686,7 @@ onMounted(() => {
       width: 24px;
       border-radius: 50%;
       background-color: var(--color-secondary);
-      color: var(--color-tertiary);
+      color: var(--color-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -812,7 +812,7 @@ onMounted(() => {
 
   &__card-link {
     display: flex;
-    color: var(--color-tertiary);
+    color: var(--color-text);
     text-decoration: none;
     width: 100%;
     height: 100%;
@@ -848,7 +848,7 @@ onMounted(() => {
   }
 
   &__card-label {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     transition: color 0.3s ease-in-out;
 
     h4 {
@@ -873,15 +873,15 @@ onMounted(() => {
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
   .form-input {
-    background-color: var(--color-tertiary-lighten-6);
+    background-color: var(--color-gray-8);
 
     &:focus {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
@@ -890,20 +890,7 @@ onMounted(() => {
   }
 
   .card {
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
-}
-
-body {
-  background-color: var(--color-tertiary-lighten-6);
-}
-
-/* overwrites */
-.header-parent {
-  background-color: var(--color-tertiary-lighten-6) !important;
-}
-
-.section {
-  background-color: var(--color-tertiary-lighten-6) !important;
 }
 </style>

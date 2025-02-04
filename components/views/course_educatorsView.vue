@@ -478,7 +478,7 @@ const currentUrl = computed(() => {
 
 <style lang="postcss" scoped>
 .educators {
-  background-color: var(--color-tertiary-lighten-5);
+  background-color: var(--color-gray-8);
 
   &__top-section {
     background-color: var(--color-primary-lighten-5);
@@ -528,11 +528,11 @@ const currentUrl = computed(() => {
   }
 
   &__contact-button {
-    color: var(--color-tertiary);
+    color: var(--color-tertiary-text);
     border-color: var(--color-tertiary);
 
     &:hover {
-      color: var(--color-white) !important;
+      color: var(--color-tertiary-text) !important;
       background-color: var(--color-tertiary);
     }
   }

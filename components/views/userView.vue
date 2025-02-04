@@ -351,7 +351,7 @@ const relatedContent = ref(props.data?.related_content);
 <style lang="postcss" scoped>
 .user {
   color: var(--color-text);
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: var(--color-gray-8);
 
   &__top-section {
     padding: 32px 0 @(--sm) 64px 0;
@@ -404,11 +404,11 @@ const relatedContent = ref(props.data?.related_content);
   }
 
   &__contact-button {
-    color: var(--color-tertiary);
+    color: var(--color-tertiary-text);
     border-color: var(--color-tertiary);
 
     &:hover {
-      color: var(--color-white) !important;
+      color: var(--color-tertiary-text) !important;
       background-color: var(--color-tertiary);
     }
   }

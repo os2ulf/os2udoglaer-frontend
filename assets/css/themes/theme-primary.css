@@ -1,6 +1,6 @@
 .theme-primary {
   --theme-background-color: var(--color-primary);
-  --theme-color: var(--color-white);
+  --theme-color: var(--color-primary-text);
 
   /* button - filled */
   --theme-button-border-color: var(--color-primary-lighten-4);
@@ -23,12 +23,12 @@
   --theme-button-ghost-text-color-hover: var(--color-primary-darken-5);
 
   /* Footer */
-  --theme-footer-text-color: var(--color-white);
+  --theme-footer-text-color: var(--color-primary-text);
 
   /* Inline Navigation */
-  --theme-inline-navigation-color: var(--color-tertiary);
+  --theme-inline-navigation-color: var(--color-primary);
 
   /* Swiper */
-  --theme-swiper-primary-color: var(--color-white);
+  --theme-swiper-primary-color: var(--color-primary-text);
   --theme-swiper-secondary-color: var(--color-primary-lighten-2);
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+const { sharedSearchKeyword } = useSharedSearchKeyword();
 
 const apiRouteStore = useApiRouteStore();
 const router = useRouter();
@@ -20,7 +21,11 @@ useHead({
 
 const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
-const searchKeyword = ref('');
+const searchKeyword = computed({
+  get: () => sharedSearchKeyword.value,
+  set: (value) => (sharedSearchKeyword.value = value),
+});
+
 const dynamicContent = ref(null);
 const totalItemsFound = ref(null);
 const pager = ref(null);
@@ -142,6 +147,10 @@ const handleSearchByKeyword = computed(() => {
     updateURLParameters();
     getFilteredPageResults(true, true);
   }, 800);
+});
+
+watch(searchKeyword, () => {
+  handleSearchByKeyword.value();
 });
 
 const handlePager = (page: number) => {
@@ -286,6 +295,10 @@ onBeforeMount(() => {
   }
 });
 
+onBeforeUnmount(() => {
+  searchKeyword.value = '';
+});
+
 const cleanEmptyFilters = () => {
   if (!allSortingOptions.value) return;
 
@@ -321,7 +334,6 @@ const cleanEmptyFilters = () => {
                 name="search"
                 label="Søg"
                 :is-search="true"
-                @input="handleSearchByKeyword"
               />
             </div>
 
@@ -476,8 +488,8 @@ const cleanEmptyFilters = () => {
 .search {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
-  background-color: var(--color-tertiary-lighten-6);
-  color: var(--color-tertiary);
+  background-color: var(--color-gray-8);
+  color: var(--color-text);
 
   &__skeleton {
     height: 100%;
@@ -489,7 +501,7 @@ const cleanEmptyFilters = () => {
 
   &__heading {
     margin-bottom: 0;
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 
   /* Filters stuff */
@@ -558,7 +570,7 @@ const cleanEmptyFilters = () => {
       width: 24px;
       border-radius: 50%;
       background-color: var(--color-secondary);
-      color: var(--color-tertiary);
+      color: var(--color-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -693,7 +705,7 @@ const cleanEmptyFilters = () => {
   }
 
   &__card-link {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     text-decoration: none;
   }
 
@@ -722,15 +734,15 @@ const cleanEmptyFilters = () => {
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
   .form-input {
-    background-color: var(--color-tertiary-lighten-6);
+    background-color: var(--color-gray-8);
 
     &:focus {
-      background-color: var(--color-tertiary-lighten-6);
+      background-color: var(--color-gray-8);
     }
   }
 
@@ -739,15 +751,15 @@ const cleanEmptyFilters = () => {
   }
 
   .card {
-    color: var(--color-tertiary);
+    color: var(--color-text);
   }
 }
 
 body {
-  background-color: var(--color-tertiary-lighten-6);
+  background-color: var(--color-gray-8);
 }
 
 .header-parent {
-  background-color: var(--color-tertiary-lighten-6) !important;
+  background-color: var(--color-gray-8) !important;
 }
 </style>

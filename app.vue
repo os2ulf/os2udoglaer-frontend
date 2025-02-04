@@ -15,6 +15,12 @@ const secondaryBgColor = computed(
 const secondaryBgTextColor = computed(
   () => settingsDataStore.settingsData?.secondary_background_text_color,
 );
+const tertiaryBgColor = computed(
+  () => settingsDataStore.settingsData?.tertiary_background_color,
+);
+const tertiaryBgTextColor = computed(
+  () => settingsDataStore.settingsData?.tertiary_background_text_color,
+);
 
 const positiveFontColor = computed(
   () => settingsDataStore.settingsData?.text_positive_color,
@@ -41,6 +47,9 @@ let primaryTextColor = '#fff';
 
 let secondaryColor = '#FBD800';
 let secondaryTextColor = '#000';
+
+let tertiaryColor = '#40362E';
+let tertiaryTextColor = '#fff';
 
 onBeforeMount(() => {
   if (settingsDataStore.settingsData === null) {
@@ -89,6 +98,14 @@ onBeforeMount(() => {
     secondaryTextColor = secondaryBgTextColor.value;
   }
 
+  if (tertiaryBgColor.value) {
+    tertiaryColor = tertiaryBgColor.value;
+  }
+
+  if (tertiaryBgTextColor.value) {
+    tertiaryTextColor = tertiaryBgTextColor.value;
+  }
+
   document.documentElement.style.setProperty('--color-primary', primaryColor);
   document.documentElement.style.setProperty(
     '--color-primary-rgb',
@@ -105,6 +122,14 @@ onBeforeMount(() => {
   document.documentElement.style.setProperty(
     '--color-secondary-text',
     secondaryTextColor,
+  );
+  document.documentElement.style.setProperty(
+    '--color-tertiary',
+    tertiaryColor,
+  );
+  document.documentElement.style.setProperty(
+    '--color-tertiary-text',
+    tertiaryTextColor,
   );
 
   if (textPositiveColor.value) {

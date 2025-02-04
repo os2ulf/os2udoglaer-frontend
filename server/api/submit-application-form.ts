@@ -1,8 +1,9 @@
+import { getBackendDomain } from '~/utils/getBackendDomainServer';
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
   const body = await readBody(event);
-  const beDataWellEndpoint = config.public.API_BASE_URL;
   const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
   const encodedCredentials = btoa(credentials);
 
@@ -17,6 +18,8 @@ export default defineEventHandler(async (event) => {
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
+  const beEndpoint = getBackendDomain(currentDomain);
+
   // BASIC ORIGIN HEADER CHECK
   // This is only a basic measure protection, real protection (if needed) should be implemented in the BE.
   if (!requestOrigin || requestOrigin !== currentDomain) {
@@ -27,7 +30,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await fetch(beDataWellEndpoint + '/node?_format=json', {
+    const response = await fetch(beEndpoint + '/node?_format=json', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

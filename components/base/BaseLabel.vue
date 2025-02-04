@@ -28,7 +28,7 @@
   }
 
   &--light-yellow {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     background-color: var(--color-secondary-lighten-4);
     border: 2px solid var(--color-secondary-lighten-4);
   }

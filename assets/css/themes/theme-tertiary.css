@@ -1,0 +1,34 @@
+.theme-tertiary {
+  --theme-background-color: var(--color-tertiary);
+  --theme-color: var(--color-tertiary-text);
+
+  /* button - filled */
+  --theme-button-border-color: var(--color-tertiary-lighten-4);
+  --theme-button-background-color: var(--color-tertiary-lighten-4);
+  --theme-button-text-color: var(--color-tertiary-darken-3);
+
+  /* button - filled:hover */
+  --theme-button-border-color-hover: var(--color-tertiary-lighten-3);
+  --theme-button-background-color-hover: var(--color-tertiary-lighten-3);
+  --theme-button-text-color-hover: var(--color-tertiary-darken-5);
+
+  /* button -  ghost */
+  --theme-button-ghost-background-color: transparent;
+  --theme-button-ghost-border-color: var(--color-tertiary-lighten-3);
+  --theme-button-ghost-text-color: var(--color-tertiary-lighten-3);
+
+  /*  button - ghost:hover */
+  --theme-button-ghost-background-color-hover: var(--color-tertiary-lighten-3);
+  --theme-button-ghost-border-color-hover: var(--color-tertiary-lighten-3);
+  --theme-button-ghost-text-color-hover: var(--color-tertiary-darken-5);
+
+  /* Footer */
+  --theme-footer-text-color: var(--color-tertiary-text);
+
+  /* Inline Navigation */
+  --theme-inline-navigation-color: var(--color-tertiary);
+
+  /* Swiper */
+  --theme-swiper-tertiary-color: var(--color-tertiary-text);
+  --theme-swiper-secondary-color: var(--color-tertiary-lighten-2);
+}

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 const route = useRoute();
+const { sharedSearchKeyword } = useSharedSearchKeyword();
 
 const inputRef = ref(null);
 
@@ -9,11 +10,15 @@ const focusInput = () => {
     inputRef.value.focus();
   }
 };
-const searchKeyword = ref('');
+
+const searchKeyword = computed({
+  get: () => sharedSearchKeyword.value,
+  set: (value) => (sharedSearchKeyword.value = value),
+});
+
 const handleSearch = () => {
   if (searchKeyword.value && route.path !== '/search') {
     navigateTo(`/search?search_string=${searchKeyword.value}`);
-    searchKeyword.value = '';
   } else {
     return;
   }
@@ -47,7 +52,7 @@ const handleSearch = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--color-tertiary);
+  color: var(--color-text);
   cursor: pointer;
 
   :deep(svg) {
@@ -65,7 +70,7 @@ const handleSearch = () => {
   }
 
   input {
-    color: var(--color-tertiary);
+    color: var(--color-text);
     box-sizing: border-box;
     width: 100%;
     height: 48px;
