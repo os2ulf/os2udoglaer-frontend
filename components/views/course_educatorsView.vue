@@ -347,7 +347,7 @@ const currentUrl = computed(() => {
                   data?.corporation.link &&
                   !data?.field_hide_contact_form)
               "
-              class="button button--ghost educators__contact-button"
+              class="button button--secondary--ghost"
               :button-data="{
                 title: props.data?.provider
                   ? 'Kontakt udbyder'
@@ -525,16 +525,6 @@ const currentUrl = computed(() => {
     padding: 0 15px;
     display: grid;
     gap: 16px;
-  }
-
-  &__contact-button {
-    color: var(--color-tertiary-text);
-    border-color: var(--color-tertiary);
-
-    &:hover {
-      color: var(--color-tertiary-text) !important;
-      background-color: var(--color-tertiary);
-    }
   }
 
   &__second-section {
