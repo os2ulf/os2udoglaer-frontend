@@ -61,8 +61,8 @@ export function useGetBackendDomain() {
   };
 
   if (currentFrontendDomain === devEnv) {
-    beEndpoint =
-      'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
+    const config = useRuntimeConfig().public;
+    beEndpoint = config.LOCAL_API_BASE_URL;
   } else {
     const apiRouteStore = useApiRouteStore();
     if (!apiRouteStore.apiRouteEndpoint) {
