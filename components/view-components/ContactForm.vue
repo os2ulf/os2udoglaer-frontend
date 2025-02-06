@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Field, Form } from 'vee-validate';
+import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 const props = defineProps({
   contactPersonEmail: {
@@ -24,8 +25,8 @@ const props = defineProps({
   },
 });
 
-const config = useRuntimeConfig().public;
-
+const apiRouteStore = useApiRouteStore();
+const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const fullName = ref('');
 const phone = ref('');
 const email = ref('');
@@ -65,7 +66,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await fetch(config.API_BASE_URL + '/webform_rest/submit', {
+    const response = await fetch(backEndDomain.value + '/webform_rest/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
