@@ -1,5 +1,5 @@
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
-import { useGetBackendDomain } from '~/composables/useGetBackendDomain'; // Import the new composable
+import { useGetBackendDomain } from '~/composables/useGetBackendDomain';
 
 export async function UseBaseApi<T>(
   path: string,

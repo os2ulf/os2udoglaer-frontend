@@ -1,4 +1,4 @@
-import { getBackendDomain } from '~/utils/getBackendDomainServer';
+import { getBackendDomainServer } from '~/utils/getBackendDomainServer';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
-  const beEndpoint = getBackendDomain(currentDomain);
+  const beEndpoint = getBackendDomainServer(currentDomain);
 
   // BASIC ORIGIN HEADER CHECK
   // This is only a basic measure protection, real protection (if needed) should be implemented in the BE.
