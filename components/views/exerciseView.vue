@@ -196,14 +196,17 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_purpose_exercise"
           >
+            <h4>Mål</h4>
             <BaseRte :content="data.field_purpose_exercise" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_preparation">
+            <h4>Forberedelse</h4>
             <BaseRte :content="data.field_preparation" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_how_to">
+            <h4>Sådan gør du</h4>
             <BaseRte :content="data.field_how_to" />
           </div>
 
@@ -212,10 +215,12 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_ackground_knowledge"
           >
+            <h4>Før besøget</h4>
             <BaseRte :content="data.field_ackground_knowledge" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_activities">
+            <h4>Under besøget</h4>
             <BaseRte :content="data.field_activities" />
           </div>
 
@@ -223,6 +228,7 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_post_processing"
           >
+            <h4>Efter besøget</h4>
             <BaseRte :content="data.field_post_processing" />
           </div>
         </div>
