@@ -424,7 +424,7 @@ const currentUrl = computed(() => {
             <ClientOnly>
               <BaseButton
                 v-if="
-                  data.field_target_group === 'Grundskole' &&
+                  (data.field_target_group === 'Grundskole' || 'Dagtilbud') &&
                   data.field_practical_info_buttons?.includes(
                     'show_transport_request',
                   ) &&
