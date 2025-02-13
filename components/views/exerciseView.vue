@@ -21,6 +21,10 @@ const props = defineProps({
   },
 });
 
+const placesToVisit = computed(() => {
+  return props.data.field_related_user;
+});
+
 const practicalInfoData = computed(() => {
   const data = [
     {
@@ -95,6 +99,15 @@ const practicalInfoData = computed(() => {
           title: 'Verdensmål',
           content: props.data?.field_sustainability_goals,
           description: props.data?.field_sustainability_goals_desc,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          type: 'places_to_visit',
+          title: 'Besøgssteder',
+          content: placesToVisit.value,
         },
       ],
     },
