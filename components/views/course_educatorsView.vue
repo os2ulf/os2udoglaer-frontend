@@ -40,7 +40,9 @@ const registrationData = computed(() => {
   return {
     bundle: props.data?.bundle,
     deadline: props.data?.field_registration_deadline,
-    description: props.data?.field_registration_description,
+    description:
+      props.data?.field_registration_description ||
+      props.data?.field_registration_procedure,
     email: props.data?.field_registration_email,
     phone: props.data?.field_registration_phone,
     title: props.data?.field_registration_title,
