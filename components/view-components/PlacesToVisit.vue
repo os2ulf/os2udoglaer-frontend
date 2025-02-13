@@ -33,9 +33,13 @@ const props = defineProps({
 
     a {
       color: var(--color-primary);
+      border-bottom: 1px solid var(--color-primary);
+      opacity: 1;
+      transition: opacity 0.3s;
 
       &:hover {
         opacity: 0.8;
+        text-decoration: none !important;
       }
     }
   }
