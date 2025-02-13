@@ -56,6 +56,18 @@ const props = defineProps({
         v-for="(item, index) in groups.group"
         :key="index"
       >
+        <!-- Places to visit element -->
+        <div v-if="item.type === 'places_to_visit'">
+          <div class="practical-information__item-container">
+            <div class="practical-information__item-heading">
+              {{ item?.title }}
+            </div>
+          </div>
+          <div class="practical-information__item-value">
+            <PlacesToVisit :places="item.content" />
+          </div>
+        </div>
+
         <!-- Sustainability goals element -->
         <div v-if="item.type === 'sustainability_goals'">
           <div class="practical-information__item-container">
@@ -119,8 +131,17 @@ const props = defineProps({
         </div>
 
         <!-- Basic element with title, content & description -->
-        <div v-else class="practical-information__item-container">
-          <div class="practical-information__item-heading">
+        <div
+          v-else
+          class="practical-information__item-container"
+          :class="
+            !item.title ? '' : 'practical-information__item-container--empty'
+          "
+        >
+          <div
+            class="practical-information__item-heading"
+            v-if="item.title && item.type !== 'places_to_visit'"
+          >
             {{ item.title }}
           </div>
 
@@ -168,7 +189,9 @@ const props = defineProps({
             </div>
             <div v-else>
               <div v-for="(content, index) in item.content" :key="index">
-                {{ content }}
+                <span v-if="content && item.type !== 'places_to_visit'">{{
+                  content
+                }}</span>
               </div>
             </div>
           </div>
@@ -211,7 +234,10 @@ const props = defineProps({
       </div>
     </div>
     <!-- Practical information data for loop END -->
-    <div class="practical-information__user-profile-button">
+    <div
+      class="practical-information__user-profile-button"
+      v-if="props.userProfilePage?.hasContactsData"
+    >
       <BaseButton
         v-if="props.userProfilePage?.hasContactsData"
         :button-data="{
@@ -262,6 +288,10 @@ const props = defineProps({
     padding-top: 12px;
     display: flex;
     justify-content: space-between;
+
+    &--empty {
+      padding-top: 0;
+    }
 
     &--profile {
       flex-direction: column;
