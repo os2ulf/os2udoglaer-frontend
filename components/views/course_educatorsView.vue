@@ -87,17 +87,34 @@ const practicalInfoData = computed(() => {
             props.data?.field_view_on_map !== 'hidden_on_map'
               ? [
                   props.data?.field_view_on_map == 'show_vendor_address' &&
-                  props.data?.provider
-                    ? props.data?.provider.field_location_name
+                  (props.data?.provider || props.data?.corporation)
+                    ? props.data?.provider
+                      ? props.data?.provider.field_location_name
+                      : props.data?.corporation?.field_location_name
                     : props.data?.field_location_name,
+
                   props.data?.field_view_on_map == 'show_vendor_address' &&
-                  props.data?.provider
-                    ? props.data?.provider.field_location_street
+                  (props.data?.provider || props.data?.corporation)
+                    ? props.data?.provider
+                      ? props.data?.provider.field_location_street
+                      : props.data?.corporation?.field_location_street
                     : props.data?.field_location_street,
+
                   props.data?.field_view_on_map == 'show_vendor_address' &&
-                  props.data?.provider
-                    ? `${props.data?.provider.field_location_zipcode || ''} ${props.data?.provider.field_location_city || ''}`.trim()
-                    : `${props.data?.field_location_zipcode || ''} ${props.data?.field_location_city || ''}`.trim(),
+                  (props.data?.provider || props.data?.corporation)
+                    ? `${
+                        (props.data?.provider
+                          ? props.data?.provider.field_location_zipcode
+                          : props.data?.corporation?.field_location_zipcode) ||
+                        ''
+                      } ${
+                        (props.data?.provider
+                          ? props.data?.provider.field_location_city
+                          : props.data?.corporation?.field_location_city) || ''
+                      }`.trim()
+                    : `${props.data?.field_location_zipcode || ''} ${
+                        props.data?.field_location_city || ''
+                      }`.trim(),
                 ]
               : [],
           description: props.data?.field_location_description
