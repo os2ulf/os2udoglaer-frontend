@@ -105,6 +105,10 @@ const practicalInfoData = computed(() => {
             ? props.data?.field_location_description
             : '',
         },
+        {
+          title: 'P-nummer',
+          content: props.data?.field_p_number,
+        },
       ],
     },
     {
