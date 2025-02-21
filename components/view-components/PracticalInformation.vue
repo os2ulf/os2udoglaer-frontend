@@ -135,7 +135,7 @@ const props = defineProps({
           v-else
           class="practical-information__item-container"
           :class="
-            !item.title ? '' : 'practical-information__item-container--empty'
+            item.title ? '' : 'practical-information__item-container--empty'
           "
         >
           <div
