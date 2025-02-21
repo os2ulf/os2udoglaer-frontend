@@ -31,6 +31,10 @@ const props = defineProps({
   &__place {
     margin-bottom: 5px;
 
+    &:last-child {
+      margin-bottom: 0;
+    }
+
     a {
       color: var(--color-primary);
       border-bottom: 1px solid var(--color-primary);

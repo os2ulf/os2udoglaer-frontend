@@ -63,7 +63,9 @@ const props = defineProps({
               {{ item?.title }}
             </div>
           </div>
-          <div class="practical-information__item-value">
+          <div
+            class="practical-information__item-value practical-information__item-value--places-to-visit"
+          >
             <PlacesToVisit :places="item.content" />
           </div>
         </div>
@@ -135,7 +137,9 @@ const props = defineProps({
           v-else
           class="practical-information__item-container"
           :class="
-            item.title ? '' : 'practical-information__item-container--empty'
+            !item.title || item.type === 'places_to_visit'
+              ? 'practical-information__item-container--empty'
+              : ''
           "
         >
           <div
@@ -307,6 +311,10 @@ const props = defineProps({
     hyphens: auto;
 
     &--profile {
+      width: 100%;
+    }
+
+    &--places-to-visit {
       width: 100%;
     }
 
