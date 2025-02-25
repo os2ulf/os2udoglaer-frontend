@@ -210,6 +210,19 @@ const props = defineProps({
           </div>
         </div>
 
+        <!-- Add nested group content fields here -->
+        <div
+          v-if="item.contentNested"
+          class="practical-information__item-container"
+        >
+          <div class="practical-information__item-heading">
+            {{ item?.titleNested }}
+          </div>
+          <div class="practical-information__item-value">
+            {{ item?.contentNested }}
+          </div>
+        </div>
+
         <!-- Basic description element -->
         <details
           class="practical-information__accordion-container"
