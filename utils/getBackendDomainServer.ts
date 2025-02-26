@@ -1,7 +1,9 @@
 import { decodeBase64 } from '~/utils/base64';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
 
-export function getBackendDomain(currentFrontendDomain: string): string | null {
+export function getBackendDomainServer(
+  currentFrontendDomain: string,
+): string | null {
   const devEnv = 'localhost';
   let beEndpoint: string | null = null;
 
@@ -67,8 +69,8 @@ export function getBackendDomain(currentFrontendDomain: string): string | null {
 
   // If devEnv is detected, use the dev endpoint
   if (currentFrontendDomain === devEnv) {
-    beEndpoint =
-      'https://api.ulfiaarhus.dk.staging-5em2ouy-4yghg26zberzk.eu-5.platformsh.site';
+    const config = useRuntimeConfig().public;
+    beEndpoint = config.LOCAL_API_BASE_URL;
   } else {
     assignBackendEndpoint();
   }

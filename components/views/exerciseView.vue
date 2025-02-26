@@ -21,6 +21,10 @@ const props = defineProps({
   },
 });
 
+const placesToVisit = computed(() => {
+  return props.data.field_related_user;
+});
+
 const practicalInfoData = computed(() => {
   const data = [
     {
@@ -95,6 +99,15 @@ const practicalInfoData = computed(() => {
           title: 'Verdensmål',
           content: props.data?.field_sustainability_goals,
           description: props.data?.field_sustainability_goals_desc,
+        },
+      ],
+    },
+    {
+      group: [
+        {
+          type: 'places_to_visit',
+          title: 'Besøgssteder',
+          content: placesToVisit.value,
         },
       ],
     },
@@ -196,14 +209,17 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_purpose_exercise"
           >
+            <h4>Mål</h4>
             <BaseRte :content="data.field_purpose_exercise" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_preparation">
+            <h4>Forberedelse</h4>
             <BaseRte :content="data.field_preparation" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_how_to">
+            <h4>Sådan gør du</h4>
             <BaseRte :content="data.field_how_to" />
           </div>
 
@@ -212,10 +228,12 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_ackground_knowledge"
           >
+            <h4>Før besøget</h4>
             <BaseRte :content="data.field_ackground_knowledge" />
           </div>
 
           <div class="exercise__paragraph-item" v-if="data.field_activities">
+            <h4>Under besøget</h4>
             <BaseRte :content="data.field_activities" />
           </div>
 
@@ -223,6 +241,7 @@ const currentUrl = computed(() => {
             class="exercise__paragraph-item"
             v-if="data.field_post_processing"
           >
+            <h4>Efter besøget</h4>
             <BaseRte :content="data.field_post_processing" />
           </div>
         </div>
@@ -241,7 +260,7 @@ const currentUrl = computed(() => {
                   data?.corporation.link &&
                   !data?.field_hide_contact_form)
               "
-              class="button button--ghost exercise__contact-button"
+              class="button button--secondary--ghost"
               :button-data="{
                 title: props.data?.provider
                   ? 'Kontakt udbyder'
@@ -402,16 +421,6 @@ const currentUrl = computed(() => {
     padding: 0 15px;
     display: grid;
     gap: 16px;
-  }
-
-  &__contact-button {
-    color: var(--color-tertiary-text);
-    border-color: var(--color-tertiary);
-
-    &:hover {
-      color: var(--color-tertiary-text) !important;
-      background-color: var(--color-tertiary);
-    }
   }
 
   &__second-section {
