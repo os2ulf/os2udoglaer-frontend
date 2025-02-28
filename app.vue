@@ -3,6 +3,8 @@ import { useSettingsDataStore } from '~/stores/settingsData';
 const settingsDataStore = useSettingsDataStore();
 
 const fontFamily = computed(() => settingsDataStore.settingsData?.font);
+const favIcon = computed(() => settingsDataStore.settingsData?.favicon);
+
 const primaryBgColor = computed(
   () => settingsDataStore.settingsData?.primary_background_color,
 );
@@ -50,6 +52,10 @@ let secondaryTextColor = '#000';
 
 let tertiaryColor = '#40362E';
 let tertiaryTextColor = '#fff';
+
+useHead({
+  link: [{ rel: 'icon', type: 'image/x-icon', href: favIcon?.value }],
+});
 
 onBeforeMount(() => {
   if (settingsDataStore.settingsData === null) {
@@ -123,10 +129,7 @@ onBeforeMount(() => {
     '--color-secondary-text',
     secondaryTextColor,
   );
-  document.documentElement.style.setProperty(
-    '--color-tertiary',
-    tertiaryColor,
-  );
+  document.documentElement.style.setProperty('--color-tertiary', tertiaryColor);
   document.documentElement.style.setProperty(
     '--color-tertiary-text',
     tertiaryTextColor,
