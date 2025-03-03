@@ -265,6 +265,7 @@ const props = defineProps({
               : '',
         }"
         @click="scrollTo('contact__section')"
+        @keydown.enter="scrollTo('contact__section')"
         class="button button--secondary button--secondary--ghost"
       />
     </div>
