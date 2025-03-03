@@ -184,6 +184,7 @@ const currentUrl = computed(() => {
                         : '',
                   }"
                   @click="showModal = true"
+                  @keydown.enter="showModal = true"
                   role="button"
                 />
               </div>
@@ -269,6 +270,7 @@ const currentUrl = computed(() => {
                     : '',
               }"
               @click="showModal = true"
+              @keydown.enter="showModal = true"
               role="button"
             />
           </div>

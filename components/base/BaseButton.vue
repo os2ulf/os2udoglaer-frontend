@@ -74,6 +74,20 @@ const component = computed(() => {
   }
   return 'button';
 });
+
+const handleKeyDown = (event) => {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (
+      event.target instanceof HTMLButtonElement ||
+      event.target.tagName === 'BUTTON'
+    ) {
+      event.target.click();
+    }
+  }
+};
 </script>
 
 <template>
@@ -83,6 +97,9 @@ const component = computed(() => {
     :target="buttonData?.target ? buttonData?.target : ''"
     :class="buttonClasses"
     :disabled="disabled"
+    :type="component === 'button' ? 'button' : undefined"
+    tabindex="0"
+    @keydown="handleKeyDown"
   >
     <NuxtIcon v-if="icon" class="button__icon" :name="icon" filled />
     <span class="button__text" v-if="buttonData?.title">
@@ -100,7 +117,6 @@ const component = computed(() => {
 
 <style lang="postcss">
 .button {
-  /* Maybe a solution? - it seems the dynamic class set/conditions of the plugin are off somewhat..? */
   .nuxt-icon svg path {
     stroke: currentColor;
   }
