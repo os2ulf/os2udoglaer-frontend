@@ -4,7 +4,7 @@ import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 const props = defineProps({
   contactPersonEmail: {
-    type: String,
+    type: null, // Had to change the type, there are some pages on the BE that returns null causing this to give warnings.
     default: '',
     required: true,
   },
