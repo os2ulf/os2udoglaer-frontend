@@ -90,7 +90,6 @@ onUnmounted(() => {
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.2);
     max-width: 600px;
     width: 100%;
-    max-height: 100vh @(--sm) 80vh;
     display: flex;
     flex-direction: column;
   }
@@ -98,9 +97,7 @@ onUnmounted(() => {
   &__body {
     flex: 1;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     padding: 0 15px 30px;
-    margin-bottom: 50px @(--sm) 0;
   }
 
   &__button {
@@ -120,8 +117,9 @@ dialog {
   border: none !important;
   padding: 0 !important;
   margin-top: 0 @(--sm) auto;
+  margin-bottom: 0 @(--sm) auto;
   border-radius: 5px;
-  height: stretch @(--sm) fit-content;
+  height: -webkit-fill-available;
   max-height: 100vh @(--sm) 80vh;
   width: 100%;
   max-width: 600px;
