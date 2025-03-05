@@ -90,7 +90,7 @@ onUnmounted(() => {
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.2);
     max-width: 600px;
     width: 100%;
-    max-height: 80vh;
+    max-height: 100vh @(--sm) 80vh;
     display: flex;
     flex-direction: column;
   }
