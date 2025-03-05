@@ -61,35 +61,46 @@ onUnmounted(() => {
     color: var(--color-text);
     position: fixed;
     top: 0;
+    left: 0;
     right: 0;
     bottom: 0;
-    left: 0;
     z-index: 10000;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
     background-color: rgba(0, 0, 0, 0.4);
-    padding: 0 @(--sm) 20px;
-    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
+    align-items: flex-start @(--sm) center;
   }
 
   &__header {
+    top: 0;
     display: flex;
     justify-content: flex-end;
-    font-size: 30px;
-    color: var(--color-text);
+    padding: 15px;
     background: var(--color-white);
-    padding-bottom: 15px;
+    z-index: 1;
   }
 
   &__content {
     background: var(--color-white);
-    padding: 15px @(--sm) 30px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.2);
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
 
+  &__body {
+    flex: 1;
     overflow-y: auto;
-    box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
+    padding: 0 15px 30px;
+    margin-bottom: 50px @(--sm) 0;
   }
 
   &__button {
@@ -97,24 +108,26 @@ onUnmounted(() => {
     background: none;
     border: none;
     cursor: pointer;
-  }
 
-  dialog:open {
-    opacity: 1;
-    transition: opacity 0.3s ease-in;
+    :deep(svg) {
+      height: 24px;
+      width: 24px;
+    }
   }
 }
 
 dialog {
   border: none !important;
   padding: 0 !important;
+  margin-top: 0 @(--sm) auto;
   border-radius: 5px;
+  height: 100% @(--sm) auto;
+  max-height: 100vh @(--sm) 80vh;
   width: 100%;
   max-width: 600px;
   box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.2);
   width: 100%;
   max-width: 600px;
   position: relative;
-  max-height: 100vh @(--sm) 80vh;
 }
 </style>
