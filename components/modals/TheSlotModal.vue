@@ -121,7 +121,7 @@ dialog {
   padding: 0 !important;
   margin-top: 0 @(--sm) auto;
   border-radius: 5px;
-  height: 100% @(--sm) auto;
+  height: 100% @(--sm) fit-content;
   max-height: 100vh @(--sm) 80vh;
   width: 100%;
   max-width: 600px;
