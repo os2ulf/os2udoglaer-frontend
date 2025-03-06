@@ -22,9 +22,12 @@ const handleEscapeKey = (e) => {
   }
 };
 
+const scrollTopOffset = document.documentElement.scrollTop;
+
 onMounted(() => {
   document.addEventListener('keyup', handleEscapeKey);
-  document.body.style.overflow = 'hidden';
+  document.body.style.top = `-${scrollTopOffset}px`;
+  document.body.style.position = 'fixed';
   dialog.value?.showModal();
 });
 
@@ -34,7 +37,9 @@ onBeforeUnmount(() => {
 
 onUnmounted(() => {
   document.removeEventListener('keyup', handleEscapeKey);
-  document.body.style.overflow = 'auto';
+  document.body.style.top = '';
+  document.body.style.position = 'relative';
+  window.scrollTo(0, scrollTopOffset);
 });
 </script>
 
