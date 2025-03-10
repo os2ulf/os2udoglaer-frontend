@@ -317,7 +317,9 @@ const relatedContent = ref(props.data?.related_content);
                 >
                   <NuxtLink
                     v-if="
-                      button?.field_file || button?.field_external_link?.url && button?.field_material_download_text
+                      button?.field_file ||
+                      (button?.field_external_link?.url &&
+                        button?.field_material_download_text)
                     "
                     class="user__info-description__button-item__link button button--ghost"
                     :to="

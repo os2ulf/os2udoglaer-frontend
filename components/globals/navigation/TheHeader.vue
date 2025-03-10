@@ -52,7 +52,7 @@ const metaMenuHeight = ref(window?.innerWidth > 991 ? 50 : 0);
 const isMetaMenuHidden = ref(false);
 
 const handleScroll = () => {
-  const currentScrollPosition = window.pageYOffset;
+  const currentScrollPosition = document.documentElement.scrollTop;
   const scrollDifference = lastScrollPosition.value - currentScrollPosition;
 
   if (currentScrollPosition >= metaMenuHeight.value) {

@@ -4,7 +4,7 @@ import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 
 const props = defineProps({
   contactPersonEmail: {
-    type: String,
+    type: null, // Had to change the type, there are some pages on the BE that returns null causing this to give warnings.
     default: '',
     required: true,
   },
@@ -166,8 +166,8 @@ function showHelperText() {
             </Transition>
           </Field>
           <div class="contact-form__textarea-description">
-            Angiv din besked. Hvis du vil booke et forløb, så angiv venligst så
-            mange informationer som muligt - f.eks. skole eller institution,
+            Hvis du vil booke et forløb, så angiv venligst så mange
+            informationer som muligt - f.eks. skole eller institution,
             klassetrin eller alder, antal børn, forslag til dato, dit tlf. nr.
             og andre informationer, der kan være gavnlige for udbyderen. Send
             ikke personfølsomme oplysninger i denne formular.

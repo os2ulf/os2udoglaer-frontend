@@ -225,6 +225,7 @@ const currentUrl = computed(() => {
                     title: 'Ansøgning',
                   }"
                   @click="scrollTo('course-registration')"
+                  @keydown.enter="scrollTo('course-registration')"
                   class="button button--secondary"
                   role="button"
                 />
@@ -246,6 +247,7 @@ const currentUrl = computed(() => {
                         : '',
                   }"
                   @click="showModal = true"
+                  @keydown.enter="showModal = true"
                   role="button"
                 />
               </div>
@@ -303,6 +305,7 @@ const currentUrl = computed(() => {
                 title: 'Ansøgning',
               }"
               @click="scrollTo('course-registration')"
+              @keydown.enter="scrollTo('course-registration')"
               class="button button--secondary"
               role="button"
             />
@@ -324,6 +327,7 @@ const currentUrl = computed(() => {
                     : '',
               }"
               @click="showModal = true"
+              @keydown.enter="showModal = true"
               role="button"
             />
           </div>
