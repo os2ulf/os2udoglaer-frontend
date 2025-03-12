@@ -43,8 +43,6 @@ const injectScript = (scriptString: string, scriptType: string) => {
       };
       if (scriptAttributes.id) headScript.id = scriptAttributes.id;
 
-      console.log('injecting headScript', headScript);
-
       useHead({
         script: [headScript],
       });
@@ -66,7 +64,6 @@ const injectScript = (scriptString: string, scriptType: string) => {
 
       scriptEl.textContent = inlineCode;
       document.head.appendChild(scriptEl);
-      console.log('injecting scriptEl', scriptEl);
     }
   }
 
