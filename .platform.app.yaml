@@ -43,7 +43,3 @@ hooks:
   build: |
     corepack npm install
     corepack npm run build
-
-# Information on the app's source code and operations that can be run on it.
-# More information: https://docs.platform.sh/create-apps/app-reference.html#source
-source:
