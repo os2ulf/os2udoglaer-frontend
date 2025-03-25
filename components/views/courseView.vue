@@ -453,7 +453,7 @@ const currentUrl = computed(() => {
                 "
                 class="button--primary"
                 :button-data="{
-                  title: 'Information om transport',
+                  title: 'Søg om refusion af transport',
                   url: transportApplicationUrl,
                 }"
                 icon-after="ext-link"
