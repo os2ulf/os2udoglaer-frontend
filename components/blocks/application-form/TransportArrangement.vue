@@ -109,7 +109,7 @@ const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseDescription = ref('');
 const coursePurpose = ref('');
-const courseDawaAddress = ref([])
+const courseDawaAddress = ref(null);
 const courseAddress = ref('');
 const coursePostalCode = ref('');
 const courseCity = ref('');
@@ -380,9 +380,7 @@ const handleCourseChange = async () => {
 // Handle "Course not in list" logic
 const handleHideCourseSelect = async () => {
   if (courseNotInList.value) {
-    courseAddress.value = '';
-    coursePostalCode.value = '';
-    courseCity.value = '';
+    courseDawaAddress.value = '';
     selectedCourse.value = '';
     coursesSelect.value = [];
     checkDistance.value = true;
@@ -409,11 +407,13 @@ const handleTypeChange = async () => {
   }
 };
 
-const handleCourseAddressChange = async () => {
+function handleCourseAddressChange(newValue) {
+  courseDawaAddress.value = newValue;
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
-};
+  console.log('Updated addresses array:', courseDawaAddress.value);
+}
 
 const handleCoursePostalcodeChange = async () => {
   checkDistance.value = true;
@@ -917,38 +917,9 @@ onBeforeMount(() => {
         <BaseDawaAutocomplete
           class="application-form__label"
           v-model="courseDawaAddress"
-          :value="courseDawaAddress"
           @update:model-value="handleCourseAddressChange"
           name="Adresse"
           label="Adresse"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="courseAddress"
-          :value="courseAddress"
-          @update:model-value="handleCourseAddressChange"
-          type="text"
-          name="Gade"
-          label="Gade"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="coursePostalCode"
-          @update:model-value="handleCoursePostalcodeChange"
-          type="text"
-          name="Postnummer"
-          label="Postnummer"
-          rules="required"
-        />
-        <BaseInputFloatingLabel
-          class="application-form__label"
-          v-model="courseCity"
-          @update:model-value="handleCourseCityChange"
-          type="text"
-          name="By"
-          label="By"
-          rules="required"
         />
       </div>
 

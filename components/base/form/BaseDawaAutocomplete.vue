@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
 import { useDawaAutocomplete } from '~/composables/useDawaAutocomplete';
-console.log('useDawaAutocomplete', useDawaAutocomplete);
 
 const props = withDefaults(
   defineProps<{
-    name: string;
+    name?: string;
     description?: string;
-    label: string;
-    modelValue: string | number | null | any | any[] | undefined;
+    label?: string;
+    modelValue?: object | null;
   }>(),
   {
     name: '',
     description: '',
     label: '',
-    modelValue: '',
+    modelValue: null,
   },
 );
 
@@ -39,17 +38,12 @@ onMounted(() => {
   if (autocompleteInput.value) {
     console.log(autocompleteInput.value);
     useDawaAutocomplete(autocompleteInput.value, (selected) => {
-      console.log('Valgt adresse: ' + selected.tekst);
+      // console.log('Valgt adresse: ' + selected.tekst);
       console.log('selected', selected);
+      emit('update:modelValue', selected) // <- emit the selected value
     })
-    // $dawaAutocomplete(autocompleteInput.value, {
-    //   select: (selected) => {
-    //     console.log('Valgt adresse: ' + selected.tekst)
-    //   }
-    // })
   }
 })
-
 
 const checkAnimation = (e: any) => {
   if (e.animationName === 'onAutoFillStart') {
@@ -65,11 +59,12 @@ const checkAnimation = (e: any) => {
   <div class="form-input-wrapper autocomplete-container">
     <input
       :id="id"
-      v-model="value"
       ref="autocompleteInput"
+      :value="modelValue || ''"
       type="search"
       :class="`form-input form-input--floating-label ${inputClass}`"
       :name="name"
+      autocomplete="off"
       @animationstart="checkAnimation"
     />
     <label
@@ -133,13 +128,14 @@ const checkAnimation = (e: any) => {
   box-sizing: border-box;
 }
 
-.dawa-autocomplete-suggestions {
-  margin: 0.3em 0 0 0;
+:deep(.dawa-autocomplete-suggestions) {
+  margin: -1px 0 0;
   padding: 0;
   text-align: left;
-  border-radius: 0.3125em;
-  background: #fcfcfc;
-  box-shadow: 0 0.0625em 0.15625em rgba(0,0,0,.15);
+  border-radius: 30px;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
   position: absolute;
   left: 0;
   right: 0;
@@ -148,29 +144,26 @@ const checkAnimation = (e: any) => {
   box-sizing: border-box;
 }
 
-.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion {
+:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion) {
   margin: 0;
   list-style: none;
   cursor: pointer;
-  padding: 0.4em 0.6em;
-  color: #333;
-  border: 0.0625em solid #ddd;
-  border-bottom-width: 0;
+  padding: 5px 26px;
+  color: #000;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child) {
+  padding-top: 15px;
 }
 
-.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child {
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
-  border-bottom-width: 0.0625em;
+:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child) {
+  padding-bottom: 15px;
+  border-bottom: 0 solid #f0f0f0;
 }
 
-.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion.dawa-selected,
-.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover {
+:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion.dawa-selected),
+:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover) {
   background: #f0f0f0;
 }
 </style>
