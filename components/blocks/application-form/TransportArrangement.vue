@@ -109,6 +109,7 @@ const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseDescription = ref('');
 const coursePurpose = ref('');
+const courseDawaAddress = ref([])
 const courseAddress = ref('');
 const coursePostalCode = ref('');
 const courseCity = ref('');
@@ -913,6 +914,15 @@ onBeforeMount(() => {
 
       <div class="field-group">
         <h3>Forløbsadresse</h3>
+        <BaseDawaAddressFloatingLabel
+          class="application-form__label"
+          v-model="courseDawaAddress"
+          :value="courseDawaAddress"
+          @update:model-value="handleCourseAddressChange"
+          name="Adresse"
+          label="Adresse"
+          rules="required"
+        />
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="courseAddress"
