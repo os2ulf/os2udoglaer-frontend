@@ -109,7 +109,7 @@ const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseDescription = ref('');
 const coursePurpose = ref('');
-const courseDawaAddress = ref([])
+const courseDawaAddress = ref([]);
 const courseAddress = ref('');
 const coursePostalCode = ref('');
 const courseCity = ref('');
@@ -451,7 +451,11 @@ const handleValidation = async (event: any) => {
   validationMessage.value = '';
 
   // Validation for course address, postal code and city
-  if (courseAddress.value === '' || coursePostalCode.value === '' || courseCity.value === '') {
+  if (
+    courseAddress.value === '' ||
+    coursePostalCode.value === '' ||
+    courseCity.value === ''
+  ) {
     validated.value = false;
     validationMessage.value = 'Vælg forløb eller indtast forløbsadresse';
     checkDistance.value = false;
@@ -467,7 +471,10 @@ const handleValidation = async (event: any) => {
   }
 
   // Validation for institution type school
-  if (selectedType.value === 'tpf_school' && (selectedInstitution.value === '' || selectedSchoolGrade.value === '')) {
+  if (
+    selectedType.value === 'tpf_school' &&
+    (selectedInstitution.value === '' || selectedSchoolGrade.value === '')
+  ) {
     validated.value = false;
     validationMessage.value = 'Vælg en skole og et klassetrin';
     checkDistance.value = false;
@@ -475,7 +482,12 @@ const handleValidation = async (event: any) => {
   }
 
   // Validation for institution type kindergarten, nursery or daycare
-  if ((selectedType.value === 'tpf_kindergarten' || selectedType.value === 'tpf_nursery' || selectedType.value === 'tpf_daycare') && selectedInstitution.value === '') {
+  if (
+    (selectedType.value === 'tpf_kindergarten' ||
+      selectedType.value === 'tpf_nursery' ||
+      selectedType.value === 'tpf_daycare') &&
+    selectedInstitution.value === ''
+  ) {
     validated.value = false;
     validationMessage.value = 'Vælg institution';
     checkDistance.value = false;
@@ -494,7 +506,7 @@ const handleValidation = async (event: any) => {
 
     // If private institution and for all course, or municipal institution and municipal course
   } else if (
-    (courseWhoCanApply.value === 'all') ||
+    courseWhoCanApply.value === 'all' ||
     (institutionPrivateMunicipal.value === 'municipal' &&
       courseWhoCanApply.value === 'municipal')
   ) {
@@ -516,7 +528,9 @@ const handleValidation = async (event: any) => {
   } else if (!courseWhoCanApply.value) {
     if (courseNotInList.value) {
       if (selectedType.value === 'tpf_school') {
-        if (schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())) {
+        if (
+          schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())
+        ) {
           validated.value = true;
           checkDistance.value = false;
         } else {
@@ -869,10 +883,39 @@ if ($route.query.course) {
 onBeforeMount(() => {
   fetchCourses('all');
 });
+
+// Gets rid if typescript errors
+declare global {
+  interface Window {
+    dawaAutocomplete: any;
+  }
+}
+onMounted(() => {
+  const interval = setInterval(() => {
+    // Wait until dawaAutocomplete is loaded
+    if (window.dawaAutocomplete) {
+      clearInterval(interval);
+
+      window.dawaAutocomplete.dawaAutocomplete(
+        document.getElementById('dawa-autocomplete-input'),
+        {
+          select: function (selected) {
+            console.log('Valgt adresse: ' + selected.tekst);
+          },
+        },
+      );
+    }
+  }, 100);
+});
 </script>
 
 <template>
   <div class="application-form" v-if="!isSuccess">
+    <div>
+      <h3>dawa autocomplete input:</h3>
+      <input type="search" id="dawa-autocomplete-input" />
+    </div>
+
     <Form @submit="handleSubmit()">
       <div class="field-group">
         <h3>Forløb</h3>
