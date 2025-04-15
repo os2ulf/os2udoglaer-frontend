@@ -96,9 +96,8 @@ const vendorAddress = {};
 
 if (props.data?.field_view_on_map === 'show_vendor_address' && (props.data?.provider || props.data?.corporation)) {
   if (props.data?.provider) {
-    console.log('provider', props.data?.provider);
     vendorAddress.locationName = props.data.provider.field_location_name;
-    if (props.data?.provider.field_dawa_address.value) {
+    if (props.data?.provider.field_dawa_address !== null) {
       const addressString = props.data?.provider.field_dawa_address.value;
       const { customAddress, customZipCity } = splitAddressOnComma(addressString);
       vendorAddress.street = customAddress;
@@ -108,7 +107,7 @@ if (props.data?.field_view_on_map === 'show_vendor_address' && (props.data?.prov
       vendorAddress.zipCity = `${props.data.provider.field_location_zipcode || ''} ${props.data.provider.field_location_city || ''}`.trim();
     }
   } else {
-    if (props.data?.corporation.field_dawa_address.value) {
+    if (props.data?.corporation.field_dawa_address !== null) {
       const addressString = props.data?.corporation.field_dawa_address.value;
       const { customAddress, customZipCity } = splitAddressOnComma(addressString);
       vendorAddress.street = customAddress;
@@ -119,8 +118,7 @@ if (props.data?.field_view_on_map === 'show_vendor_address' && (props.data?.prov
     }
   }
 } else {
-  console.log('test');
-  if (props.data?.field_dawa_address.data.betegnelse) {
+  if (props.data?.field_dawa_address !== null) {
     const addressString = props.data?.field_dawa_address.value;
     const { customAddress, customZipCity } = splitAddressOnComma(addressString);
     vendorAddress.street = customAddress;
@@ -131,7 +129,7 @@ if (props.data?.field_view_on_map === 'show_vendor_address' && (props.data?.prov
     vendorAddress.zipCity = `${props.data?.field_location_zipcode || ''} ${props.data?.field_location_city || ''}`.trim();
   }
 }
-console.log('vendorAddress', vendorAddress);
+
 const practicalInfoData = computed(() => {
   const data = [
     {
@@ -163,9 +161,9 @@ const practicalInfoData = computed(() => {
           content:
             props.data?.field_view_on_map !== 'hidden_on_map'
               ? [
-                vendorAddress.locationName ? vendorAddress.locationName : '',
-                vendorAddress.street ? vendorAddress.street : '',
-                vendorAddress.zipCity ? vendorAddress.zipCity : '',
+                  vendorAddress.locationName ? vendorAddress.locationName : '',
+                  vendorAddress.street ? vendorAddress.street : '',
+                  vendorAddress.zipCity ? vendorAddress.zipCity : '',
                 ]
               : [],
           description: props.data?.field_location_description
