@@ -39,7 +39,8 @@ onMounted(() => {
   if (autocompleteInput.value) {
     console.log(autocompleteInput.value);
     useDawaAutocomplete(autocompleteInput.value, (selected) => {
-      console.log('Valgt adresse: ' + selected.tekst)
+      console.log('Valgt adresse: ' + selected.tekst);
+      console.log('selected', selected);
     })
     // $dawaAutocomplete(autocompleteInput.value, {
     //   select: (selected) => {

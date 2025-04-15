@@ -6,10 +6,32 @@ export default defineNuxtPlugin((nuxtApp) => {
         return
       }
 
+      const existingScript = document.querySelector('script[src="https://cdn.dataforsyningen.dk/dawa/assets/dawa-autocomplete2/1.0.2/unfilled/dawa-autocomplete2.min.js"]')
+      if (existingScript) {
+        const waitForGlobal = () => {
+          if (window.dawaAutocomplete) {
+            resolve()
+          } else {
+            setTimeout(waitForGlobal, 50)
+          }
+        }
+        waitForGlobal()
+        return
+      }
+
       const script = document.createElement('script')
-      script.src = 'https://cdn.dataforsyningen.dk/dawa/assets/dawa-autocomplete2/1.0.2/dawa-autocomplete2.min.js'
+      script.src = 'https://cdn.dataforsyningen.dk/dawa/assets/dawa-autocomplete2/1.0.2/unfilled/dawa-autocomplete2.min.js'
       script.async = true
-      script.onload = () => resolve()
+      script.onload = () => {
+        const waitForGlobal = () => {
+          if (window.dawaAutocomplete) {
+            resolve()
+          } else {
+            setTimeout(waitForGlobal, 50)
+          }
+        }
+        waitForGlobal()
+      }
       script.onerror = (err) => reject(err)
       document.head.appendChild(script)
     })
