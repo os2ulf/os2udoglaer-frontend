@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
-const { $dawaAutocomplete } = useNuxtApp();
+import { useDawaAutocomplete } from '~/composables/useDawaAutocomplete';
+console.log('useDawaAutocomplete', useDawaAutocomplete);
 
 const props = withDefaults(
   defineProps<{
@@ -35,13 +36,16 @@ const inputClass = computed(() => {
 const autocompleteInput = ref(null)
 
 onMounted(() => {
-  console.log('$dawaAutocomplete', $dawaAutocomplete);
   if (autocompleteInput.value) {
-    $dawaAutocomplete(autocompleteInput.value, {
-      select: (selected) => {
-        console.log('Valgt adresse: ' + selected.tekst)
-      }
+    console.log(autocompleteInput.value);
+    useDawaAutocomplete(autocompleteInput.value, (selected) => {
+      console.log('Valgt adresse: ' + selected.tekst)
     })
+    // $dawaAutocomplete(autocompleteInput.value, {
+    //   select: (selected) => {
+    //     console.log('Valgt adresse: ' + selected.tekst)
+    //   }
+    // })
   }
 })
 
@@ -61,10 +65,10 @@ const checkAnimation = (e: any) => {
     <input
       :id="id"
       v-model="value"
+      ref="autocompleteInput"
       type="search"
       :class="`form-input form-input--floating-label ${inputClass}`"
       :name="name"
-      autocomplete="off"
       @animationstart="checkAnimation"
     />
     <label

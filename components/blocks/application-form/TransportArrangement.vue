@@ -914,14 +914,13 @@ onBeforeMount(() => {
 
       <div class="field-group">
         <h3>Forløbsadresse</h3>
-        <BaseDawaAddressFloatingLabel
+        <BaseDawaAutocomplete
           class="application-form__label"
           v-model="courseDawaAddress"
           :value="courseDawaAddress"
           @update:model-value="handleCourseAddressChange"
           name="Adresse"
           label="Adresse"
-          rules="required"
         />
         <BaseInputFloatingLabel
           class="application-form__label"
