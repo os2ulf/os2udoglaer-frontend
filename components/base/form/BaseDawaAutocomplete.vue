@@ -7,7 +7,7 @@ const props = withDefaults(
     name?: string;
     description?: string;
     label?: string;
-    modelValue?: object | null;
+    modelValue?: string | number | null | any | any[] | undefined;
   }>(),
   {
     name: '',
@@ -36,10 +36,7 @@ const autocompleteInput = ref(null)
 
 onMounted(() => {
   if (autocompleteInput.value) {
-    console.log(autocompleteInput.value);
     useDawaAutocomplete(autocompleteInput.value, (selected) => {
-      // console.log('Valgt adresse: ' + selected.tekst);
-      console.log('selected', selected);
       emit('update:modelValue', selected) // <- emit the selected value
     })
   }
@@ -53,6 +50,11 @@ const checkAnimation = (e: any) => {
   }
 };
 
+const checkEmpty = (e: any) => {
+  if (e.target.value === '') {
+    emit('update:modelValue', '');
+  }
+};
 </script>
 
 <template>
@@ -66,6 +68,7 @@ const checkAnimation = (e: any) => {
       :name="name"
       autocomplete="off"
       @animationstart="checkAnimation"
+      @input="checkEmpty($event)"
     />
     <label
       v-if="label"

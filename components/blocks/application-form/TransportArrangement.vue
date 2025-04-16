@@ -93,7 +93,6 @@ const courseWhoCanApply = ref('');
 const courseLatLon = ref([]);
 const userContent = ref([]);
 const institutionAddress = ref('');
-const institutionPostalCode = ref('');
 const institutionLatLon = ref([]);
 const institutionPrivateMunicipal = ref('');
 const institutionDistrict = ref('');
@@ -109,10 +108,8 @@ const selectedSchoolGrade = ref('');
 const courseNotInList = ref(false);
 const courseDescription = ref('');
 const coursePurpose = ref('');
-const courseDawaAddress = ref(null);
+const courseDawaAddress = ref([]);
 const courseAddress = ref('');
-const coursePostalCode = ref('');
-const courseCity = ref('');
 const requestedAmount = ref('');
 const numberOfStudents = ref('');
 const settlementDate = ref('');
@@ -184,32 +181,21 @@ const fetchCourseContent = async (nid: any) => {
   }
 
   // Set address, postal code and city from course content
-  if (courseContent.value.content.field_location_street) {
-    courseAddress.value = courseContent.value.content.field_location_street;
-  } else if (courseContent.value.content.provider?.field_location_street) {
-    courseAddress.value =
-      courseContent.value.content.provider?.field_location_street;
-  } else if (courseContent.value.content.corporation?.field_location_street) {
-    courseAddress.value =
-      courseContent.value.content.corporation?.field_location_street;
-  }
-  if (courseContent.value.content.field_location_zipcode) {
-    coursePostalCode.value = courseContent.value.content.field_location_zipcode;
-  } else if (courseContent.value.content.provider?.field_location_zipcode) {
-    coursePostalCode.value =
-      courseContent.value.content.provider?.field_location_zipcode;
-  } else if (courseContent.value.content.corporation?.field_location_zipcode) {
-    coursePostalCode.value =
-      courseContent.value.content.corporation?.field_location_zipcode;
-  }
-  if (courseContent.value.content.field_location_city) {
-    courseCity.value = courseContent.value.content.field_location_city;
-  } else if (courseContent.value.content.provider?.field_location_city) {
-    courseCity.value =
-      courseContent.value.content.provider?.field_location_city;
-  } else if (courseContent.value.content.corporation?.field_location_city) {
-    courseCity.value =
-      courseContent.value.content.corporation?.field_location_city;
+  if (courseContent.value.content.field_dawa_address) {
+    courseDawaAddress.value = courseContent.value.content.field_dawa_address;
+    courseAddress.value = courseContent.value.content.field_dawa_address.value;
+    courseLatLon.value['latitude'] = courseContent.value.content.field_dawa_address.data.y;
+    courseLatLon.value['longitude'] = courseContent.value.content.field_dawa_address.data.x;
+  } else if (courseContent.value.content.provider?.field_dawa_address) {
+    courseDawaAddress.value = courseContent.value.content.provider?.field_dawa_address;
+    courseAddress.value = courseContent.value.content.provider?.field_dawa_address.value;
+    courseLatLon.value['latitude'] = courseContent.value.content.provider?.field_dawa_address.data.y;
+    courseLatLon.value['longitude'] = courseContent.value.content.provider?.field_dawa_address.data.x;
+  } else if (courseContent.value.content.corporation?.field_dawa_address) {
+    courseDawaAddress.value = courseContent.value.content.corporation?.field_dawa_address;
+    courseAddress.value = courseContent.value.content.corporation?.field_dawa_address.value;
+    courseLatLon.value['latitude'] = courseContent.value.content.corporation?.field_dawa_address.data.y;
+    courseLatLon.value['longitude'] = courseContent.value.content.corporation?.field_dawa_address.data.x;
   }
   courseWhoCanApply.value =
     courseContent.value.content?.field_tpf_who_get_support;
@@ -262,22 +248,18 @@ const fetchUserContent = async (uid: any) => {
         },
       },
     );
-
     if (!response.ok) throw new Error(response.status);
-
     userContent.value = await response.json();
   } catch (error) {
     console.error('Error fetching schools:', error);
   }
 
   // Set address, postal code and city from user content.
-  if (userContent.value[0].field_location_street) {
+  if (userContent.value[0].field_dawa_address[0]) {
     institutionAddress.value =
-      userContent.value[0]?.field_location_street[0]?.value;
-  }
-  if (userContent.value[0].field_location_zipcode) {
-    institutionPostalCode.value =
-      userContent.value[0]?.field_location_zipcode[0]?.value;
+      userContent.value[0]?.field_dawa_address[0]?.value;
+    institutionLatLon.value['latitude'] = userContent.value[0]?.field_dawa_address[0].data.y;
+    institutionLatLon.value['longitude'] = userContent.value[0]?.field_dawa_address[0].data.x;
   }
   institutionPrivateMunicipal.value =
     userContent.value[0]?.field_private_municipal[0]?.value;
@@ -344,33 +326,11 @@ const distanceBetween = (
   return distance;
 };
 
-// Fetch data from DAWA API
-const getDawaData = async (queryRaw: any, postalCode: any) => {
-  if (queryRaw !== null && postalCode !== null) {
-    const query = queryRaw?.trim().replace(/\s/g, '+');
-    const dawaUrl = `https://api.dataforsyningen.dk/adresser?q=${query}*&postnr=${postalCode}&per_side=1&struktur=mini`;
-    try {
-      const response = await fetch(dawaUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) throw new Error(response.status);
-      return response.json();
-    } catch (error) {
-      console.error('Error fetching dawa data:', error);
-    }
-  } else {
-    console.error('Invalid address data.');
-  }
-};
-
 // Handle course change.
 const handleCourseChange = async () => {
+  courseDawaAddress.value = [];
   courseAddress.value = '';
-  coursePostalCode.value = '';
-  courseCity.value = '';
+  courseLatLon.value = [];
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
@@ -380,7 +340,9 @@ const handleCourseChange = async () => {
 // Handle "Course not in list" logic
 const handleHideCourseSelect = async () => {
   if (courseNotInList.value) {
-    courseDawaAddress.value = '';
+    courseDawaAddress.value = [];
+    courseAddress.value = '';
+    courseLatLon.value = [];
     selectedCourse.value = '';
     coursesSelect.value = [];
     checkDistance.value = true;
@@ -408,30 +370,21 @@ const handleTypeChange = async () => {
 };
 
 function handleCourseAddressChange(newValue) {
-  courseDawaAddress.value = newValue;
-  checkDistance.value = true;
-  validated.value = false;
-  validationMessage.value = '';
-  console.log('Updated addresses array:', courseDawaAddress.value);
+  if (newValue) {
+    courseDawaAddress.value = newValue;
+    courseAddress.value = newValue.tekst;
+    courseLatLon.value['latitude'] = newValue.data.y;
+    courseLatLon.value['longitude'] = newValue.data.x;
+    checkDistance.value = true;
+    validated.value = false;
+    validationMessage.value = '';
+  }
 }
-
-const handleCoursePostalcodeChange = async () => {
-  checkDistance.value = true;
-  validated.value = false;
-  validationMessage.value = '';
-};
-
-const handleCourseCityChange = async () => {
-  checkDistance.value = true;
-  validated.value = false;
-  validationMessage.value = '';
-};
 
 // Fetch user content on institution change
 const handleInstitutionChange = async () => {
-  // console.log('handleInstitutionChange', selectedInstitution.value);
   institutionAddress.value = '';
-  institutionPostalCode.value = '';
+  institutionLatLon.value = [];
   institutionDistrict.value = '';
   checkDistance.value = true;
   validated.value = false;
@@ -450,10 +403,17 @@ const handleValidation = async (event: any) => {
   event.preventDefault();
   validationMessage.value = '';
 
-  // Validation for course address, postal code and city
-  if (courseAddress.value === '' || coursePostalCode.value === '' || courseCity.value === '') {
+  // Validation for course
+  if (selectedCourse.value === '' && !courseNotInList.value) {
     validated.value = false;
-    validationMessage.value = 'Vælg forløb eller indtast forløbsadresse';
+    validationMessage.value = 'Vælg forløb';
+    checkDistance.value = false;
+    return;
+  }
+  // Validation for course address
+  if (courseAddress.value === '') {
+    validated.value = false;
+    validationMessage.value = 'Forløbsadresse mangler';
     checkDistance.value = false;
     return;
   }
@@ -537,29 +497,6 @@ const handleValidation = async (event: any) => {
 
   // If distance check is enabled
   if (checkDistance.value) {
-    // Get course latitude and longitude
-    if (courseAddress.value !== '' || coursePostalCode.value !== '') {
-      const data = await getDawaData(
-        courseAddress.value,
-        coursePostalCode.value,
-      );
-      if (data.length > 0) {
-        courseLatLon.value['longitude'] = data[0].x;
-        courseLatLon.value['latitude'] = data[0].y;
-      }
-    }
-
-    // Get institution latitude and longitude
-    if (institutionAddress.value !== '' || institutionPostalCode.value !== '') {
-      const data = await getDawaData(
-        institutionAddress.value,
-        institutionPostalCode.value,
-      );
-      if (data.length > 0) {
-        institutionLatLon.value['longitude'] = data[0].x;
-        institutionLatLon.value['latitude'] = data[0].y;
-      }
-    }
 
     // Calculate distance between course and institution
     if (
@@ -631,8 +568,7 @@ const resetForm = async () => {
   courseDescription.value = '';
   coursePurpose.value = '';
   courseAddress.value = '';
-  coursePostalCode.value = '';
-  courseCity.value = '';
+  courseDawaAddress.value = [];
   validated.value = false;
   validationMessage.value = '';
   requestedAmount.value = '';
@@ -768,20 +704,8 @@ const handleSubmit = async () => {
         value: selectedType.value,
       },
     ],
-    field_location_street: [
-      {
-        value: courseAddress.value,
-      },
-    ],
-    field_location_zipcode: [
-      {
-        value: coursePostalCode.value,
-      },
-    ],
-    field_location_city: [
-      {
-        value: courseCity.value,
-      },
+    field_dawa_address: [
+      courseDawaAddress.value
     ],
     field_tpf_participants: [
       {
@@ -816,7 +740,7 @@ const handleSubmit = async () => {
   }
 
   // If course purpose is selected add to payload
-  if (courseDescription.value) {
+  if (coursePurpose.value) {
     payload.field_tpf_purpose_course = field_tpf_purpose_course;
   }
 
@@ -916,7 +840,7 @@ onBeforeMount(() => {
         <h3>Forløbsadresse</h3>
         <BaseDawaAutocomplete
           class="application-form__label"
-          v-model="courseDawaAddress"
+          v-model="courseAddress"
           @update:model-value="handleCourseAddressChange"
           name="Adresse"
           label="Adresse"
