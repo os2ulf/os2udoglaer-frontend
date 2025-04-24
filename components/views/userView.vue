@@ -9,6 +9,28 @@ const props = defineProps({
     default: null,
   },
 });
+function splitAddressOnComma(addressString) {
+  if (!addressString) return { rest: '', lastItem: '' };
+
+  const parts = addressString.split(',').map(part => part.trim());
+  const customZipCity = parts.pop();
+  const customAddress = parts.join(', ');
+
+  return { customAddress, customZipCity };
+}
+
+const vendorAddress = {};
+
+if (props.data?.field_dawa_address !== null) {
+  const addressString = props.data?.field_dawa_address.value;
+  const { customAddress, customZipCity } = splitAddressOnComma(addressString);
+  vendorAddress.street = customAddress;
+  vendorAddress.zipCity = customZipCity;
+} else {
+  vendorAddress.locationName = props.data?.field_location_name;
+  vendorAddress.street = props.data?.field_location_street;
+  vendorAddress.zipCity = `${props.data?.field_location_zipcode || ''} ${props.data?.field_location_city || ''}`.trim();
+}
 
 const practicalInfoData = computed(() => {
   const data = [
@@ -26,22 +48,9 @@ const practicalInfoData = computed(() => {
           type: 'user_profile',
           title: props.data?.field_name,
           content: [
-            props.data?.field_view_on_map == 'show_vendor_address' &&
-            props.data?.provider
-              ? props.data?.provider.field_location_name
-              : props.data?.field_location_name,
-            props.data?.field_view_on_map == 'show_vendor_address' &&
-            props.data?.provider
-              ? props.data?.provider.field_location_street
-              : props.data?.field_location_street,
-            props.data?.field_view_on_map == 'show_vendor_address' &&
-            props.data?.provider
-              ? props.data?.provider.field_location_zipcode +
-                ' ' +
-                props.data?.provider.field_location_city
-              : props.data?.field_location_zipcode +
-                ' ' +
-                props.data?.field_location_city,
+            vendorAddress.locationName ? vendorAddress.locationName : '',
+            vendorAddress.street ? vendorAddress.street : '',
+            vendorAddress.zipCity ? vendorAddress.zipCity : '',
           ],
           description: props.data?.field_location_description
             ? props.data?.field_location_description
