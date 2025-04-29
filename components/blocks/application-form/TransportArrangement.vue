@@ -182,20 +182,14 @@ const fetchCourseContent = async (nid: any) => {
 
   // Set address, postal code and city from course content
   if (courseContent.value.content.field_dawa_address) {
-    courseDawaAddress.value = courseContent.value.content.field_dawa_address;
+    handleCourseAddressChange(courseContent.value.content.field_dawa_address);
     courseAddress.value = courseContent.value.content.field_dawa_address.value;
-    courseLatLon.value['latitude'] = courseContent.value.content.field_dawa_address.data.y;
-    courseLatLon.value['longitude'] = courseContent.value.content.field_dawa_address.data.x;
   } else if (courseContent.value.content.provider?.field_dawa_address) {
-    courseDawaAddress.value = courseContent.value.content.provider?.field_dawa_address;
+    handleCourseAddressChange(courseContent.value.content.provider?.field_dawa_address);
     courseAddress.value = courseContent.value.content.provider?.field_dawa_address.value;
-    courseLatLon.value['latitude'] = courseContent.value.content.provider?.field_dawa_address.data.y;
-    courseLatLon.value['longitude'] = courseContent.value.content.provider?.field_dawa_address.data.x;
   } else if (courseContent.value.content.corporation?.field_dawa_address) {
-    courseDawaAddress.value = courseContent.value.content.corporation?.field_dawa_address;
+    handleCourseAddressChange(courseContent.value.content.corporation?.field_dawa_address);
     courseAddress.value = courseContent.value.content.corporation?.field_dawa_address.value;
-    courseLatLon.value['latitude'] = courseContent.value.content.corporation?.field_dawa_address.data.y;
-    courseLatLon.value['longitude'] = courseContent.value.content.corporation?.field_dawa_address.data.x;
   }
   courseWhoCanApply.value =
     courseContent.value.content?.field_tpf_who_get_support;
@@ -371,8 +365,13 @@ const handleTypeChange = async () => {
 
 function handleCourseAddressChange(newValue) {
   if (newValue) {
+    errorMessage.value = '';
     courseDawaAddress.value = newValue;
-    courseAddress.value = newValue.tekst;
+    if (newValue.tekst) {
+     courseAddress.value = newValue.tekst;
+    } else {
+     courseAddress.value = newValue.value;
+    }
     courseLatLon.value['latitude'] = newValue.data.y;
     courseLatLon.value['longitude'] = newValue.data.x;
     checkDistance.value = true;
@@ -413,7 +412,7 @@ const handleValidation = async (event: any) => {
   // Validation for course address
   if (courseAddress.value === '') {
     validated.value = false;
-    validationMessage.value = 'Forløbsadresse mangler';
+    validationMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt';
     checkDistance.value = false;
     return;
   }
@@ -562,6 +561,7 @@ const resetForm = async () => {
   schools.value = [];
   schoolsSelect.value = [];
   selectedCourse.value = '';
+  selectedType.value = '';
   selectedInstitution.value = '';
   selectedSchoolGrade.value = '';
   courseNotInList.value = false;
@@ -595,12 +595,21 @@ const handleSubmit = async () => {
     errorMessage.value =
       'Der er opstået en fejl under udfyldning af formularen, venligst udfyld formularen korrekt.';
     return;
-  } else if (!mailTo.value) {
+  }
+
+  if (!mailTo.value) {
     errorMessage.value =
       'Der blev ikke angivet en e-mailadresse af udbyderen. Dette er ikke din fejl. Venligst kontakt udbyderen på en anden måde.';
     return;
-  } else if (emailRepeat.value !== email.value) {
+  }
+
+  if (emailRepeat.value !== email.value) {
     errorMessage.value = 'E-mailadresserne er ikke ens.';
+    return;
+  }
+
+  if (courseAddress.value === '') {
+    errorMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt.';
     return;
   }
 
@@ -705,7 +714,32 @@ const handleSubmit = async () => {
       },
     ],
     field_dawa_address: [
-      courseDawaAddress.value
+      {
+        id: courseDawaAddress.value.data.id,
+        value: courseDawaAddress.value.tekst ? courseDawaAddress.value.tekst : courseDawaAddress.value.value,
+        data : {
+          id: courseDawaAddress.value.data.id,
+          status: courseDawaAddress.value.data.status,
+          darstatus: courseDawaAddress.value.data.darstatus,
+          vejkode: courseDawaAddress.value.data.vejkode,
+          vejnavn: courseDawaAddress.value.data.vejnavn,
+          adresseringsvejnavn: courseDawaAddress.value.data.adresseringsvejnavn,
+          husnr: courseDawaAddress.value.data.husnr,
+          etage: courseDawaAddress.value.data.etage,
+          dør: courseDawaAddress.value.data.dør,
+          supplerendebynavn: courseDawaAddress.value.data.supplerendebynavn,
+          postnr: courseDawaAddress.value.data.postnr,
+          postnrnavn: courseDawaAddress.value.data.postnrnavn,
+          stormodtagerpostnr: courseDawaAddress.value.data.stormodtagerpostnr,
+          stormodtagerpostnrnavn: courseDawaAddress.value.data.stormodtagerpostnrnavn,
+          kommunekode: courseDawaAddress.value.data.kommunekode,
+          adgangsadresseid: courseDawaAddress.value.data.adgangsadresseid,
+          x: courseDawaAddress.value.data.x,
+          y: courseDawaAddress.value.data.y,
+          href: courseDawaAddress.value.data.href,
+          betegnelse: courseDawaAddress.value.tekst ? courseDawaAddress.value.tekst : courseDawaAddress.value.value
+        }
+      }
     ],
     field_tpf_participants: [
       {

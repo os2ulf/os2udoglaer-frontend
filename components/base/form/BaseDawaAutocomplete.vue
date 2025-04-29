@@ -38,9 +38,9 @@ onMounted(() => {
   if (autocompleteInput.value) {
     useDawaAutocomplete(autocompleteInput.value, (selected) => {
       emit('update:modelValue', selected) // <- emit the selected value
-    })
+    });
   }
-})
+});
 
 const checkAnimation = (e: any) => {
   if (e.animationName === 'onAutoFillStart') {
@@ -50,10 +50,9 @@ const checkAnimation = (e: any) => {
   }
 };
 
-const checkEmpty = (e: any) => {
-  if (e.target.value === '') {
-    emit('update:modelValue', '');
-  }
+const checkInput = (e: any) => {
+  // Reset modelValue on input.
+  emit('update:modelValue', '');
 };
 </script>
 
@@ -68,7 +67,7 @@ const checkEmpty = (e: any) => {
       :name="name"
       autocomplete="off"
       @animationstart="checkAnimation"
-      @input="checkEmpty($event)"
+      @input="checkInput($event)"
     />
     <label
       v-if="label"
