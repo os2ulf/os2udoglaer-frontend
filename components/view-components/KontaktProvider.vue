@@ -91,22 +91,35 @@ const props = defineProps({
   }
 
   &__person-heading {
+    padding-right: 0;
+
+    @media (--viewport-md-min) {
+      padding-right: 20px;
+    }
+
     @media (--viewport-sm-max) {
       text-align: center;
     }
   }
 
   &__button-wrapper {
-    display: grid @(--md) flex;
+    display: flex;
+    flex-direction: column;
 
     @media (--viewport-sm-max) {
       justify-content: center;
     }
+
+    @media (--viewport-lg-min) {
+      flex-direction: row;
+    }
   }
 
   &__button {
-    margin: 20px 0 0 0 @(--md) 0 16px 0 0;
+    margin: 10px 0 @(--lg) 0 16px 0 0;
     width: 100% @(--sm) inherit;
+    word-break: auto-phrase;
+    white-space: nowrap;
 
     &:last-child {
       margin-right: 0 @(--sm) 0;
