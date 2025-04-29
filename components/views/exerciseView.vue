@@ -59,18 +59,26 @@ const practicalInfoData = computed(() => {
           title: 'Målgruppe',
           content:
             props.data?.field_target_group === 'Grundskole'
-              ? props.data?.field_trgt_grp_primary_school.concat(
-                  props.data?.field_primary_school_subject,
-                )
+              ? props.data?.field_trgt_grp_primary_school
               : props.data?.field_target_group === 'Dagtilbud'
-                ? props.data?.field_trgt_grp_daycare.concat(
-                    props.data?.field_curriculum_themes,
-                  )
+                ? props.data?.field_trgt_grp_daycare
                 : props.data?.field_target_group === 'Ungdomsuddannelse'
-                  ? props.data?.field_trgt_grp_youth_education.concat(
-                      props.data?.field_youth_education_subject,
-                    )
-                  : 'Object needed from BE',
+                  ? props.data?.field_trgt_grp_youth_education
+                  : '',
+        },
+        {
+          title:
+            props.data?.field_target_group === 'Dagtilbud'
+              ? 'Læreplanstemaer'
+              : 'Fag',
+          content:
+            props.data?.field_target_group === 'Grundskole'
+              ? props.data?.field_primary_school_subject
+              : props.data?.field_target_group === 'Dagtilbud'
+                ? props.data?.field_curriculum_themes
+                : props.data?.field_target_group === 'Ungdomsuddannelse'
+                  ? props.data?.field_youth_education_subject
+                  : '',
         },
         {
           title: 'Aktivitet',
