@@ -98,6 +98,7 @@ const practicalInfoData = computed(() => {
 });
 
 const relatedContent = ref(props.data?.related_content);
+console.log('data?.field_contact?.length', props.data?.field_contact[0]);
 </script>
 
 <template>
@@ -109,14 +110,17 @@ const relatedContent = ref(props.data?.related_content);
             <div class="user__page-heading-wrapper">
               <h1 class="user__page-title">{{ data?.field_name }}</h1>
               <div class="user__page-heading-button-container">
-                <!-- TODO: connect buttons -->
                 <BaseButton
+                  v-if="relatedContent?.results?.length > 0"
                   icon-after="arrow-right"
-                  :button-data="{ title: 'Find forløb' }"
+                  :button-data="{
+                    title: 'Find forløb'
+                  }"
+                  @click="scrollTo('related_content__section')"
                   class="button button--secondary"
                 />
                 <BaseButton
-                  v-if="data?.field_contact?.length > 0"
+                  v-if="data?.field_contact?.length > 0 && (data?.field_contact[0].field_email !== null || data?.field_contact[0].field_phone !== null)"
                   :button-data="{
                     title: props.data.roles?.includes('corporation')
                       ? 'Kontakt virksomhed'
@@ -247,6 +251,7 @@ const relatedContent = ref(props.data?.related_content);
 
         <!-- Section related articles -->
         <div
+          id="related_content__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-related-content"
           v-if="relatedContent?.results?.length > 0"
         >
@@ -261,7 +266,7 @@ const relatedContent = ref(props.data?.related_content);
         <div
           id="contact__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-contact"
-          v-if="data?.field_contact?.length > 0"
+          v-if="data?.field_contact?.length > 0 && (data?.field_contact[0].field_email !== null || data?.field_contact[0].field_phone !== null)"
         >
           <div class="user__contact">
             <KontaktProvider
