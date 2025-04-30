@@ -98,7 +98,6 @@ const practicalInfoData = computed(() => {
 });
 
 const relatedContent = ref(props.data?.related_content);
-console.log('data?.field_contact?.length', props.data?.field_contact[0]);
 </script>
 
 <template>
