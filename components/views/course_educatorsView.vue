@@ -91,13 +91,13 @@ if (props.data?.field_view_on_map === 'show_vendor_address' && (props.data?.prov
     }
   }
 } else {
+  vendorAddress.locationName = props.data?.field_location_name;
   if (props.data?.field_dawa_address !== null) {
     const addressString = props.data?.field_dawa_address.value;
     const { customAddress, customZipCity } = splitAddressOnComma(addressString);
     vendorAddress.street = customAddress;
     vendorAddress.zipCity = customZipCity;
   } else {
-    vendorAddress.locationName = props.data?.field_location_name;
     vendorAddress.street = props.data?.field_location_street;
     vendorAddress.zipCity = `${props.data?.field_location_zipcode || ''} ${props.data?.field_location_city || ''}`.trim();
   }
