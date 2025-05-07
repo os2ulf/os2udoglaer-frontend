@@ -18,7 +18,7 @@ const props = withDefaults(
 );
 
 const autofilled = ref(false);
-const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus']);
+const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus', 'address-selected']);
 const id = ref(uuidv4());
 
 const value = computed({
@@ -37,7 +37,8 @@ const autocompleteInput = ref(null)
 onMounted(() => {
   if (autocompleteInput.value) {
     useDawaAutocomplete(autocompleteInput.value, (selected) => {
-      emit('update:modelValue', selected) // <- emit the selected value
+      emit('update:modelValue', selected);
+      emit('address-selected', true);
     });
   }
 });
@@ -51,8 +52,8 @@ const checkAnimation = (e: any) => {
 };
 
 const checkInput = (e: any) => {
-  // Reset modelValue on input.
-  emit('update:modelValue', '');
+  // Emit address-selected to false when user types in the input.
+  emit('address-selected', false);
 };
 </script>
 
