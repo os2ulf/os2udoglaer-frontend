@@ -110,6 +110,7 @@ const courseDescription = ref('');
 const coursePurpose = ref('');
 const courseDawaAddress = ref([]);
 const courseAddress = ref('');
+const isCourseAddressValid = ref(false);
 const requestedAmount = ref('');
 const numberOfStudents = ref('');
 const settlementDate = ref('');
@@ -377,8 +378,16 @@ function handleCourseAddressChange(newValue) {
     checkDistance.value = true;
     validated.value = false;
     validationMessage.value = '';
+    isCourseAddressValid.value = true;
   }
 }
+
+// Watch for isCourseAddressValid changes.
+watch(isCourseAddressValid, () => {
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
+});
 
 // Fetch user content on institution change
 const handleInstitutionChange = async () => {
@@ -410,7 +419,7 @@ const handleValidation = async (event: any) => {
     return;
   }
   // Validation for course address
-  if (courseAddress.value === '') {
+  if (courseAddress.value === ''|| !isCourseAddressValid.value) {
     validated.value = false;
     validationMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt';
     checkDistance.value = false;
@@ -608,7 +617,7 @@ const handleSubmit = async () => {
     return;
   }
 
-  if (courseAddress.value === '') {
+  if (courseAddress.value === '' || !isCourseAddressValid.value) {
     errorMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt.';
     return;
   }
@@ -876,6 +885,7 @@ onBeforeMount(() => {
           class="application-form__label"
           v-model="courseAddress"
           @update:model-value="handleCourseAddressChange"
+          @address-selected="isCourseAddressValid = $event"
           name="Adresse"
           label="Adresse"
         />
