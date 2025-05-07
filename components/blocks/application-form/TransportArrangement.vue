@@ -179,15 +179,15 @@ const fetchCourseContent = async (nid: any) => {
   } catch (error) {
     console.error('Error fetching courses:', error);
   }
-
+console.log('courseContent.value.content', courseContent.value.content);
   // Set address, postal code and city from course content
-  if (courseContent.value.content.field_dawa_address) {
+  if (courseContent.value.content.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_alternative_address') {
     handleCourseAddressChange(courseContent.value.content.field_dawa_address);
     courseAddress.value = courseContent.value.content.field_dawa_address.value;
-  } else if (courseContent.value.content.provider?.field_dawa_address) {
+  } else if (courseContent.value.content.provider?.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_vendor_address') {
     handleCourseAddressChange(courseContent.value.content.provider?.field_dawa_address);
     courseAddress.value = courseContent.value.content.provider?.field_dawa_address.value;
-  } else if (courseContent.value.content.corporation?.field_dawa_address) {
+  } else if (courseContent.value.content.corporation?.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_vendor_address') {
     handleCourseAddressChange(courseContent.value.content.corporation?.field_dawa_address);
     courseAddress.value = courseContent.value.content.corporation?.field_dawa_address.value;
   }
