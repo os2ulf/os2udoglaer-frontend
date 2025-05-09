@@ -149,7 +149,6 @@ const props = defineProps({
   &__card-link-text {
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.3s ease-in-out;
-    word-break: break-all;
   }
 
   &__card-item-description {
