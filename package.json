@@ -47,6 +47,6 @@
     "vue": "latest"
   },
   "engines": {
-    "pnpm": "9.15.4"
+    "pnpm": "10.8.2"
   }
 }
