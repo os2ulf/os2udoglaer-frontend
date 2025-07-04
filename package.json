@@ -45,8 +45,5 @@
   },
   "overrides": {
     "vue": "latest"
-  },
-  "engines": {
-    "pnpm": "10.8.2"
   }
 }
