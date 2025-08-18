@@ -29,7 +29,8 @@ const targetGroupFields = computed(() => {
   }
 
   // IF Internship (Erhvervspraktik) CT
-  if (props.data?.bundle === 'internship') {
+  if (props.data?.bundle === 'internship' ||
+    props.data?.bundle === 'junior_apprenticeship') {
     return {
       audience: props.data.field_areas_of_interest,
       subjectOrTheme: props.data.field_industry,
@@ -278,6 +279,13 @@ const cardLabels = computed(() => {
       labels.push(getBannerLabel(props.data));
     },
     internship: () => {
+      getBannerLabel(props.data) === null
+        ? labels.push(getIndustryLabel(props.data))
+        : '';
+      labels.push(getStatusLabel(props.data));
+      labels.push(getBannerLabel(props.data));
+    },
+    junior_apprenticeship: () => {
       getBannerLabel(props.data) === null
         ? labels.push(getIndustryLabel(props.data))
         : '';
