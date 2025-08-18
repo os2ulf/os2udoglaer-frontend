@@ -20,7 +20,7 @@ const props = defineProps({
     default: null,
   },
 });
-console.log('Exercise data:', props.data);
+
 const placesToVisit = computed(() => {
   return props.data.field_related_user;
 });
