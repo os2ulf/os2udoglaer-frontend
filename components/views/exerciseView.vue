@@ -214,14 +214,6 @@ const currentUrl = computed(() => {
             <BaseRte :content="data.body" />
           </div>
 
-          <div
-            class="exercise__paragraph-item"
-            v-if="data.field_purpose_exercise"
-          >
-            <h4>Mål</h4>
-            <BaseRte :content="data.field_purpose_exercise" />
-          </div>
-
           <div class="exercise__paragraph-item" v-if="data.field_preparation">
             <h4>Forberedelse</h4>
             <BaseRte :content="data.field_preparation" />
@@ -252,6 +244,14 @@ const currentUrl = computed(() => {
           >
             <h4>Efter besøget</h4>
             <BaseRte :content="data.field_post_processing" />
+          </div>
+
+          <div
+            class="exercise__paragraph-item"
+            v-if="data.field_purpose_exercise"
+          >
+            <h4>Mål</h4>
+            <BaseRte :content="data.field_purpose_exercise" />
           </div>
         </div>
         <div
