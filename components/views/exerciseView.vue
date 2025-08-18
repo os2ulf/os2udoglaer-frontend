@@ -84,6 +84,10 @@ const practicalInfoData = computed(() => {
           title: 'Aktivitet',
           content: props.data?.field_activity_select,
         },
+        {
+          title: 'Fokus',
+          content: props.data?.field_focus,
+        },
       ],
     },
     {
