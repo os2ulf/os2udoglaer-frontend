@@ -991,7 +991,23 @@ onBeforeMount(() => {
 
       <div v-if="validated">
         <div class="field-group">
-          <h3>Kontakt information</h3>
+          <h3>Kontaktinformation</h3>
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="email"
+            type="text"
+            name="E-mailadresse"
+            label="E-mailadresse"
+            rules="required|email"
+          />
+          <BaseInputFloatingLabel
+            class="application-form__label"
+            v-model="emailRepeat"
+            type="text"
+            name="Gentag e-mailadresse"
+            label="Gentag e-mailadresse"
+            rules="required|email"
+          />
           <BaseInputFloatingLabel
             class="application-form__label"
             v-model="fullName"
@@ -999,22 +1015,6 @@ onBeforeMount(() => {
             name="Navn på medfølgende voksen"
             label="Navn på medfølgende voksen"
             rules="required"
-          />
-          <BaseInputFloatingLabel
-            class="application-form__label"
-            v-model="email"
-            type="text"
-            name="E-mailadresse på medfølgende voksen"
-            label="E-mailadresse på medfølgende voksen"
-            rules="required|email"
-          />
-          <BaseInputFloatingLabel
-            class="application-form__label"
-            v-model="emailRepeat"
-            type="text"
-            name="Gentag e-mailadresse på medfølgende voksen"
-            label="Gentag e-mailadresse på medfølgende voksen"
-            rules="required|email"
           />
           <BaseInputFloatingLabel
             class="application-form__label"
