@@ -20,7 +20,7 @@ const props = defineProps({
     default: null,
   },
 });
-
+console.log('Exercise data:', props.data);
 const placesToVisit = computed(() => {
   return props.data.field_related_user;
 });
@@ -83,6 +83,10 @@ const practicalInfoData = computed(() => {
         {
           title: 'Aktivitet',
           content: props.data?.field_activity_select,
+        },
+        {
+          title: 'Fokus',
+          content: props.data?.field_focus,
         },
       ],
     },
