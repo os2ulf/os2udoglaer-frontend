@@ -20,6 +20,14 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   });
 
+  VeeValidate.defineRule('not_past', (value: string) => {
+    if (!value) return true;
+    const selected = new Date(value);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return selected >= now || 'Vælg en dato i dag eller fremad';
+  });
+
   VeeValidate.configure({
     generateMessage: localize({
       'da-DK': da,
