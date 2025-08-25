@@ -182,15 +182,30 @@ const fetchCourseContent = async (nid: any) => {
   }
 
   // Set address, postal code and city from course content
-  if (courseContent.value.content.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_alternative_address') {
+  if (
+    courseContent.value.content.field_dawa_address &&
+    courseContent.value.content.field_view_on_map === 'show_alternative_address'
+  ) {
     handleCourseAddressChange(courseContent.value.content.field_dawa_address);
     courseAddress.value = courseContent.value.content.field_dawa_address.value;
-  } else if (courseContent.value.content.provider?.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_vendor_address') {
-    handleCourseAddressChange(courseContent.value.content.provider?.field_dawa_address);
-    courseAddress.value = courseContent.value.content.provider?.field_dawa_address.value;
-  } else if (courseContent.value.content.corporation?.field_dawa_address && courseContent.value.content.field_view_on_map === 'show_vendor_address') {
-    handleCourseAddressChange(courseContent.value.content.corporation?.field_dawa_address);
-    courseAddress.value = courseContent.value.content.corporation?.field_dawa_address.value;
+  } else if (
+    courseContent.value.content.provider?.field_dawa_address &&
+    courseContent.value.content.field_view_on_map === 'show_vendor_address'
+  ) {
+    handleCourseAddressChange(
+      courseContent.value.content.provider?.field_dawa_address,
+    );
+    courseAddress.value =
+      courseContent.value.content.provider?.field_dawa_address.value;
+  } else if (
+    courseContent.value.content.corporation?.field_dawa_address &&
+    courseContent.value.content.field_view_on_map === 'show_vendor_address'
+  ) {
+    handleCourseAddressChange(
+      courseContent.value.content.corporation?.field_dawa_address,
+    );
+    courseAddress.value =
+      courseContent.value.content.corporation?.field_dawa_address.value;
   }
   courseWhoCanApply.value =
     courseContent.value.content?.field_tpf_who_get_support;
@@ -253,8 +268,10 @@ const fetchUserContent = async (uid: any) => {
   if (userContent.value[0].field_dawa_address[0]) {
     institutionAddress.value =
       userContent.value[0]?.field_dawa_address[0]?.value;
-    institutionLatLon.value['latitude'] = userContent.value[0]?.field_dawa_address[0].data.y;
-    institutionLatLon.value['longitude'] = userContent.value[0]?.field_dawa_address[0].data.x;
+    institutionLatLon.value['latitude'] =
+      userContent.value[0]?.field_dawa_address[0].data.y;
+    institutionLatLon.value['longitude'] =
+      userContent.value[0]?.field_dawa_address[0].data.x;
   }
   institutionPrivateMunicipal.value =
     userContent.value[0]?.field_private_municipal[0]?.value;
@@ -369,9 +386,9 @@ function handleCourseAddressChange(newValue) {
     errorMessage.value = '';
     courseDawaAddress.value = newValue;
     if (newValue.tekst) {
-     courseAddress.value = newValue.tekst;
+      courseAddress.value = newValue.tekst;
     } else {
-     courseAddress.value = newValue.value;
+      courseAddress.value = newValue.value;
     }
     courseLatLon.value['latitude'] = newValue.data.y;
     courseLatLon.value['longitude'] = newValue.data.x;
@@ -419,9 +436,10 @@ const handleValidation = async (event: any) => {
     return;
   }
   // Validation for course address
-  if (courseAddress.value === ''|| !isCourseAddressValid.value) {
+  if (courseAddress.value === '' || !isCourseAddressValid.value) {
     validated.value = false;
-    validationMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt';
+    validationMessage.value =
+      'Forløbsadresse mangler eller er ikke korrekt udfyldt';
     checkDistance.value = false;
     return;
   }
@@ -435,7 +453,10 @@ const handleValidation = async (event: any) => {
   }
 
   // Validation for institution type school
-  if (selectedType.value === 'tpf_school' && (selectedInstitution.value === '' || selectedSchoolGrade.value === '')) {
+  if (
+    selectedType.value === 'tpf_school' &&
+    (selectedInstitution.value === '' || selectedSchoolGrade.value === '')
+  ) {
     validated.value = false;
     validationMessage.value = 'Vælg en skole og et klassetrin';
     checkDistance.value = false;
@@ -443,7 +464,12 @@ const handleValidation = async (event: any) => {
   }
 
   // Validation for institution type kindergarten, nursery or daycare
-  if ((selectedType.value === 'tpf_kindergarten' || selectedType.value === 'tpf_nursery' || selectedType.value === 'tpf_daycare') && selectedInstitution.value === '') {
+  if (
+    (selectedType.value === 'tpf_kindergarten' ||
+      selectedType.value === 'tpf_nursery' ||
+      selectedType.value === 'tpf_daycare') &&
+    selectedInstitution.value === ''
+  ) {
     validated.value = false;
     validationMessage.value = 'Vælg institution';
     checkDistance.value = false;
@@ -462,7 +488,7 @@ const handleValidation = async (event: any) => {
 
     // If private institution and for all course, or municipal institution and municipal course
   } else if (
-    (courseWhoCanApply.value === 'all') ||
+    courseWhoCanApply.value === 'all' ||
     (institutionPrivateMunicipal.value === 'municipal' &&
       courseWhoCanApply.value === 'municipal')
   ) {
@@ -484,7 +510,9 @@ const handleValidation = async (event: any) => {
   } else if (!courseWhoCanApply.value) {
     if (courseNotInList.value) {
       if (selectedType.value === 'tpf_school') {
-        if (schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())) {
+        if (
+          schoolClassAllowed.value.includes(selectedSchoolGrade.value.trim())
+        ) {
           validated.value = true;
           checkDistance.value = false;
         } else {
@@ -505,7 +533,6 @@ const handleValidation = async (event: any) => {
 
   // If distance check is enabled
   if (checkDistance.value) {
-
     // Calculate distance between course and institution
     if (
       courseLatLon.value.latitude &&
@@ -618,7 +645,8 @@ const handleSubmit = async () => {
   }
 
   if (courseAddress.value === '' || !isCourseAddressValid.value) {
-    errorMessage.value = 'Forløbsadresse mangler eller er ikke korrekt udfyldt.';
+    errorMessage.value =
+      'Forløbsadresse mangler eller er ikke korrekt udfyldt.';
     return;
   }
 
@@ -725,8 +753,10 @@ const handleSubmit = async () => {
     field_dawa_address: [
       {
         id: courseDawaAddress.value.data.id,
-        value: courseDawaAddress.value.tekst ? courseDawaAddress.value.tekst : courseDawaAddress.value.value,
-        data : {
+        value: courseDawaAddress.value.tekst
+          ? courseDawaAddress.value.tekst
+          : courseDawaAddress.value.value,
+        data: {
           id: courseDawaAddress.value.data.id,
           status: courseDawaAddress.value.data.status,
           darstatus: courseDawaAddress.value.data.darstatus,
@@ -740,15 +770,18 @@ const handleSubmit = async () => {
           postnr: courseDawaAddress.value.data.postnr,
           postnrnavn: courseDawaAddress.value.data.postnrnavn,
           stormodtagerpostnr: courseDawaAddress.value.data.stormodtagerpostnr,
-          stormodtagerpostnrnavn: courseDawaAddress.value.data.stormodtagerpostnrnavn,
+          stormodtagerpostnrnavn:
+            courseDawaAddress.value.data.stormodtagerpostnrnavn,
           kommunekode: courseDawaAddress.value.data.kommunekode,
           adgangsadresseid: courseDawaAddress.value.data.adgangsadresseid,
           x: courseDawaAddress.value.data.x,
           y: courseDawaAddress.value.data.y,
           href: courseDawaAddress.value.data.href,
-          betegnelse: courseDawaAddress.value.tekst ? courseDawaAddress.value.tekst : courseDawaAddress.value.value
-        }
-      }
+          betegnelse: courseDawaAddress.value.tekst
+            ? courseDawaAddress.value.tekst
+            : courseDawaAddress.value.value,
+        },
+      },
     ],
     field_tpf_participants: [
       {
@@ -971,7 +1004,7 @@ onBeforeMount(() => {
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules="required"
+          rules="required|not_past"
         />
         <BaseInput
           class="application-form__label"

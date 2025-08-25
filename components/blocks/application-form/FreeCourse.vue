@@ -633,7 +633,7 @@ onBeforeMount(() => {
           type="date"
           name="Afviklingsdato"
           label="Afviklingsdato"
-          rules="required"
+          rules="required|not_past"
         />
       </div>
 
