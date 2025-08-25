@@ -53,5 +53,15 @@ const props = defineProps({
     background-color: var(--color-secondary-lighten-4);
     color: var(--color-text);
   }
+
+  &--green {
+    background-color: var(--color-success-dark);
+    color: #fff;
+  }
+
+  &--red {
+    background-color: var(--color-error-dropdown);
+    color: #fff;
+  }
 }
 </style>
