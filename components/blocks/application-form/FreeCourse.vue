@@ -51,6 +51,7 @@ const email = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const selectedProvider = ref('');
 const selectedCourse = ref('');
+const selectedCourseTitle = ref('');
 const selectedCourseTerm = ref('');
 const courseNotInList = ref(false);
 const courseName = ref('');
@@ -261,6 +262,8 @@ const handleHideCourseSelect = async () => {
     courseTermsSelect.value = [];
     coursePriceInfo.value = [];
     courseNotInList.value = true;
+    courseName.value = '';
+    selectedCourseTitle.value = '';
     await fetchSubjects();
   } else {
     // If the checkbox is unchecked fetch courses from selected provider
@@ -271,9 +274,17 @@ const handleHideCourseSelect = async () => {
   }
 };
 
+// Update selected course title
+function updateSelectedCourseTitle(nid) {
+  const course = courses.value.find(c => c.nid === nid)
+  selectedCourseTitle.value = course ? course.title : ''
+}
+
 // Fetch course subjects and price info on course change
 const handleCourseChange = async () => {
   coursePriceInfo.value = [];
+  updateSelectedCourseTitle(selectedCourse.value);
+  courseName.value = selectedCourseTitle.value;
   await fetchCourseSubjects(selectedCourse.value);
   await fetchCoursePriceInfo(selectedCourse.value);
 };
@@ -307,6 +318,7 @@ const resetForm = async () => {
   email.value = '';
   selectedProvider.value = '';
   selectedCourse.value = '';
+  selectedCourseTitle.value = '';
   selectedCourseTerm.value = '';
   courseNotInList.value = false;
   courseName.value = '';
