@@ -88,6 +88,7 @@ const institutionsSelect = ref([]);
 const checkDistance = ref(true);
 const validated = ref(false);
 const validationMessage = ref('');
+const courseName = ref('');
 const courseContent = ref([]);
 const courseWhoCanApply = ref('');
 const courseLatLon = ref([]);
@@ -102,6 +103,7 @@ const urlQueryCourseId = ref('');
 
 // Form data
 const selectedCourse = ref('');
+const selectedCourseTitle = ref('');
 const selectedType = ref('');
 const selectedInstitution = ref('');
 const selectedSchoolGrade = ref('');
@@ -338,6 +340,12 @@ const distanceBetween = (
   return distance;
 };
 
+// Update selected course title
+function updateSelectedCourseTitle(nid) {
+  const course = courses.value.find(c => c.nid === nid)
+  selectedCourseTitle.value = course ? course.title : ''
+}
+
 // Handle course change.
 const handleCourseChange = async () => {
   courseDawaAddress.value = [];
@@ -346,6 +354,8 @@ const handleCourseChange = async () => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
+  updateSelectedCourseTitle(selectedCourse.value);
+  courseName.value = selectedCourseTitle.value;
   await fetchCourseContent(selectedCourse.value);
 };
 
@@ -360,6 +370,8 @@ const handleHideCourseSelect = async () => {
     checkDistance.value = true;
     validated.value = false;
     validationMessage.value = '';
+    courseName.value = '';
+    selectedCourseTitle.value = '';
   } else {
     await fetchCourses('all');
   }
@@ -786,6 +798,11 @@ const handleSubmit = async () => {
     field_tpf_participants: [
       {
         value: numberOfStudents.value,
+      },
+    ],
+    field_tpf_course_name: [
+      {
+        value: courseName.value,
       },
     ],
     field_tpf_course_not_found: [
