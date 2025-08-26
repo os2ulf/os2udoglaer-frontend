@@ -78,21 +78,22 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="course__registration">
-    <h2 v-if="props.data.bundle == 'internship' || props.data.bundle == 'junior_apprenticeship'">Ansøgning</h2>
-    <h2 v-else>Tilmelding</h2>
-    <div v-if="props.data.open_for_application" class="course__registration__status"
+    <h2
+      v-if="
+        props.data.bundle == 'internship' ||
+        props.data.bundle == 'junior_apprenticeship'
+      "
     >
-      <BaseTag
-        :data="{ label: 'Vi har åben for ansøgning' }"
-        color="green"
-      />
+      Ansøgning
+    </h2>
+    <h2 v-else>Tilmelding</h2>
+    <div
+      v-if="props.data.open_for_application"
+      class="course__registration__status"
+    >
+      <BaseTag :data="{ label: 'Vi har åben for ansøgning' }" color="green" />
     </div>
-    <div v-else class="course__registration__status">
-      <BaseTag
-        :data="{ label: 'Vi har desværre ikke åben for ansøgning' }"
-        color="red"
-      />
-    </div>
+
     <div
       v-if="props.data.free || props.data.price"
       class="course__registration__prices"
