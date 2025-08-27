@@ -25,7 +25,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     const selected = new Date(value);
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    return selected >= now || 'Vælg en dato i dag eller fremad';
+    return (
+      selected >= now ||
+      'Vælg venligst en dato fra dags dato og frem - og husk altid at tjekke puljens betingelser.'
+    );
   });
 
   VeeValidate.configure({
