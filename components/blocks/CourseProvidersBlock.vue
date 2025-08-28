@@ -403,14 +403,10 @@ onMounted(async() => {
   await import('leaflet/dist/leaflet.css');
 
   // Manually fix icon paths
-  const markerIcon2x = (await import('leaflet/dist/images/marker-icon-2x.png')).default;
-  const markerIcon = (await import('leaflet/dist/images/marker-icon.png')).default;
   const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
 
   delete L.Icon.Default.prototype._getIconUrl;
   L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
     shadowUrl: markerShadow,
   });
 
