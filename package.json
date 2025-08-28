@@ -36,6 +36,8 @@
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^4.5.0",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "nuxt-icons": "^3.2.1",
     "pinia": "^2.1.7",
     "sitemap": "^7.1.1",

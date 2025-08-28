@@ -13,6 +13,9 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  sectionWidth: {
+    type: String,
+  },
 });
 
 const searchBlockData = ref(props.blockData);
@@ -31,6 +34,26 @@ const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
 
+const isClient = ref(false)
+
+let map
+let markersLayer // A layer group to easily clear & redraw markers
+
+function createSvgMarker(size = 40) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="-64 0 512 512">
+      <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
+    </svg>
+  `;
+
+  return L.divIcon({
+    html: svg,
+    className: 'custom-leaflet-marker', // remove default styles
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size], // bottom center
+    popupAnchor: [0, -size]
+  });
+}
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
@@ -322,16 +345,118 @@ const searchResultSuffix = computed(() => {
   }
 });
 
+// Transform dynamicContent into Leaflet-friendly marker data
+const leafletMarkers = computed(() =>
+  dynamicContent.value
+    .filter(item =>
+      item.field_view_on_map === 'show_on_map' &&
+      item.field_dawa_address?.lat &&
+      item.field_dawa_address?.lng
+    )
+    .map((item) => {
+      let imageHtml = '';
+      if (item.field_logo.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="" /></a></div>`;
+      } else if (item.field_image.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+      }
+
+      return ({
+        id: item.id,
+        title: item.label,
+        coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
+        popupContent: `
+          <div class="leaflet-popup-content__inner">
+            ${imageHtml}
+            <div class="leaflet-popup-content__content">
+              <h4>${item.label}</h4>
+              <a href="${item.link}">Se udbyder</a>
+            </div>
+          </div>
+        `
+      });
+    })
+);
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
   }
 });
 
-onMounted(() => {
+onMounted(async() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
+  isClient.value = true;
+
+  // Only run Leaflet in the browser
+  if (!process.client) return;
+  // Dynamically import Leaflet in the browser
+  const leaflet = await import('leaflet');
+  L = leaflet.default;
+
+  const LMarkerCluster = await import('leaflet.markercluster');
+  await import('leaflet.markercluster/dist/MarkerCluster.css');
+  await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
+
+  // Import Leaflet CSS dynamically
+  await import('leaflet/dist/leaflet.css');
+
+  // Manually fix icon paths
+  const markerIcon2x = (await import('leaflet/dist/images/marker-icon-2x.png')).default;
+  const markerIcon = (await import('leaflet/dist/images/marker-icon.png')).default;
+  const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
+
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+  });
+
+  // Wait until Vue has rendered DOM
+  await nextTick();
+  const mapContainer = document.getElementById('provider-map');
+  if (!mapContainer) return console.error('Map container not found!');
+
+  initMap()
 });
+
+function initMap() {
+  map = L.map('provider-map').setView([20, 0], 2)
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map)
+
+  // Create a marker cluster group instead of a simple layer group
+  markersLayer = L.markerClusterGroup();
+  map.addLayer(markersLayer);
+
+  updateMarkers(leafletMarkers.value);
+
+  watch(leafletMarkers, (newMarkers) => {
+    updateMarkers(newMarkers)
+  })
+}
+
+function updateMarkers(markers) {
+  if (!markersLayer) return
+  markersLayer.clearLayers()
+
+  markers.forEach(marker => {
+    L.marker(marker.coords, {
+      icon: createSvgMarker(40)
+    })
+    .bindPopup(marker.popupContent, { maxWidth: 250 })
+    .addTo(markersLayer)
+  })
+
+  if (markers.length) {
+    const bounds = L.latLngBounds(markers.map(m => m.coords))
+    map.fitBounds(bounds, { padding: [50, 50] })
+  }
+}
 </script>
 
 <template>
@@ -574,6 +699,10 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <ClientOnly>
+    <div id="provider-map"></div>
+  </ClientOnly>
 </template>
 
 <style lang="postcss">
@@ -687,7 +816,6 @@ onMounted(() => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
@@ -733,7 +861,6 @@ onMounted(() => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
     font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
@@ -891,6 +1018,66 @@ onMounted(() => {
 
   .card {
     color: var(--color-text);
+  }
+}
+
+#provider-map {
+  width: 100%;
+  height: 700px;
+}
+
+.custom-leaflet-marker {
+  svg {
+    fill: var(--color-primary);
+  }
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.leaflet-popup-content {
+  width: auto !important;
+  margin: 0 !important;
+
+  &__inner {
+    display: flex;
+    flex-direction: row;
+    width: 350px;
+    height: 140px;
+    font-size: 14px;
+    font-family: var(--body-font-family);
+
+    a {
+      font-weight: 400;
+    }
+  }
+
+  &__image {
+    flex-basis: 140px;
+    align-content: center;
+
+    &--logo {
+      border-right: 1px solid var(--color-quaternary-lighten-5);
+
+      img {
+        width: 90%;
+        height: auto;
+        margin-left: 5%;
+      }
+    }
+
+    &--image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    flex-grow: 1;
+    padding: 15px;
   }
 }
 </style>
