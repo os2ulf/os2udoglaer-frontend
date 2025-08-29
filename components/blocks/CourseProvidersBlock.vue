@@ -357,10 +357,13 @@ const leafletMarkers = computed(() =>
     )
     .map((item) => {
       let imageHtml = '';
+      let innerWrapperClass = 'leaflet-popup-content__inner';
       if (item.field_logo.img_element) {
         imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="" /></a></div>`;
       } else if (item.field_image.img_element) {
         imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+      } else {
+        innerWrapperClass += ' leaflet-popup-content__inner--no-image';
       }
 
       return ({
@@ -368,7 +371,7 @@ const leafletMarkers = computed(() =>
         title: item.label,
         coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
         popupContent: `
-          <div class="leaflet-popup-content__inner">
+          <div class="${innerWrapperClass}">
             ${imageHtml}
             <div class="leaflet-popup-content__content">
               <h4>${item.label}</h4>
@@ -1118,6 +1121,12 @@ function updateMarkers(markers) {
   border-radius: 0 !important;
 }
 
+.leaflet-container a.leaflet-popup-close-button {
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 22px !important;
+}
+
 .leaflet-popup-content {
   width: auto !important;
   margin: 0 !important;
@@ -1130,35 +1139,47 @@ function updateMarkers(markers) {
     font-size: 14px;
     font-family: var(--body-font-family);
 
+    &--no-image {
+      width: 210px;
+    }
+
     a {
       font-weight: 400;
     }
   }
 
   &__image {
-    flex-basis: 140px;
-    align-content: center;
+    flex: 0 0 140px;
+
+    a {
+      display: block;
+    }
 
     &--logo {
       border-right: 1px solid var(--color-quaternary-lighten-5);
 
-      img {
-        width: 90%;
-        height: auto;
-        margin-left: 5%;
+      a {
+        margin: 15px;
       }
     }
 
-    &--image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    &--image {
+      a {
+        width: 100%;
+        height: 100%;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 
   &__content {
     flex-grow: 1;
-    padding: 15px;
+    padding: 15px 30px 15px 15px;
   }
 }
 </style>
