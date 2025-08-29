@@ -30,6 +30,8 @@ const allSortingOptions = ref(searchBlockData?.value?.facets);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
 const showAllFilters = ref(false);
+const showListView = ref(true);
+const showMapView = ref(false);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
@@ -388,37 +390,52 @@ onMounted(async() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
   isClient.value = true;
+});
 
-  // Only run Leaflet in the browser
-  if (!process.client) return;
-  // Dynamically import Leaflet in the browser
-  const leaflet = await import('leaflet');
-  L = leaflet.default;
+// Watch leafletMarkers globally to refresh markers whenever search/filter changes
+watch(leafletMarkers, (newMarkers) => {
+  if (map && markersLayer) {
+    updateMarkers(newMarkers);
+  }
+});
 
-  const LMarkerCluster = await import('leaflet.markercluster');
-  await import('leaflet.markercluster/dist/MarkerCluster.css');
-  await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
+watch(showMapView, async (value) => {
+  if (value) {
+    await nextTick(); // Wait for DOM to render
 
-  // Import Leaflet CSS dynamically
-  await import('leaflet/dist/leaflet.css');
+    // Lazy load Leaflet
+    if (!window.L) {
+      const leaflet = await import('leaflet');
+      window.L = leaflet.default;
 
-  // Manually fix icon paths
-  const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
+      const LMarkerCluster = await import('leaflet.markercluster');
+      await import('leaflet.markercluster/dist/MarkerCluster.css');
+      await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
+      await import('leaflet/dist/leaflet.css');
 
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    shadowUrl: markerShadow,
-  });
+      // Fix marker paths
+      const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({ shadowUrl: markerShadow });
+    }
 
-  // Wait until Vue has rendered DOM
-  await nextTick();
-  const mapContainer = document.getElementById('provider-map');
-  if (!mapContainer) return console.error('Map container not found!');
+    const mapContainer = document.getElementById('provider-map');
+    if (!mapContainer) return console.error('Map container not found!');
 
-  initMap()
+    initMap();
+  } else {
+    // Cleanup map when hiding
+    if (map) {
+      map.remove();
+      map = null;
+      markersLayer = null;
+    }
+  }
 });
 
 function initMap() {
+  if (map) return; // Prevent double init
+
   map = L.map('provider-map').setView([20, 0], 2)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -474,6 +491,32 @@ function updateMarkers(markers) {
                 :is-search="true"
                 @input="handleSearchByKeyword"
               />
+            </div>
+            <div class="search-block-provider__list-map-toggle">
+              <button
+                class="button button--ghost"
+                v-if="dynamicContent.length > 0 && isClient && showListView"
+                @click="showListView = false; showMapView = true;"
+              >
+                <NuxtIcon
+                  class="search-block-provider__chip-close"
+                  name="map"
+                  filled
+                ></NuxtIcon>
+                Vis på kort
+              </button>
+              <button
+                class="button button--ghost"
+                v-if="dynamicContent.length > 0 && isClient && showMapView"
+                @click="showListView = true; showMapView = false;"
+              >
+                <NuxtIcon
+                  class="search-block-provider__chip-close"
+                  name="grid"
+                  filled
+                ></NuxtIcon>
+                Vis listevisning
+              </button>
             </div>
 
             <div
@@ -580,7 +623,7 @@ function updateMarkers(markers) {
             class="search-block-provider__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search-block-provider__extra-filters-bar">
+            <div class="search-block-provider__extra-filters-bar" v-if="showListView">
               <div class="search-block-provider__results-found">
                 <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
               </div>
@@ -597,6 +640,7 @@ function updateMarkers(markers) {
             </div>
 
             <div
+              v-if="showListView"
               class="search-block-provider__result-items"
               :class="{
                 'search-block-provider__result-items--loading':
@@ -660,9 +704,13 @@ function updateMarkers(markers) {
               </TransitionGroup>
             </div>
 
+            <ClientOnly v-else-if="showMapView">
+              <div id="provider-map"></div>
+            </ClientOnly>
+
             <BasePager
               class="search-block-provider__pager"
-              v-if="pager"
+              v-if="pager && showListView"
               :pager="pager"
               @change="handlePager"
             />
@@ -695,16 +743,12 @@ function updateMarkers(markers) {
       </div>
     </div>
   </div>
-
-  <ClientOnly>
-    <div id="provider-map"></div>
-  </ClientOnly>
 </template>
 
 <style lang="postcss">
 .search-block-provider {
   &__label {
-    color: var(--color-text);
+    color: var(--theme-color);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -713,7 +757,7 @@ function updateMarkers(markers) {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-text);
+  color: var(--theme-color);
 
   &__skeleton {
     height: 100%;
@@ -735,6 +779,21 @@ function updateMarkers(markers) {
     gap: 24px;
     flex-wrap: wrap;
     min-height: auto @(--sm) 88px;
+
+    &-container {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  &__list-map-toggle {
+    margin-left: auto;
+
+    & .button {
+      margin-left: 16px;
+      border: var(--form-input-border);
+      font-weight: 400;
+    }
   }
 
   &__search-keyword {
@@ -993,18 +1052,44 @@ function updateMarkers(markers) {
     color: var(--color-text);
   }
 
+  .form-label {
+    background-color: var(--theme-background-color);
+    color: var(--theme-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
+
+    svg {
+      fill: var(--theme-color);
+    }
+  }
+
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+      color: var(--theme-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
   .form-input {
-    background-color: var(--color-gray-8);
+    background-color: var(--theme-background-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
 
     &:focus {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
