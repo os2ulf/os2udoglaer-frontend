@@ -13,6 +13,9 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  sectionWidth: {
+    type: String,
+  },
 });
 
 const searchBlockData = ref(props.blockData);
@@ -27,10 +30,32 @@ const allSortingOptions = ref(searchBlockData?.value?.facets);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
 const showAllFilters = ref(false);
+const showListView = ref(true);
+const showMapView = ref(false);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
 
+const isClient = ref(false)
+
+let map
+let markersLayer // A layer group to easily clear & redraw markers
+
+function createSvgMarker(size = 40) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="-64 0 512 512">
+      <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
+    </svg>
+  `;
+
+  return L.divIcon({
+    html: svg,
+    className: 'custom-leaflet-marker', // remove default styles
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size], // bottom center
+    popupAnchor: [0, -size]
+  });
+}
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
@@ -322,16 +347,132 @@ const searchResultSuffix = computed(() => {
   }
 });
 
+// Transform dynamicContent into Leaflet-friendly marker data
+const leafletMarkers = computed(() =>
+  dynamicContent.value
+    .filter(item =>
+      item.field_view_on_map === 'show_on_map' &&
+      item.field_dawa_address?.lat &&
+      item.field_dawa_address?.lng
+    )
+    .map((item) => {
+      let imageHtml = '';
+      let innerWrapperClass = 'leaflet-popup-content__inner';
+      if (item.field_logo.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="" /></a></div>`;
+      } else if (item.field_image.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+      } else {
+        innerWrapperClass += ' leaflet-popup-content__inner--no-image';
+      }
+
+      return ({
+        id: item.id,
+        title: item.label,
+        coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
+        popupContent: `
+          <div class="${innerWrapperClass}">
+            ${imageHtml}
+            <div class="leaflet-popup-content__content">
+              <h4>${item.label}</h4>
+              <a href="${item.link}">Se udbyder</a>
+            </div>
+          </div>
+        `
+      });
+    })
+);
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
   }
 });
 
-onMounted(() => {
+onMounted(async() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
+  isClient.value = true;
 });
+
+// Watch leafletMarkers globally to refresh markers whenever search/filter changes
+watch(leafletMarkers, (newMarkers) => {
+  if (map && markersLayer) {
+    updateMarkers(newMarkers);
+  }
+});
+
+watch(showMapView, async (value) => {
+  if (value) {
+    await nextTick(); // Wait for DOM to render
+
+    // Lazy load Leaflet
+    if (!window.L) {
+      const leaflet = await import('leaflet');
+      window.L = leaflet.default;
+
+      const LMarkerCluster = await import('leaflet.markercluster');
+      await import('leaflet.markercluster/dist/MarkerCluster.css');
+      await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
+      await import('leaflet/dist/leaflet.css');
+
+      // Fix marker paths
+      const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({ shadowUrl: markerShadow });
+    }
+
+    const mapContainer = document.getElementById('provider-map');
+    if (!mapContainer) return console.error('Map container not found!');
+
+    initMap();
+  } else {
+    // Cleanup map when hiding
+    if (map) {
+      map.remove();
+      map = null;
+      markersLayer = null;
+    }
+  }
+});
+
+function initMap() {
+  if (map) return; // Prevent double init
+
+  map = L.map('provider-map').setView([20, 0], 2)
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map)
+
+  // Create a marker cluster group instead of a simple layer group
+  markersLayer = L.markerClusterGroup();
+  map.addLayer(markersLayer);
+
+  updateMarkers(leafletMarkers.value);
+
+  watch(leafletMarkers, (newMarkers) => {
+    updateMarkers(newMarkers)
+  })
+}
+
+function updateMarkers(markers) {
+  if (!markersLayer) return
+  markersLayer.clearLayers()
+
+  markers.forEach(marker => {
+    L.marker(marker.coords, {
+      icon: createSvgMarker(40)
+    })
+    .bindPopup(marker.popupContent, { maxWidth: 250 })
+    .addTo(markersLayer)
+  })
+
+  if (markers.length) {
+    const bounds = L.latLngBounds(markers.map(m => m.coords))
+    map.fitBounds(bounds, { padding: [50, 50] })
+  }
+}
 </script>
 
 <template>
@@ -344,15 +485,43 @@ onMounted(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
           <div class="search-block-provider__filters-container">
-            <div class="search-block-provider__search-keyword">
-              <BaseInputFloatingLabel
-                v-model="searchKeyword"
-                type="text"
-                name="search"
-                label="Søg"
-                :is-search="true"
-                @input="handleSearchByKeyword"
-              />
+            <div class="search-block-provider__filters-container__inner">
+              <div class="search-block-provider__search-keyword">
+                <BaseInputFloatingLabel
+                  v-model="searchKeyword"
+                  type="text"
+                  name="search"
+                  label="Søg"
+                  :is-search="true"
+                  @input="handleSearchByKeyword"
+                />
+              </div>
+              <div class="search-block-provider__list-map-toggle">
+                <button
+                  class="button button--ghost"
+                  v-if="dynamicContent.length > 0 && isClient && showListView"
+                  @click="showListView = false; showMapView = true;"
+                >
+                  <NuxtIcon
+                    class="search-block-provider__chip-close"
+                    name="map"
+                    filled
+                  ></NuxtIcon>
+                  <span>Vis på kort</span>
+                </button>
+                <button
+                  class="button button--ghost"
+                  v-if="dynamicContent.length > 0 && isClient && showMapView"
+                  @click="showListView = true; showMapView = false;"
+                >
+                  <NuxtIcon
+                    class="search-block-provider__chip-close"
+                    name="grid"
+                    filled
+                  ></NuxtIcon>
+                  <span>Vis listevisning</span>
+                </button>
+              </div>
             </div>
 
             <div
@@ -459,7 +628,7 @@ onMounted(() => {
             class="search-block-provider__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search-block-provider__extra-filters-bar">
+            <div class="search-block-provider__extra-filters-bar" v-if="showListView">
               <div class="search-block-provider__results-found">
                 <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
               </div>
@@ -476,6 +645,7 @@ onMounted(() => {
             </div>
 
             <div
+              v-if="showListView"
               class="search-block-provider__result-items"
               :class="{
                 'search-block-provider__result-items--loading':
@@ -539,9 +709,13 @@ onMounted(() => {
               </TransitionGroup>
             </div>
 
+            <ClientOnly v-else-if="showMapView">
+              <div id="provider-map"></div>
+            </ClientOnly>
+
             <BasePager
               class="search-block-provider__pager"
-              v-if="pager"
+              v-if="pager && showListView"
               :pager="pager"
               @change="handlePager"
             />
@@ -579,7 +753,7 @@ onMounted(() => {
 <style lang="postcss">
 .search-block-provider {
   &__label {
-    color: var(--color-text);
+    color: var(--theme-color);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -588,7 +762,7 @@ onMounted(() => {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-text);
+  color: var(--theme-color);
 
   &__skeleton {
     height: 100%;
@@ -610,6 +784,35 @@ onMounted(() => {
     gap: 24px;
     flex-wrap: wrap;
     min-height: auto @(--sm) 88px;
+
+    &-container {
+      &__inner {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+      }
+    }
+  }
+
+  &__list-map-toggle {
+    margin-left: auto;
+
+    & .button {
+      max-height: 59px;
+      margin-left: 16px;
+      border: var(--form-input-border);
+      font-weight: 400;
+      white-space: nowrap;
+
+      @media (--viewport-ms-max) {
+        .nuxt-icon {
+          padding-right: 0;
+        }
+        span:not(.nuxt-icon) {
+          display: none;
+        }
+      }
+    }
   }
 
   &__search-keyword {
@@ -687,7 +890,6 @@ onMounted(() => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
@@ -733,7 +935,6 @@ onMounted(() => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
     font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
@@ -870,18 +1071,44 @@ onMounted(() => {
     color: var(--color-text);
   }
 
+  .form-label {
+    background-color: var(--theme-background-color);
+    color: var(--theme-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
+
+    svg {
+      fill: var(--theme-color);
+    }
+  }
+
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+      color: var(--theme-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
   .form-input {
-    background-color: var(--color-gray-8);
+    background-color: var(--theme-background-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
 
     &:focus {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
@@ -891,6 +1118,93 @@ onMounted(() => {
 
   .card {
     color: var(--color-text);
+  }
+}
+
+#provider-map {
+  width: 100%;
+  height: 0;
+  padding-bottom: 400px;
+
+  @media (--viewport-sm-min) {
+    padding-bottom: 70%;
+  }
+
+  @media (--viewport-md-min) {
+    padding-bottom: 60%;
+  }
+}
+
+.custom-leaflet-marker {
+  svg {
+    fill: var(--color-primary);
+  }
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 22px !important;
+}
+
+.leaflet-popup-content {
+  width: auto !important;
+  margin: 0 !important;
+
+  &__inner {
+    display: flex;
+    flex-direction: row;
+    width: 350px;
+    height: 140px;
+    font-size: 14px;
+    font-family: var(--body-font-family);
+
+    &--no-image {
+      width: 210px;
+    }
+
+    a {
+      font-weight: 400;
+    }
+  }
+
+  &__image {
+    flex: 0 0 140px;
+
+    a {
+      display: block;
+    }
+
+    &--logo {
+      border-right: 1px solid var(--color-quaternary-lighten-5);
+
+      a {
+        margin: 15px;
+      }
+    }
+
+    &--image {
+      a {
+        width: 100%;
+        height: 100%;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  &__content {
+    flex-grow: 1;
+    padding: 15px 30px 15px 15px;
   }
 }
 </style>

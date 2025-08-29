@@ -31,4 +31,10 @@
   /* Swiper */
   --theme-swiper-primary-color: var(--color-text);
   --theme-swiper-secondary-color: var(--color-gray-32);
+
+  /* Form */
+  --form-input-color: var(--color-text);
+  --form-input-color-hover: var(--color-text);
+  --form-input-color-focus: var(--color-text);
+  --form-input-border-focus: 1px solid var(--color-text);
 }
