@@ -485,41 +485,43 @@ function updateMarkers(markers) {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
           <div class="search-block-provider__filters-container">
-            <div class="search-block-provider__search-keyword">
-              <BaseInputFloatingLabel
-                v-model="searchKeyword"
-                type="text"
-                name="search"
-                label="Søg"
-                :is-search="true"
-                @input="handleSearchByKeyword"
-              />
-            </div>
-            <div class="search-block-provider__list-map-toggle">
-              <button
-                class="button button--ghost"
-                v-if="dynamicContent.length > 0 && isClient && showListView"
-                @click="showListView = false; showMapView = true;"
-              >
-                <NuxtIcon
-                  class="search-block-provider__chip-close"
-                  name="map"
-                  filled
-                ></NuxtIcon>
-                Vis på kort
-              </button>
-              <button
-                class="button button--ghost"
-                v-if="dynamicContent.length > 0 && isClient && showMapView"
-                @click="showListView = true; showMapView = false;"
-              >
-                <NuxtIcon
-                  class="search-block-provider__chip-close"
-                  name="grid"
-                  filled
-                ></NuxtIcon>
-                Vis listevisning
-              </button>
+            <div class="search-block-provider__filters-container__inner">
+              <div class="search-block-provider__search-keyword">
+                <BaseInputFloatingLabel
+                  v-model="searchKeyword"
+                  type="text"
+                  name="search"
+                  label="Søg"
+                  :is-search="true"
+                  @input="handleSearchByKeyword"
+                />
+              </div>
+              <div class="search-block-provider__list-map-toggle">
+                <button
+                  class="button button--ghost"
+                  v-if="dynamicContent.length > 0 && isClient && showListView"
+                  @click="showListView = false; showMapView = true;"
+                >
+                  <NuxtIcon
+                    class="search-block-provider__chip-close"
+                    name="map"
+                    filled
+                  ></NuxtIcon>
+                  <span>Vis på kort</span>
+                </button>
+                <button
+                  class="button button--ghost"
+                  v-if="dynamicContent.length > 0 && isClient && showMapView"
+                  @click="showListView = true; showMapView = false;"
+                >
+                  <NuxtIcon
+                    class="search-block-provider__chip-close"
+                    name="grid"
+                    filled
+                  ></NuxtIcon>
+                  <span>Vis listevisning</span>
+                </button>
+              </div>
             </div>
 
             <div
@@ -784,8 +786,11 @@ function updateMarkers(markers) {
     min-height: auto @(--sm) 88px;
 
     &-container {
-      display: flex;
-      flex-direction: row;
+      &__inner {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+      }
     }
   }
 
@@ -793,9 +798,20 @@ function updateMarkers(markers) {
     margin-left: auto;
 
     & .button {
+      max-height: 59px;
       margin-left: 16px;
       border: var(--form-input-border);
       font-weight: 400;
+      white-space: nowrap;
+
+      @media (--viewport-ms-max) {
+        .nuxt-icon {
+          padding-right: 0;
+        }
+        span:not(.nuxt-icon) {
+          display: none;
+        }
+      }
     }
   }
 
@@ -1107,7 +1123,16 @@ function updateMarkers(markers) {
 
 #provider-map {
   width: 100%;
-  height: 700px;
+  height: 0;
+  padding-bottom: 400px;
+
+  @media (--viewport-sm-min) {
+    padding-bottom: 70%;
+  }
+
+  @media (--viewport-md-min) {
+    padding-bottom: 60%;
+  }
 }
 
 .custom-leaflet-marker {
