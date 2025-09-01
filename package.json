@@ -19,6 +19,7 @@
     "@novicell/postcss-config": "^0.4.2",
     "@novicell/stylelint-config": "^0.2.10",
     "@nuxt/devtools": "^1.1.5",
+    "@types/leaflet": "^1.9.20",
     "cross-env": "^7.0.3",
     "eslint": "^9.0.0",
     "eslint-plugin-vue": "^9.25.0",

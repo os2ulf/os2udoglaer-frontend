@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import LeafletMap from '~/components/globals/map/LeafletMap.client.vue';
 
 const apiRouteStore = useApiRouteStore();
 const id = `search-block-provider-${uuidv4()}`;
@@ -38,24 +39,6 @@ const sortingString = ref(
 
 const isClient = ref(false)
 
-let map
-let markersLayer // A layer group to easily clear & redraw markers
-
-function createSvgMarker(size = 40) {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="-64 0 512 512">
-      <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
-    </svg>
-  `;
-
-  return L.divIcon({
-    html: svg,
-    className: 'custom-leaflet-marker', // remove default styles
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size], // bottom center
-    popupAnchor: [0, -size]
-  });
-}
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
@@ -394,85 +377,6 @@ onMounted(async() => {
   isLoadingPageResults.value = false;
   isClient.value = true;
 });
-
-// Watch leafletMarkers globally to refresh markers whenever search/filter changes
-watch(leafletMarkers, (newMarkers) => {
-  if (map && markersLayer) {
-    updateMarkers(newMarkers);
-  }
-});
-
-watch(showMapView, async (value) => {
-  if (value) {
-    await nextTick(); // Wait for DOM to render
-
-    // Lazy load Leaflet
-    if (!window.L) {
-      const leaflet = await import('leaflet');
-      window.L = leaflet.default;
-
-      const LMarkerCluster = await import('leaflet.markercluster');
-      await import('leaflet.markercluster/dist/MarkerCluster.css');
-      await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
-      await import('leaflet/dist/leaflet.css');
-
-      // Fix marker paths
-      const markerShadow = (await import('leaflet/dist/images/marker-shadow.png')).default;
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({ shadowUrl: markerShadow });
-    }
-
-    const mapContainer = document.getElementById('provider-map');
-    if (!mapContainer) return console.error('Map container not found!');
-
-    initMap();
-  } else {
-    // Cleanup map when hiding
-    if (map) {
-      map.remove();
-      map = null;
-      markersLayer = null;
-    }
-  }
-});
-
-function initMap() {
-  if (map) return; // Prevent double init
-
-  map = L.map('provider-map').setView([20, 0], 2)
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map)
-
-  // Create a marker cluster group instead of a simple layer group
-  markersLayer = L.markerClusterGroup();
-  map.addLayer(markersLayer);
-
-  updateMarkers(leafletMarkers.value);
-
-  watch(leafletMarkers, (newMarkers) => {
-    updateMarkers(newMarkers)
-  })
-}
-
-function updateMarkers(markers) {
-  if (!markersLayer) return
-  markersLayer.clearLayers()
-
-  markers.forEach(marker => {
-    L.marker(marker.coords, {
-      icon: createSvgMarker(40)
-    })
-    .bindPopup(marker.popupContent, { maxWidth: 250 })
-    .addTo(markersLayer)
-  })
-
-  if (markers.length) {
-    const bounds = L.latLngBounds(markers.map(m => m.coords))
-    map.fitBounds(bounds, { padding: [50, 50] })
-  }
-}
 </script>
 
 <template>
@@ -496,32 +400,34 @@ function updateMarkers(markers) {
                   @input="handleSearchByKeyword"
                 />
               </div>
-              <div class="search-block-provider__list-map-toggle">
-                <button
-                  class="button button--ghost"
-                  v-if="dynamicContent.length > 0 && isClient && showListView"
-                  @click="showListView = false; showMapView = true;"
-                >
-                  <NuxtIcon
-                    class="search-block-provider__chip-close"
-                    name="map"
-                    filled
-                  ></NuxtIcon>
-                  <span>Vis på kort</span>
-                </button>
-                <button
-                  class="button button--ghost"
-                  v-if="dynamicContent.length > 0 && isClient && showMapView"
-                  @click="showListView = true; showMapView = false;"
-                >
-                  <NuxtIcon
-                    class="search-block-provider__chip-close"
-                    name="grid"
-                    filled
-                  ></NuxtIcon>
-                  <span>Vis listevisning</span>
-                </button>
-              </div>
+              <ClientOnly>
+                <div class="search-block-provider__list-map-toggle">
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showListView"
+                    @click="showListView = false; showMapView = true;"
+                  >
+                    <NuxtIcon
+                      class="search-block-provider__chip-close"
+                      name="map"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis på kort</span>
+                  </button>
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showMapView"
+                    @click="showListView = true; showMapView = false;"
+                  >
+                    <NuxtIcon
+                      class="search-block-provider__chip-close"
+                      name="grid"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis listevisning</span>
+                  </button>
+                </div>
+              </ClientOnly>
             </div>
 
             <div
@@ -709,8 +615,11 @@ function updateMarkers(markers) {
               </TransitionGroup>
             </div>
 
-            <ClientOnly v-else-if="showMapView">
-              <div id="provider-map"></div>
+            <ClientOnly>
+              <LeafletMap
+                v-if="showMapView"
+                :markers="leafletMarkers"
+              />
             </ClientOnly>
 
             <BasePager
@@ -1118,93 +1027,6 @@ function updateMarkers(markers) {
 
   .card {
     color: var(--color-text);
-  }
-}
-
-#provider-map {
-  width: 100%;
-  height: 0;
-  padding-bottom: 400px;
-
-  @media (--viewport-sm-min) {
-    padding-bottom: 70%;
-  }
-
-  @media (--viewport-md-min) {
-    padding-bottom: 60%;
-  }
-}
-
-.custom-leaflet-marker {
-  svg {
-    fill: var(--color-primary);
-  }
-}
-
-.leaflet-popup-content-wrapper {
-  padding: 0 !important;
-  border-radius: 0 !important;
-}
-
-.leaflet-container a.leaflet-popup-close-button {
-  width: 30px !important;
-  height: 30px !important;
-  font-size: 22px !important;
-}
-
-.leaflet-popup-content {
-  width: auto !important;
-  margin: 0 !important;
-
-  &__inner {
-    display: flex;
-    flex-direction: row;
-    width: 350px;
-    height: 140px;
-    font-size: 14px;
-    font-family: var(--body-font-family);
-
-    &--no-image {
-      width: 210px;
-    }
-
-    a {
-      font-weight: 400;
-    }
-  }
-
-  &__image {
-    flex: 0 0 140px;
-
-    a {
-      display: block;
-    }
-
-    &--logo {
-      border-right: 1px solid var(--color-quaternary-lighten-5);
-
-      a {
-        margin: 15px;
-      }
-    }
-
-    &--image {
-      a {
-        width: 100%;
-        height: 100%;
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
-
-  &__content {
-    flex-grow: 1;
-    padding: 15px 30px 15px 15px;
   }
 }
 </style>
