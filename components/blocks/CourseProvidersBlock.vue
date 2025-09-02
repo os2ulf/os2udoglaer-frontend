@@ -351,13 +351,13 @@ const leafletMarkers = computed(() =>
 
       return ({
         id: item.id,
-        title: item.label,
+        title: item.field_name,
         coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
         popupContent: `
           <div class="${innerWrapperClass}">
             ${imageHtml}
             <div class="leaflet-popup-content__content">
-              <h4>${item.label}</h4>
+              <h4>${item.field_name}</h4>
               <a href="${item.link}">Se udbyder</a>
             </div>
           </div>
