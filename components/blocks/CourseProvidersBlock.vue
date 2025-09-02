@@ -348,7 +348,6 @@ const leafletMarkers = computed(() =>
       } else {
         innerWrapperClass += ' leaflet-popup-content__inner--no-image';
       }
-      console.log('item', item);
 
       return ({
         id: item.id,
