@@ -29,6 +29,12 @@ const showMapView = ref(false);
 
 const isClient = ref(false)
 
+const responseForMap: any = await fetch(
+  `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map`,
+);
+const dataForMapMarkers = await responseForMap.json();
+const dynamicMapContent = ref(dataForMapMarkers.results);
+
 // Exclude facet from default sorting options if facet_id is on of the below:
 const excludedFacetIds = [
   'course_is_free',
@@ -158,6 +164,12 @@ const getFilteredPageResults = async (
     );
     const data = await response.json();
 
+    const responseForMap: any = await fetch(
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+    );
+    const dataForMapMarkers = await responseForMap.json();
+
+    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
@@ -397,6 +409,12 @@ const handleExtractedFilters = async () => {
     );
     const data = await response.json();
 
+    const responseForMap: any = await fetch(
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+    );
+    const dataForMapMarkers = await responseForMap.json();
+
+    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
@@ -567,9 +585,9 @@ watch(selectedGuaranteePartnerFilter, () => {
   }
 });
 
-// Transform dynamicContent into Leaflet-friendly marker data
+// Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
-  dynamicContent.value
+  dynamicMapContent.value
     .filter(item =>
       (item.field_view_on_map === 'show_vendor_address' &&
       item.provider?.field_dawa_address?.data?.y &&
@@ -956,6 +974,8 @@ onMounted(() => {
 
   /* Filters stuff */
   &__filters {
+    position: relative;
+    z-index: 2;
     display: flex;
     padding-top: 32px;
     gap: 24px;
@@ -1018,23 +1038,19 @@ onMounted(() => {
   }
 
   &__show-all-filters {
-    display: flex;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    height: 56px;
-    border-radius: 56px;
-    background-color: var(--color-primary-lighten-4);
-    padding: 15px 32px;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--color-primary-darken-3);
-    align-items: center;
     position: relative;
-    transition: all 0.3s ease-in-out;
-    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 15px 32px;
+    background-color: var(--color-primary-lighten-4);
+    color: var(--color-primary-darken-3);
+    font-size: 16px;
     font-weight: 700;
+    border-radius: 56px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 
     &--mobile {
       display: none;
@@ -1059,6 +1075,7 @@ onMounted(() => {
     }
 
     &__counter {
+      display: block @(--sm) none;
       position: absolute;
       top: -3px;
       right: 0;
@@ -1067,12 +1084,10 @@ onMounted(() => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-secondary-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
       font-weight: 600;
-      display: block @(--sm) none;
     }
   }
 
@@ -1171,16 +1186,14 @@ onMounted(() => {
   }
 
   &__chip-clear {
+    padding: 7px 16px;
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
-    font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
     color: var(--color-primary-darken-3);
     transition: color 0.3s ease-in-out;
-    padding: 7px 16px;
 
     &:hover {
       color: var(--color-primary);
@@ -1189,6 +1202,8 @@ onMounted(() => {
 
   /* Results stuff */
   &__results-container {
+    position: relative;
+    z-index: 1;
     padding-top: 24px @(--sm) 96px;
 
     &--loading {
