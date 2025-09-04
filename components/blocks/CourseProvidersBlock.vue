@@ -108,7 +108,7 @@ const getFilteredPageResults = async (
     const data = await response.json();
 
     const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
     );
     const dataForMapMarkers = await responseForMap.json();
 
@@ -284,7 +284,7 @@ const handleExtractedFilters = async () => {
     const data = await response.json();
 
     const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
     );
     const dataForMapMarkers = await responseForMap.json();
 

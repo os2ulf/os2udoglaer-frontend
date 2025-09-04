@@ -58,16 +58,20 @@ function updateMarkers(markers: Marker[]) {
 
   markersLayer.clearLayers();
 
+  if (markers.length === 0) {
+    // Reset to default world view
+    map.setView([20, 0], 2);
+    return;
+  }
+
   markers.forEach((m) => {
     L.marker(m.coords, { icon: createSvgMarker(40) })
       .bindPopup(m.popupContent, { maxWidth: 250 })
       .addTo(markersLayer as L.LayerGroup);
   });
 
-  if (markers.length) {
-    const bounds = L.latLngBounds(markers.map((m) => m.coords));
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }
+  const bounds = L.latLngBounds(markers.map((m) => m.coords));
+  map.fitBounds(bounds, { padding: [50, 50] });
 }
 
 onMounted(() => {
@@ -91,12 +95,12 @@ onBeforeUnmount(() => {
     markersLayer = null;
   }
 });
+console.log('props.markers.length', props.markers.length);
 </script>
 
 <template>
-  <div v-if="props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl">
-  </div>
-  <div v-else class="text-center py-10">
+  <div v-show="props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl"></div>
+  <div v-if="props.markers.length === 0" class="text-center py-10">
     <p>Der er ingen steder at vise.</p>
   </div>
 </template>
