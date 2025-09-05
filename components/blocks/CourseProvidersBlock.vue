@@ -39,6 +39,12 @@ const sortingString = ref(
 
 const isClient = ref(false)
 
+const responseForMap: any = await fetch(
+  `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map`,
+);
+const dataForMapMarkers = await responseForMap.json();
+const dynamicMapContent = ref(dataForMapMarkers.results);
+
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
@@ -101,6 +107,12 @@ const getFilteredPageResults = async (
     );
     const data = await response.json();
 
+    const responseForMap: any = await fetch(
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+    );
+    const dataForMapMarkers = await responseForMap.json();
+
+    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -269,8 +281,14 @@ const handleExtractedFilters = async () => {
     const response: any = await fetch(
       `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
     );
-
     const data = await response.json();
+
+    const responseForMap: any = await fetch(
+      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
+    );
+    const dataForMapMarkers = await responseForMap.json();
+
+    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -330,9 +348,9 @@ const searchResultSuffix = computed(() => {
   }
 });
 
-// Transform dynamicContent into Leaflet-friendly marker data
+// Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
-  dynamicContent.value
+  dynamicMapContent.value
     .filter(item =>
       item.field_view_on_map === 'show_on_map' &&
       item.field_dawa_address?.lat &&
@@ -688,6 +706,8 @@ onMounted(async() => {
 
   /* Filters stuff */
   &__filters {
+    position: relative;
+    z-index: 2;
     display: flex;
     padding-top: 32px;
     gap: 24px;
@@ -751,22 +771,18 @@ onMounted(async() => {
 
   &__show-all-filters {
     display: flex;
-    background: transparent;
-    border: none;
-    padding: 0;
+    padding: 15px 32px;
     cursor: pointer;
     height: 56px;
     border-radius: 56px;
     background-color: var(--color-primary-lighten-4);
-    padding: 15px 32px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-primary-darken-3);
     align-items: center;
     position: relative;
     transition: all 0.3s ease-in-out;
     border: 1px solid transparent;
-    font-weight: 700;
 
     &--mobile {
       display: none;
@@ -858,6 +874,8 @@ onMounted(async() => {
 
   /* Results stuff */
   &__results-container {
+    position: relative;
+    z-index: 1;
     padding-top: 24px @(--sm) 96px;
 
     &--loading {

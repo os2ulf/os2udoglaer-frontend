@@ -58,16 +58,20 @@ function updateMarkers(markers: Marker[]) {
 
   markersLayer.clearLayers();
 
+  if (markers.length === 0) {
+    // Reset to default world view
+    map.setView([20, 0], 2);
+    return;
+  }
+
   markers.forEach((m) => {
     L.marker(m.coords, { icon: createSvgMarker(40) })
       .bindPopup(m.popupContent, { maxWidth: 250 })
       .addTo(markersLayer as L.LayerGroup);
   });
 
-  if (markers.length) {
-    const bounds = L.latLngBounds(markers.map((m) => m.coords));
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }
+  const bounds = L.latLngBounds(markers.map((m) => m.coords));
+  map.fitBounds(bounds, { padding: [50, 50] });
 }
 
 onMounted(() => {
@@ -94,7 +98,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div id="provider-map" class="provider-map" ref="mapEl">
+  <div v-show="props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl"></div>
+  <div v-if="props.markers.length === 0" class="text-center py-10">
+    <p>Der er ingen steder at vise.</p>
   </div>
 </template>
 
@@ -141,13 +147,13 @@ onBeforeUnmount(() => {
   &__inner {
     display: flex;
     flex-direction: row;
-    width: 350px;
-    height: 140px;
+    width: 400px;
+    min-height: 140px;
     font-size: 14px;
     font-family: var(--body-font-family);
 
     &--no-image {
-      width: 210px;
+      width: 260px;
     }
 
     a {
@@ -187,6 +193,12 @@ onBeforeUnmount(() => {
   &__content {
     flex-grow: 1;
     padding: 15px 30px 15px 15px;
+
+    p {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-family: var(--body-font-family);
+    }
   }
 }
 </style>
