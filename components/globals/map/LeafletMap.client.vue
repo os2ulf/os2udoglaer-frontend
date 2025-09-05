@@ -95,7 +95,6 @@ onBeforeUnmount(() => {
     markersLayer = null;
   }
 });
-console.log('props.markers.length', props.markers.length);
 </script>
 
 <template>
