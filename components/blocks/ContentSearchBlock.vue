@@ -29,11 +29,8 @@ const showMapView = ref(false);
 
 const isClient = ref(false)
 
-const responseForMap: any = await fetch(
-  `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map`,
-);
-const dataForMapMarkers = await responseForMap.json();
-const dynamicMapContent = ref(dataForMapMarkers.results);
+const leafletMapRef = ref(null);
+const dynamicMapContent = ref<any[]>([]);
 
 // Exclude facet from default sorting options if facet_id is on of the below:
 const excludedFacetIds = [
@@ -164,12 +161,14 @@ const getFilteredPageResults = async (
     );
     const data = await response.json();
 
-    const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-    );
-    const dataForMapMarkers = await responseForMap.json();
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
-    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
@@ -409,12 +408,14 @@ const handleExtractedFilters = async () => {
     );
     const data = await response.json();
 
-    const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-    );
-    const dataForMapMarkers = await responseForMap.json();
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
-    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
@@ -585,6 +586,30 @@ watch(selectedGuaranteePartnerFilter, () => {
   }
 });
 
+watch(showMapView, async (newVal) => {
+  if (newVal) {
+    try {
+      let filterString = '';
+      selectedFiltersData.forEach((filter, index) => {
+        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+      });
+
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+      // wait for DOM to render map container
+      await nextTick();
+      // force Leaflet to recalc size
+      leafletMapRef.value?.refreshMapAndFitBounds();
+    } catch (error) {
+      console.error('Error fetching map results:', error);
+      dynamicMapContent.value = [];
+    }
+  }
+});
+
 // Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
   dynamicMapContent.value
@@ -592,7 +617,10 @@ const leafletMarkers = computed(() =>
       (item.field_view_on_map === 'show_vendor_address' &&
       item.provider?.field_dawa_address?.data?.y &&
       item.provider?.field_dawa_address?.data?.x) ||
-      (item.field_view_on_map === 'show_on_map' &&
+      (item.field_view_on_map === 'show_vendor_address' &&
+      item.corporation?.field_dawa_address?.data?.y &&
+      item.corporation?.field_dawa_address?.data?.x) ||
+      ('show_alternative_address' &&
       item.field_dawa_address?.lat &&
       item.field_dawa_address?.lng)
     )
@@ -607,9 +635,16 @@ const leafletMarkers = computed(() =>
 
       let latitude = '';
       let longitude = '';
-      if (item.field_view_on_map === 'show_vendor_address') {
+      if (item.field_view_on_map === 'show_vendor_address' &&
+          item.provider?.field_dawa_address?.data?.y &&
+          item.provider?.field_dawa_address?.data?.x) {
         latitude = item.provider?.field_dawa_address?.data?.y;
         longitude = item.provider?.field_dawa_address?.data?.x;
+      } else if (item.field_view_on_map === 'show_vendor_address' &&
+          item.corporation?.field_dawa_address?.data?.y &&
+          item.corporation?.field_dawa_address?.data?.x) {
+        latitude = item.corporation?.field_dawa_address?.data?.y;
+        longitude = item.corporation?.field_dawa_address?.data?.x;
       } else {
         latitude = item.field_dawa_address?.lat;
         longitude = item.field_dawa_address?.lng;
@@ -904,6 +939,7 @@ onMounted(() => {
             <ClientOnly>
               <LeafletMap
                 v-if="showMapView"
+                ref="leafletMapRef"
                 :markers="leafletMarkers"
               />
             </ClientOnly>

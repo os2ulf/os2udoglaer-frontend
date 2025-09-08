@@ -39,11 +39,8 @@ const sortingString = ref(
 
 const isClient = ref(false)
 
-const responseForMap: any = await fetch(
-  `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map`,
-);
-const dataForMapMarkers = await responseForMap.json();
-const dynamicMapContent = ref(dataForMapMarkers.results);
+const leafletMapRef = ref(null);
+const dynamicMapContent = ref<any[]>([]);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -107,12 +104,14 @@ const getFilteredPageResults = async (
     );
     const data = await response.json();
 
-    const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
-    );
-    const dataForMapMarkers = await responseForMap.json();
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
-    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -283,12 +282,14 @@ const handleExtractedFilters = async () => {
     );
     const data = await response.json();
 
-    const responseForMap: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
-    );
-    const dataForMapMarkers = await responseForMap.json();
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
-    dynamicMapContent.value = dataForMapMarkers.results;
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -345,6 +346,30 @@ const searchResultSuffix = computed(() => {
     return totalItemsFound.value > 1 ? 'udbydere' : 'udbyder';
   } else {
     return totalItemsFound.value > 1 ? 'virksomheder' : 'virksomhed';
+  }
+});
+
+watch(showMapView, async (newVal) => {
+  if (newVal) {
+    try {
+      let filterString = '';
+      selectedFiltersData.forEach((filter, index) => {
+        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+      });
+
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+      // wait for DOM to render map container
+      await nextTick();
+      // force Leaflet to recalc size
+      leafletMapRef.value?.refreshMapAndFitBounds();
+    } catch (error) {
+      console.error('Error fetching map results:', error);
+      dynamicMapContent.value = [];
+    }
   }
 });
 
@@ -636,6 +661,7 @@ onMounted(async() => {
             <ClientOnly>
               <LeafletMap
                 v-if="showMapView"
+                ref="leafletMapRef"
                 :markers="leafletMarkers"
               />
             </ClientOnly>
