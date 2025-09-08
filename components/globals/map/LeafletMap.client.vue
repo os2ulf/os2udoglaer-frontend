@@ -95,6 +95,22 @@ onBeforeUnmount(() => {
     markersLayer = null;
   }
 });
+
+function refreshMapAndFitBounds() {
+  if (!map) return;
+
+  // First refresh layout
+  map.invalidateSize();
+
+  // Then refit bounds if markers exist
+  if (markersLayer && markersLayer.getLayers().length > 0) {
+    const bounds = L.latLngBounds(
+      (markersLayer.getLayers() as L.Marker[]).map((m: any) => m.getLatLng())
+    );
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }
+}
+defineExpose({ refreshMapAndFitBounds });
 </script>
 
 <template>
