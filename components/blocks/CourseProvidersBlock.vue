@@ -41,6 +41,7 @@ const isClient = ref(false)
 
 const leafletMapRef = ref(null);
 const dynamicMapContent = ref<any[]>([]);
+const loadingMap = ref(false);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -352,6 +353,7 @@ const searchResultSuffix = computed(() => {
 watch(showMapView, async (newVal) => {
   if (newVal) {
     try {
+      loadingMap.value = true;
       let filterString = '';
       selectedFiltersData.forEach((filter, index) => {
         filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
@@ -362,13 +364,13 @@ watch(showMapView, async (newVal) => {
       );
       const dataForMapMarkers = await responseForMap.json();
       dynamicMapContent.value = dataForMapMarkers.results;
-      // wait for DOM to render map container
-      await nextTick();
-      // force Leaflet to recalc size
-      leafletMapRef.value?.refreshMapAndFitBounds();
     } catch (error) {
       console.error('Error fetching map results:', error);
       dynamicMapContent.value = [];
+    } finally {
+      loadingMap.value = true;
+      await nextTick();
+      leafletMapRef.value?.refreshMapAndFitBounds();
     }
   }
 });
@@ -663,6 +665,7 @@ onMounted(async() => {
                 v-if="showMapView"
                 ref="leafletMapRef"
                 :markers="leafletMarkers"
+                :loading="loadingMap"
               />
             </ClientOnly>
 
