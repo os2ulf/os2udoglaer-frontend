@@ -16,6 +16,7 @@ type Marker = {
 
 const props = defineProps<{
   markers: Marker[];
+  loading?: boolean;
   heightClass?: string; // allow custom height if you want
 }>();
 
@@ -114,8 +115,11 @@ defineExpose({ refreshMapAndFitBounds });
 </script>
 
 <template>
-  <div v-show="props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl"></div>
-  <div v-if="props.markers.length === 0" class="text-center py-10">
+  <div v-if="props.loading" class="loading">
+    <BaseLoading />
+  </div>
+  <div v-show="!props.loading && props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl"></div>
+  <div v-show="!props.loading && props.markers.length === 0" class="text-center py-10">
     <p>Der er ingen steder at vise.</p>
   </div>
 </template>
