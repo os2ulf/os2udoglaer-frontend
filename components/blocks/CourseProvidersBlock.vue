@@ -368,7 +368,7 @@ watch(showMapView, async (newVal) => {
       console.error('Error fetching map results:', error);
       dynamicMapContent.value = [];
     } finally {
-      loadingMap.value = true;
+      loadingMap.value = false;
       await nextTick();
       leafletMapRef.value?.refreshMapAndFitBounds();
     }
