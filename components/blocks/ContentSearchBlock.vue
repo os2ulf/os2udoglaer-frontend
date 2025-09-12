@@ -27,7 +27,7 @@ const defaultSortingOptions = ref(searchBlockData?.value?.facets);
 const showListView = ref(true);
 const showMapView = ref(false);
 
-const isClient = ref(false)
+const isClient = ref(false);
 
 const leafletMapRef = ref(null);
 const dynamicMapContent = ref<any[]>([]);
@@ -600,6 +600,7 @@ watch(showMapView, async (newVal) => {
         `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
       );
       const dataForMapMarkers = await responseForMap.json();
+
       dynamicMapContent.value = dataForMapMarkers.results;
     } catch (error) {
       console.error('Error fetching map results:', error);
@@ -612,19 +613,31 @@ watch(showMapView, async (newVal) => {
   }
 });
 
+const getBundleCTA = (bundle) => {
+  const map = {
+    course: 'Se forløbet',
+    internship: 'Se praktikken',
+    junior_apprenticeship: 'Se forløbet',
+    course_educators: 'Se kurset',
+  };
+
+  return map[bundle] || 'Se forløbet';
+};
+
 // Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
   dynamicMapContent.value
-    .filter(item =>
-      (item.field_view_on_map === 'show_vendor_address' &&
-      item.provider?.field_dawa_address?.data?.y &&
-      item.provider?.field_dawa_address?.data?.x) ||
-      (item.field_view_on_map === 'show_vendor_address' &&
-      item.corporation?.field_dawa_address?.data?.y &&
-      item.corporation?.field_dawa_address?.data?.x) ||
-      ('show_alternative_address' &&
-      item.field_dawa_address?.lat &&
-      item.field_dawa_address?.lng)
+    .filter(
+      (item) =>
+        (item.field_view_on_map === 'show_vendor_address' &&
+          item.provider?.field_dawa_address?.data?.y &&
+          item.provider?.field_dawa_address?.data?.x) ||
+        (item.field_view_on_map === 'show_vendor_address' &&
+          item.corporation?.field_dawa_address?.data?.y &&
+          item.corporation?.field_dawa_address?.data?.x) ||
+        ('show_alternative_address' &&
+          item.field_dawa_address?.lat &&
+          item.field_dawa_address?.lng),
     )
     .map((item) => {
       let imageHtml = '';
@@ -637,14 +650,18 @@ const leafletMarkers = computed(() =>
 
       let latitude = '';
       let longitude = '';
-      if (item.field_view_on_map === 'show_vendor_address' &&
-          item.provider?.field_dawa_address?.data?.y &&
-          item.provider?.field_dawa_address?.data?.x) {
+      if (
+        item.field_view_on_map === 'show_vendor_address' &&
+        item.provider?.field_dawa_address?.data?.y &&
+        item.provider?.field_dawa_address?.data?.x
+      ) {
         latitude = item.provider?.field_dawa_address?.data?.y;
         longitude = item.provider?.field_dawa_address?.data?.x;
-      } else if (item.field_view_on_map === 'show_vendor_address' &&
-          item.corporation?.field_dawa_address?.data?.y &&
-          item.corporation?.field_dawa_address?.data?.x) {
+      } else if (
+        item.field_view_on_map === 'show_vendor_address' &&
+        item.corporation?.field_dawa_address?.data?.y &&
+        item.corporation?.field_dawa_address?.data?.x
+      ) {
         latitude = item.corporation?.field_dawa_address?.data?.y;
         longitude = item.corporation?.field_dawa_address?.data?.x;
       } else {
@@ -657,22 +674,22 @@ const leafletMarkers = computed(() =>
         providerHtml = `<p>Udbyder: <a href="${item.provider.link}">${item.provider.field_name}</a></p>`;
       }
 
-      return ({
+      return {
         id: item.id,
         title: item.label,
         coords: [latitude, longitude],
         popupContent: `
-          <div class="${innerWrapperClass}">
-            ${imageHtml}
-            <div class="leaflet-popup-content__content">
-              <h4>${item.label}</h4>
-              ${providerHtml}
-              <a href="${item.link}">Se heleforl&oslash;bet</a>
-            </div>
+        <div class="${innerWrapperClass} leaflet-popup-clickable" data-link="${item.link}">
+          ${imageHtml}
+          <div class="leaflet-popup-content__content">
+            <h4>${item.label}</h4>
+            ${providerHtml}
+            <a href="${item.link}">${getBundleCTA(item.bundle)}</a>
           </div>
-        `
-      });
-    })
+        </div>
+        `,
+      };
+    }),
 );
 
 onBeforeMount(() => {
@@ -714,7 +731,10 @@ onMounted(() => {
                   <button
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showListView"
-                    @click="showListView = false; showMapView = true;"
+                    @click="
+                      showListView = false;
+                      showMapView = true;
+                    "
                   >
                     <NuxtIcon
                       class="search-block__chip-close"
@@ -726,7 +746,10 @@ onMounted(() => {
                   <button
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showMapView"
-                    @click="showListView = true; showMapView = false;"
+                    @click="
+                      showListView = true;
+                      showMapView = false;
+                    "
                   >
                     <NuxtIcon
                       class="search-block__chip-close"
