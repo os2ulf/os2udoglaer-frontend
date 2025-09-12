@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-
-// CSS can be statically imported here safely (no hydration issues since this file is client-only)
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -75,28 +73,6 @@ function updateMarkers(markers: Marker[]) {
   map.fitBounds(bounds, { padding: [50, 50] });
 }
 
-onMounted(() => {
-  initMap();
-});
-
-// keep markers in sync with filters/search
-watch(
-  () => props.markers,
-  (m) => {
-    updateMarkers(m || []);
-  },
-  { deep: true }
-);
-
-onBeforeUnmount(() => {
-  try {
-    map?.remove();
-  } finally {
-    map = null;
-    markersLayer = null;
-  }
-});
-
 function refreshMapAndFitBounds() {
   if (!map) return;
 
@@ -106,20 +82,75 @@ function refreshMapAndFitBounds() {
   // Then refit bounds if markers exist
   if (markersLayer && markersLayer.getLayers().length > 0) {
     const bounds = L.latLngBounds(
-      (markersLayer.getLayers() as L.Marker[]).map((m: any) => m.getLatLng())
+      (markersLayer.getLayers() as L.Marker[]).map((m: any) => m.getLatLng()),
     );
     map.fitBounds(bounds, { padding: [50, 50] });
   }
 }
 defineExpose({ refreshMapAndFitBounds });
+
+// keep markers in sync with filters/search
+watch(
+  () => props.markers,
+  (m) => {
+    updateMarkers(m || []);
+  },
+  { deep: true },
+);
+
+onMounted(() => {
+  initMap();
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+
+    const clickable = target.closest('.leaflet-popup-clickable');
+    const clickedLink = target.closest('a');
+
+    const tag = target.tagName.toLowerCase();
+    const isTextElement = [
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'p',
+      'span',
+    ].includes(tag);
+
+    if (clickable && !clickedLink && !isTextElement) {
+      const link = clickable.getAttribute('data-link');
+      if (link) {
+        window.location.href = link;
+      }
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  try {
+    map?.remove();
+  } finally {
+    map = null;
+    markersLayer = null;
+  }
+});
 </script>
 
 <template>
-  <div v-if="props.loading" class="loading">
-    <BaseLoading />
-  </div>
-  <div v-show="!props.loading && props.markers.length > 0" id="provider-map" class="provider-map" ref="mapEl"></div>
-  <div v-show="!props.loading && props.markers.length === 0" class="text-center py-10">
+  <BaseLoading v-if="props.loading" />
+
+  <div
+    v-show="!props.loading && props.markers.length > 0"
+    id="provider-map"
+    class="provider-map"
+    ref="mapEl"
+  ></div>
+  <div
+    v-show="!props.loading && props.markers.length === 0"
+    class="text-center py-10"
+  >
     <p>Der er ingen steder at vise.</p>
   </div>
 </template>
@@ -213,11 +244,22 @@ defineExpose({ refreshMapAndFitBounds });
   &__content {
     flex-grow: 1;
     padding: 15px 30px 15px 15px;
+    cursor: pointer;
 
     p {
       margin: 0 0 8px;
       font-size: 14px;
       font-family: var(--body-font-family);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+      cursor: default;
     }
   }
 }
