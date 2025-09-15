@@ -375,6 +375,15 @@ watch(showMapView, async (newVal) => {
   }
 });
 
+const getBundleCTA = (bundle) => {
+  const map = {
+    Udbyder: 'Se udbyder',
+    Virksomhed: 'Se virksomhed',
+  };
+
+  return map[bundle] || 'Se udbyder';
+};
+
 // Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
   dynamicMapContent.value
@@ -403,7 +412,7 @@ const leafletMarkers = computed(() =>
             ${imageHtml}
             <div class="leaflet-popup-content__content">
               <h4><a href="${item.link}">${item.field_name}</a></h4>
-              <a href="${item.link}">Se udbyder</a>
+              <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle_label)}</a>
             </div>
           </div>
         `

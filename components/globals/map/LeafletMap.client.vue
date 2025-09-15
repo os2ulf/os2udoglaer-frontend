@@ -245,7 +245,6 @@ onBeforeUnmount(() => {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
-    justify-content: space-between;
     padding: 15px 30px 15px 15px;
 
     p {
@@ -262,6 +261,11 @@ onBeforeUnmount(() => {
         font-size: inherit;
       }
     }
+  }
+
+  &__link {
+    display: block;
+    margin-top: auto;
   }
 }
 </style>
