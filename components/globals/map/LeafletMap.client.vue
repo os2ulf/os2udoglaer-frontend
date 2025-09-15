@@ -247,22 +247,11 @@ onBeforeUnmount(() => {
     flex-direction: column;
     justify-content: space-between;
     padding: 15px 30px 15px 15px;
-    cursor: pointer;
 
     p {
       margin: 0 0 8px;
       font-size: 14px;
       font-family: var(--body-font-family);
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p {
-      cursor: default;
     }
 
     h4 {
