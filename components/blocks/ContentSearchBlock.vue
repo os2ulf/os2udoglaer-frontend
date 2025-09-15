@@ -669,21 +669,15 @@ const leafletMarkers = computed(() =>
         longitude = item.field_dawa_address?.lng;
       }
 
-      let providerHtml = '';
-      if (item.provider) {
-        providerHtml = `<p>Udbyder: <a href="${item.provider.link}">${item.provider.field_name}</a></p>`;
-      }
-
       return {
         id: item.id,
         title: item.label,
         coords: [latitude, longitude],
         popupContent: `
-        <div class="${innerWrapperClass} leaflet-popup-clickable" data-link="${item.link}">
+        <div class="${innerWrapperClass}">
           ${imageHtml}
           <div class="leaflet-popup-content__content">
-            <h4>${item.label}</h4>
-            ${providerHtml}
+            <h4><a href="${item.link}">${item.label}</a></h4>
             <a href="${item.link}">${getBundleCTA(item.bundle)}</a>
           </div>
         </div>
