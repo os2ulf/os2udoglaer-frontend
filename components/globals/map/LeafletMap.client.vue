@@ -220,6 +220,7 @@ onBeforeUnmount(() => {
     }
 
     &--logo {
+      align-content: center;
       border-right: 1px solid var(--color-quaternary-lighten-5);
 
       a {
