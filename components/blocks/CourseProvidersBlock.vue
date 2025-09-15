@@ -402,7 +402,7 @@ const leafletMarkers = computed(() =>
           <div class="${innerWrapperClass}">
             ${imageHtml}
             <div class="leaflet-popup-content__content">
-              <h4>${item.field_name}</h4>
+              <h4><a href="${item.link}">${item.field_name}</a></h4>
               <a href="${item.link}">Se udbyder</a>
             </div>
           </div>

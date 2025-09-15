@@ -242,7 +242,10 @@ onBeforeUnmount(() => {
   }
 
   &__content {
+    display: flex;
     flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 15px 30px 15px 15px;
     cursor: pointer;
 
@@ -260,6 +263,15 @@ onBeforeUnmount(() => {
     h6,
     p {
       cursor: default;
+    }
+
+    h4 {
+      a {
+        text-decoration: none;
+        color: inherit;
+        font-weight: inherit;
+        font-size: inherit;
+      }
     }
   }
 }
