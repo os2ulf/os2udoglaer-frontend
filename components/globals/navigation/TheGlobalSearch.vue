@@ -117,7 +117,7 @@ const handleSearch = () => {
     width: 48px;
 
     :deep(path) {
-      stroke: var(--color-white);
+      fill: var(--color-white);
     }
   }
 

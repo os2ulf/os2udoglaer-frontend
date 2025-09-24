@@ -2,6 +2,7 @@
 // @ts-nocheck
 import { v4 as uuidv4 } from 'uuid';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import LeafletMap from '~/components/globals/map/LeafletMap.client.vue';
 
 const apiRouteStore = useApiRouteStore();
 
@@ -23,6 +24,14 @@ const dynamicContent = ref(searchBlockData?.value?.results);
 const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
 const defaultSortingOptions = ref(searchBlockData?.value?.facets);
+const showListView = ref(true);
+const showMapView = ref(false);
+
+const isClient = ref(false);
+
+const leafletMapRef = ref(null);
+const dynamicMapContent = ref<any[]>([]);
+const loadingMap = ref(false);
 
 // Exclude facet from default sorting options if facet_id is on of the below:
 const excludedFacetIds = [
@@ -152,6 +161,14 @@ const getFilteredPageResults = async (
       `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
     );
     const data = await response.json();
+
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
@@ -392,6 +409,14 @@ const handleExtractedFilters = async () => {
     );
     const data = await response.json();
 
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
+
     dynamicContent.value = data.results;
     searchResultString.value = data.result_string;
     pager.value = data.pager;
@@ -562,6 +587,111 @@ watch(selectedGuaranteePartnerFilter, () => {
   }
 });
 
+watch(showMapView, async (newVal) => {
+  if (newVal) {
+    try {
+      loadingMap.value = true;
+      let filterString = '';
+      selectedFiltersData.forEach((filter, index) => {
+        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+      });
+
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+
+      dynamicMapContent.value = dataForMapMarkers.results;
+    } catch (error) {
+      console.error('Error fetching map results:', error);
+      dynamicMapContent.value = [];
+    } finally {
+      loadingMap.value = false;
+      await nextTick();
+      leafletMapRef.value?.refreshMapAndFitBounds();
+    }
+  }
+});
+
+const getBundleCTA = (bundle) => {
+  const map = {
+    course: 'Se forløbet',
+    internship: 'Se praktikken',
+    junior_apprenticeship: 'Se forløbet',
+    course_educators: 'Se kurset',
+  };
+
+  return map[bundle] || 'Se forløbet';
+};
+
+// Transform dynamicMapContent into Leaflet-friendly marker data
+const leafletMarkers = computed(() =>
+  dynamicMapContent.value
+    .filter(
+      (item) =>
+        (item.field_view_on_map === 'show_vendor_address' &&
+          item.provider?.field_dawa_address?.data?.y &&
+          item.provider?.field_dawa_address?.data?.x) ||
+        (item.field_view_on_map === 'show_vendor_address' &&
+          item.corporation?.field_dawa_address?.data?.y &&
+          item.corporation?.field_dawa_address?.data?.x) ||
+        ('show_alternative_address' &&
+          item.field_dawa_address?.lat &&
+          item.field_dawa_address?.lng),
+    )
+    .map((item) => {
+      let imageHtml = '';
+      let innerWrapperClass = 'leaflet-popup-content__inner';
+      if (item.field_image.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+      } else {
+        innerWrapperClass += ' leaflet-popup-content__inner--no-image';
+      }
+
+      let latitude = '';
+      let longitude = '';
+      if (
+        item.field_view_on_map === 'show_vendor_address' &&
+        item.provider?.field_dawa_address?.data?.y &&
+        item.provider?.field_dawa_address?.data?.x
+      ) {
+        latitude = item.provider?.field_dawa_address?.data?.y;
+        longitude = item.provider?.field_dawa_address?.data?.x;
+      } else if (
+        item.field_view_on_map === 'show_vendor_address' &&
+        item.corporation?.field_dawa_address?.data?.y &&
+        item.corporation?.field_dawa_address?.data?.x
+      ) {
+        latitude = item.corporation?.field_dawa_address?.data?.y;
+        longitude = item.corporation?.field_dawa_address?.data?.x;
+      } else {
+        latitude = item.field_dawa_address?.lat;
+        longitude = item.field_dawa_address?.lng;
+      }
+
+      let providerHtml = '';
+      if (item.provider) {
+        providerHtml = `<p class="leaflet-popup-content__provider-link"><a href="${item.provider.link}">${item.provider.field_name}</a></p>`;
+      }
+
+      return {
+        id: item.id,
+        title: item.label,
+        coords: [latitude, longitude],
+        popupContent: `
+        <div class="${innerWrapperClass}">
+          ${imageHtml}
+          <div class="leaflet-popup-content__content">
+            <h4><a href="${item.link}">${item.label}</a></h4>
+            ${providerHtml}
+            <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle)}</a>
+          </div>
+        </div>
+        `,
+      };
+    }),
+);
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
@@ -571,6 +701,7 @@ onBeforeMount(() => {
 onMounted(() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
+  isClient.value = true;
 });
 </script>
 
@@ -584,15 +715,51 @@ onMounted(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
           <div class="search-block__filters-container">
-            <div class="search-block__search-keyword">
-              <BaseInputFloatingLabel
-                v-model="searchKeyword"
-                type="text"
-                name="search"
-                label="Søg"
-                :is-search="true"
-                @input="handleSearchByKeyword"
-              />
+            <div class="search-block__filters-container__inner">
+              <div class="search-block__search-keyword">
+                <BaseInputFloatingLabel
+                  v-model="searchKeyword"
+                  type="text"
+                  name="search"
+                  label="Søg"
+                  :is-search="true"
+                  @input="handleSearchByKeyword"
+                />
+              </div>
+              <ClientOnly>
+                <div class="search-block__list-map-toggle">
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showListView"
+                    @click="
+                      showListView = false;
+                      showMapView = true;
+                    "
+                  >
+                    <NuxtIcon
+                      class="search-block__chip-close"
+                      name="map"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis på kort</span>
+                  </button>
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showMapView"
+                    @click="
+                      showListView = true;
+                      showMapView = false;
+                    "
+                  >
+                    <NuxtIcon
+                      class="search-block__chip-close"
+                      name="grid"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis listevisning</span>
+                  </button>
+                </div>
+              </ClientOnly>
             </div>
 
             <div class="search-block__filters" v-if="!isLoadingPageResults">
@@ -758,7 +925,7 @@ onMounted(() => {
             class="search-block__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search-block__extra-filters-bar">
+            <div class="search-block__extra-filters-bar" v-if="showListView">
               <div class="search-block__results-found">
                 <h4>{{ searchResultString }}</h4>
               </div>
@@ -775,6 +942,7 @@ onMounted(() => {
             </div>
 
             <div
+              v-if="showListView"
               class="search-block__result-items"
               :class="{
                 'search-block__result-items--loading': isLoadingPageResults,
@@ -793,9 +961,18 @@ onMounted(() => {
               </TransitionGroup>
             </div>
 
+            <ClientOnly>
+              <LeafletMap
+                v-if="showMapView"
+                ref="leafletMapRef"
+                :markers="leafletMarkers"
+                :loading="loadingMap"
+              />
+            </ClientOnly>
+
             <BasePager
               class="search-block__pager"
-              v-if="pager"
+              v-if="pager && showListView"
               :pager="pager"
               @change="handlePager"
             />
@@ -833,7 +1010,7 @@ onMounted(() => {
 <style lang="postcss" scoped>
 .search-block {
   &__label {
-    color: var(--color-text);
+    color: var(--theme-color);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -842,7 +1019,7 @@ onMounted(() => {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-text);
+  color: var(--theme-color);
 
   &__skeleton {
     height: 100%;
@@ -859,11 +1036,42 @@ onMounted(() => {
 
   /* Filters stuff */
   &__filters {
+    position: relative;
+    z-index: 2;
     display: flex;
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
     min-height: auto @(--sm) 88px;
+
+    &-container {
+      &__inner {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+      }
+    }
+  }
+
+  &__list-map-toggle {
+    margin-left: auto;
+
+    & .button {
+      max-height: 59px;
+      margin-left: 16px;
+      border: var(--form-input-border);
+      font-weight: 400;
+      white-space: nowrap;
+
+      @media (--viewport-ms-max) {
+        .nuxt-icon {
+          padding-right: 0;
+        }
+        span:not(.nuxt-icon) {
+          display: none;
+        }
+      }
+    }
   }
 
   &__search-keyword {
@@ -892,23 +1100,19 @@ onMounted(() => {
   }
 
   &__show-all-filters {
-    display: flex;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    height: 56px;
-    border-radius: 56px;
-    background-color: var(--color-primary-lighten-4);
-    padding: 15px 32px;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--color-primary-darken-3);
-    align-items: center;
     position: relative;
-    transition: all 0.3s ease-in-out;
-    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 15px 32px;
+    background-color: var(--color-primary-lighten-4);
+    color: var(--color-primary-darken-3);
+    font-size: 16px;
     font-weight: 700;
+    border-radius: 56px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 
     &--mobile {
       display: none;
@@ -933,6 +1137,7 @@ onMounted(() => {
     }
 
     &__counter {
+      display: block @(--sm) none;
       position: absolute;
       top: -3px;
       right: 0;
@@ -941,12 +1146,10 @@ onMounted(() => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-secondary-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
       font-weight: 600;
-      display: block @(--sm) none;
     }
   }
 
@@ -1045,16 +1248,14 @@ onMounted(() => {
   }
 
   &__chip-clear {
+    padding: 7px 16px;
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
-    font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
     color: var(--color-primary-darken-3);
     transition: color 0.3s ease-in-out;
-    padding: 7px 16px;
 
     &:hover {
       color: var(--color-primary);
@@ -1063,6 +1264,8 @@ onMounted(() => {
 
   /* Results stuff */
   &__results-container {
+    position: relative;
+    z-index: 1;
     padding-top: 24px @(--sm) 96px;
 
     &--loading {

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import LeafletMap from '~/components/globals/map/LeafletMap.client.vue';
 
 const apiRouteStore = useApiRouteStore();
 const id = `search-block-provider-${uuidv4()}`;
@@ -12,6 +13,9 @@ const props = defineProps({
   blockData: {
     type: Object,
     required: true,
+  },
+  sectionWidth: {
+    type: String,
   },
 });
 
@@ -27,9 +31,17 @@ const allSortingOptions = ref(searchBlockData?.value?.facets);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
 const showAllFilters = ref(false);
+const showListView = ref(true);
+const showMapView = ref(false);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
+
+const isClient = ref(false)
+
+const leafletMapRef = ref(null);
+const dynamicMapContent = ref<any[]>([]);
+const loadingMap = ref(false);
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -92,6 +104,14 @@ const getFilteredPageResults = async (
       `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
     );
     const data = await response.json();
+
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
 
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
@@ -261,8 +281,16 @@ const handleExtractedFilters = async () => {
     const response: any = await fetch(
       `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
     );
-
     const data = await response.json();
+
+    if (showMapView.value) {
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    }
+
     dynamicContent.value = data.results;
     totalItemsFound.value = data.pager.items;
     pager.value = data.pager;
@@ -322,15 +350,86 @@ const searchResultSuffix = computed(() => {
   }
 });
 
+watch(showMapView, async (newVal) => {
+  if (newVal) {
+    try {
+      loadingMap.value = true;
+      let filterString = '';
+      selectedFiltersData.forEach((filter, index) => {
+        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+      });
+
+      const responseForMap: any = await fetch(
+        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
+      );
+      const dataForMapMarkers = await responseForMap.json();
+      dynamicMapContent.value = dataForMapMarkers.results;
+    } catch (error) {
+      console.error('Error fetching map results:', error);
+      dynamicMapContent.value = [];
+    } finally {
+      loadingMap.value = false;
+      await nextTick();
+      leafletMapRef.value?.refreshMapAndFitBounds();
+    }
+  }
+});
+
+const getBundleCTA = (bundle) => {
+  const map = {
+    Udbyder: 'Se udbyder',
+    Virksomhed: 'Se virksomhed',
+  };
+
+  return map[bundle] || 'Se udbyder';
+};
+
+// Transform dynamicMapContent into Leaflet-friendly marker data
+const leafletMarkers = computed(() =>
+  dynamicMapContent.value
+    .filter(item =>
+      item.field_view_on_map === 'show_on_map' &&
+      item.field_dawa_address?.lat &&
+      item.field_dawa_address?.lng
+    )
+    .map((item) => {
+      let imageHtml = '';
+      let innerWrapperClass = 'leaflet-popup-content__inner';
+      if (item.field_logo.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="" /></a></div>`;
+      } else if (item.field_image.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+      } else {
+        innerWrapperClass += ' leaflet-popup-content__inner--no-image';
+      }
+
+      return ({
+        id: item.id,
+        title: item.field_name,
+        coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
+        popupContent: `
+          <div class="${innerWrapperClass}">
+            ${imageHtml}
+            <div class="leaflet-popup-content__content">
+              <h4><a href="${item.link}">${item.field_name}</a></h4>
+              <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle_label)}</a>
+            </div>
+          </div>
+        `
+      });
+    })
+);
+
 onBeforeMount(() => {
   if (window.location.search) {
     parseUrlParameters();
   }
 });
 
-onMounted(() => {
+onMounted(async() => {
   isLoading.value = false;
   isLoadingPageResults.value = false;
+  isClient.value = true;
 });
 </script>
 
@@ -344,15 +443,45 @@ onMounted(() => {
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
           <div class="search-block-provider__filters-container">
-            <div class="search-block-provider__search-keyword">
-              <BaseInputFloatingLabel
-                v-model="searchKeyword"
-                type="text"
-                name="search"
-                label="Søg"
-                :is-search="true"
-                @input="handleSearchByKeyword"
-              />
+            <div class="search-block-provider__filters-container__inner">
+              <div class="search-block-provider__search-keyword">
+                <BaseInputFloatingLabel
+                  v-model="searchKeyword"
+                  type="text"
+                  name="search"
+                  label="Søg"
+                  :is-search="true"
+                  @input="handleSearchByKeyword"
+                />
+              </div>
+              <ClientOnly>
+                <div class="search-block-provider__list-map-toggle">
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showListView"
+                    @click="showListView = false; showMapView = true;"
+                  >
+                    <NuxtIcon
+                      class="search-block-provider__chip-close"
+                      name="map"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis på kort</span>
+                  </button>
+                  <button
+                    class="button button--ghost"
+                    v-if="dynamicContent.length > 0 && isClient && showMapView"
+                    @click="showListView = true; showMapView = false;"
+                  >
+                    <NuxtIcon
+                      class="search-block-provider__chip-close"
+                      name="grid"
+                      filled
+                    ></NuxtIcon>
+                    <span>Vis listevisning</span>
+                  </button>
+                </div>
+              </ClientOnly>
             </div>
 
             <div
@@ -459,7 +588,7 @@ onMounted(() => {
             class="search-block-provider__results-container"
             v-if="dynamicContent.length > 0"
           >
-            <div class="search-block-provider__extra-filters-bar">
+            <div class="search-block-provider__extra-filters-bar" v-if="showListView">
               <div class="search-block-provider__results-found">
                 <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
               </div>
@@ -476,6 +605,7 @@ onMounted(() => {
             </div>
 
             <div
+              v-if="showListView"
               class="search-block-provider__result-items"
               :class="{
                 'search-block-provider__result-items--loading':
@@ -539,9 +669,18 @@ onMounted(() => {
               </TransitionGroup>
             </div>
 
+            <ClientOnly>
+              <LeafletMap
+                v-if="showMapView"
+                ref="leafletMapRef"
+                :markers="leafletMarkers"
+                :loading="loadingMap"
+              />
+            </ClientOnly>
+
             <BasePager
               class="search-block-provider__pager"
-              v-if="pager"
+              v-if="pager && showListView"
               :pager="pager"
               @change="handlePager"
             />
@@ -579,7 +718,7 @@ onMounted(() => {
 <style lang="postcss">
 .search-block-provider {
   &__label {
-    color: var(--color-text);
+    color: var(--theme-color);
     margin-bottom: 24px @(--sm) 64px;
     font-size: var(--font-size-h1);
     font-weight: 700;
@@ -588,7 +727,7 @@ onMounted(() => {
   padding-top: 48px @(--sm) 96px;
   margin-bottom: 48px @(--sm) 96px;
   background-color: transparent;
-  color: var(--color-text);
+  color: var(--theme-color);
 
   &__skeleton {
     height: 100%;
@@ -605,11 +744,42 @@ onMounted(() => {
 
   /* Filters stuff */
   &__filters {
+    position: relative;
+    z-index: 2;
     display: flex;
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
     min-height: auto @(--sm) 88px;
+
+    &-container {
+      &__inner {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+      }
+    }
+  }
+
+  &__list-map-toggle {
+    margin-left: auto;
+
+    & .button {
+      max-height: 59px;
+      margin-left: 16px;
+      border: var(--form-input-border);
+      font-weight: 400;
+      white-space: nowrap;
+
+      @media (--viewport-ms-max) {
+        .nuxt-icon {
+          padding-right: 0;
+        }
+        span:not(.nuxt-icon) {
+          display: none;
+        }
+      }
+    }
   }
 
   &__search-keyword {
@@ -639,22 +809,18 @@ onMounted(() => {
 
   &__show-all-filters {
     display: flex;
-    background: transparent;
-    border: none;
-    padding: 0;
+    padding: 15px 32px;
     cursor: pointer;
     height: 56px;
     border-radius: 56px;
     background-color: var(--color-primary-lighten-4);
-    padding: 15px 32px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-primary-darken-3);
     align-items: center;
     position: relative;
     transition: all 0.3s ease-in-out;
     border: 1px solid transparent;
-    font-weight: 700;
 
     &--mobile {
       display: none;
@@ -687,7 +853,6 @@ onMounted(() => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
@@ -733,7 +898,6 @@ onMounted(() => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
     font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
@@ -748,6 +912,8 @@ onMounted(() => {
 
   /* Results stuff */
   &__results-container {
+    position: relative;
+    z-index: 1;
     padding-top: 24px @(--sm) 96px;
 
     &--loading {
@@ -870,18 +1036,44 @@ onMounted(() => {
     color: var(--color-text);
   }
 
+  .form-label {
+    background-color: var(--theme-background-color);
+    color: var(--theme-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
+
+    svg {
+      fill: var(--theme-color);
+    }
+  }
+
   .form-input--floating-label {
     &.form-input--up ~ .form-label,
     &:focus ~ .form-label {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+      color: var(--theme-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
   .form-input {
-    background-color: var(--color-gray-8);
+    background-color: var(--theme-background-color);
+
+    .theme-none & {
+      background-color: var(--site-background-color);
+    }
 
     &:focus {
-      background-color: var(--color-gray-8);
+      background-color: var(--theme-background-color);
+
+      .theme-none & {
+        background-color: var(--site-background-color);
+      }
     }
   }
 
