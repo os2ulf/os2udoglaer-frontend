@@ -3,9 +3,8 @@ const props = defineProps({
   blockData: Object,
 });
 
-const inlineNavigationItems = ref(props.blockData.field_inline_nav_paragraphs);
-
-const isCompactStyle = ref(props.blockData.field_compact_view);
+const inlineNavigationItems = ref(props.blockData?.field_inline_nav_paragraphs);
+const isCompactStyle = ref(props.blockData?.field_compact_view);
 </script>
 
 <template>
@@ -15,7 +14,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
         class="inline-navigation__card-link"
         v-for="item in inlineNavigationItems"
         :key="item"
-        :to="item?.field_inline_navigation_pages?.url"
+        :to="item?.field_inline_navigation_pages?.link"
         :aria-label="`Link til ${item?.field_inline_navigation_pages?.label}`"
       >
         <div class="inline-navigation__card-item">
@@ -59,7 +58,7 @@ const isCompactStyle = ref(props.blockData.field_compact_view);
         class="inline-navigation__card-compact-link inline-navigation__card-link"
         v-for="item in inlineNavigationItems"
         :key="item"
-        :to="item?.field_inline_navigation_pages?.url"
+        :to="item?.field_inline_navigation_pages?.link"
         :aria-label="`Link til ${item?.field_inline_navigation_pages?.label}`"
       >
         <div class="inline-navigation__card-compact-item">
