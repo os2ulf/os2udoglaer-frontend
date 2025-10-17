@@ -34,7 +34,7 @@
     "@vee-validate/i18n": "^4.7.3",
     "@vee-validate/rules": "^4.7.3",
     "@vuepic/vue-datepicker": "^9.0.2",
-    "axios": "^1.6.8",
+    "axios": "^1.12.2",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^4.5.0",
     "leaflet": "^1.9.4",
