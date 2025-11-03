@@ -278,13 +278,13 @@ const handleHideCourseSelect = async () => {
 function updateSelectedCourseTitle(nid) {
   const course = courses.value.find(c => c.nid === nid)
   selectedCourseTitle.value = course ? course.title : ''
+  courseName.value = selectedCourseTitle.value;
 }
 
 // Fetch course subjects and price info on course change
 const handleCourseChange = async () => {
   coursePriceInfo.value = [];
   updateSelectedCourseTitle(selectedCourse.value);
-  courseName.value = selectedCourseTitle.value;
   await fetchCourseSubjects(selectedCourse.value);
   await fetchCoursePriceInfo(selectedCourse.value);
 };
@@ -336,7 +336,7 @@ const resetForm = async () => {
 
 // Handle submit
 const handleSubmit = async () => {
-  if (honeypot.value !== '' || !agreementCheckbox.value) {
+  if (honeypot.value !== '' || !agreementCheckbox.value || !courseName.value) {
     errorMessage.value =
       'Der er opstået en fejl under udfyldning af formularen, venligst udfyld formularen korrekt.';
     return;
