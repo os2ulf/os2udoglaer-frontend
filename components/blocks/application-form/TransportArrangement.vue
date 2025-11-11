@@ -344,6 +344,7 @@ const distanceBetween = (
 function updateSelectedCourseTitle(nid) {
   const course = courses.value.find(c => c.nid === nid)
   selectedCourseTitle.value = course ? course.title : ''
+  courseName.value = selectedCourseTitle.value;
 }
 
 // Handle course change.
@@ -355,7 +356,6 @@ const handleCourseChange = async () => {
   validated.value = false;
   validationMessage.value = '';
   updateSelectedCourseTitle(selectedCourse.value);
-  courseName.value = selectedCourseTitle.value;
   await fetchCourseContent(selectedCourse.value);
 };
 
@@ -639,7 +639,7 @@ const resetForm = async () => {
 
 // Handle submit
 const handleSubmit = async () => {
-  if (honeypot.value !== '' || !agreementCheckbox.value) {
+  if (honeypot.value !== '' || !agreementCheckbox.value || !courseName.value) {
     errorMessage.value =
       'Der er opstået en fejl under udfyldning af formularen, venligst udfyld formularen korrekt.';
     return;
