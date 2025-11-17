@@ -639,7 +639,7 @@ const resetForm = async () => {
 
 // Handle submit
 const handleSubmit = async () => {
-  if (honeypot.value !== '' || !agreementCheckbox.value || !courseName.value) {
+  if (honeypot.value !== '' || !agreementCheckbox.value) {
     errorMessage.value =
       'Der er opstået en fejl under udfyldning af formularen, venligst udfyld formularen korrekt.';
     return;
