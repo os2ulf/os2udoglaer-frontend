@@ -1,5 +1,3 @@
-<script></script>
-
 <template>
   <div>
     <div class="container">

@@ -1,5 +1,3 @@
-<script></script>
-
 <template>
   <div class="preview-ribbon">
     <span class="preview-ribbon__base">Preview</span>
