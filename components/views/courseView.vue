@@ -210,7 +210,7 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price[0].field_price
+          content: props.data?.field_price[0]?.field_price
             ? props.data?.field_price
             : '',
           free: props.data?.field_is_free,
