@@ -412,7 +412,7 @@ const handleSubmit = async () => {
     ],
     field_receiving_class: [
       {
-        value: false,
+        value: receivingClass.value,
       },
     ],
     field_rfc_name: [
