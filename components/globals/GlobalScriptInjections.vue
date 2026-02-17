@@ -2,89 +2,83 @@
 import { useSettingsDataStore } from '~/stores/settingsData';
 
 const settingsDataStore = useSettingsDataStore();
-const settingsData = ref(settingsDataStore.settingsData);
+await settingsDataStore.getSettingsData();
 
-if (settingsData.value === null) {
-  settingsDataStore.getSettingsData().then(() => {
-    settingsData.value = settingsDataStore.settingsData;
+// Grab scripts (non-reactive)
+const cookieScript = settingsDataStore.getCookieScript();
+const trackingScript = settingsDataStore.getTrackingScript();
+
+const headScripts: Array<Record<string, any>> = [];
+
+/**
+ * Parse a <script> string from CMS and extract:
+ * - attrs (like src, id, type)
+ * - inlineCode
+ */
+function parseScript(script: string | null) {
+  if (!script) return null;
+
+  const match = script.match(/<script\b([^>]*)>([\s\S]*?)<\/script>/i);
+  if (!match) return null;
+
+  const attrString = match[1];
+  const inlineCode = match[2].trim();
+
+  const attrs: Record<string, string> = {};
+  attrString.replace(/(\w+(?:-\w+)*)=["']([^"']*)["']/g, (_, key, val) => {
+    attrs[key] = val;
+    return '';
   });
+
+  return { attrs, inlineCode };
 }
 
-const data = ref(settingsData.value);
-const cookieScript = ref(data.value?.site_cookie_script);
-const isCookieScriptLoaded = ref(false);
-const siteTrackingScript = ref(data.value?.site_tracking_script);
-
-const injectScript = (scriptString: string, scriptType: string) => {
-  // Match multiple <script> tags in the input
-  const scriptTagRegex = /<script\s+([^>]*)>([\s\S]*?)<\/script>/gi;
-  const attrRegex = /(\w+[-\w]*)=["']([^"']+)["']/g;
-  let match;
-
-  while ((match = scriptTagRegex.exec(scriptString)) !== null) {
-    const attributesString = match[1];
-    const inlineCode = match[2].trim();
-
-    // Parse attributes
-    const scriptAttributes: Record<string, string> = {};
-    let attrMatch;
-    while ((attrMatch = attrRegex.exec(attributesString)) !== null) {
-      scriptAttributes[attrMatch[1]] = attrMatch[2];
-    }
-
-    // Handle external script
-    if (scriptAttributes.src) {
-      const headScript: any = {
-        src: scriptAttributes.src,
-        type: scriptAttributes.type || 'text/javascript',
-        async: scriptType === 'cookie' || scriptAttributes.async !== undefined,
-        defer:
-          scriptType === 'tracking' || scriptAttributes.defer !== undefined,
-      };
-      if (scriptAttributes.id) headScript.id = scriptAttributes.id;
-
-      useHead({
-        script: [headScript],
-      });
-    }
-    // Handle inline script
-    else if (inlineCode) {
-      const scriptEl = document.createElement('script');
-      scriptEl.type = scriptAttributes.type || 'text/javascript';
-
-      if (scriptType === 'cookie' || scriptAttributes.async !== undefined) {
-        scriptEl.async = true;
-      }
-      if (scriptType === 'tracking' || scriptAttributes.defer !== undefined) {
-        scriptEl.defer = true;
-      }
-      if (scriptAttributes.id) {
-        scriptEl.id = scriptAttributes.id;
-      }
-
-      scriptEl.textContent = inlineCode;
-      document.head.appendChild(scriptEl);
-    }
+// ----- Cookie Script -----
+const cookieParsed = parseScript(cookieScript);
+if (cookieParsed) {
+  if (cookieParsed.attrs.src) {
+    headScripts.push({
+      src: cookieParsed.attrs.src,
+      async: true,
+      id: cookieParsed.attrs.id,
+      type: cookieParsed.attrs.type || 'text/javascript',
+    });
+  } else if (cookieParsed.inlineCode) {
+    headScripts.push({
+      children: cookieParsed.inlineCode,
+      type: cookieParsed.attrs.type || 'text/javascript',
+      async: true,
+      id: cookieParsed.attrs.id,
+    });
   }
+}
 
-  // Mark cookie script as loaded if applicable
-  if (scriptType === 'cookie') {
-    isCookieScriptLoaded.value = true;
+// ----- Tracking Script -----
+const trackingParsed = parseScript(trackingScript);
+if (trackingParsed) {
+  if (trackingParsed.attrs.src) {
+    headScripts.push({
+      src: trackingParsed.attrs.src,
+      defer: true,
+      id: trackingParsed.attrs.id,
+      type: trackingParsed.attrs.type || 'text/javascript',
+    });
+  } else if (trackingParsed.inlineCode) {
+    headScripts.push({
+      children: trackingParsed.inlineCode,
+      type: trackingParsed.attrs.type || 'text/javascript',
+      defer: true,
+      id: trackingParsed.attrs.id,
+    });
   }
-};
+}
 
-// When the cookie script loads, if the site tracking script is available, inject it.
-watch(isCookieScriptLoaded, () => {
-  if (isCookieScriptLoaded.value && siteTrackingScript.value) {
-    injectScript(siteTrackingScript.value, 'tracking');
-  }
-});
-
-onMounted(() => {
-  if (cookieScript.value) {
-    injectScript(cookieScript.value, 'cookie');
-  }
+// Inject into <head> SSR-safe
+useHead({
+  script: headScripts,
 });
 </script>
 
-<template></template>
+<template>
+  <!-- No template needed; all scripts handled via useHead -->
+</template>

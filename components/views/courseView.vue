@@ -210,7 +210,7 @@ const practicalInfoData = computed(() => {
         {
           type: 'price',
           title: 'Pris',
-          content: props.data?.field_price[0].field_price
+          content: props.data?.field_price[0]?.field_price
             ? props.data?.field_price
             : '',
           free: props.data?.field_is_free,
@@ -534,11 +534,11 @@ const currentUrl = computed(() => {
           class="col-xs-12 col-sm-12 col-md-12 course__section-cards"
           v-if="
             data.field_materials.length > 1 ||
-            data.field_materials[0].field_literature_suggestion ||
-            data.field_materials[0].field_material_description ||
-            data.field_materials[0].field_material_title ||
-            data.field_materials[0].field_material_file ||
-            data.field_materials[0].field_material_url
+            data.field_materials[0]?.field_literature_suggestion ||
+            data.field_materials[0]?.field_material_description ||
+            data.field_materials[0]?.field_material_title ||
+            data.field_materials[0]?.field_material_file ||
+            data.field_materials[0]?.field_material_url
           "
         >
           <div class="course__educational-cards">
