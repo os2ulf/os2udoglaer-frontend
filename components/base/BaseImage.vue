@@ -24,16 +24,8 @@ const hasTheme = computed(() => {
       </template>
       <img
         :src="image?.img_element?.uri"
-        :alt="
-          image?.img_element?.alt
-            ? image?.img_element?.alt
-            : image?.label || 'Billede'
-        "
-        :title="
-          image?.img_element?.alt
-            ? image?.img_element?.alt
-            : image?.label || 'Billede'
-        "
+        :alt="image?.img_element?.alt ? image?.img_element?.alt : ''"
+        :title="image?.img_element?.title ? image?.img_element?.title : ''"
         loading="lazy"
         :width="image?.width"
         :height="image?.height"
