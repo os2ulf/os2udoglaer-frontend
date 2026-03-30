@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
               <TheGlobalSearch />
             </ClientOnly>
 
-            <button class="header__burger-menu" @click="handleMobileNavigation">
+            <button class="header__burger-menu" @click="handleMobileNavigation" aria-controls="main-menu" :aria-label="!showMobileNavigation ? 'Show menu' : 'Hide menu'" :aria-expanded="!showMobileNavigation ? 'false' : 'true'">
               <NuxtIcon
                 filled
                 :name="!showMobileNavigation ? 'hamburger' : 'close'"
