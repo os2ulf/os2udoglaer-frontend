@@ -29,6 +29,7 @@ const handleChange = (event) => {
         @change="handleChange"
         :checked="modelValue"
         :id="id"
+        :aria-describedby="description ? `${id}-desc` : null"
         :maxlength="maxlength"
         :type="type"
         :placeholder="placeholder"
@@ -36,7 +37,7 @@ const handleChange = (event) => {
       />
       <span :class="'label--' + type">{{ label }}</span>
     </label>
-    <div v-if="description" class="form-description">
+    <div v-if="description" :id="`${id}-desc`" class="form-description">
       {{ description }}
     </div>
   </div>
@@ -87,7 +88,6 @@ const handleChange = (event) => {
     padding-top: 10px;
     color: var(--color-text);
     border: 1px solid var(--color-black);
-    outline: none;
   }
 
   span {

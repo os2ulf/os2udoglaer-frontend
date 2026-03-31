@@ -94,6 +94,52 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
 });
+
+const focusedOptionIndex = ref(0);
+
+const selectFocusedOption = () => {
+  const option = filteredOptions[focusedIndex.value];
+  if (option) {
+    $emit('update:modelValue', option.value);
+    closeDropdown();
+  }
+};
+
+const selectOption = (index: number) => {
+  value.value = filteredOptions.value[index].value;
+  closeDropdown();
+};
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (!dropdownOpen.value) {
+    if (['Enter', ' ', 'ArrowDown'].includes(event.key)) {
+      toggleDropdown();
+      focusedOptionIndex.value = 0;
+      event.preventDefault();
+    }
+    return;
+  }
+
+  switch (event.key) {
+    case 'ArrowDown':
+      focusedOptionIndex.value = Math.min(focusedOptionIndex.value + 1, filteredOptions.value.length - 1);
+      event.preventDefault();
+      break;
+    case 'ArrowUp':
+      focusedOptionIndex.value = Math.max(focusedOptionIndex.value - 1, 0);
+      event.preventDefault();
+      break;
+    case 'Enter':
+    case ' ':
+      selectOption(focusedOptionIndex.value);
+      event.preventDefault();
+      break;
+    case 'Escape':
+      closeDropdown();
+      event.preventDefault();
+      break;
+  }
+};
 </script>
 
 <template>
@@ -133,7 +179,16 @@ onBeforeUnmount(() => {
 
       <!--  -->
 
-      <div class="select-header" :class="{ open: dropdownOpen }">
+      <div
+        class="select-header"
+        :class="{ open: dropdownOpen }"
+        role="combobox"
+        :aria-expanded="dropdownOpen.toString()"
+        :aria-controls="`${id}-listbox`"
+        :aria-haspopup="true"
+        tabindex="0"
+        @keydown="handleKeydown"
+      >
         <div class="selected-value" :class="{ open: dropdownOpen }">
           <div v-html="dynamicFieldTitle"></div>
           <NuxtIcon
@@ -160,19 +215,29 @@ onBeforeUnmount(() => {
         v-if="dropdownOpen"
         class="dropdown-options"
         :class="{ open: dropdownOpen }"
+        role="listbox"
+        :id="`${id}-listbox`"
       >
         <TransitionGroup name="fade-in">
           <li
             v-for="(option, index) in filteredOptions"
             :key="index"
+            :id="`${id}-option-${index}`"
+            role="presentation"
             class="option"
-            :class="{ selected: props.modelValue === option.value }"
-            @click="
-              value = option.value;
-              closeDropdown();
-            "
-            v-html="option.text"
-          ></li>
+          >
+            <button
+              @click="$emit('update:modelValue', option.value); closeDropdown()"
+              role="option"
+              :aria-selected="props.modelValue === option.value"
+              class="dropdown-option"
+              :class="{
+                selected: props.modelValue === option.value,
+              }"
+            >
+              {{ option.text }}
+            </button>
+          </li>
         </TransitionGroup>
 
         <div v-if="filteredOptions.length === 0">
@@ -278,15 +343,21 @@ onBeforeUnmount(() => {
   margin-top: 5px;
 }
 
-.option {
-  padding: 8px;
-  cursor: pointer;
-  z-index: 1;
+.dropdown-option {
   position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.option:hover,
-.option.selected {
+.dropdown-option:hover,
+.dropdown-option:focus,
+.dropdown-option.selected {
   background-color: rgba(var(--color-primary-rgb), 0.1);
 }
 
