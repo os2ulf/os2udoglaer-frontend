@@ -242,14 +242,13 @@ const fetchSubjects = async () => {
 };
 
 // Fetch courses on provider change and empty course selected values
-const handleProviderChange = async () => {
+const handleProviderChange = async (value: string) => {
   selectedCourse.value = '';
   coursesSelect.value = [];
   selectedCourseTerm.value = '';
   courseTermsSelect.value = [];
   coursePriceInfo.value = [];
-
-  await fetchCourses(selectedProvider.value);
+  await fetchCourses(value);
 };
 
 // Handle "Course not in list" logic
@@ -282,11 +281,11 @@ function updateSelectedCourseTitle(nid) {
 }
 
 // Fetch course subjects and price info on course change
-const handleCourseChange = async () => {
+const handleCourseChange = async (value: string) => {
   coursePriceInfo.value = [];
-  updateSelectedCourseTitle(selectedCourse.value);
-  await fetchCourseSubjects(selectedCourse.value);
-  await fetchCoursePriceInfo(selectedCourse.value);
+  updateSelectedCourseTitle(value);
+  await fetchCourseSubjects(value);
+  await fetchCoursePriceInfo(value);
 };
 
 // Handle modal
@@ -666,7 +665,7 @@ onBeforeMount(() => {
               )
             "
           ></p>
-          <NuxtLink
+          <button
             class="modal__trigger"
             @click="
               handleModal(
@@ -674,7 +673,7 @@ onBeforeMount(() => {
                 props.blockData?.field_information_text,
               )
             "
-            >Læs mere</NuxtLink
+            >Læs mere</button
           >
         </div>
       </div>
@@ -877,8 +876,11 @@ onBeforeMount(() => {
 }
 
 .modal__trigger {
+  padding: 0;
   color: var(--color-primary);
-  cursor: pointer;
   text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 </style>
