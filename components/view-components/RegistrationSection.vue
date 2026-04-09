@@ -216,6 +216,14 @@ onBeforeUnmount(() => {
   border: none;
 }
 
+:deep(.pretix-widget a) {
+  color: #2b2b2b;
+
+  &:hover {
+    color: #2b2b2b;
+  }
+}
+
 :deep(.pretix-widget .pretix-widget-event-calendar) {
   width: 100% @(--sm) 684px;
   margin: 0 auto;
@@ -297,7 +305,7 @@ onBeforeUnmount(() => {
       .pretix-widget-event-list-entry
       .pretix-widget-event-list-entry-date
   ) {
-  color: #9b9b9b;
+  color: #2b2b2b;
 }
 
 :deep(
