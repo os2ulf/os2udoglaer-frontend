@@ -348,15 +348,15 @@ function updateSelectedCourseTitle(nid) {
 }
 
 // Handle course change.
-const handleCourseChange = async () => {
+const handleCourseChange = async (value: string) => {
   courseDawaAddress.value = [];
   courseAddress.value = '';
   courseLatLon.value = [];
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
-  updateSelectedCourseTitle(selectedCourse.value);
-  await fetchCourseContent(selectedCourse.value);
+  updateSelectedCourseTitle(value);
+  await fetchCourseContent(value);
 };
 
 // Handle "Course not in list" logic
@@ -378,7 +378,7 @@ const handleHideCourseSelect = async () => {
 };
 
 // Fetch schools/institutions on type change
-const handleTypeChange = async () => {
+const handleTypeChange = async (value: string) => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
@@ -386,10 +386,10 @@ const handleTypeChange = async () => {
   selectedSchoolGrade.value = '';
   if (selectedType.value === '') {
     return;
-  } else if (selectedType.value === 'tpf_school') {
+  } else if (value === 'tpf_school') {
     await fetchSchools();
   } else {
-    await fetchInstitutions(selectedType.value);
+    await fetchInstitutions(value);
   }
 };
 
@@ -419,14 +419,14 @@ watch(isCourseAddressValid, () => {
 });
 
 // Fetch user content on institution change
-const handleInstitutionChange = async () => {
+const handleInstitutionChange = async (value: string) => {
   institutionAddress.value = '';
   institutionLatLon.value = [];
   institutionDistrict.value = '';
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
-  await fetchUserContent(selectedInstitution.value);
+  await fetchUserContent(value);
 };
 
 const handleSchoolGradeChange = async () => {
@@ -1103,7 +1103,7 @@ onBeforeMount(() => {
               )
             "
           ></p>
-          <NuxtLink
+          <button
             class="modal__trigger"
             @click="
               handleModal(
@@ -1111,7 +1111,7 @@ onBeforeMount(() => {
                 props.blockData?.field_information_text,
               )
             "
-            >Læs mere</NuxtLink
+            >Læs mere</button
           >
         </div>
       </div>
@@ -1318,8 +1318,11 @@ onBeforeMount(() => {
 }
 
 .modal__trigger {
+  padding: 0;
   color: var(--color-primary);
-  cursor: pointer;
   text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 </style>

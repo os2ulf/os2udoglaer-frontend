@@ -368,7 +368,7 @@ const handleSubmit = async () => {
               )
             "
           ></p>
-          <NuxtLink
+          <button
             class="modal__trigger"
             @click="
               handleModal(
@@ -378,7 +378,7 @@ const handleSubmit = async () => {
             "
             aria-label="Læs mere"
             role="button"
-            >Læs mere</NuxtLink
+            >Læs mere</button
           >
         </div>
       </div>
@@ -579,10 +579,13 @@ const handleSubmit = async () => {
     }
   }
 }
-/*  */
+
 .modal__trigger {
+  padding: 0;
   color: var(--color-primary);
-  cursor: pointer;
   text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 </style>

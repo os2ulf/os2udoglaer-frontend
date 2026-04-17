@@ -95,12 +95,14 @@ const practicalInfoData = computed(() => {
         {
           title: 'Varighed',
           content: props.data?.field_duration_select,
-          description: props.data?.field_duration_description,
+          description: props.data?.field_description_of_duration,
+          expanded: props.data?.field_desc_of_duration_expanded
         },
         {
           title: 'Periode',
           content: props.data?.field_period_select,
           description: props.data?.field_description_of_period,
+          expanded: props.data?.field_desc_of_period_expanded
         },
       ],
     },

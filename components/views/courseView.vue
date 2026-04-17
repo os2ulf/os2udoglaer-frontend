@@ -65,6 +65,14 @@ const priceQuantityPeriodDescription = computed(() => {
   return description;
 });
 
+const priceQuantityPeriodExpanded = computed(() => {
+  let expanded = false;
+  if (props.data?.field_desc_of_price_expanded || props.data?.field_quantity_desc_expanded || props.data?.field_desc_of_period_expanded) {
+    expanded = true;
+  }
+  return expanded;
+});
+
 const registrationData = computed(() => {
   return {
     bundle: props.data?.bundle,
@@ -229,6 +237,7 @@ const practicalInfoData = computed(() => {
           description: priceQuantityPeriodDescription.value
             ? priceQuantityPeriodDescription.value
             : '',
+          expanded: priceQuantityPeriodExpanded.value
         },
       ],
     },
@@ -244,6 +253,7 @@ const practicalInfoData = computed(() => {
                 props.data?.field_duration_unit_taxonomy
               : '',
           description: props.data?.field_description_of_duration,
+          expanded: props.data?.field_desc_of_duration_expanded
         },
       ],
     },

@@ -65,7 +65,7 @@ const handleShareOnSome = (value: string) => {
   &__title {
     font-size: 14px;
     font-weight: 400;
-    color: var(--color-tertiary-lighten-2);
+    color: var(--color-text);
   }
 
   &__divider {

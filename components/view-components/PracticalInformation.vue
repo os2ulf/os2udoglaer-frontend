@@ -227,6 +227,7 @@ const props = defineProps({
         <details
           class="practical-information__accordion-container"
           v-if="item.description"
+          :open="item.expanded"
         >
           <summary class="practical-information__accordion-container--cta">
             <span class="practical-information__see-more-cta collapsed"

@@ -36,6 +36,14 @@ const periodPriceDurationDescription = computed(() => {
   return description;
 });
 
+const periodPriceDurationExpanded = computed(() => {
+  let expanded = false;
+  if (props.data?.field_desc_of_price_expanded || props.data?.field_desc_of_duration_expanded || props.data?.field_desc_of_period_expanded) {
+    expanded = true;
+  }
+  return expanded;
+});
+
 const registrationData = computed(() => {
   return {
     bundle: props.data?.bundle,
@@ -167,6 +175,7 @@ const practicalInfoData = computed(() => {
           title: 'Antal',
           content: props.data?.field_quantity,
           description: props.data?.field_quantity_description,
+          expanded: props.data?.field_quantity_desc_expanded
         },
       ],
     },
@@ -202,6 +211,7 @@ const practicalInfoData = computed(() => {
           description: periodPriceDurationDescription.value
             ? periodPriceDurationDescription.value
             : '',
+          expanded: periodPriceDurationExpanded.value
         },
       ],
     },

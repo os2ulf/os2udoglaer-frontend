@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { stripHtmlFromString } from '~/utils/stripHtml';
-import { truncateString } from '~/utils/truncateString';
 
 const props = defineProps({
   data: {
@@ -335,7 +334,7 @@ const cardLabels = computed(() => {
         </div>
 
         <div v-if="data?.body" class="card__text">
-          {{ truncateString(cardBodyText, 155) }}
+          {{ cardBodyText }}
         </div>
         <div class="card__icons" v-if="targetGroupFields || providerData">
           <div class="card__icon" v-if="providerData">

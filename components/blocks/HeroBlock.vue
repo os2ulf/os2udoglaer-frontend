@@ -62,7 +62,7 @@ const heroData = ref(props.blockData);
     &--overlay {
       :deep(img) {
         object-fit: cover;
-        opacity: 0.8;
+        opacity: 0.45;
       }
     }
   }

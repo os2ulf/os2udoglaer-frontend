@@ -643,7 +643,7 @@ const leafletMarkers = computed(() =>
       let imageHtml = '';
       let innerWrapperClass = 'leaflet-popup-content__inner';
       if (item.field_image.img_element) {
-        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="" /></a></div>`;
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="${item.field_image.img_element.alt}" /></a></div>`;
       } else {
         innerWrapperClass += ' leaflet-popup-content__inner--no-image';
       }

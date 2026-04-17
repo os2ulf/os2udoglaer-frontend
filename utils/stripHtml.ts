@@ -1,16 +1,15 @@
 export const stripHtmlFromString = (html: string) => {
-  if (!html) {
-    return null;
-  }
+  if (!html) return null;
 
-  // Remove HTML tags
-  const strippedHtml = html.replace(/<[^>]+>/g, '');
+  // Replace closing </p> tags with &nbsp;
+  const withNbsp = html.replace(/<\/p>/gi, '&nbsp;');
 
-  // Remove common HTML entities
-  const withoutEntities = strippedHtml.replace(
+  // Remove all remaining HTML tags (including opening <p>)
+  const strippedHtml = withNbsp.replace(/<[^>]+>/g, '');
+
+  // Replace common HTML entities with a space
+  return strippedHtml.replace(
     /&nbsp;|&amp;|&lt;|&gt;|&quot;|&#39;/g,
     ' ',
   );
-
-  return withoutEntities;
 };

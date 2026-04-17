@@ -28,7 +28,7 @@ const hasChildren = computed(() => {
     >
       <div class="header-item__item">
         <div class="header-item__icon" v-if="node.field_icon">
-          <img :src="node?.field_icon" />
+          <img :src="node?.field_icon" alt="" />
         </div>
         <div>
           {{ node?.title }}
