@@ -28,6 +28,32 @@ const positiveFontColor = computed(
   () => settingsDataStore.settingsData?.text_positive_color,
 );
 
+const primaryButtonColor = computed(
+  () => settingsDataStore.settingsData?.primary_button_color,
+);
+const primaryButtonTextColor = computed(
+  () => settingsDataStore.settingsData?.primary_button_text_color,
+);
+const primaryButtonHoverColor = computed(
+  () => settingsDataStore.settingsData?.primary_button_hover_color,
+);
+const primaryButtonHoverTextColor = computed(
+  () => settingsDataStore.settingsData?.primary_button_hover_text_color,
+);
+
+const secondaryButtonColor = computed(
+  () => settingsDataStore.settingsData?.secondary_button_color,
+);
+const secondaryButtonTextColor = computed(
+  () => settingsDataStore.settingsData?.secondary_button_text_color,
+);
+const secondaryButtonHoverColor = computed(
+  () => settingsDataStore.settingsData?.secondary_button_hover_color,
+);
+const secondaryButtonHoverTextColor = computed(
+  () => settingsDataStore.settingsData?.secondary_button_hover_text_color,
+);
+
 // Function to convert hex to RGB
 function hexToRgb(hex: string) {
   try {
@@ -110,6 +136,62 @@ onBeforeMount(() => {
 
   if (tertiaryBgTextColor.value) {
     tertiaryTextColor = tertiaryBgTextColor.value;
+  }
+
+  if (primaryButtonColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-primary-button-color',
+      primaryButtonColor.value,
+    );
+  }
+
+  if (primaryButtonTextColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-primary-button-text-color',
+      primaryButtonTextColor.value,
+    );
+  }
+
+  if (primaryButtonHoverColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-primary-button-hover-color',
+      primaryButtonHoverColor.value,
+    );
+  }
+
+  if (primaryButtonHoverTextColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-primary-button-hover-text-color',
+      primaryButtonHoverTextColor.value,
+    );
+  }
+
+  if (secondaryButtonColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-secondary-button-color',
+      secondaryButtonColor.value,
+    );
+  }
+
+  if (secondaryButtonTextColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-secondary-button-text-color',
+      secondaryButtonTextColor.value,
+    );
+  }
+
+  if (secondaryButtonHoverColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-secondary-button-hover-color',
+      secondaryButtonHoverColor.value,
+    );
+  }
+
+  if (secondaryButtonHoverTextColor.value) {
+    document.documentElement.style.setProperty(
+      '--color-secondary-button-hover-text-color',
+      secondaryButtonHoverTextColor.value,
+    );
   }
 
   document.documentElement.style.setProperty('--color-primary', primaryColor);

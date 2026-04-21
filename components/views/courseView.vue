@@ -5,6 +5,7 @@ import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { useSettingsDataStore } from '~/stores/settingsData';
 const settingsDataStore = useSettingsDataStore();
+const { hasPrimaryButtonColors, hasSecondaryButtonColors } = useButtonColors()
 
 if (settingsDataStore.settingsData === null) {
   settingsDataStore.getSettingsData();
@@ -363,7 +364,8 @@ const currentUrl = computed(() => {
                   }"
                   @click="scrollTo('course-registration')"
                   @keydown.enter="scrollTo('course-registration')"
-                  class="button button--secondary"
+                  class="button button--primary"
+                  :class="{'button--course' : hasPrimaryButtonColors}"
                   role="button"
                 />
                 <BaseButton
@@ -375,7 +377,8 @@ const currentUrl = computed(() => {
                       data?.corporation.link &&
                       !data?.field_hide_contact_form)
                   "
-                  class="button button--secondary--ghost"
+                  class="button button--ghost"
+                  :class="{'button--course' : hasPrimaryButtonColors}"
                   :button-data="{
                     title: props.data?.provider
                       ? 'Kontakt udbyder'
@@ -450,7 +453,8 @@ const currentUrl = computed(() => {
               @click="scrollTo('course-registration')"
               @keydown.enter="scrollTo('course-registration')"
               icon-after="arrow-right"
-              class="button button--secondary"
+              class="button button--primary"
+              :class="{'button--course' : hasPrimaryButtonColors}"
               role="button"
             />
             <BaseButton
@@ -462,7 +466,8 @@ const currentUrl = computed(() => {
                   data?.corporation.link &&
                   !data?.field_hide_contact_form)
               "
-              class="button button--secondary--ghost"
+              class="button button--ghost"
+              :class="{'button--course' : hasPrimaryButtonColors}"
               :button-data="{
                 title: props.data?.provider
                   ? 'Kontakt udbyder'
@@ -483,7 +488,8 @@ const currentUrl = computed(() => {
                   ) &&
                   transportApplicationUrl
                 "
-                class="button--primary"
+                class="button button--secondary--ghost"
+                :class="{'button--course' : hasSecondaryButtonColors}"
                 :button-data="{
                   title: 'Søg om refusion af transport',
                   url: transportApplicationUrl,
@@ -500,7 +506,8 @@ const currentUrl = computed(() => {
                   ) &&
                   freeCourseApplicationUrl
                 "
-                class="button--primary"
+                class="button button--secondary--ghost"
+                :class="{'button--course' : hasSecondaryButtonColors}"
                 :button-data="{
                   title: 'Ansøg om betaling af dette forløb!',
                   url: freeCourseApplicationUrl,

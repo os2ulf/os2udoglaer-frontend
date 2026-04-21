@@ -6,6 +6,7 @@ const props = defineProps({
     default: null,
   },
 });
+const { hasPrimaryButtonColors } = useButtonColors()
 
 const formatDeadlineString = computed(() => {
   const deadlineString = ref(props.data?.deadline?.text);
@@ -162,7 +163,8 @@ onBeforeUnmount(() => {
     <div v-if="props.data.url" class="course__registration__url">
       <a
         :href="props.data.url"
-        class="button button--secondary"
+        class="button button--primary"
+        :class="{'button--course' : hasPrimaryButtonColors}"
         target="_blank"
         >{{ props.data.title ? props.data.title : props.data.url }}</a
       >

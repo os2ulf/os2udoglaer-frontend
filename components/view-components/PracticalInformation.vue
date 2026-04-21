@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
+const { hasPrimaryButtonColors } = useButtonColors()
 
 const props = defineProps({
   data: {
@@ -267,7 +268,8 @@ const props = defineProps({
         }"
         @click="scrollTo('contact__section')"
         @keydown.enter="scrollTo('contact__section')"
-        class="button button--secondary button--secondary--ghost"
+        class="button button--ghost"
+        :class="{'button--course' : hasPrimaryButtonColors}"
       />
     </div>
   </div>
