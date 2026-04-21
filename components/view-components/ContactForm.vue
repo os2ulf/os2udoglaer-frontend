@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Field, Form } from 'vee-validate';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+const { hasPrimaryButtonColors } = useButtonColors()
 
 const props = defineProps({
   contactPersonEmail: {
@@ -180,6 +181,7 @@ function showHelperText() {
       <button
         v-if="!isLoading"
         class="button button--primary contact-form__button"
+        :class="{'button--course' : hasPrimaryButtonColors}"
         aria-label="Send besked"
         type="submit"
       >
