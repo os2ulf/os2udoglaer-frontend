@@ -230,6 +230,14 @@
         &:hover {
           color: var(--color-primary-button-hover-text-color) !important;
         }
+
+        &.button--secondary--ghost {
+          color: var(--color-secondary-button-color) !important;
+
+          &:hover {
+            color: var(--color-secondary-button-hover-text-color) !important;
+          }
+        }
       }
 
       &--success {

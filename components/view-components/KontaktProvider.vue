@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { hasPrimaryButtonColors } = useButtonColors()
 const props = defineProps({
   data: {
     type: Array,
@@ -42,6 +43,7 @@ const props = defineProps({
               v-if="person?.field_email"
               :href="'mailto:' + person?.field_email"
               class="button button--primary contact__button"
+              :class="{'button--course' : hasPrimaryButtonColors}"
             >
               <NuxtIcon class="contact__icon" name="envelope-alt" filled />
               {{ person?.field_email }}
@@ -50,6 +52,7 @@ const props = defineProps({
               v-if="person?.field_phone"
               :href="'tel:' + person?.field_phone"
               class="button button--primary contact__button"
+              :class="{'button--course' : hasPrimaryButtonColors}"
             >
               <NuxtIcon class="contact__icon" name="phone" filled />
               {{ person?.field_phone }}
