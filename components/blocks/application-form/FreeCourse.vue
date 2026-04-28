@@ -51,7 +51,6 @@ const email = ref('');
 const mailTo = ref(props.blockData?.field_mail_to);
 const selectedProvider = ref('');
 const selectedCourse = ref('');
-const selectedCourseTitle = ref('');
 const selectedCourseTerm = ref('');
 const courseNotInList = ref(false);
 const courseName = ref('');
@@ -262,7 +261,6 @@ const handleHideCourseSelect = async () => {
     coursePriceInfo.value = [];
     courseNotInList.value = true;
     courseName.value = '';
-    selectedCourseTitle.value = '';
     await fetchSubjects();
   } else {
     // If the checkbox is unchecked fetch courses from selected provider
@@ -273,17 +271,9 @@ const handleHideCourseSelect = async () => {
   }
 };
 
-// Update selected course title
-function updateSelectedCourseTitle(nid) {
-  const course = courses.value.find(c => c.nid === nid)
-  selectedCourseTitle.value = course ? course.title : ''
-  courseName.value = selectedCourseTitle.value;
-}
-
 // Fetch course subjects and price info on course change
 const handleCourseChange = async (value: string) => {
   coursePriceInfo.value = [];
-  updateSelectedCourseTitle(value);
   await fetchCourseSubjects(value);
   await fetchCoursePriceInfo(value);
 };
@@ -317,7 +307,6 @@ const resetForm = async () => {
   email.value = '';
   selectedProvider.value = '';
   selectedCourse.value = '';
-  selectedCourseTitle.value = '';
   selectedCourseTerm.value = '';
   courseNotInList.value = false;
   courseName.value = '';
@@ -362,6 +351,18 @@ const handleSubmit = async () => {
     },
   ];
 
+  const computedCourseName = computed(() => {
+    // If user typed manually → use that
+    if (courseNotInList.value) return courseName.value;
+    // Otherwise derive from selected course
+    const course = courses.value.find(
+      (c) => c.nid === selectedCourse.value
+    );
+    return course?.title || '';
+  });
+
+  const finalCourseName = computedCourseName.value;
+
   // Payload
   const payload = {
     type: [
@@ -391,7 +392,7 @@ const handleSubmit = async () => {
     ],
     field_rfc_new_course_name: [
       {
-        value: courseName.value,
+        value: finalCourseName,
       },
     ],
     field_rfc_course_not_found: [
