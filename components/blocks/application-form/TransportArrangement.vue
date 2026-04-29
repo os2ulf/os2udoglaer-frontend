@@ -128,7 +128,6 @@ const agreementCheckbox = ref(true);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const honeypot = ref('');
-const isClientReady = ref(false);
 
 // Fetch courses from provider UID
 const fetchCourses = async (uid: any) => {
@@ -885,7 +884,6 @@ if ($route.query.course) {
 
 // Fetch schools and providers on component mount
 onMounted(async () => {
-  isClientReady.value = true;
   await fetchCourses('all');
   await fetchSchools();
 });
@@ -897,7 +895,7 @@ onMounted(async () => {
       <div class="field-group">
         <h3>Forløb</h3>
         <BaseSelect
-          v-if="!courseNotInList && isClientReady"
+          v-if="!courseNotInList"
           v-model="selectedCourse"
           :options="coursesSelect"
           @update:model-value="handleCourseChange"
@@ -947,7 +945,6 @@ onMounted(async () => {
       <div class="field-group">
         <h3>Vælg institution</h3>
         <BaseSelect
-          v-if="isClientReady"
           v-model="selectedType"
           :options="typeSelect"
           @update:model-value="handleTypeChange"
@@ -956,7 +953,7 @@ onMounted(async () => {
         />
 
         <BaseSelect
-          v-if="selectedType === 'tpf_school' && isClientReady"
+          v-if="selectedType === 'tpf_school'"
           v-model="selectedInstitution"
           :options="schoolsSelect"
           @update:model-value="handleInstitutionChange"
@@ -966,7 +963,7 @@ onMounted(async () => {
           rules="required"
         />
         <BaseSelect
-          v-if="selectedType === 'tpf_school' && isClientReady"
+          v-if="selectedType === 'tpf_school'"
           v-model="selectedSchoolGrade"
           :options="schoolClassSelect"
           @update:model-value="handleSchoolGradeChange"
@@ -976,7 +973,7 @@ onMounted(async () => {
         />
 
         <BaseSelect
-          v-if="selectedType && selectedType !== 'tpf_school' && isClientReady"
+          v-if="selectedType && selectedType !== 'tpf_school'"
           v-model="selectedInstitution"
           :options="institutionsSelect"
           @update:model-value="handleInstitutionChange"
