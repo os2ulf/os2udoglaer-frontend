@@ -885,7 +885,6 @@ if ($route.query.course) {
 // Fetch schools and providers on component mount
 onMounted(async () => {
   await fetchCourses('all');
-  await fetchSchools();
 });
 </script>
 
