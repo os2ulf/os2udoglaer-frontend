@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
 import { filterGroups } from '~/utils/dataFilter';
+const { hasPrimaryButtonColors } = useButtonColors()
 
 const props = defineProps({
   data: {
@@ -125,7 +126,8 @@ const relatedContent = ref(props.data?.related_content);
                     title: 'Find forløb'
                   }"
                   @click="scrollTo('related_content__section')"
-                  class="button button--secondary"
+                  class="button button--primary"
+                  :class="{'button--course' : hasPrimaryButtonColors}"
                 />
                 <BaseButton
                   v-if="data?.field_contact?.length > 0 && (data?.field_contact[0].field_email !== null || data?.field_contact[0].field_phone !== null)"
@@ -137,7 +139,8 @@ const relatedContent = ref(props.data?.related_content);
                         : '',
                   }"
                   @click="scrollTo('contact__section')"
-                  class="button button--secondary--ghost"
+                  class="button button--ghost"
+                  :class="{'button--course' : hasPrimaryButtonColors}"
                 />
               </div>
             </div>

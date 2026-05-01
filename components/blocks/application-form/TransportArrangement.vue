@@ -103,7 +103,6 @@ const urlQueryCourseId = ref('');
 
 // Form data
 const selectedCourse = ref('');
-const selectedCourseTitle = ref('');
 const selectedType = ref('');
 const selectedInstitution = ref('');
 const selectedSchoolGrade = ref('');
@@ -340,13 +339,6 @@ const distanceBetween = (
   return distance;
 };
 
-// Update selected course title
-function updateSelectedCourseTitle(nid) {
-  const course = courses.value.find(c => c.nid === nid)
-  selectedCourseTitle.value = course ? course.title : ''
-  courseName.value = selectedCourseTitle.value;
-}
-
 // Handle course change.
 const handleCourseChange = async (value: string) => {
   courseDawaAddress.value = [];
@@ -355,7 +347,6 @@ const handleCourseChange = async (value: string) => {
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
-  updateSelectedCourseTitle(value);
   await fetchCourseContent(value);
 };
 
@@ -371,7 +362,6 @@ const handleHideCourseSelect = async () => {
     validated.value = false;
     validationMessage.value = '';
     courseName.value = '';
-    selectedCourseTitle.value = '';
   } else {
     await fetchCourses('all');
   }
@@ -715,6 +705,16 @@ const handleSubmit = async () => {
     },
   ];
 
+  const computedCourseName = computed(() => {
+    if (courseNotInList.value) return courseName.value;
+
+    const course = courses.value.find(
+      (c) => c.nid === selectedCourse.value
+    );
+
+    return course?.title || '';
+  });
+
   // Payload
   const payload = {
     type: [
@@ -802,7 +802,7 @@ const handleSubmit = async () => {
     ],
     field_tpf_course_name: [
       {
-        value: courseName.value,
+        value: computedCourseName.value,
       },
     ],
     field_tpf_course_not_found: [
@@ -878,13 +878,13 @@ const handleSubmit = async () => {
 if ($route.query.course) {
   urlQueryCourseId.value = $route.query.course;
   selectedCourse.value = urlQueryCourseId.value;
-  fetchCourses(urlQueryCourseId.value);
-  fetchCourseContent(urlQueryCourseId.value);
+  await fetchCourses('all');
+  await fetchCourseContent(urlQueryCourseId.value);
 }
 
 // Fetch schools and providers on component mount
-onBeforeMount(() => {
-  fetchCourses('all');
+onMounted(async () => {
+  await fetchCourses('all');
 });
 </script>
 
