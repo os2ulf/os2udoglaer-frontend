@@ -21,4 +21,6 @@ export const productionDomains = [
   'www.udoglaer.vejle.dk',
   'klcviborg.dk',
   'www.klcviborg.dk',
+  'taetpaadig.roskilde.dk',
+  'www.taetpaadig.roskilde.dk',
 ];
