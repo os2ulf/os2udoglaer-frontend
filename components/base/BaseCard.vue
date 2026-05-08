@@ -464,7 +464,7 @@ const cardLabels = computed(() => {
     position: absolute;
     bottom: 0;
     right: 0;
-    color: var(--color-white);
+    color: var(--color-primary-text);
     background-color: var(--color-primary);
     padding: 7px 0;
     width: 100%;
