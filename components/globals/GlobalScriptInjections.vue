@@ -1,84 +1,116 @@
 <script setup lang="ts">
+import { useHead } from '#imports';
 import { useSettingsDataStore } from '~/stores/settingsData';
 
 const settingsDataStore = useSettingsDataStore();
+
 await settingsDataStore.getSettingsData();
 
-// Grab scripts (non-reactive)
+// Grab scripts from store
 const cookieScript = settingsDataStore.getCookieScript();
 const trackingScript = settingsDataStore.getTrackingScript();
 
 const headScripts: Array<Record<string, any>> = [];
 
 /**
- * Parse a <script> string from CMS and extract:
- * - attrs (like src, id, type)
- * - inlineCode
+ * Parse ALL <script> tags from a string.
+ *
+ * Supports:
+ * - inline scripts
+ * - external src scripts
+ * - boolean attrs (async, defer, etc.)
  */
-function parseScript(script: string | null) {
-  if (!script) return null;
+function parseScripts(html: string | null) {
+  if (!html) return [];
 
-  const match = script.match(/<script\b([^>]*)>([\s\S]*?)<\/script>/i);
-  if (!match) return null;
+  const matches = [
+    ...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi),
+  ];
 
-  const attrString = match[1];
-  const inlineCode = match[2].trim();
+  return matches.map((match) => {
+    const attrString = match[1];
+    const inlineCode = match[2].trim();
 
-  const attrs: Record<string, string> = {};
-  attrString.replace(/(\w+(?:-\w+)*)=["']([^"']*)["']/g, (_, key, val) => {
-    attrs[key] = val;
-    return '';
+    const attrs: Record<string, any> = {};
+
+    // Parse attributes including boolean attrs
+    attrString.replace(
+      /(\w+(?:-\w+)*)(?:=["']([^"']*)["'])?/g,
+      (_, key, val) => {
+        attrs[key] = val ?? true;
+        return '';
+      }
+    );
+
+    return {
+      attrs,
+      inlineCode,
+    };
   });
-
-  return { attrs, inlineCode };
 }
 
-// ----- Cookie Script -----
-const cookieParsed = parseScript(cookieScript);
-if (cookieParsed) {
-  if (cookieParsed.attrs.src) {
-    headScripts.push({
-      src: cookieParsed.attrs.src,
-      async: true,
-      id: cookieParsed.attrs.id,
-      type: cookieParsed.attrs.type || 'text/javascript',
-    });
-  } else if (cookieParsed.inlineCode) {
-    headScripts.push({
-      children: cookieParsed.inlineCode,
-      type: cookieParsed.attrs.type || 'text/javascript',
-      async: true,
-      id: cookieParsed.attrs.id,
-    });
-  }
+/**
+ * Push parsed scripts into useHead config
+ */
+function addScripts(
+  scripts: ReturnType<typeof parseScripts>,
+  defaults: {
+    async?: boolean;
+    defer?: boolean;
+  } = {}
+) {
+  scripts.forEach((parsed) => {
+    const scriptConfig: Record<string, any> = {
+      type: parsed.attrs.type || 'text/javascript',
+    };
+
+    // Preserve optional attrs
+    if (parsed.attrs.id) {
+      scriptConfig.id = parsed.attrs.id;
+    }
+
+    if (parsed.attrs.async !== undefined) {
+      scriptConfig.async = parsed.attrs.async;
+    } else if (defaults.async !== undefined) {
+      scriptConfig.async = defaults.async;
+    }
+
+    if (parsed.attrs.defer !== undefined) {
+      scriptConfig.defer = parsed.attrs.defer;
+    } else if (defaults.defer !== undefined) {
+      scriptConfig.defer = defaults.defer;
+    }
+
+    // External script
+    if (parsed.attrs.src) {
+      scriptConfig.src = parsed.attrs.src;
+    }
+
+    // Inline script
+    if (parsed.inlineCode) {
+      scriptConfig.children = parsed.inlineCode;
+    }
+
+    headScripts.push(scriptConfig);
+  });
 }
 
-// ----- Tracking Script -----
-const trackingParsed = parseScript(trackingScript);
-if (trackingParsed) {
-  if (trackingParsed.attrs.src) {
-    headScripts.push({
-      src: trackingParsed.attrs.src,
-      defer: true,
-      id: trackingParsed.attrs.id,
-      type: trackingParsed.attrs.type || 'text/javascript',
-    });
-  } else if (trackingParsed.inlineCode) {
-    headScripts.push({
-      children: trackingParsed.inlineCode,
-      type: trackingParsed.attrs.type || 'text/javascript',
-      defer: true,
-      id: trackingParsed.attrs.id,
-    });
-  }
-}
+// ----- Cookie Scripts -----
+addScripts(parseScripts(cookieScript), {
+  async: true,
+});
 
-// Inject into <head> SSR-safe
+// ----- Tracking Scripts -----
+addScripts(parseScripts(trackingScript), {
+  defer: true,
+});
+
+// Inject into <head>
 useHead({
   script: headScripts,
 });
 </script>
 
 <template>
-  <!-- No template needed; all scripts handled via useHead -->
+  <!-- Scripts are injected via useHead -->
 </template>
