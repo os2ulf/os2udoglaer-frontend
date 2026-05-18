@@ -299,7 +299,7 @@ const currentUrl = computed(() => {
 
 <template>
   <div class="course">
-    <div class="course__top-section">
+    <section class="course__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -393,35 +393,35 @@ const currentUrl = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container course__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_activities">
-            <h4>Aktiviteter</h4>
+          <section class="course__paragraph-item" v-if="data.field_activities">
+            <h2 class="h4">Aktiviteter</h2>
             <BaseRte :content="data.field_activities" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_preparation">
-            <h4>Forberedelse</h4>
+          <section class="course__paragraph-item" v-if="data.field_preparation">
+            <h2 class="h4">Forberedelse</h2>
             <BaseRte :content="data.field_preparation" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_post_processing">
-            <h4>Efterbehandling</h4>
+          <section class="course__paragraph-item" v-if="data.field_post_processing">
+            <h2 class="h4">Efterbehandling</h2>
             <BaseRte :content="data.field_post_processing" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_purpose">
-            <h4>Formål</h4>
+          <section class="course__paragraph-item" v-if="data.field_purpose">
+            <h2 class="h4">Formål</h2>
             <BaseRte :content="data.field_purpose" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"

@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="course__registration">
+  <section class="course__registration">
     <h2
       v-if="
         props.data.bundle == 'internship' ||
@@ -169,7 +169,7 @@ onBeforeUnmount(() => {
         >{{ props.data.title ? props.data.title : props.data.url }}</a
       >
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="postcss" scoped>
