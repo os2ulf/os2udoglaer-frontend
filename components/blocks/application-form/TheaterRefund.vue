@@ -258,7 +258,7 @@ const handleSubmit = async () => {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Skole</h3>
+        <h2 class="h3">Skole</h2>
         <BaseSelect
           v-model="selectedSchool"
           :options="schoolsSelect"
@@ -302,7 +302,7 @@ const handleSubmit = async () => {
         />
       </div>
       <div class="field-group">
-        <h3>Forestilling</h3>
+        <h2 class="h3">Forestilling</h2>
         <BaseSelect
           v-model="selectedTheater"
           :options="theatersSelect"
@@ -352,9 +352,9 @@ const handleSubmit = async () => {
       </div>
 
       <div v-if="props.blockData?.field_information_text" class="field-group">
-        <h3 v-if="props.blockData?.field_information_text_title">
+        <h2 class="h3" v-if="props.blockData?.field_information_text_title">
           {{ props.blockData?.field_information_text_title }}
-        </h3>
+        </h2>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"
