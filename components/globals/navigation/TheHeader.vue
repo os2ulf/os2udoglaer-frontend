@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
               :aria-label="'Link til ' + item.title"
               :role="!item?.link?.url ? 'button' : ''"
             >
-              <button class="header__link-text">
+              <span class="header__link-text">
                 {{ item.title }}
                 <span
                   class="header__button--arrow"
@@ -179,7 +179,7 @@ onBeforeUnmount(() => {
                 >
                   <NuxtIcon filled name="chevron-down" />
                 </span>
-              </button>
+              </span>
               <ClientOnly>
                 <Teleport to=".header-parent">
                   <Transition name="slide-top-offcanvas">
