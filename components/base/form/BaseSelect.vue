@@ -183,6 +183,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         class="select-header"
         :class="{ open: dropdownOpen }"
         role="combobox"
+        :aria-label="dynamicFieldTitle"
         :aria-expanded="dropdownOpen.toString()"
         :aria-controls="`${id}-listbox`"
         :aria-haspopup="true"

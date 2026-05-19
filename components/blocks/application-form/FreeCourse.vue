@@ -496,7 +496,7 @@ onBeforeMount(() => {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Skole</h3>
+        <h2 class="h3">Skole</h2>
         <BaseSelect
           v-model="selectedSchool"
           :options="schoolsSelect"
@@ -548,7 +548,7 @@ onBeforeMount(() => {
         />
       </div>
       <div class="field-group">
-        <h3>Forløb</h3>
+        <h2 class="h3">Forløb</h2>
         <BaseSelect
           v-model="selectedProvider"
           :options="providersSelect"
@@ -650,9 +650,9 @@ onBeforeMount(() => {
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
+        <h2 class="h3" v-if="props.blockData.field_information_text_title">
           {{ props.blockData.field_information_text_title }}
-        </h3>
+        </h2>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"

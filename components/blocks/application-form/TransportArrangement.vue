@@ -880,7 +880,7 @@ onMounted(async () => {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Forløb</h3>
+        <h2 class="h3">Forløb</h2>
         <BaseSelect
           v-if="!courseNotInList"
           v-model="selectedCourse"
@@ -918,7 +918,7 @@ onMounted(async () => {
       </div>
 
       <div class="field-group">
-        <h3>Forløbsadresse</h3>
+        <h2 class="h3">Forløbsadresse</h2>
         <BaseDawaAutocomplete
           class="application-form__label"
           v-model="courseAddress"
@@ -930,7 +930,7 @@ onMounted(async () => {
       </div>
 
       <div class="field-group">
-        <h3>Vælg institution</h3>
+        <h2 class="h3">Vælg institution</h2>
         <BaseSelect
           v-model="selectedType"
           :options="typeSelect"
@@ -986,7 +986,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="validated" class="field-group">
-        <h3>Transport information</h3>
+        <h2 class="h3">Transport information</h2>
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="requestedAmount"
@@ -1029,7 +1029,7 @@ onMounted(async () => {
 
       <div v-if="validated">
         <div class="field-group">
-          <h3>Kontaktinformation</h3>
+          <h2 class="h3">Kontaktinformation</h2>
           <BaseInputFloatingLabel
             class="application-form__label"
             v-model="email"
@@ -1064,7 +1064,7 @@ onMounted(async () => {
           />
         </div>
         <div class="field-group">
-          <h3>Besked</h3>
+          <h2 class="h3">Besked</h2>
           <BaseTextareaFloatingLabel
             v-model="message"
             name="Evt. besked"
@@ -1075,9 +1075,9 @@ onMounted(async () => {
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
+        <h2 class="h3" v-if="props.blockData.field_information_text_title">
           {{ props.blockData.field_information_text_title }}
-        </h3>
+        </h2>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"
