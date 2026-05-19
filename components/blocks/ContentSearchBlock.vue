@@ -927,7 +927,7 @@ onMounted(() => {
           >
             <div class="search-block__extra-filters-bar" v-if="showListView">
               <div class="search-block__results-found">
-                <h4>{{ searchResultString }}</h4>
+                <div class="h4">{{ searchResultString }}</div>
               </div>
               <div class="search-block__sorting">
                 <ClientOnly>

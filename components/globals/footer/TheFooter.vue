@@ -47,7 +47,7 @@ const footerData = ref(filterFooterData[0]);
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-3 footer__section">
-          <h3 class="footer__title">Kontakt</h3>
+          <h2 class="h3 footer__title">Kontakt</h2>
           <div class="footer__contact" v-if="footerData">
             <div
               v-if="footerData?.field_contact_info"
@@ -114,7 +114,7 @@ const footerData = ref(filterFooterData[0]);
             class="footer__shortcuts"
             v-if="footerData?.field_shortcuts?.length > 0"
           >
-            <h3 class="footer__title">Genveje</h3>
+            <h2 class="h3 footer__title">Genveje</h2>
 
             <div class="footer__shortcuts-container">
               <NuxtLink

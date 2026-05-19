@@ -34,7 +34,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
             {{ dateConversion(data?.created) }}
           </div>
 
-          <h4 class="news-card__title">{{ data?.label }}</h4>
+          <h3 class="h4 news-card__title">{{ data?.label }}</h3>
           <div class="news-card__description" v-if="data?.body">
             {{ truncateString(cardBodyText, 85) }}
           </div>
