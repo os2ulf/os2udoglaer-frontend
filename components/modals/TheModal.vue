@@ -39,7 +39,7 @@ onUnmounted(() => {
 
 <template>
   <Transition name="fade">
-    <div
+    <dialog
       v-show="isVisible"
       class="the-modal"
       @click.self="modalStore.hideModal"
@@ -88,7 +88,7 @@ onUnmounted(() => {
           @click="modalStore.hideModal"
         />
       </div>
-    </div>
+    </dialog>
   </Transition>
 </template>
 

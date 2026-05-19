@@ -8,7 +8,7 @@ if (footerDataStore.footerData === null) {
 </script>
 
 <template>
-  <footer class="footer-parent" v-if="footerDataStore.footerData">
+  <div class="footer-parent" v-if="footerDataStore.footerData">
     <TheFooter :data="footerDataStore.footerData" />
-  </footer>
+  </div>
 </template>
