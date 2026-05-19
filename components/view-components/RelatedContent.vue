@@ -156,9 +156,9 @@ const handleSorting = (key: any) => {
             v-for="(item, index) in content"
             :key="index"
           >
-            <div class="related-content__card-item" :key="componentKey">
+            <article class="related-content__card-item" :key="componentKey">
               <BaseCard :data="item" />
-            </div>
+            </article>
           </div>
         </transition-group>
       </div>

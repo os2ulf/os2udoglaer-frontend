@@ -11,7 +11,7 @@ function scrollToContent() {
 </script>
 <template>
   <a
-    href="#"
+    href="#main-content"
     aria-label="Skip to main content"
     class="skip-link"
     @click.prevent="scrollToContent"
@@ -21,9 +21,9 @@ function scrollToContent() {
   </a>
   <TheMetaMenu />
   <TheHeaderParent />
-  <div class="app" ref="mainContent">
+  <main id="main-content" class="app" ref="mainContent">
     <slot></slot>
-  </div>
+  </main>
   <TheFooterParent />
   <TheModal />
   <GlobalScriptInjections />

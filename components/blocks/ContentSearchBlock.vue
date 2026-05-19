@@ -954,9 +954,9 @@ onMounted(() => {
                   v-for="item in dynamicContent"
                   :key="item"
                 >
-                  <div class="search-block__card-item">
+                  <article class="search-block__card-item">
                     <BaseCard :data="item" />
-                  </div>
+                  </article>
                 </div>
               </TransitionGroup>
             </div>

@@ -13,9 +13,9 @@ const mainMenuData = computed(() => {
 </script>
 
 <template>
-  <div class="header-parent">
+  <header class="header-parent">
     <TheHeader v-if="mainMenuData" :data="mainMenuData" />
-  </div>
+  </header>
 </template>
 
 <style lang="postcss" scoped>

@@ -62,7 +62,7 @@ watch(
 </script>
 
 <template>
-  <div class="meta-menu">
+  <nav class="meta-menu" aria-label="meta-menu">
     <div class="container">
       <div class="row">
         <div class="col-sm-12 col-xs-12 col-md-12">
@@ -110,7 +110,7 @@ watch(
         </div>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <style lang="postcss" scoped>

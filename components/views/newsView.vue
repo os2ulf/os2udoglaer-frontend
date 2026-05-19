@@ -45,7 +45,7 @@ const practicalInfoData = computed(() => {
 
 <template>
   <div class="news">
-    <div class="news__top-section">
+    <section class="news__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -84,14 +84,14 @@ const practicalInfoData = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container news__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <BaseRte :content="data.body" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -106,7 +106,7 @@ const practicalInfoData = computed(() => {
           <BaseDivider />
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12"
           v-if="
             data.field_video_title ||
@@ -131,10 +131,10 @@ const practicalInfoData = computed(() => {
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section cards -->
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12"
           v-if="
             data?.field_other_info.length > 1 ||
@@ -152,7 +152,7 @@ const practicalInfoData = computed(() => {
               }"
             />
           </div>
-        </div>
+        </section>
       </div>
     </div>
   </div>

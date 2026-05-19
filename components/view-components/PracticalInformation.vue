@@ -23,7 +23,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="practical-information">
+  <section class="practical-information">
     <div
       class="practical-information__user-provider-logo"
       v-if="userProfilePage?.logo?.src"
@@ -272,7 +272,7 @@ const props = defineProps({
         :class="{'button--course' : hasPrimaryButtonColors}"
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="postcss" scoped>

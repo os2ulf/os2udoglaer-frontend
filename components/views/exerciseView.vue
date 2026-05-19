@@ -146,7 +146,7 @@ const currentUrl = computed(() => {
 
 <template>
   <div class="exercise">
-    <div class="exercise__top-section">
+    <section class="exercise__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -212,55 +212,55 @@ const currentUrl = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container exercise__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
+          </section>
 
-          <div class="exercise__paragraph-item" v-if="data.field_preparation">
-            <h4>Forberedelse</h4>
+          <section class="exercise__paragraph-item" v-if="data.field_preparation">
+            <h2 class="h4">Forberedelse</h2>
             <BaseRte :content="data.field_preparation" />
-          </div>
+          </section>
 
-          <div class="exercise__paragraph-item" v-if="data.field_how_to">
-            <h4>Sådan gør du</h4>
+          <section class="exercise__paragraph-item" v-if="data.field_how_to">
+            <h2 class="h4">Sådan gør du</h2>
             <BaseRte :content="data.field_how_to" />
-          </div>
+          </section>
 
           <!-- Thats a misspell from the BE, ha! -->
-          <div
+          <section
             class="exercise__paragraph-item"
             v-if="data.field_ackground_knowledge"
           >
-            <h4>Før besøget</h4>
+            <h2 class="h4">Før besøget</h2>
             <BaseRte :content="data.field_ackground_knowledge" />
-          </div>
+          </section>
 
-          <div class="exercise__paragraph-item" v-if="data.field_activities">
-            <h4>Under besøget</h4>
+          <section class="exercise__paragraph-item" v-if="data.field_activities">
+            <h2 class="h4">Under besøget</h2>
             <BaseRte :content="data.field_activities" />
-          </div>
+          </section>
 
-          <div
+          <section
             class="exercise__paragraph-item"
             v-if="data.field_post_processing"
           >
-            <h4>Efter besøget</h4>
+            <h2 class="h4">Efter besøget</h2>
             <BaseRte :content="data.field_post_processing" />
-          </div>
+          </section>
 
-          <div
+          <section
             class="exercise__paragraph-item"
             v-if="data.field_purpose_exercise"
           >
-            <h4>Mål</h4>
+            <h2 class="h4">Mål</h2>
             <BaseRte :content="data.field_purpose_exercise" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -293,7 +293,7 @@ const currentUrl = computed(() => {
           </div>
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 exercise__section-video"
           v-if="
             data.field_video_title ||
@@ -317,10 +317,10 @@ const currentUrl = computed(() => {
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section cards -->
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 exercise__section-cards"
           v-if="
             data.field_work_documents?.length > 1 ||
@@ -338,10 +338,10 @@ const currentUrl = computed(() => {
               }"
             />
           </div>
-        </div>
+        </section>
 
         <!-- Section related articles -->
-        <div
+        <section
           v-if="props.data.field_related_excercises.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 exercise__section-related-articles"
         >
@@ -364,7 +364,7 @@ const currentUrl = computed(() => {
               </Swiper>
             </ClientOnly>
           </div>
-        </div>
+        </section>
       </div>
     </div>
 

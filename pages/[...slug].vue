@@ -363,14 +363,12 @@ useHead({
 
 <template>
   <div>
-    <main>
-      <PreviewRibbon v-if="isPreview"></PreviewRibbon>
-      <component
-        :is="renderLayoutBlock(viewData.bundle)"
-        v-if="viewData"
-        :data="viewData"
-        :page-header="pageBlockHeaderData"
-      />
-    </main>
+    <PreviewRibbon v-if="isPreview"></PreviewRibbon>
+    <component
+      :is="renderLayoutBlock(viewData.bundle)"
+      v-if="viewData"
+      :data="viewData"
+      :page-header="pageBlockHeaderData"
+    />
   </div>
 </template>

@@ -112,7 +112,7 @@ const relatedContent = ref(props.data?.related_content);
 
 <template>
   <div class="user">
-    <div class="user__top-section">
+    <section class="user__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -151,28 +151,28 @@ const relatedContent = ref(props.data?.related_content);
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container user__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.field_presentation">
+          <section v-if="data.field_presentation">
             <h2>Præsentation</h2>
             <BaseRte :content="data.field_presentation" />
-          </div>
+          </section>
 
-          <div
+          <section
             class="user__paragraph-item"
             v-if="data.field_educational_profile"
           >
-            <h3>Pædagogisk profil</h3>
+            <h2 class="h3">Pædagogisk profil</h2>
             <BaseRte :content="data.field_educational_profile" />
-          </div>
+          </section>
 
-          <div class="user__paragraph-item" v-if="data.field_intro">
-            <h4>Entré</h4>
+          <section class="user__paragraph-item" v-if="data.field_intro">
+            <h2 class="h4">Entré</h2>
             <BaseRte :content="data.field_intro" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -234,7 +234,7 @@ const relatedContent = ref(props.data?.related_content);
           <BaseDivider />
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12"
           v-if="
             data.field_video_title ||
@@ -258,10 +258,10 @@ const relatedContent = ref(props.data?.related_content);
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section related articles -->
-        <div
+        <section
           id="related_content__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-related-content"
           v-if="relatedContent?.results?.length > 0"
@@ -271,10 +271,10 @@ const relatedContent = ref(props.data?.related_content);
               :data="{ relatedContent, title: data?.field_name }"
             />
           </div>
-        </div>
+        </section>
 
         <!-- Section kontakt -->
-        <div
+        <section
           id="contact__section"
           class="col-xs-12 col-sm-12 col-md-12 user__section-contact"
           v-if="data?.field_contact?.length > 0 && (data?.field_contact[0].field_email !== null || data?.field_contact[0].field_phone !== null)"
@@ -291,9 +291,9 @@ const relatedContent = ref(props.data?.related_content);
               "
             />
           </div>
-        </div>
+        </section>
         <!-- Section information -->
-        <div
+        <section
           class="user__section-user-info"
           v-if="
             data?.field_other_info_description !== null ||
@@ -360,7 +360,7 @@ const relatedContent = ref(props.data?.related_content);
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   </div>
