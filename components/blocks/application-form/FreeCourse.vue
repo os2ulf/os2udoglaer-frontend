@@ -4,12 +4,12 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData';
 
 const $route = useRoute();
 
 // Stores
-const settingsDataStore = useSettingsDataStore();
+const settings = useSettingsData();
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
 
@@ -20,7 +20,7 @@ const props = defineProps({
 // Set arrays of site messages to use in validation
 const formSettings = {
   confirmation: computed(
-    () => settingsDataStore.settingsData?.ufcr_receipt.value,
+    () => settings.settingsData.value?.ufcr_receipt.value,
   ),
 };
 

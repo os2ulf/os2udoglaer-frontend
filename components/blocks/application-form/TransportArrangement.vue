@@ -4,12 +4,12 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData';
 
 const $route = useRoute();
 
 // Stores
-const settingsDataStore = useSettingsDataStore();
+const settings = useSettingsData();
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
 
@@ -19,30 +19,18 @@ const props = defineProps({
 
 // Set arrays of site messages to use in validation
 const formSettings = {
-  free_choice: computed(
-    () => settingsDataStore.settingsData?.free_choice.value,
-  ),
-  course_not_found: computed(
-    () => settingsDataStore.settingsData?.course_not_found.value,
-  ),
-  district_1: computed(() => settingsDataStore.settingsData?.district_1.value),
-  district_2: computed(() => settingsDataStore.settingsData?.district_2.value),
-  district_3: computed(() => settingsDataStore.settingsData?.district_3.value),
-  district_4: computed(() => settingsDataStore.settingsData?.district_4.value),
-  district_5: computed(() => settingsDataStore.settingsData?.district_5.value),
-  no_district: computed(
-    () => settingsDataStore.settingsData?.no_district.value,
-  ),
-  denied_distance: computed(
-    () => settingsDataStore.settingsData?.denied_distance.value,
-  ),
-  denied_private: computed(
-    () => settingsDataStore.settingsData?.denied_private.value,
-  ),
-  confirmation: computed(
-    () => settingsDataStore.settingsData?.confirmation.value,
-  ),
-};
+  free_choice: computed(() => settings.settingsData.value?.free_choice.value),
+  course_not_found: computed(() => settings.settingsData.value?.course_not_found.value),
+  district_1: computed(() => settings.settingsData.value?.district_1.value),
+  district_2: computed(() => settings.settingsData.value?.district_2.value),
+  district_3: computed(() => settings.settingsData.value?.district_3.value),
+  district_4: computed(() => settings.settingsData.value?.district_4.value),
+  district_5: computed(() => settings.settingsData.value?.district_5.value),
+  no_district: computed(() => settings.settingsData.value?.no_district.value),
+  denied_distance: computed(() => settings.settingsData.value?.denied_distance.value),
+  denied_private: computed(() => settings.settingsData.value?.denied_private.value),
+  confirmation: computed(() => settings.settingsData.value?.confirmation.value),
+}
 
 // Set arrays for select options
 const courses = ref([]);

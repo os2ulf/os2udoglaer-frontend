@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import { useHead } from '#imports';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData'
 
-const settingsDataStore = useSettingsDataStore();
+const settings = useSettingsData();
 
-await settingsDataStore.getSettingsData();
+await settings.getSettingsData();
 
-// Grab scripts from store
-const cookieScript = settingsDataStore.getCookieScript();
-const trackingScript = settingsDataStore.getTrackingScript();
+// Grab scripts from composable
+const cookieScript = settings.getCookieScript();
+const trackingScript = settings.getTrackingScript();
 
 const headScripts: Array<Record<string, any>> = [];
 
-/**
- * Parse ALL <script> tags from a string.
- *
- * Supports:
- * - inline scripts
- * - external src scripts
- * - boolean attrs (async, defer, etc.)
- */
 function parseScripts(html: string | null) {
   if (!html) return [];
 
@@ -33,14 +25,10 @@ function parseScripts(html: string | null) {
 
     const attrs: Record<string, any> = {};
 
-    // Parse attributes including boolean attrs
-    attrString.replace(
-      /(\w+(?:-\w+)*)(?:=["']([^"']*)["'])?/g,
-      (_, key, val) => {
-        attrs[key] = val ?? true;
-        return '';
-      }
-    );
+    attrString.replace(/(\w+(?:-\w+)*)(?:=["']([^"']*)["'])?/g, (_, key, val) => {
+      attrs[key] = val ?? true;
+      return '';
+    });
 
     return {
       attrs,
@@ -49,25 +37,16 @@ function parseScripts(html: string | null) {
   });
 }
 
-/**
- * Push parsed scripts into useHead config
- */
 function addScripts(
   scripts: ReturnType<typeof parseScripts>,
-  defaults: {
-    async?: boolean;
-    defer?: boolean;
-  } = {}
+  defaults: { async?: boolean; defer?: boolean } = {}
 ) {
   scripts.forEach((parsed) => {
     const scriptConfig: Record<string, any> = {
       type: parsed.attrs.type || 'text/javascript',
     };
 
-    // Preserve optional attrs
-    if (parsed.attrs.id) {
-      scriptConfig.id = parsed.attrs.id;
-    }
+    if (parsed.attrs.id) scriptConfig.id = parsed.attrs.id;
 
     if (parsed.attrs.async !== undefined) {
       scriptConfig.async = parsed.attrs.async;
@@ -81,12 +60,10 @@ function addScripts(
       scriptConfig.defer = defaults.defer;
     }
 
-    // External script
     if (parsed.attrs.src) {
       scriptConfig.src = parsed.attrs.src;
     }
 
-    // Inline script
     if (parsed.inlineCode) {
       scriptConfig.children = parsed.inlineCode;
     }
@@ -95,22 +72,17 @@ function addScripts(
   });
 }
 
-// ----- Cookie Scripts -----
-addScripts(parseScripts(cookieScript), {
-  async: true,
-});
+// cookie scripts
+addScripts(parseScripts(cookieScript), { async: true });
 
-// ----- Tracking Scripts -----
-addScripts(parseScripts(trackingScript), {
-  defer: true,
-});
+// tracking scripts
+addScripts(parseScripts(trackingScript), { defer: true });
 
-// Inject into <head>
 useHead({
   script: headScripts,
 });
 </script>
 
 <template>
-  <!-- Scripts are injected via useHead -->
+  <!-- injected via useHead -->
 </template>

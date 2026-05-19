@@ -3,13 +3,10 @@ import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
 import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { useSettingsDataStore } from '~/stores/settingsData';
-const settingsDataStore = useSettingsDataStore();
+import { useSettingsData } from '~/composables/useSettingsData';
 const { hasPrimaryButtonColors, hasSecondaryButtonColors } = useButtonColors()
-
-if (settingsDataStore.settingsData === null) {
-  settingsDataStore.getSettingsData();
-}
+const settings = useSettingsData();
+await settings.getSettingsData();
 
 const props = defineProps({
   data: {
@@ -19,28 +16,25 @@ const props = defineProps({
   },
 });
 
-let freeCourseApplicationUrl = computed(
-  () => settingsDataStore.settingsData?.free_course_application_reference,
-);
+const freeCourseApplicationUrl = computed(() => {
+  const base = settings.settingsData.value?.free_course_application_reference
+  if (!base) return null
 
-if (freeCourseApplicationUrl.value) {
-  freeCourseApplicationUrl =
-    freeCourseApplicationUrl.value + '?course=' + props.data.id;
+  let url = base + '?course=' + props.data.id
 
   if (props.data?.provider) {
-    freeCourseApplicationUrl =
-      freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+    url += '&provider=' + props.data.provider.id
   }
-}
 
-let transportApplicationUrl = computed(
-  () => settingsDataStore.settingsData?.transport_pool_application_reference,
-);
+  return url
+})
 
-if (transportApplicationUrl.value) {
-  transportApplicationUrl =
-    transportApplicationUrl.value + '?course=' + props.data.id;
-}
+const transportApplicationUrl = computed(() => {
+  const base = settings.settingsData.value?.transport_pool_application_reference
+  if (!base) return null
+
+  return base + '?course=' + props.data.id
+})
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {

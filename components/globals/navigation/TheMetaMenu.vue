@@ -1,63 +1,64 @@
 <script setup>
 import { useHeaderDataStore } from '~/stores/headerData';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData'
 
 const headerDataStore = useHeaderDataStore();
-const settingsDataStore = useSettingsDataStore();
+const { isHeaderFixed } = useSettingsData();
 
-if (headerDataStore.headerData === null) {
-  headerDataStore.getHeaderData();
-}
+await useAsyncData('header', () => headerDataStore.getHeaderData());
 
 const metaMenuData = computed(() => {
-  const metaKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+  const data = headerDataStore.headerData;
+  if (!data) return null;
+
+  const metaKey = Object.keys(data).find((key) =>
     key.includes('meta'),
   );
-  return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
+
+  return metaKey ? data[metaKey] : null;
 });
-
-const isHeaderFixed = computed(() => settingsDataStore?.isHeaderFixed);
-
-// Close the meta-menu offcanvas if the header is fixed (off screen)
-watch(isHeaderFixed, () => {
-  closeOffCanvas();
-});
-
-const route = useRoute();
-watch(
-  () => route.path,
-  () => {
-    closeOffCanvas();
-  },
-);
 
 const isOpen = ref(false);
 const activeNavItem = ref(null);
-const handleNavigationItemClick = (metaItem) => {
-  if (metaItem.below.length > 0) {
-    if (isOpen.value && activeNavItem.value === metaItem) {
-      // Close the canvas if the same metaItem is clicked again
-      closeOffCanvas();
-    } else {
-      openOffCanvas(metaItem);
-    }
-  } else {
-    if (isOpen.value) {
-      closeOffCanvas();
-    }
-    // Closing the canvas if the metaItem has no children
-    closeOffCanvas();
-  }
-};
-const openOffCanvas = (metaItem) => {
-  isOpen.value = true;
-  activeNavItem.value = metaItem;
-};
 
 const closeOffCanvas = () => {
   isOpen.value = false;
   activeNavItem.value = null;
 };
+
+const openOffCanvas = (metaItem) => {
+  isOpen.value = true;
+  activeNavItem.value = metaItem;
+};
+
+const handleNavigationItemClick = (metaItem) => {
+  const hasChildren = metaItem?.below?.length > 0;
+
+  if (!hasChildren) {
+    closeOffCanvas();
+    return;
+  }
+
+  if (isOpen.value && activeNavItem.value === metaItem) {
+    closeOffCanvas();
+  } else {
+    openOffCanvas(metaItem);
+  }
+};
+
+watch(
+  isHeaderFixed,
+  (val) => {
+    if (val) closeOffCanvas();
+  }
+);
+
+const route = useRoute();
+
+watch(
+  () => route.path,
+  () => closeOffCanvas()
+);
 </script>
 
 <template>
