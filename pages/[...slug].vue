@@ -75,7 +75,8 @@ const renderLayoutBlock = (viewName: string) => {
   );
 };
 
-const openGraph = ref(viewData?.field_meta_tags?.html_head);
+const openGraph = computed(() => viewData?.field_meta_tags?.html_head ?? {});
+const seo = computed(() => openGraph.value || {});
 
 const canonicalUrl = computed(() => {
   return seoCanonicalUrlHandler(
@@ -89,262 +90,262 @@ useHead({
     lang: 'da',
   },
 
-  title: openGraph?.value?.title?.attributes?.content ?? '',
+  title: seo.value?.title?.attributes?.content ?? '',
   meta: [
     {
       name: 'description',
-      content: openGraph?.value?.og_description?.attributes?.content ?? '',
+      content: seo.value?.og_description?.attributes?.content ?? '',
     },
     {
       name: 'robots',
-      content: openGraph?.value?.robots?.attributes?.content ?? '',
+      content: seo.value?.robots?.attributes?.content ?? '',
     },
     {
       name: 'abstract',
-      content: openGraph?.value?.abstract?.attributes?.content ?? '',
+      content: seo.value?.abstract?.attributes?.content ?? '',
     },
     {
       name: 'keywords',
-      content: openGraph?.value?.keywords?.attributes?.content ?? '',
+      content: seo.value?.keywords?.attributes?.content ?? '',
     },
     {
       property: 'og:description',
-      content: openGraph?.value?.og_description?.attributes?.content ?? '',
+      content: seo.value?.og_description?.attributes?.content ?? '',
     },
     {
       property: 'og:image',
-      content: openGraph?.value?.og_image_0?.attributes?.content ?? '',
+      content: seo.value?.og_image_0?.attributes?.content ?? '',
     },
     {
       property: 'og:site_name',
-      content: openGraph?.value?.og_site_name?.attributes?.content ?? '',
+      content: seo.value?.og_site_name?.attributes?.content ?? '',
     },
     {
       property: 'og:title',
-      content: openGraph?.value?.og_title?.attributes?.content ?? '',
+      content: seo.value?.og_title?.attributes?.content ?? '',
     },
     {
       property: 'og:url',
       content:
         useGetCurrentDomain() +
-        removeBEdomain(openGraph?.value?.og_url?.attributes?.content ?? ''),
+        removeBEdomain(seo.value?.og_url?.attributes?.content ?? ''),
     },
     {
       property: 'og:type',
-      content: openGraph?.value?.og_type?.attributes?.content ?? '',
+      content: seo.value?.og_type?.attributes?.content ?? '',
     },
     {
       property: 'og:determiner',
-      content: openGraph?.value?.og_determiner?.attributes?.content ?? '',
+      content: seo.value?.og_determiner?.attributes?.content ?? '',
     },
     {
       property: 'article:author',
-      content: openGraph?.value?.article_author_0?.attributes?.content ?? '',
+      content: seo.value?.article_author_0?.attributes?.content ?? '',
     },
     {
       property: 'article:expiration_time',
       content:
-        openGraph?.value?.article_expiration_time?.attributes?.content ?? '',
+        seo.value?.article_expiration_time?.attributes?.content ?? '',
     },
     {
       property: 'article:modified_time',
       content:
-        openGraph?.value?.article_modified_time?.attributes?.content ?? '',
+        seo.value?.article_modified_time?.attributes?.content ?? '',
     },
     {
       property: 'article:published_time',
       content:
-        openGraph?.value?.article_published_time?.attributes?.content ?? '',
+        seo.value?.article_published_time?.attributes?.content ?? '',
     },
     {
       property: 'article:publisher',
-      content: openGraph?.value?.article_publisher?.attributes?.content ?? '',
+      content: seo.value?.article_publisher?.attributes?.content ?? '',
     },
     {
       property: 'article:section',
-      content: openGraph?.value?.article_section?.attributes?.content ?? '',
+      content: seo.value?.article_section?.attributes?.content ?? '',
     },
     {
       property: 'article:tag',
-      content: openGraph?.value?.article_tag_0?.attributes?.content ?? '',
+      content: seo.value?.article_tag_0?.attributes?.content ?? '',
     },
     {
       property: 'book:author',
-      content: openGraph?.value?.book_author_0?.attributes?.content ?? '',
+      content: seo.value?.book_author_0?.attributes?.content ?? '',
     },
     {
       property: 'book:isbn',
-      content: openGraph?.value?.book_isbn?.attributes?.content ?? '',
+      content: seo.value?.book_isbn?.attributes?.content ?? '',
     },
     {
       property: 'book:release_date',
-      content: openGraph?.value?.book_release_date?.attributes?.content ?? '',
+      content: seo.value?.book_release_date?.attributes?.content ?? '',
     },
     {
       property: 'book:tag',
-      content: openGraph?.value?.book_tag_0?.attributes?.content ?? '',
+      content: seo.value?.book_tag_0?.attributes?.content ?? '',
     },
     {
       property: 'og:audio',
-      content: openGraph?.value?.og_audio?.attributes?.content ?? '',
+      content: seo.value?.og_audio?.attributes?.content ?? '',
     },
     {
       property: 'og:audio:secure_url',
-      content: openGraph?.value?.og_audio_secure_url?.attributes?.content ?? '',
+      content: seo.value?.og_audio_secure_url?.attributes?.content ?? '',
     },
     {
       property: 'og:audio:type',
-      content: openGraph?.value?.og_audio_type?.attributes?.content ?? '',
+      content: seo.value?.og_audio_type?.attributes?.content ?? '',
     },
     {
       property: 'og:country-name',
-      content: openGraph?.value?.og_country_name?.attributes?.content ?? '',
+      content: seo.value?.og_country_name?.attributes?.content ?? '',
     },
     {
       property: 'og:email',
-      content: openGraph?.value?.og_email?.attributes?.content ?? '',
+      content: seo.value?.og_email?.attributes?.content ?? '',
     },
     {
       property: 'og:fax_number',
-      content: openGraph?.value?.og_fax_number?.attributes?.content ?? '',
+      content: seo.value?.og_fax_number?.attributes?.content ?? '',
     },
     {
       property: 'og:image:alt',
-      content: openGraph?.value?.og_image_alt?.attributes?.content ?? '',
+      content: seo.value?.og_image_alt?.attributes?.content ?? '',
     },
     {
       property: 'og:image:height',
-      content: openGraph?.value?.og_image_height?.attributes?.content ?? '',
+      content: seo.value?.og_image_height?.attributes?.content ?? '',
     },
     {
       property: 'og:image:secure_url',
       content:
-        openGraph?.value?.og_image_secure_url_0?.attributes?.content ?? '',
+        seo.value?.og_image_secure_url_0?.attributes?.content ?? '',
     },
     {
       property: 'og:image:type',
-      content: openGraph?.value?.og_image_type?.attributes?.content ?? '',
+      content: seo.value?.og_image_type?.attributes?.content ?? '',
     },
     {
       property: 'og:image:url',
-      content: openGraph?.value?.og_image_url_0?.attributes?.content ?? '',
+      content: seo.value?.og_image_url_0?.attributes?.content ?? '',
     },
     {
       property: 'og:image:width',
-      content: openGraph?.value?.og_image_width?.attributes?.content ?? '',
+      content: seo.value?.og_image_width?.attributes?.content ?? '',
     },
     {
       property: 'og:latitude',
-      content: openGraph?.value?.og_latitude?.attributes?.content ?? '',
+      content: seo.value?.og_latitude?.attributes?.content ?? '',
     },
     {
       property: 'og:locale',
-      content: openGraph?.value?.og_locale?.attributes?.content ?? '',
+      content: seo.value?.og_locale?.attributes?.content ?? '',
     },
     {
       property: 'og:locale:alternative',
       content:
-        openGraph?.value?.og_locale_alternative_0?.attributes?.content ?? '',
+        seo.value?.og_locale_alternative_0?.attributes?.content ?? '',
     },
     {
       property: 'og:locality',
-      content: openGraph?.value?.og_locality?.attributes?.content ?? '',
+      content: seo.value?.og_locality?.attributes?.content ?? '',
     },
     {
       property: 'og:longitude',
-      content: openGraph?.value?.og_longitude?.attributes?.content ?? '',
+      content: seo.value?.og_longitude?.attributes?.content ?? '',
     },
     {
       property: 'og:phone_number',
-      content: openGraph?.value?.og_phone_number?.attributes?.content ?? '',
+      content: seo.value?.og_phone_number?.attributes?.content ?? '',
     },
     {
       property: 'og:postal_code',
-      content: openGraph?.value?.og_postal_code?.attributes?.content ?? '',
+      content: seo.value?.og_postal_code?.attributes?.content ?? '',
     },
     {
       property: 'og:region',
-      content: openGraph?.value?.og_region?.attributes?.content ?? '',
+      content: seo.value?.og_region?.attributes?.content ?? '',
     },
     {
       property: 'og:see_also',
-      content: openGraph?.value?.og_see_also?.attributes?.content ?? '',
+      content: seo.value?.og_see_also?.attributes?.content ?? '',
     },
     {
       property: 'og:street_address',
-      content: openGraph?.value?.og_street_address?.attributes?.content ?? '',
+      content: seo.value?.og_street_address?.attributes?.content ?? '',
     },
     {
       property: 'og:updated_time',
-      content: openGraph?.value?.og_updated_time?.attributes?.content ?? '',
+      content: seo.value?.og_updated_time?.attributes?.content ?? '',
     },
     {
       property: 'og:video',
-      content: openGraph?.value?.og_video_0?.attributes?.content ?? '',
+      content: seo.value?.og_video_0?.attributes?.content ?? '',
     },
     {
       property: 'og:video:duration',
-      content: openGraph?.value?.og_video_duration?.attributes?.content ?? '',
+      content: seo.value?.og_video_duration?.attributes?.content ?? '',
     },
     {
       property: 'og:video:height',
-      content: openGraph?.value?.og_video_height?.attributes?.content ?? '',
+      content: seo.value?.og_video_height?.attributes?.content ?? '',
     },
     {
       property: 'og:video:secure_url',
-      content: openGraph?.value?.og_video_secure_url?.attributes?.content ?? '',
+      content: seo.value?.og_video_secure_url?.attributes?.content ?? '',
     },
     {
       property: 'og:video:type',
-      content: openGraph?.value?.og_video_type?.attributes?.content ?? '',
+      content: seo.value?.og_video_type?.attributes?.content ?? '',
     },
     {
       property: 'og:video:width',
-      content: openGraph?.value?.og_video_width?.attributes?.content ?? '',
+      content: seo.value?.og_video_width?.attributes?.content ?? '',
     },
     {
       property: 'profile:first_name',
-      content: openGraph?.value?.profile_first_name?.attributes?.content ?? '',
+      content: seo.value?.profile_first_name?.attributes?.content ?? '',
     },
     {
       property: 'profile:gender',
-      content: openGraph?.value?.profile_gender?.attributes?.content ?? '',
+      content: seo.value?.profile_gender?.attributes?.content ?? '',
     },
     {
       property: 'profile:last_name',
-      content: openGraph?.value?.profile_last_name?.attributes?.content ?? '',
+      content: seo.value?.profile_last_name?.attributes?.content ?? '',
     },
     {
       property: 'profile:username',
-      content: openGraph?.value?.profile_username?.attributes?.content ?? '',
+      content: seo.value?.profile_username?.attributes?.content ?? '',
     },
     {
       property: 'video:actor',
-      content: openGraph?.value?.video_actor_0?.attributes?.content ?? '',
+      content: seo.value?.video_actor_0?.attributes?.content ?? '',
     },
     {
       property: 'video:actor:role',
-      content: openGraph?.value?.video_actor_role_0?.attributes?.content ?? '',
+      content: seo.value?.video_actor_role_0?.attributes?.content ?? '',
     },
     {
       property: 'video:director',
-      content: openGraph?.value?.video_director_0?.attributes?.content ?? '',
+      content: seo.value?.video_director_0?.attributes?.content ?? '',
     },
     {
       property: 'video:release_date',
-      content: openGraph?.value?.video_release_date?.attributes?.content ?? '',
+      content: seo.value?.video_release_date?.attributes?.content ?? '',
     },
     {
       property: 'video:series',
-      content: openGraph?.value?.video_series?.attributes?.content ?? '',
+      content: seo.value?.video_series?.attributes?.content ?? '',
     },
     {
       property: 'video:tag',
-      content: openGraph?.value?.video_tag_0?.attributes?.content ?? '',
+      content: seo.value?.video_tag_0?.attributes?.content ?? '',
     },
     {
       property: 'video:writer',
-      content: openGraph?.value?.video_writer_0?.attributes?.content ?? '',
+      content: seo.value?.video_writer_0?.attributes?.content ?? '',
     },
   ],
   link: [
@@ -354,7 +355,7 @@ useHead({
     },
     {
       rel: 'image_src',
-      href: openGraph?.value?.image_src?.attributes?.href ?? '',
+      href: seo.value?.image_src?.attributes?.href ?? '',
     },
   ],
 });

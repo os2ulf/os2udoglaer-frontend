@@ -1,125 +1,130 @@
 <script setup>
-import { useSettingsDataStore } from '~/stores/settingsData';
-const settingsDataStore = useSettingsDataStore();
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { useSettingsData } from '~/composables/useSettingsData'
 
 const props = defineProps({
   data: {
     type: Object,
     required: true,
   },
-});
+})
 
-if (settingsDataStore.settingsData === null) {
-  settingsDataStore.getSettingsData();
+const { settingsData, getSettingsData, setIsHeaderFixed } = useSettingsData()
+
+// fetch settings once
+if (!settingsData.value) {
+  getSettingsData()
 }
 
-const siteLogo = computed(() => settingsDataStore.settingsData?.logo);
+const siteLogo = computed(() => settingsData.value?.logo)
 
-const isOpen = ref(false);
-const activeNavItem = ref(null);
+const isOpen = ref(false)
+const activeNavItem = ref(null)
+
 const handleNavigationItemClick = (item) => {
   if (item.below.length > 0) {
     if (isOpen.value && activeNavItem.value === item) {
-      // Close the canvas if the same item is clicked again
-      closeOffCanvas();
+      closeOffCanvas()
     } else {
-      openOffCanvas(item);
+      openOffCanvas(item)
     }
   } else {
     if (isOpen.value) {
-      closeOffCanvas();
+      closeOffCanvas()
     }
-    // Closing the canvas if the item has no children
-    closeOffCanvas();
+    closeOffCanvas()
   }
-};
+}
 
 const openOffCanvas = (item) => {
-  isOpen.value = true;
-  activeNavItem.value = item;
-};
+  isOpen.value = true
+  activeNavItem.value = item
+}
 
 const closeOffCanvas = () => {
-  isOpen.value = false;
-  activeNavItem.value = null;
-};
+  isOpen.value = false
+  activeNavItem.value = null
+}
 
-const isHeaderFixed = ref(false);
-const lastScrollPosition = ref(0);
-const scrollThreshold = ref(window?.innerWidth > 991 ? 40 : 20);
-const metaMenuHeight = ref(window?.innerWidth > 991 ? 50 : 0);
+// header state (lokal UI state stadig OK)
+const isHeaderFixed = ref(false)
+const lastScrollPosition = ref(0)
+const scrollThreshold = ref(window?.innerWidth > 991 ? 40 : 20)
+const metaMenuHeight = ref(window?.innerWidth > 991 ? 50 : 0)
 
-const isMetaMenuHidden = ref(false);
+const isMetaMenuHidden = ref(false)
 
 const handleScroll = () => {
-  const currentScrollPosition = document.documentElement.scrollTop;
-  const scrollDifference = lastScrollPosition.value - currentScrollPosition;
+  const currentScrollPosition = document.documentElement.scrollTop
+  const scrollDifference = lastScrollPosition.value - currentScrollPosition
 
   if (currentScrollPosition >= metaMenuHeight.value) {
-    document.querySelector('.header').classList.remove('header--relative');
-    document.querySelector('.header').classList.add('header--fixed');
-    isMetaMenuHidden.value = true;
-    settingsDataStore.setIsHeaderFixed(true);
+    document.querySelector('.header')?.classList.remove('header--relative')
+    document.querySelector('.header')?.classList.add('header--fixed')
+    isMetaMenuHidden.value = true
+    setIsHeaderFixed(true)
   } else {
-    document.querySelector('.header').classList.remove('header--fixed');
-    document.querySelector('.header').classList.add('header--relative');
-    isMetaMenuHidden.value = false;
-    settingsDataStore.setIsHeaderFixed(false);
+    document.querySelector('.header')?.classList.remove('header--fixed')
+    document.querySelector('.header')?.classList.add('header--relative')
+    isMetaMenuHidden.value = false
+    setIsHeaderFixed(false)
   }
 
-  // If off-canvas navigation is open, keep the header fixed
   if (isOpen.value) {
-    isHeaderFixed.value = true;
-    return;
+    isHeaderFixed.value = true
+    return
   }
 
   if (scrollDifference > scrollThreshold.value) {
     setTimeout(() => {
-      isHeaderFixed.value = true;
-    }, 100);
+      isHeaderFixed.value = true
+    }, 100)
   } else if (scrollDifference < -scrollThreshold.value) {
     setTimeout(() => {
-      isHeaderFixed.value = false;
-    }, 100);
+      isHeaderFixed.value = false
+    }, 100)
   }
 
-  lastScrollPosition.value = currentScrollPosition;
-};
+  lastScrollPosition.value = currentScrollPosition
+}
 
-const showMobileNavigation = ref(false);
+const showMobileNavigation = ref(false)
+
 const handleMobileNavigation = () => {
-  showMobileNavigation.value = !showMobileNavigation.value;
-};
+  showMobileNavigation.value = !showMobileNavigation.value
+}
 
 const closeMobileNavigation = () => {
-  document.body.style.overflow = 'auto';
-  showMobileNavigation.value = false;
-};
+  document.body.style.overflow = 'auto'
+  showMobileNavigation.value = false
+}
 
-// on route change, close the off-canvas navigation
-const route = useRoute();
+const route = useRoute()
+
 watch(
   () => route.path,
   () => {
-    closeOffCanvas();
-    closeMobileNavigation();
-  },
-);
+    closeOffCanvas()
+    closeMobileNavigation()
+  }
+)
 
-const initialHeaderClass = ref('');
+const initialHeaderClass = ref('')
+
 const handleWindowResize = () => {
   initialHeaderClass.value =
-    window?.innerWidth > 991 ? 'header--relative' : 'header--fixed';
-};
+    window?.innerWidth > 991 ? 'header--relative' : 'header--fixed'
+}
 
 onMounted(() => {
-  handleWindowResize();
-  window.addEventListener('scroll', handleScroll);
-});
+  handleWindowResize()
+  window.addEventListener('scroll', handleScroll)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
@@ -139,11 +144,10 @@ onBeforeUnmount(() => {
           <div class="header__left">
             <NuxtLink
               class="header__link-logo"
-              v-if="siteLogo"
               to="/"
               aria-label="Gå til forsiden"
             >
-              <BaseLogo :logo="siteLogo" class="header__logo" />
+              <BaseLogo :logo="siteLogo ?? ''" class="header__logo" />
             </NuxtLink>
           </div>
 
