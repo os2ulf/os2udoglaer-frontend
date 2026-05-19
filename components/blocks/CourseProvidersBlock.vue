@@ -411,7 +411,7 @@ const leafletMarkers = computed(() =>
           <div class="${innerWrapperClass}">
             ${imageHtml}
             <div class="leaflet-popup-content__content">
-              <h4><a href="${item.link}">${item.field_name}</a></h4>
+              <h2 class="h4"><a href="${item.link}">${item.field_name}</a></h2>
               <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle_label)}</a>
             </div>
           </div>
@@ -590,7 +590,7 @@ onMounted(async() => {
           >
             <div class="search-block-provider__extra-filters-bar" v-if="showListView">
               <div class="search-block-provider__results-found">
-                <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
+                <div class="h4">Viser {{ totalItemsFound }} {{ searchResultSuffix }}</div>
               </div>
               <div class="search-block-provider__sorting">
                 <ClientOnly>
@@ -647,9 +647,9 @@ onMounted(async() => {
                           class="search-block-provider__card-label"
                           v-if="item?.field_name"
                         >
-                          <h4 v-if="item?.field_name">
+                          <h2 class="h4" v-if="item?.field_name">
                             {{ item?.field_name }}
-                          </h4>
+                          </h2>
                           <p
                             v-if="item?.field_presentation"
                             class="search-block-provider__card-description"
@@ -695,7 +695,7 @@ onMounted(async() => {
             v-else
           >
             <div class="search-block-provider__no-result-item">
-              <h4>Ingen resultater</h4>
+              <div class="h4">Ingen resultater</div>
 
               <div
                 v-if="isLoadingPageResults"
@@ -935,7 +935,7 @@ onMounted(async() => {
     display: flex;
     align-items: center;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -951,7 +951,7 @@ onMounted(async() => {
   }
 
   &__results-found {
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -1017,7 +1017,7 @@ onMounted(async() => {
     color: var(--color-text);
     transition: color 0.3s ease-in-out;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
