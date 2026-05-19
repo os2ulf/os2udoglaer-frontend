@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
             </NuxtLink>
           </div>
 
-          <nav class="header__right-content">
+          <nav class="header__right-content" aria-label="main-menu">
             <NuxtLink
               v-for="(item, index) in data?.items"
               :key="index"

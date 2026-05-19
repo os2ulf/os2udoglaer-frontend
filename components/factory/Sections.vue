@@ -42,7 +42,7 @@ const assignMdCollumnsHandler = (
 
 <template>
   <div class="layout-builder">
-    <div
+    <section
       v-for="section in sections"
       :key="section.id"
       :class="[
@@ -98,7 +98,7 @@ const assignMdCollumnsHandler = (
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

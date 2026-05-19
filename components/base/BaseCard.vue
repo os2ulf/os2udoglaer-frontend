@@ -330,7 +330,7 @@ const cardLabels = computed(() => {
         :class="{ 'card__content--no-image': !data?.field_image }"
       >
         <div v-if="data?.label" class="card__title">
-          <h4>{{ data?.label }}</h4>
+          <h2 class="h4">{{ data?.label }}</h2>
         </div>
 
         <div v-if="data?.body" class="card__text">

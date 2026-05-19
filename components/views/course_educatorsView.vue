@@ -266,7 +266,7 @@ const currentUrl = computed(() => {
 
 <template>
   <div class="educators">
-    <div class="educators__top-section">
+    <section class="educators__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -358,15 +358,15 @@ const currentUrl = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container educators__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -421,7 +421,7 @@ const currentUrl = computed(() => {
           </div>
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 educators__section-video"
           v-if="
             data.field_video_title ||
@@ -445,10 +445,10 @@ const currentUrl = computed(() => {
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section cards -->
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 educators__section-cards"
           v-if="
             data.field_materials.length > 1 ||
@@ -466,7 +466,7 @@ const currentUrl = computed(() => {
               }"
             />
           </div>
-        </div>
+        </section>
 
         <!-- Section registration -->
         <div
@@ -486,7 +486,7 @@ const currentUrl = computed(() => {
         </div>
 
         <!-- Section related articles -->
-        <div
+        <section
           v-if="props.data.field_related_courses.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 educators__section-related-articles"
         >
@@ -509,7 +509,7 @@ const currentUrl = computed(() => {
               </Swiper>
             </ClientOnly>
           </div>
-        </div>
+        </section>
       </div>
     </div>
 
