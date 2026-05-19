@@ -12,7 +12,7 @@ const cardItem = ref(props.cardItem);
 <template>
   <div class="page-header-card">
     <div class="page-header-card__item">
-      <h4 class="page-header-card__title">{{ cardItem?.field_title }}</h4>
+      <h2 class="h4 page-header-card__title">{{ cardItem?.field_title }}</h2>
       <div class="page-header-card__description">
         {{ cardItem?.field_description }}
       </div>
