@@ -682,7 +682,7 @@ const leafletMarkers = computed(() =>
         <div class="${innerWrapperClass}">
           ${imageHtml}
           <div class="leaflet-popup-content__content">
-            <h4><a href="${item.link}">${item.label}</a></h4>
+            <h2 class="h4"><a href="${item.link}">${item.label}</a></h2>
             ${providerHtml}
             <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle)}</a>
           </div>
@@ -987,7 +987,7 @@ onMounted(() => {
             v-else
           >
             <div class="search-block__no-result-item">
-              <h4>Ingen resultater</h4>
+              <div class="h4">Ingen resultater</div>
 
               <div
                 v-if="isLoadingPageResults"
@@ -1287,7 +1287,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -1303,7 +1303,7 @@ onMounted(() => {
   }
 
   &__results-found {
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
