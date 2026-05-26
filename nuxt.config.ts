@@ -1,6 +1,3 @@
-import { defineNuxtConfig } from 'nuxt/config';
-import postcssConfig from '@novicell/postcss-config';
-
 export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
@@ -15,7 +12,6 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
-    prefetchLinks: true,
 
     head: {
       meta: [
@@ -26,7 +22,6 @@ export default defineNuxtConfig({
           content: "script-src 'self';",
         },
       ],
-
       htmlAttrs: {
         lang: 'da',
       },
@@ -35,12 +30,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      API_BASE_URL: process.env.API_BASE_URL,
-      LOCAL_API_BASE_URL: process.env.LOCAL_API_BASE_URL,
+      API_BASE_URL: process.env.API_BASE_URL || '',
+      LOCAL_API_BASE_URL: process.env.LOCAL_API_BASE_URL || '',
     },
-
-    REST_API_USER: process.env.REST_API_USER,
-    REST_API_USER_PASS: process.env.REST_API_USER_PASS,
+    REST_API_USER: process.env.REST_API_USER || '',
+    REST_API_USER_PASS: process.env.REST_API_USER_PASS || '',
   },
 
   components: [
@@ -58,46 +52,25 @@ export default defineNuxtConfig({
     '~/components/views',
   ],
 
-  webpack: {
-    extractCSS: true,
-  },
-
-  css: ['/assets/css/app.css'],
+  css: [
+    '~/assets/css/app.css'
+  ],
 
   postcss: {
-    config: false,
-
     plugins: {
-      ...postcssConfig({
-        'postcss-preset-env': {
-          stage: 2,
-          preserve: true,
-        },
-      }),
+      'postcss-import': {},
+      'postcss-nested': {},
+      'postcss-preset-env': {
+        stage: 3,
+      },
     },
   },
 
   modules: ['@pinia/nuxt', 'nuxt-icons'],
 
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      maxSize: 250000,
-      cacheGroups: {
-        default: false,
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: -10,
-        },
-      },
-    },
-  },
-
   vue: {
     compilerOptions: {
-      isCustomElement: (tag) => tag === 'pretix-widget',
+      isCustomElement: (tag: string) => tag === 'pretix-widget',
     },
   },
 });

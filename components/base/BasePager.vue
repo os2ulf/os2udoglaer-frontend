@@ -82,7 +82,6 @@ const limitedPages = computed(() => {
     font-weight: 700;
     font-size: 16px;
     background-color: transparent;
-    border: none;
     border-radius: 30px;
     transition: all 0.3s ease-in-out;
     border: 2px solid var(--color-primary-lighten-3);
@@ -117,13 +116,29 @@ const limitedPages = computed(() => {
     }
 
     &--prev {
-      margin-right: 6px @(--sm) 22px;
+      margin-right: 6px;
       margin-left: 0;
+
+      @media (min-width: 768px) {
+        margin-right: 22px;
+      }
+
+      .nuxt-icon {
+        padding-bottom: 3px;
+      }
     }
 
     &--next {
-      margin-left: 6px @(--sm) 22px;
+      margin-left: 6px;
       margin-right: 0;
+
+      @media (min-width: 768px) {
+        margin-left: 22px;
+      }
+
+      .nuxt-icon {
+        padding-bottom: 3px;
+      }
     }
 
     &--prev-icon {
@@ -136,7 +151,7 @@ const limitedPages = computed(() => {
 
     &:hover {
       opacity: 0.7;
-      box-shadow: 0px 2px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+      box-shadow: 0 2px 10px 7px rgba(var(--color-primary-rgb), .1);
     }
   }
 }

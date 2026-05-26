@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Navigation, Scrollbar, A11y } from 'swiper';
+import { Navigation, Scrollbar, A11y } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y];
@@ -106,7 +106,11 @@ const props = defineProps({
 .video-component {
   &__layout-flex {
     &__video-content {
-      padding-top: 0 @(--sm) 36px;
+      padding-top: 0;
+
+      @media (min-width: 768px) {
+        padding-top: 36px;
+      }
     }
   }
 

@@ -45,7 +45,11 @@
 }
 
 .dp__instance_calendar:first-child {
-  padding-right: 0 @(--sm) 32px;
+  padding-right: 0;
+
+  @media (min-width: 768px) {
+    padding-right: 32px;
+  }
 }
 
 .dp__instance_calendar:last-child {

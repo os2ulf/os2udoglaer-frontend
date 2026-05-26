@@ -165,11 +165,11 @@ onBeforeUnmount(() => {
   height: 0;
   padding-bottom: 400px;
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     padding-bottom: 70%;
   }
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     padding-bottom: 60%;
   }
 }

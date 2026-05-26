@@ -33,8 +33,12 @@ const props = defineProps({
   z-index: 1000;
   top: 100%;
   right: 0;
-  width: 100% @(--sm) 340px;
+  width: 100%;
   box-shadow: 0 4px 30px 0 #0000001a;
+
+  @media (min-width: 768px) {
+    width: 340px;
+  }
 
   &__item-wrapper {
     text-align: left;

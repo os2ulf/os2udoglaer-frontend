@@ -21,18 +21,18 @@ const props = defineProps({
 .articles {
   display: block;
 
-  @media (--viewport-ms-min) {
+  @media (min-width: 481px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
   }
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
     gap: 44px;
   }
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     grid-template-columns: 1fr 1fr 1fr;
 
     .column-widths--50-50 & {
@@ -45,7 +45,7 @@ const props = defineProps({
   }
 
   :deep(.article) {
-    @media (--viewport-ms-min) {
+    @media (min-width: 481px) {
       margin-bottom: 0;
     }
   }

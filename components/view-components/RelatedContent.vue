@@ -173,8 +173,12 @@ const handleSorting = (key: any) => {
 <style lang="postcss" scoped>
 .related-content {
   &__title-container {
-    margin-bottom: 18px @(--sm) 36px;
+    margin-bottom: 18px;
     word-break: break-word;
+
+    @media (min-width: 768px) {
+      margin-bottom: 36px;
+    }
   }
 
   &__description {
@@ -183,7 +187,11 @@ const handleSorting = (key: any) => {
 
   &__filters-container {
     padding-top: 6px;
-    margin-bottom: 30px @(--sm) 64px;
+    margin-bottom: 30px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
   }
 
   &__filters {
@@ -204,12 +212,16 @@ const handleSorting = (key: any) => {
     color: var(--color-primary);
     padding: 10px 16px;
     font-weight: 700;
-    font-size: 14px @(--sm) 16px;
+    font-size: 14px;
     line-height: 1.25;
     transition: all 0.3s ease;
     cursor: pointer;
     margin-right: 2px;
     margin-bottom: 2px;
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+    }
 
     &--active {
       color: var(--color-white);
@@ -238,7 +250,7 @@ const handleSorting = (key: any) => {
   &__card {
     margin-bottom: 24px;
 
-    @media (--viewport-lg-min) {
+    @media (min-width: 1200px) {
       &:nth-child(odd) {
         padding-right: calc(var(--grid-gutter) / 4);
       }

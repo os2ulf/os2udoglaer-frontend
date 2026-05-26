@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
-import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 const { hasPrimaryButtonColors } = useButtonColors()
 
@@ -486,16 +486,26 @@ const currentUrl = computed(() => {
 
   &__tags-wrapper {
     padding-top: 24px;
-    display: grid @(--sm) flex;
-    gap: 12px @(--sm) 16px;
+    display: grid;
+    gap: 12px;
     margin-bottom: 32px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-heading-wrapper {
-    display: grid @(--md) flex;
+    display: grid;
     justify-content: space-between;
     margin-bottom: 48px;
     align-items: center;
+
+    @media (min-width: 992px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-title {
@@ -504,13 +514,30 @@ const currentUrl = computed(() => {
   }
 
   &__page-heading-button-container {
-    margin-top: 10px @(--md) 0;
-    display: grid @(--sm) flex;
-    gap: 10px @(--sm) 0;
+    margin-top: 10px;
+    display: grid;
+    gap: 10px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
 
     .button {
-      margin-left: 0 @(--md) 12px;
-      white-space: normal @(--sm) nowrap;
+      margin-left: 0;
+      white-space: normal;
+
+      @media (min-width: 768px) {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 992px) {
+        margin-left: 12px;
+      }
     }
   }
 
@@ -527,27 +554,52 @@ const currentUrl = computed(() => {
   }
 
   &__second-section {
-    padding-top: 48px @(--md) 96px;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      margin-left: 12px;
+      padding-top: 96px;
+    }
   }
 
   &__section-registration {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-cards {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-video {
-    padding-top: 48px @(--md) 96px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 48px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-related-articles {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 48px @(--md) 96px;
+    padding-top: 24px;
+    padding-bottom: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 96px;
+    }
   }
 
   &__related-articles {
@@ -557,16 +609,25 @@ const currentUrl = computed(() => {
     }
 
     :deep(.swiper) {
-      padding-top: 24px @(--sm) 44px;
-      padding-bottom: 44px @(--sm) 70px;
+      padding-top: 24px;
+      padding-bottom: 44px;
       overflow: clip;
       overflow-y: visible;
+
+      @media (min-width: 768px) {
+        padding-top: 44px;
+        padding-bottom: 70px;
+      }
     }
 
     :deep(.swiper-button-next),
     :deep(.swiper-button-prev) {
-      top: -32px @(--sm) -36px;
+      top: -32px;
       margin-bottom: 0;
+
+      @media (min-width: 768px) {
+        top: -36px;
+      }
     }
 
     :deep(.swiper-horizontal > .swiper-scrollbar) {

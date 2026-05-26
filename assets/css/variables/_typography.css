@@ -20,7 +20,7 @@
   --font-size-paragraph-sm: 16px;
   --font-size-paragraph-xs: 12px;
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     --font-size-display: 64px;
     --font-size-h1: 48px;
     --font-size-h2: 36px;

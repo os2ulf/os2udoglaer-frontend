@@ -175,8 +175,12 @@ onBeforeUnmount(() => {
 <style lang="postcss" scoped>
 .course__registration {
   text-align: center;
-  padding: 48px var(--grid-gutter-half) @(--md) 96px var(--grid-gutter-half);
+  padding: 48px var(--grid-gutter-half);
   background: var(--color-secondary-lighten-5);
+
+  @media (min-width: 992px) {
+    padding: 96px var(--grid-gutter-half);
+  }
 
   &__prices {
     margin-bottom: 16px;
@@ -192,22 +196,38 @@ onBeforeUnmount(() => {
 
   &__price-item {
     margin-bottom: 16px;
-    font-size: 16px @(--md) 22px;
+    font-size: 16px;
+
+    @media (min-width: 992px) {
+      font-size: 22px;
+    }
   }
 
   &__url {
     margin-top: 16px;
-    font-size: 16px @(--md) 22px;
+    font-size: 16px;
+
+    @media (min-width: 992px) {
+      font-size: 22px;
+    }
   }
 
   &__description {
-    width: 100% @(--sm) 684px;
+    width: 100%;
     margin: 0 auto;
     color: var(--color-text);
 
+    @media (min-width: 768px) {
+      width: 684px;
+    }
+
     :deep(p) {
-      font-size: 16px @(--md) 22px;
+      font-size: 16px;
       line-height: 1.3;
+
+      @media (min-width: 992px) {
+        font-size: 22px;
+      }
     }
   }
 }
@@ -227,12 +247,16 @@ onBeforeUnmount(() => {
 }
 
 :deep(.pretix-widget .pretix-widget-event-calendar) {
-  width: 100% @(--sm) 684px;
+  width: 100%;
   margin: 0 auto;
   padding: 5px;
   background: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
+
+  @media (min-width: 768px) {
+    width: 684px;
+  }
 }
 
 :deep(
@@ -263,12 +287,16 @@ onBeforeUnmount(() => {
 }
 
 :deep(.pretix-widget .pretix-widget-event-list) {
-  width: 100% @(--lg) 1068px;
+  width: 100%;
   margin: 0 auto;
   padding: 0;
   background: #fff;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
+  box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
+
+  @media (max-width: 1399px) {
+    width: 1068px;
+  }
 }
 
 :deep(.pretix-widget .pretix-widget-event-list-entry) {

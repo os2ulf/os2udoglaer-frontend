@@ -68,39 +68,54 @@ const props = defineProps({
 .contact {
   color: var(--color-text);
   background-color: var(--color-gray-20);
-  padding: 20px 20px @(--sm) 96px 168px;
+  padding: 20px 20px;
   box-shadow: 0px 4px 10px 15px #40362e1a;
+
+  @media (min-width: 768px) {
+    padding: 96px 168px;
+  }
 
   &__title {
     margin-bottom: 32px;
-    text-align: center @(--sm) left;
+    text-align: center;
     word-break: break-word;
+
+    @media (min-width: 768px) {
+      text-align: left;
+    }
   }
 
   &__item-section {
-    padding: 27px 0 @(--sm) 58px 0;
+    padding: 27px 0;
     border-top: 1px solid var(--color-base-divider);
+
+    @media (min-width: 768px) {
+      padding: 58px 0;
+    }
   }
 
   &__heading-wrapper {
-    display: grid @(--md) flex;
-    align-items: center;
+    display: grid;
     align-items: center;
     justify-content: space-between;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       justify-content: center;
+    }
+
+    @media (min-width: 992px) {
+      display: flex;
     }
   }
 
   &__person-heading {
     padding-right: 0;
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-right: 20px;
     }
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       text-align: center;
     }
   }
@@ -109,23 +124,31 @@ const props = defineProps({
     display: flex;
     flex-direction: column;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       justify-content: center;
     }
 
-    @media (--viewport-lg-min) {
+    @media (min-width: 1200px) {
       flex-direction: row;
     }
   }
 
   &__button {
-    margin: 10px 0 @(--lg) 0 16px 0 0;
-    width: 100% @(--sm) inherit;
+    margin: 10px 0;
+    width: 100%;
     word-break: auto-phrase;
     white-space: nowrap;
 
+    @media (min-width: 768px) {
+      width: inherit;
+    }
+
+    @media (max-width: 1399px) {
+      margin: 0 16px 0 0;
+    }
+
     &:last-child {
-      margin-right: 0 @(--sm) 0;
+      margin-right: 0;
     }
   }
 
@@ -141,7 +164,7 @@ const props = defineProps({
   &__contact-hours {
     font-weight: 400;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       text-align: center;
     }
   }

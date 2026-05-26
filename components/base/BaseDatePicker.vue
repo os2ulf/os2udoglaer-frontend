@@ -207,7 +207,7 @@ onUnmounted(() => {
       z-index: 9;
       max-width: 166px;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         min-width: 100%;
       }
     }

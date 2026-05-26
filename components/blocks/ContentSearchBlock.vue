@@ -1009,17 +1009,26 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .search-block {
-  &__label {
-    color: var(--theme-color);
-    margin-bottom: 24px @(--sm) 64px;
-    font-size: var(--font-size-h1);
-    font-weight: 700;
-  }
-
-  padding-top: 48px @(--sm) 96px;
-  margin-bottom: 48px @(--sm) 96px;
+  margin-bottom: 48px;
+  padding-top: 48px;
   background-color: transparent;
   color: var(--theme-color);
+
+  @media (min-width: 768px) {
+    margin-bottom: 96px;
+    padding-top: 96px;
+  }
+
+  &__label {
+    margin-bottom: 24px;
+    color: var(--theme-color);
+    font-size: var(--font-size-h1);
+    font-weight: 700;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
+  }
 
   &__skeleton {
     height: 100%;
@@ -1042,7 +1051,11 @@ onMounted(() => {
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
-    min-height: auto @(--sm) 88px;
+    min-height: auto;
+
+    @media (min-width: 768px) {
+      min-height: 88px;
+    }
 
     &-container {
       &__inner {
@@ -1063,7 +1076,7 @@ onMounted(() => {
       font-weight: 400;
       white-space: nowrap;
 
-      @media (--viewport-ms-max) {
+      @media (max-width: 767px) {
         .nuxt-icon {
           padding-right: 0;
         }
@@ -1075,25 +1088,37 @@ onMounted(() => {
   }
 
   &__search-keyword {
-    width: 100% @(--sm) 500px;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: 500px;
+    }
   }
 
   &__extra-filters-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px @(--sm) 64px;
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
   }
 
   &__dropdown {
-    width: 100% @(--sm) auto;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: auto;
+    }
 
     &--is-hidden {
       display: none;
     }
 
     &--is-hidden-mobile {
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -1117,7 +1142,7 @@ onMounted(() => {
     &--mobile {
       display: none;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: flex;
       }
     }
@@ -1125,7 +1150,7 @@ onMounted(() => {
     &--desktop {
       display: flex;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -1137,7 +1162,7 @@ onMounted(() => {
     }
 
     &__counter {
-      display: block @(--sm) none;
+      display: block;
       position: absolute;
       top: -3px;
       right: 0;
@@ -1150,6 +1175,10 @@ onMounted(() => {
       align-items: center;
       font-size: 14px;
       font-weight: 600;
+
+      @media (min-width: 768px) {
+        display: none;
+      }
     }
   }
 
@@ -1216,11 +1245,15 @@ onMounted(() => {
 
   /* chips */
   &__chips {
-    padding-top: 24px @(--sm) 32px;
+    padding-top: 24px;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     align-items: center;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__chip {
@@ -1266,7 +1299,11 @@ onMounted(() => {
   &__results-container {
     position: relative;
     z-index: 1;
-    padding-top: 24px @(--sm) 96px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 96px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -1311,7 +1348,11 @@ onMounted(() => {
   &__result-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 0 @(--sm) 48px 24px;
+    gap: 24px 0;
+
+    @media (min-width: 768px) {
+      gap: 48px 24px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -1320,7 +1361,11 @@ onMounted(() => {
   }
 
   &__result-item {
-    width: 100% @(--sm) calc(50% - 12px);
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(50% - 12px);
+    }
   }
 
   &__card-item {
@@ -1343,7 +1388,11 @@ onMounted(() => {
   }
 
   &__pager {
-    padding-top: 32px @(--sm) 64px;
+    padding-top: 32px;
+
+    @media (min-width: 768px) {
+      padding-top: 64px;
+    }
   }
 
   .card {

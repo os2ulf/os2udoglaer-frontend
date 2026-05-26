@@ -73,10 +73,14 @@ onUnmounted(() => {
     background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
-    align-items: flex-start @(--sm) center;
+    align-items: flex-start;
     padding: 20px;
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
+
+    @media (min-width: 768px) {
+      align-items: center;
+    }
   }
 
   &__header {
@@ -121,11 +125,17 @@ dialog {
   padding: 0 !important;
   max-width: 600px;
   width: 100%;
-  max-height: 100vh @(--sm) 80vh;
-  margin-top: 0 @(--sm) auto;
-  margin-bottom: 0 @(--sm) auto;
+  max-height: 100vh;
+  margin-top: 0;
+  margin-bottom: 0;
   border-radius: 5px;
   border: none !important;
   box-shadow: 0 4px 10px 7px rgba(var(--color-primary-rgb), 0.2);
+
+  @media (min-width: 768px) {
+    max-height: 80vh;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 }
 </style>
