@@ -158,7 +158,18 @@ const handlePager = (page: number) => {
   updateURLParameters();
 
   getFilteredPageResults(false, true).then(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const searchBlock = document.querySelector('.search');
+
+    if (searchBlock) {
+      searchBlock.scrollIntoView({ behavior: 'smooth' });
+      const searchBlockResults = document.querySelector('.search__result-items')
+
+      if (searchBlockResults) {
+        searchBlockResults.setAttribute('tabindex', '-1')
+        searchBlockResults.focus({ preventScroll: true })
+      }
+    }
+
   });
 };
 
@@ -358,7 +369,7 @@ const cleanEmptyFilters = () => {
             <!-- chips -->
             <div class="search__chips" v-if="selectedFiltersData.length > 0">
               <TransitionGroup name="pan-right">
-                <div
+                <button
                   class="search__chip"
                   v-for="item in selectedFiltersData"
                   :key="item"
@@ -366,7 +377,7 @@ const cleanEmptyFilters = () => {
                 >
                   <NuxtIcon class="search__chip-close" name="close"></NuxtIcon>
                   <span>{{ item?.label }}</span>
-                </div>
+                </button>
               </TransitionGroup>
               <button
                 @click="handleClearAllFilters"

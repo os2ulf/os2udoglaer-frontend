@@ -459,6 +459,12 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
+      const searchBlockResults = document.querySelector('.search-block__result-items')
+
+      if (searchBlockResults) {
+        searchBlockResults.setAttribute('tabindex', '-1')
+        searchBlockResults.focus({ preventScroll: true })
+      }
     }
   });
 };
@@ -897,7 +903,7 @@ onMounted(() => {
               v-if="selectedFiltersData.length > 0"
             >
               <TransitionGroup name="pan-right">
-                <div
+                <button
                   class="search-block__chip"
                   v-for="item in selectedFiltersData"
                   :key="item"
@@ -908,7 +914,7 @@ onMounted(() => {
                     name="close"
                   ></NuxtIcon>
                   <span>{{ item?.label }}</span>
-                </div>
+                </button>
               </TransitionGroup>
               <button
                 @click="handleClearAllFilters"
@@ -1034,10 +1040,6 @@ onMounted(() => {
     height: 100%;
   }
 
-  /* removes overflow to the side, if the
-  rightest nav option clips to the side of the page */
-  overflow-x: clip;
-
   &__heading {
     margin-bottom: 0;
     color: var(--color-text);
@@ -1075,6 +1077,16 @@ onMounted(() => {
       border: var(--form-input-border);
       font-weight: 400;
       white-space: nowrap;
+
+      &:focus {
+        border: 1px solid var(--color-primary);
+        box-shadow: 0 0 0 4px #297f781a;
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
 
       @media (max-width: 767px) {
         .nuxt-icon {
@@ -1202,7 +1214,6 @@ onMounted(() => {
       border: 2px solid var(--color-border);
       border-radius: 50%;
       position: relative;
-      outline: none;
       cursor: pointer;
       transition: border 0.2s ease-in-out;
       display: inline-block;
@@ -1228,6 +1239,11 @@ onMounted(() => {
 
       &:focus {
         box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.3);
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
       }
     }
 

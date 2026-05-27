@@ -315,7 +315,7 @@ function showHelperText() {
 
   &__styled-textarea:focus {
     border: var(--form-input-border-focus);
-    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
+    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
     outline: none;
   }
 

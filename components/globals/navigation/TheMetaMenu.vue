@@ -1,22 +1,22 @@
 <script setup>
-import { useHeaderDataStore } from '~/stores/headerData';
+import { useHeaderData } from '~/composables/useHeaderData'
 import { useSettingsData } from '~/composables/useSettingsData'
 
-const headerDataStore = useHeaderDataStore();
-const { isHeaderFixed } = useSettingsData();
+const { headerData, getHeaderData } = useHeaderData()
+const { isHeaderFixed } = useSettingsData()
 
-await useAsyncData('header', () => headerDataStore.getHeaderData());
+await getHeaderData()
 
 const metaMenuData = computed(() => {
-  const data = headerDataStore.headerData;
-  if (!data) return null;
+  const data = headerData.value
+  if (!data) return null
 
   const metaKey = Object.keys(data).find((key) =>
     key.includes('meta'),
-  );
+  )
 
-  return metaKey ? data[metaKey] : null;
-});
+  return metaKey ? data[metaKey] : null
+})
 
 const isOpen = ref(false);
 const activeNavItem = ref(null);
