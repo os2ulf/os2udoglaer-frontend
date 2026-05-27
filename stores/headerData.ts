@@ -2,18 +2,20 @@ import { defineStore } from 'pinia';
 
 export const useHeaderDataStore = defineStore('headerData', () => {
   const { useRegion } = useRegionApi();
+
   const loading = ref(false);
-  const headerData: any = ref(null);
+  const headerData = ref(null);
 
   const getHeaderData = async () => {
+    if (headerData.value) return;
+
     loading.value = true;
 
-    if (!headerData.value) {
-      const { data } = await useAsyncData('header', () => useRegion('header'));
-
-      headerData.value = data.value;
+    try {
+      headerData.value = await useRegion('header');
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   };
 
   return { headerData, getHeaderData, loading };
