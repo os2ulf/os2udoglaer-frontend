@@ -128,7 +128,7 @@ defaultValue();
   &--first-selected {
     transform: translateY(15px);
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       transform: translateY(22px);
     }
   }
@@ -167,7 +167,7 @@ defaultValue();
   font-size: var(--font-size-paragraph-sm);
   transform: translateY(15px);
 
-  @media (--viewport-ms-max) {
+  @media (max-width: 767px) {
     transform: translateY(17px);
   }
 }

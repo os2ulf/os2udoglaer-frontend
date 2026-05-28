@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];

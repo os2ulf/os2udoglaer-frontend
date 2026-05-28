@@ -30,7 +30,7 @@ const inspirationalItems = ref(props.blockData.field_content);
   &__card {
     margin-bottom: 24px;
 
-    @media (--viewport-lg-min) {
+    @media (min-width: 1200px) {
       &:nth-child(odd) {
         padding-right: calc(var(--grid-gutter) / 4);
       }

@@ -395,7 +395,7 @@ const cardLabels = computed(() => {
 <style lang="postcss" scoped>
 .card {
   display: flex;
-  flex-flow: column @(--sm) row;
+  flex-flow: column;
   background: var(--color-white);
   color: var(--color-text);
   border: 2px solid var(--color-primary-lighten-4);
@@ -403,6 +403,10 @@ const cardLabels = computed(() => {
   height: 100%;
   box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
   transition: all 0.3s ease-in-out;
+
+  @media (min-width: 768px) {
+    flex-flow: row;
+  }
 
   :deep(img) {
     opacity: 1;
@@ -428,8 +432,12 @@ const cardLabels = computed(() => {
   }
 
   &__image {
-    width: 100% @(--sm) 50%;
+    width: 100%;
     position: relative;
+
+    @media (min-width: 768px) {
+      width: 50%;
+    }
 
     :deep(figure),
     :deep(picture),
@@ -448,7 +456,11 @@ const cardLabels = computed(() => {
 
   &__image-item {
     :deep(img) {
-      border-radius: 3px 3px 0 0 @(--sm) 3px 0 0 3px;
+      border-radius: 3px 3px 0 0;
+
+      @media (min-width: 768px) {
+        border-radius: 3px 0 0 3px;
+      }
     }
   }
 
@@ -480,8 +492,13 @@ const cardLabels = computed(() => {
   &__content {
     display: flex;
     flex-flow: column;
-    width: 100% @(--sm) 50%;
-    padding: 24px @(--sm) 32px;
+    width: 100%;
+    padding: 24px;
+
+    @media (min-width: 768px) {
+      width: 50%;
+      padding: 32px;
+    }
 
     &--no-image {
       width: 100% !important;

@@ -1,4 +1,7 @@
-@import 'swiper/swiper-bundle.min.css';
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/scrollbar";
+@import "swiper/css/pagination";
 
 .swiper {
   padding: 48px 0 90px;
@@ -9,7 +12,7 @@
 }
 
 .container--full {
-  @media (--viewport-lg-min) {
+  @media (min-width: 1200px) {
     .swiper-button-prev {
       right: calc(
         ((100vw - var(--container-width)) / 2) + 64px + var(--grid-gutter-half)
@@ -33,23 +36,23 @@
   width: 40px;
   height: 40px;
 
-  @media (--viewport-xs-max) {
+  @media (max-width: 480px) {
     top: 89%;
   }
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     top: 89%;
   }
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     top: 87%;
   }
 
-  @media (--viewport-lg-min) {
+  @media (min-width: 1200px) {
     top: 85%;
   }
 
-  @media (--viewport-xl-min) {
+  @media (min-width: 1400px) {
     top: 87%;
   }
 
@@ -71,7 +74,7 @@
   left: auto;
   right: 54px;
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     right: 64px;
   }
 
@@ -95,23 +98,23 @@
   margin-bottom: 16px;
   width: 70%;
 
-  @media (--viewport-xs-max) {
+  @media (max-width: 480px) {
     width: 70%;
   }
 
-  @media (--viewport-sm-min) {
+  @media (min-width: 768px) {
     width: 86%;
   }
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     width: 88%;
   }
 
-  @media (--viewport-lg-min) {
+  @media (min-width: 1200px) {
     width: 90%;
   }
 
-  @media (--viewport-xl-min) {
+  @media (min-width: 1400px) {
     width: 92%;
   }
 }

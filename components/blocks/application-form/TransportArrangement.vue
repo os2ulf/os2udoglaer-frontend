@@ -1151,12 +1151,20 @@ onMounted(async () => {
   }
 
   :deep(.form-input-wrapper) {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
 
     &--inline {
       display: flex;
-      gap: 16px @(--sm) 24px;
+      gap: 16px;
       margin-top: 0 !important;
+
+      @media (min-width: 768px) {
+        gap: 24px;
+      }
 
       .form-label {
         padding-right: 26px;
@@ -1165,7 +1173,11 @@ onMounted(async () => {
   }
 
   &__textarea-wrapper {
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__textarea-container {
@@ -1176,12 +1188,16 @@ onMounted(async () => {
   &__checkbox {
     display: flex;
     width: fit-content;
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
     color: var(--color-text);
     font-weight: 400;
     font-size: 16px;
     align-items: center;
     cursor: pointer;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
 
     &--invalid {
       border: 1px solid var(--color-error) !important;
@@ -1257,8 +1273,12 @@ onMounted(async () => {
   }
 
   &__error-message {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
     color: var(--color-error);
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__success {

@@ -12,8 +12,13 @@
 
 <style lang="postcss" scoped>
 .page-title {
-  padding-top: 48px @(--md) 96px;
-  margin-bottom: 48px @(--md) 96px;
+  padding-top: 48px;
+  margin-bottom: 48px;
   text-align: center;
+
+  @media (min-width: 992px) {
+    padding-top: 96px;
+    margin-bottom: 96px;
+  }
 }
 </style>

@@ -101,11 +101,16 @@ const isCompactStyle = ref(props.blockData?.field_compact_view);
 
   &__card-wrapper {
     display: grid;
-    grid-template-columns: repeat(1, 1fr) @(--sm) repeat(2, 1fr) @(--md) repeat(
-        3,
-        1fr
-      );
+    grid-template-columns: repeat(1, 1fr);
     gap: 22px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   &__card-link {
@@ -167,10 +172,20 @@ const isCompactStyle = ref(props.blockData?.field_compact_view);
   /* Compact Style */
   &__card-compact-wrapper {
     display: grid;
-    grid-template-columns:
-      repeat(1, 1fr) @(--sm) repeat(2, 1fr) @(--md) repeat(3, 1fr)
-      @(--lg) repeat(4, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 22px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 1399px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   &__card-compact-button {
@@ -184,11 +199,15 @@ const isCompactStyle = ref(props.blockData?.field_compact_view);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 22px @(--sm) 32px;
+    padding: 22px;
     border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
     transition: all 0.3s ease-in-out;
+
+    @media (min-width: 768px) {
+      padding: 32px;
+    }
 
     &:hover {
       box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);

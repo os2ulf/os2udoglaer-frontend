@@ -486,10 +486,15 @@ const cleanEmptyFilters = () => {
 
 <style lang="postcss">
 .search {
-  padding-top: 48px @(--sm) 96px;
-  margin-bottom: 48px @(--sm) 96px;
+  margin-bottom: 48px;
+  padding-top: 48px;
   background-color: var(--color-gray-8);
   color: var(--color-text);
+
+  @media (min-width: 768px) {
+    margin-bottom: 96px;
+    padding-top: 96px;
+  }
 
   &__skeleton {
     height: 100%;
@@ -510,29 +515,45 @@ const cleanEmptyFilters = () => {
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
-    min-height: auto @(--sm) 88px;
+    min-height: auto;
+
+    @media (min-width: 768px) {
+      min-height: 88px;
+    }
   }
 
   &__search-keyword {
-    width: 100% @(--sm) 500px;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: 500px;
+    }
   }
 
   &__results-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px @(--sm) 44px;
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 44px;
+    }
   }
 
   &__dropdown {
-    width: 100% @(--sm) auto;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: auto;
+    }
 
     &--is-hidden {
       display: none;
     }
 
     &--is-hidden-mobile {
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -571,22 +592,29 @@ const cleanEmptyFilters = () => {
       border-radius: 50%;
       background-color: var(--color-secondary);
       color: var(--color-text);
-      display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
       font-weight: 600;
-      display: block @(--sm) none;
+      display: block;
+
+      @media (min-width: 768px) {
+        display: none;
+      }
     }
   }
 
   /* chips */
   &__chips {
-    padding-top: 24px @(--sm) 32px;
+    padding-top: 24px;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     align-items: center;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__chip {
@@ -632,7 +660,11 @@ const cleanEmptyFilters = () => {
 
   /* Results stuff */
   &__results-container {
-    padding-top: 24px @(--sm) 96px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 96px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -686,7 +718,11 @@ const cleanEmptyFilters = () => {
   }
 
   &__result-item {
-    width: 100% @(--sm) calc(50% - 12px);
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(50% - 12px);
+    }
   }
 
   &__card-item {
@@ -696,8 +732,12 @@ const cleanEmptyFilters = () => {
     border-radius: 4px;
     height: 100%;
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
-    padding: 24px @(--sm) 32px;
+    padding: 24px;
     transition: all 0.3s ease-in-out;
+
+    @media (min-width: 768px) {
+      padding: 32px;
+    }
 
     &:hover {
       box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
@@ -714,15 +754,23 @@ const cleanEmptyFilters = () => {
     color: var(--color-primary);
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 12px @(--sm) 14px;
+    font-size: 12px;
     margin-bottom: 10px;
+
+    @media (min-width: 768px) {
+      font-size: 14px;
+    }
   }
 
   &__card-description {
     font-weight: 400;
-    font-size: 14px @(--sm) 16px;
+    font-size: 14px;
     line-height: 22px;
     color: var(--color-text);
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+    }
 
     :deep(p) {
       &:last-child {
@@ -747,7 +795,11 @@ const cleanEmptyFilters = () => {
   }
 
   &__pager {
-    padding-top: 32px @(--sm) 64px;
+    padding-top: 32px;
+
+    @media (min-width: 768px) {
+      padding-top: 64px;
+    }
   }
 
   .card {

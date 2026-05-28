@@ -47,12 +47,16 @@ const cardItem = ref(props.cardItem);
 
   &__item {
     background-color: var(--color-white);
-    padding: 24px @(--sm) 32px;
+    padding: 24px;
     height: 100%;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       display: flex;
       align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      padding: 32px;
     }
   }
 
@@ -60,7 +64,7 @@ const cardItem = ref(props.cardItem);
     line-height: 28px;
     word-wrap: break-word;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       flex-grow: 1;
       margin-bottom: 0;
     }
@@ -70,7 +74,7 @@ const cardItem = ref(props.cardItem);
     font-weight: 400;
     line-height: 24px;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       display: none;
     }
   }
@@ -78,7 +82,7 @@ const cardItem = ref(props.cardItem);
   &__link {
     padding-top: 22px;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       padding-top: 0;
     }
 

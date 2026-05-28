@@ -164,22 +164,35 @@ const practicalInfoData = computed(() => {
   color: var(--color-text);
 
   &__top-section {
-    padding: 32px 0 @(--sm) 0 0 64px 0;
+    padding: 32px 0;
     background-color: var(--color-primary-lighten-5);
+
+    @media (min-width: 768px) {
+      padding: 0 0 64px 0;
+    }
   }
 
   &__tags-wrapper {
     padding-top: 24px;
-    display: grid @(--sm) flex;
-    gap: 12px @(--sm) 16px;
+    display: grid;
+    gap: 12px;
     margin-bottom: 32px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-heading-wrapper {
-    display: grid @(--md) flex;
+    display: grid;
     justify-content: space-between;
     margin-bottom: 48px;
     align-items: center;
+
+    @media (min-width: 992px) {
+      display: flex;
+    }
   }
 
   &__page-title {
@@ -188,23 +201,49 @@ const practicalInfoData = computed(() => {
   }
 
   &__page-heading-button-container {
-    margin-top: 10px @(--md) 0;
-    display: grid @(--sm) flex;
-    gap: 10px @(--sm) 0;
+    margin-top: 10px;
+    display: grid;
+    gap: 10px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
 
     .button {
-      margin-left: 0 @(--md) 12px;
-      white-space: normal @(--sm) nowrap;
+      margin-left: 0;
+      white-space: normal;
+
+      @media (min-width: 768px) {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 992px) {
+        margin-left: 12px;
+      }
     }
   }
 
   &__second-section {
-    padding-top: 48px @(--md) 96px;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+    }
   }
 
   &__divider {
-    padding-top: 43px @(--sm) 96px;
-    margin-bottom: 43px @(--sm) 96px;
+    padding-top: 43px;
+    margin-bottom: 43px;
+
+    @media (min-width: 768px) {
+      padding-top: 96px;
+      margin-bottom: 96px;
+    }
   }
 
   &__link {
@@ -219,11 +258,19 @@ const practicalInfoData = computed(() => {
   }
 
   &__section {
-    margin-bottom: 48px @(--md) 96px;
+    margin-bottom: 48px;
+
+    @media (min-width: 992px) {
+      margin-bottom: 96px;
+    }
   }
 
   &__video-section {
-    margin-bottom: 43px @(--sm) 96px;
+    margin-bottom: 43px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 96px;
+    }
   }
 }
 </style>

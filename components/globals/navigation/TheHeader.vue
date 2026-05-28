@@ -265,20 +265,28 @@ onBeforeUnmount(() => {
     justify-content: flex-start;
     padding-right: 10px;
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       flex: 1;
     }
   }
 
   &__logo {
-    max-width: 170px @(--sm) 300px;
+    max-width: 170px;
     width: max-content;
+
+    @media (min-width: 768px) {
+      max-width: 300px;
+    }
   }
 
   &__right-content {
     padding-top: 14px;
-    display: none @(--md) flex;
+    display: none;
     flex-wrap: wrap;
+
+    @media (min-width: 992px) {
+      display: flex;
+    }
   }
 
   /* Sliding the header up and down based on state */
@@ -350,9 +358,13 @@ onBeforeUnmount(() => {
     margin-left: 24px;
     border: none;
     border-radius: 50%;
-    display: block @(--md) none;
+    display: block;
     width: 48px;
     height: 48px;
+
+    @media (min-width: 992px) {
+      display: none;
+    }
 
     :deep(svg) {
       font-size: 24px;
@@ -362,7 +374,7 @@ onBeforeUnmount(() => {
   &__icon-wrapper {
     display: flex;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       justify-content: flex-end;
       flex: 1;
     }

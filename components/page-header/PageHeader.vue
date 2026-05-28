@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Navigation, Scrollbar, A11y } from 'swiper';
+import { Navigation, Scrollbar, A11y } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y];
@@ -88,8 +88,16 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .page-header {
   position: relative;
-  padding-top: 36px @(--md) 64px;
-  padding-bottom: 0 @(--sm) 116px;
+  padding-top: 36px;
+  padding-bottom: 0;
+
+  @media (min-width: 768px) {
+    padding-bottom: 116px;
+  }
+
+  @media (min-width: 992px) {
+    padding-top: 64px;
+  }
 
   &__title {
     word-break: break-word;
@@ -104,26 +112,58 @@ const props = defineProps({
     color: var(--color-white);
 
     h1 {
-      font-size: 38px @(--md) 48px @(--lg) 58px;
+      font-size: 38px;
       line-height: 1.1;
-      margin-bottom: 24px @(--sm) 36px;
+      margin-bottom: 24px;
+
+      @media (min-width: 768px) {
+        margin-bottom: 36px;
+      }
+
+      @media (min-width: 992px) {
+        font-size: 48px;
+      }
+
+      @media (min-width: 1200px) {
+        font-size: 58px;
+      }
     }
   }
 
   &__image-wrapper {
     position: relative;
     width: 100%;
-    height: 250px @(--ms) 320px @(--sm) 460px @(--md) 560px;
-    margin-bottom: 24px @(--sm) 0;
+    margin-bottom: 24px;
+
+    @media (min-width: 481px) {
+      height: 320px;
+    }
+
+    @media (min-width: 768px) {
+      height: 460px;
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 992px) {
+      height: 560px;
+    }
   }
 
   &__image-container {
     position: absolute;
     top: 0;
-    right: 0 @(--sm) 16.66667% @(--xl) calc(50% - (1632px / 12 * 4));
+    right: 0;
     bottom: 0;
     left: 0;
     overflow: hidden;
+
+    @media (min-width: 768px) {
+      right: 16.66667%;
+    }
+
+    @media (min-width: 1400px) {
+      right: calc(50% - (1632px / 12 * 4));
+    }
   }
 
   &__image {
@@ -138,10 +178,16 @@ const props = defineProps({
   }
 
   &__card-container {
-    position: relative @(--sm) absolute;
-    bottom: auto @(--sm) 0;
-    left: auto @(--sm) 0;
+    position: relative;
+    bottom: auto;
+    left: auto;
     width: 100%;
+
+    @media (min-width: 768px) {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
   }
 
   &__item-content {
@@ -149,19 +195,23 @@ const props = defineProps({
   }
 
   &__swiper {
-    padding: 0 0 40px @(--sm) 0 0 140px;
+    padding: 0 0 40px;
+
+    @media (min-width: 768px) {
+      padding: 0 0 140px;
+    }
   }
 
   /* Filthy Swiper styling for this component */
   :deep(.swiper-wrapper) {
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       flex-flow: column;
       transform: translate3d(0, 0, 0) !important;
     }
   }
 
   :deep(.swiper-slide) {
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       margin-right: 0;
       margin-bottom: 24px;
     }
@@ -178,14 +228,6 @@ const props = defineProps({
     background-color: rgba(255, 255, 255, 0.4);
   }
 
-  :deep(.swiper-button-next:after) {
-    color: var(--color-white);
-  }
-
-  :deep(.swiper-button-prev:after) {
-    color: var(--color-white);
-  }
-
   :deep(.swiper-horizontal > .swiper-scrollbar) {
     position: absolute;
     bottom: 82px;
@@ -194,7 +236,7 @@ const props = defineProps({
     height: 4px;
     margin-bottom: 0;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       display: none;
     }
   }
@@ -206,13 +248,35 @@ const props = defineProps({
     margin-bottom: 0;
     border-width: 2px;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       display: none;
+    }
+
+    svg {
+      width: 15px;
+      height: 15px;
+
+      path {
+        fill: var(--color-white);
+      }
+    }
+  }
+
+  :deep(.swiper-button-next) {
+    right: 0;
+
+    svg {
+      margin-left: 3px;
     }
   }
 
   :deep(.swiper-button-prev) {
     right: 56px;
+    left: auto;
+
+    svg {
+      margin-right: 3px;
+    }
   }
 }
 </style>

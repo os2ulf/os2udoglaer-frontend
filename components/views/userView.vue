@@ -372,22 +372,36 @@ const relatedContent = ref(props.data?.related_content);
   background-color: var(--color-gray-8);
 
   &__top-section {
-    padding: 32px 0 @(--sm) 64px 0;
+    padding: 32px 0;
     background-color: var(--color-primary-lighten-5);
+
+    @media (min-width: 768px) {
+      padding: 64px 0;
+    }
   }
 
   &__tags-wrapper {
-    padding-top: 24px;
-    display: grid @(--sm) flex;
-    gap: 12px @(--sm) 16px;
+    display: grid;
+    gap: 12px;
     margin-bottom: 32px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-heading-wrapper {
-    display: grid @(--md) flex;
+    display: grid;
     justify-content: space-between;
     margin-bottom: 48px;
     align-items: center;
+
+    @media (min-width: 992px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-title {
@@ -396,13 +410,30 @@ const relatedContent = ref(props.data?.related_content);
   }
 
   &__page-heading-button-container {
-    margin-top: 10px @(--md) 0;
-    display: grid @(--sm) flex;
-    gap: 10px @(--sm) 0;
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
 
     .button {
-      margin-left: 0 @(--md) 12px;
-      white-space: normal @(--sm) nowrap;
+      margin-left: 0;
+      white-space: normal;
+
+      @media (min-width: 768px) {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 992px) {
+        margin-left: 12px;
+      }
     }
   }
 
@@ -432,13 +463,23 @@ const relatedContent = ref(props.data?.related_content);
   }
 
   &__second-section {
-    padding-top: 48px @(--md) 96px;
-    padding-bottom: 48px @(--md) 96px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+      padding-bottom: 96px;
+    }
   }
 
   &__divider {
-    padding-top: 43px @(--sm) 97px;
-    margin-bottom: 43px @(--sm) 97px;
+    padding-top: 43px;
+    margin-bottom: 43px;
+
+    @media (min-width: 768px) {
+      padding-top: 97px;
+      margin-bottom: 97px;
+    }
   }
 
   &__links-wrapper {
@@ -460,7 +501,11 @@ const relatedContent = ref(props.data?.related_content);
   &__section-contact,
   &__section-user-info,
   &__section-related-content {
-    padding-top: 48px @(--md) 96px;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+    }
   }
 
   &__section-user-info {

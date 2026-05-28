@@ -49,7 +49,7 @@ const heroData = ref(props.blockData);
   position: relative;
   overflow: hidden;
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     margin-bottom: 0;
   }
 
@@ -73,7 +73,11 @@ const heroData = ref(props.blockData);
     max-width: 1000px;
     margin: 0 auto;
     color: var(--color-white);
-    line-height: 38px @(--sm) 56px;
+    line-height: 38px;
+
+    @media (min-width: 768px) {
+      line-height: 56px;
+    }
 
     /* align center of its container */
     top: 50%;
@@ -83,15 +87,25 @@ const heroData = ref(props.blockData);
   }
 
   &__text {
-    margin-bottom: 16px @(--sm) 32px;
+    margin-bottom: 16px;
     text-align: center;
     word-wrap: break-word;
 
+    @media (min-width: 768px) {
+      margin-bottom: 32px;
+    }
+
     &--under-title {
-      font-size: 16px @(--sm) 20px;
+      font-size: 16px;
       font-weight: 500;
-      margin-bottom: 16px @(--sm) 32px;
-      line-height: 24px @(--sm) 32px;
+      margin-bottom: 16px;
+      line-height: 24px;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+        margin-bottom: 32px;
+        line-height: 32px;
+      }
     }
   }
 

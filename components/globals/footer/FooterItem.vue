@@ -93,7 +93,7 @@ const hasChildren = computed(() => {
         opacity: 0.5;
       }
 
-      @media (--viewport-ms-max) {
+      @media (max-width: 767px) {
         /* mobile view */
         font-weight: 400;
         font-size: 18px;
@@ -105,7 +105,7 @@ const hasChildren = computed(() => {
   &__children {
     display: grid;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       display: none;
     }
 

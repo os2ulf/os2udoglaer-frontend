@@ -201,9 +201,13 @@ const footerData = ref(filterFooterData[0]);
 .footer {
   background-color: var(--theme-background-color);
   color: var(--theme-color);
-  padding: 72px 0 @(--sm) 96px 0;
+  padding: 72px 0;
   transition: background-color 0.3s ease-in-out;
   position: relative;
+
+  @media (min-width: 768px) {
+    padding: 96px 0;
+  }
 
   &__section {
     z-index: 1;
@@ -268,10 +272,14 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__contact-social-media {
-    padding-top: 48px @(--sm) 36px;
+    padding-top: 48px;
     font-size: 32px;
     display: flex;
     gap: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 36px;
+    }
   }
 
   &__contact-social-media-icon {
@@ -302,9 +310,17 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__shortcuts {
-    padding-top: 48px @(--sm) 0;
-    margin-bottom: 0 @(--md) 20px;
+    padding-top: 48px;
+    margin-bottom: 0;
     display: grid;
+
+    @media (min-width: 768px) {
+      padding-top: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-bottom: 20px;
+    }
   }
 
   &__shortcuts-container {
@@ -335,13 +351,17 @@ const footerData = ref(filterFooterData[0]);
 
   &__watermark {
     position: absolute;
-    top: 56px @(--md) 61px;
+    top: 56px;
     right: 0;
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
 
-    @media (--viewport-sm-max) {
+    @media (min-width: 992px) {
+      top: 61px;
+    }
+
+    @media (max-width: 991px) {
       left: 45px;
     }
   }
@@ -350,15 +370,28 @@ const footerData = ref(filterFooterData[0]);
     display: flex;
     align-items: flex-end;
     flex-flow: wrap;
-    padding-top: 48px @(--md) 0;
-    justify-content: left @(--md) flex-end;
-    gap: 16px @(--sm) 36px;
+    padding-top: 48px;
+    justify-content: left;
+    gap: 16px;
     height: 100%;
     width: 100%;
 
+    @media (min-width: 768px) {
+      gap: 36px;
+    }
+
+    @media (min-width: 992px) {
+      padding-top: 0;
+      justify-content: flex-end;
+    }
+
     /* this is to 'fix' the scrolling issue if there are more than 3 big logos,
     however in the ACs it states it should only be up to 3 icons, so this is just in case. */
-    /* overflow: scroll @(--md) visible; */
+    /* overflow: scroll;
+    @media (min-width: 992px) {
+      visible;
+    }
+    */
   }
 
   &__big-icon-item {
@@ -373,23 +406,33 @@ const footerData = ref(filterFooterData[0]);
       }
     }
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       text-align: center;
     }
   }
 
   &__privacy {
-    padding-top: 48px @(--md) 96px;
-    display: grid @(--md) flex;
+    display: grid;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      display: flex;
+      padding-top: 96px;
+    }
   }
 
   &__privacy-buttons {
-    display: grid @(--md) flex;
-    gap: 24px @(--md) 40px;
+    display: grid;
+    gap: 24px;
     flex-wrap: wrap;
+
+    @media (min-width: 992px) {
+      display: flex;
+      gap: 40px;
+    }
   }
 
   &__privacy-button-item {
@@ -411,7 +454,11 @@ const footerData = ref(filterFooterData[0]);
   }
 
   &__privacy-terms {
-    padding-top: 40px @(--md) 0;
+    padding-top: 40px;
+
+    @media (min-width: 992px) {
+      padding-top: 0;
+    }
   }
 }
 </style>

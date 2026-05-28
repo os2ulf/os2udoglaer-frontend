@@ -46,7 +46,7 @@ const captionData = ref({
 .image-block-with-link {
   padding-bottom: 32px;
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     padding-bottom: 0;
   }
 
