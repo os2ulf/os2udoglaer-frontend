@@ -1,35 +1,26 @@
 import { ref } from 'vue'
 
-let _headerPromise: Promise<any> | null = null
 const headerData = ref<any>(null)
-const loading = ref(false)
+let promise: Promise<any> | null = null
 
 export function useHeaderData() {
   const { useRegion } = useRegionApi()
 
   const getHeaderData = async () => {
     if (headerData.value) return headerData.value
-    if (_headerPromise) return _headerPromise
+    if (promise) return promise
 
-    loading.value = true
-
-    _headerPromise = (async () => {
-      const { data } = await useAsyncData('header', () =>
-        useRegion('header')
-      )
-
-      headerData.value = data.value
-      loading.value = false
-
+    promise = (async () => {
+      const data = await useRegion('header')
+      headerData.value = data
       return headerData.value
     })()
 
-    return _headerPromise
+    return promise
   }
 
   return {
     headerData,
-    loading,
     getHeaderData,
   }
 }

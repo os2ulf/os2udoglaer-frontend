@@ -190,7 +190,7 @@ onUnmounted(() => {
     min-width: 313px;
     height: 55px;
 
-    border: 1px solid #707070;
+    border: var(--form-input-border);
     border-radius: 32px;
     background: none;
     line-height: 18px;
@@ -203,13 +203,23 @@ onUnmounted(() => {
 
     &--active {
       border: 1px solid var(--color-primary);
-      box-shadow: 0px 0px 0px 4px #297f781a;
+      box-shadow: 0 0 0 4px #297f781a;
       z-index: 9;
       max-width: 166px;
 
       @media (max-width: 991px) {
         min-width: 100%;
       }
+    }
+
+    &:focus {
+      border: 1px solid var(--color-primary);
+      box-shadow: 0 0 0 4px #297f781a;
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
     }
   }
 

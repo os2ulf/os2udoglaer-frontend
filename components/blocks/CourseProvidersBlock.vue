@@ -325,6 +325,12 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
+      const searchBlockResults = document.querySelector('.search-block-provider__result-items')
+
+      if (searchBlockResults) {
+        searchBlockResults.setAttribute('tabindex', '-1')
+        searchBlockResults.focus({ preventScroll: true })
+      }
     }
   });
 };

@@ -3,12 +3,7 @@ export default defineNuxtConfig({
     compressPublicAssets: true,
   },
 
-  devtools: {
-    enabled: true,
-    timeline: {
-      enabled: true,
-    },
-  },
+  devtools: { enabled: false },
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },

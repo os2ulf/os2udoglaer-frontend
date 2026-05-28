@@ -5,12 +5,6 @@ const { sharedSearchKeyword } = useSharedSearchKeyword();
 
 const inputRef = ref(null);
 
-const focusInput = () => {
-  if (inputRef.value && route.path !== '/search') {
-    inputRef.value.focus();
-  }
-};
-
 const searchKeyword = computed({
   get: () => sharedSearchKeyword.value,
   set: (value) => (sharedSearchKeyword.value = value),
@@ -27,7 +21,7 @@ const handleSearch = () => {
 
 <template>
   <div class="global-search">
-    <form @mouseenter="focusInput" @submit.prevent="handleSearch">
+    <form @submit.prevent="handleSearch">
       <input
         type="search"
         ref="inputRef"
@@ -36,12 +30,17 @@ const handleSearch = () => {
         aria-label="Søg"
         v-model="searchKeyword"
       />
-      <NuxtIcon
-        @click="handleSearch"
-        name="search"
-        filled
-        class="icon"
-      ></NuxtIcon>
+      <button
+        type="submit"
+        class="global-search__submit"
+        aria-label="Søg"
+      >
+        <NuxtIcon
+          name="search"
+          filled
+          class="icon"
+        />
+      </button>
     </form>
   </div>
 </template>
@@ -83,7 +82,7 @@ const handleSearch = () => {
     box-shadow: 0 4px 30px 0px rgba(var(--color-primary-rgb), 0.15) !important;
   }
 
-  .icon {
+  &__submit {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
@@ -99,30 +98,26 @@ const handleSearch = () => {
     transition: all 1s;
   }
 
-  form:hover,
-  form:valid {
+  &:hover form,
+  form:focus-within {
     width: 230px;
     cursor: pointer;
   }
 
-  form:hover input,
-  form:valid input {
+  &:hover input,
+  form:focus-within input {
     display: block;
   }
 
-  form:hover .icon,
-  form:valid .icon {
+  &:hover button {
     background: var(--color-primary);
+    border-color: var(--color-primary);
     height: 48px;
     width: 48px;
 
     :deep(path) {
       fill: var(--color-white);
     }
-  }
-
-  form:valid button {
-    display: block;
   }
 
   input[type='search']::-webkit-search-cancel-button {

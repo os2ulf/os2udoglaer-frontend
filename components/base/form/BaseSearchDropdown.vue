@@ -88,12 +88,11 @@ onUnmounted(() => {
     :id="id"
     class="dropdown"
     :class="{ 'dropdown--focus': visible }"
-    @click="toggleDropdown"
-    aria-label="Filter dropdown"
   >
     <button
       class="dropdown__selector"
       :class="{ 'dropdown__selector--border': visible }"
+      @click="toggleDropdown"
       aria-label="Filter dropdown"
     >
       <div class="dropdown__label">
@@ -183,18 +182,7 @@ onUnmounted(() => {
 .dropdown {
   width: inherit;
   height: inherit;
-  cursor: pointer;
   position: relative;
-  height: inherit;
-  color: #444444;
-  font-weight: 400;
-  font-size: var(--font-size-paragraph-sm);
-  border: 1px solid #707070;
-  border-radius: 32px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  z-index: 2;
-  padding: 8px 0 8px 0;
 
   &__title {
     text-align: left;
@@ -204,17 +192,34 @@ onUnmounted(() => {
     }
   }
 
-  &--focus {
-    border: 1px solid var(--color-primary);
-    box-shadow: 0px 0px 0px 4px #297f781a;
-    z-index: 9;
-  }
-
   &__selector {
     width: inherit;
-    border: none;
-    outline: none;
-    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    color: #444444;
+    font-weight: 400;
+    font-size: var(--font-size-paragraph-sm);
+    border: var(--form-input-border);
+    border-radius: 32px;
+    transition: all 0.3s ease-in-out;
+    z-index: 2;
+    padding: 8px 0 8px 0;
+
+    .dropdown--focus & {
+      border: 1px solid var(--color-primary);
+      box-shadow: 0 0 0 4px #297f781a;
+    }
+
+    &:focus{
+      border: 1px solid var(--color-primary);
+      box-shadow: 0 0 0 4px #297f781a;
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
+    }
   }
 
   &__label {
@@ -274,11 +279,10 @@ onUnmounted(() => {
     position: absolute;
     z-index: 9;
     width: 100%;
-    padding: 0;
     background: var(--color-white);
-    box-shadow: 0px 4px 30px 0px #0000001a;
+    box-shadow: 0 4px 30px 0 #0000001a;
     border-radius: 4px;
-    margin-top: 13px;
+    margin-top: 5px;
     padding: 32px 24px;
     cursor: default;
 
