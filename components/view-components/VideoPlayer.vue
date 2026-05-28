@@ -76,7 +76,6 @@ const handleVideo = (videoItem: VideoItem) => {
   @media (min-width: 992px) {
     padding-top: 0;
   }
-}
 
   :deep(svg) {
     position: absolute;
