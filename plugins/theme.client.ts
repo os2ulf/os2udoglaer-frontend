@@ -68,7 +68,7 @@ function applyTheme(data: any) {
 export default defineNuxtPlugin(async () => {
   const settings = useSettingsData()
 
-  await settings.getSettingsData()
+  await settings.getSettingsData({ force: true })
 
   const run = () => {
     const data = settings.settingsData.value
