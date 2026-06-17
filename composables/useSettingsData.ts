@@ -1,46 +1,48 @@
 import { ref } from 'vue'
 
-let _settingsPromise: Promise<void> | null = null
-let _settingsFetched = false
+type GetSettingsDataOptions = {
+  force?: boolean
+}
+
+let _settingsPromise: Promise<any> | null = null
 
 const settingsData = ref<any>(null)
 const isHeaderFixed = ref(false)
 
-// non-reactive script storage
-let cookieScript: string | null = null
-let trackingScript: string | null = null
+const cookieScript = ref<string | null>(null)
+const trackingScript = ref<string | null>(null)
 
 export function useSettingsData() {
   const { useRegion } = useRegionApi()
 
-  const getSettingsData = async () => {
-    // 👇 hard cache guard (stop duplicate calls)
-    if (_settingsFetched) return
+  const getSettingsData = async (options: GetSettingsDataOptions = {}) => {
     if (_settingsPromise) return _settingsPromise
+    if (!options.force && settingsData.value) return settingsData.value
 
     _settingsPromise = (async () => {
-      const { data } = await useAsyncData('settings', () =>
-        useRegion('settings'),
-      )
+      const data = await useRegion('settings')
+      const raw = data?.settings
+      if (!raw) return settingsData.value
 
-      const raw = data.value?.settings
-      if (!raw) return
-
-      cookieScript = raw.site_cookie_script ?? null
-      trackingScript = raw.site_tracking_script ?? null
+      cookieScript.value = raw.site_cookie_script ?? null
+      trackingScript.value = raw.site_tracking_script ?? null
 
       delete raw.site_cookie_script
       delete raw.site_tracking_script
 
       settingsData.value = raw
-      _settingsFetched = true
+      return settingsData.value
     })()
 
-    return _settingsPromise
+    try {
+      return await _settingsPromise
+    } finally {
+      _settingsPromise = null
+    }
   }
 
-  const getCookieScript = () => cookieScript
-  const getTrackingScript = () => trackingScript
+  const getCookieScript = () => cookieScript.value
+  const getTrackingScript = () => trackingScript.value
 
   const setIsHeaderFixed = (val: boolean) => {
     isHeaderFixed.value = val
@@ -49,6 +51,8 @@ export function useSettingsData() {
   return {
     settingsData,
     isHeaderFixed,
+    cookieScript,
+    trackingScript,
     getSettingsData,
     getCookieScript,
     getTrackingScript,

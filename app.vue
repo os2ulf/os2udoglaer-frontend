@@ -3,7 +3,7 @@ import { useSettingsData } from '~/composables/useSettingsData'
 
 const settings = useSettingsData()
 
-await settings.getSettingsData()
+await settings.getSettingsData(import.meta.server ? { force: true } : {})
 </script>
 
 <template>

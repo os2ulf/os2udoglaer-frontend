@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { useHead } from '#imports';
 import { useSettingsData } from '~/composables/useSettingsData'
+import { computed } from 'vue'
 
 const settings = useSettingsData();
 
 await settings.getSettingsData();
-
-// Grab scripts from composable
-const cookieScript = settings.getCookieScript();
-const trackingScript = settings.getTrackingScript();
-
-const headScripts: Array<Record<string, any>> = [];
 
 function parseScripts(html: string | null) {
   if (!html) return [];
@@ -37,12 +32,14 @@ function parseScripts(html: string | null) {
   });
 }
 
-function addScripts(
+function getScriptConfigs(
   scripts: ReturnType<typeof parseScripts>,
-  defaults: { async?: boolean; defer?: boolean } = {}
+  defaults: { async?: boolean; defer?: boolean } = {},
+  keyPrefix = 'settings-script'
 ) {
-  scripts.forEach((parsed) => {
+  return scripts.map((parsed, index) => {
     const scriptConfig: Record<string, any> = {
+      key: parsed.attrs.id || parsed.attrs.src || `${keyPrefix}-${index}`,
       type: parsed.attrs.type || 'text/javascript',
     };
 
@@ -68,19 +65,26 @@ function addScripts(
       scriptConfig.children = parsed.inlineCode;
     }
 
-    headScripts.push(scriptConfig);
+    return scriptConfig;
   });
 }
 
-// cookie scripts
-addScripts(parseScripts(cookieScript), { async: true });
+const headScripts = computed(() => [
+  ...getScriptConfigs(
+    parseScripts(settings.cookieScript.value),
+    { async: true },
+    'cookie-script'
+  ),
+  ...getScriptConfigs(
+    parseScripts(settings.trackingScript.value),
+    { defer: true },
+    'tracking-script'
+  ),
+]);
 
-// tracking scripts
-addScripts(parseScripts(trackingScript), { defer: true });
-
-useHead({
-  script: headScripts,
-});
+useHead(() => ({
+  script: headScripts.value,
+}));
 </script>
 
 <template>
