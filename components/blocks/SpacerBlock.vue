@@ -21,15 +21,27 @@ const props = defineProps({
   padding: 0;
 
   &--small {
-    height: 15px @(--sm) 30px;
+    height: 15px;
+
+    @media (min-width: 768px) {
+      height: 30px;
+    }
   }
 
   &--medium {
-    height: 25px @(--sm) 50px;
+    height: 25px;
+
+    @media (min-width: 768px) {
+      height: 50px;
+    }
   }
 
   &--large {
-    height: 48px @(--sm) 96px;
+    height: 48px;
+
+    @media (min-width: 768px) {
+      height: 96px;
+    }
   }
 }
 </style>

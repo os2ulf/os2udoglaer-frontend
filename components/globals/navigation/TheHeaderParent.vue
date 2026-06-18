@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useHeaderDataStore } from '~/stores/headerData';
-const headerDataStore = useHeaderDataStore();
+const { headerData, getHeaderData } = useHeaderData()
 
-if (headerDataStore.headerData === null) {
-  headerDataStore.getHeaderData();
-}
+await getHeaderData()
 
 const mainMenuData = computed(() => {
-  const mainKey = Object.keys(headerDataStore?.headerData || {}).find(key => key.includes('main'));
-  return mainKey ? headerDataStore?.headerData?.[mainKey] : null;
-});
+  const data = headerData.value
+  if (!data) return null
+
+  const mainKey = Object.keys(data).find(k => k.includes('main'))
+  return mainKey ? data[mainKey] : null
+})
 </script>
 
 <template>

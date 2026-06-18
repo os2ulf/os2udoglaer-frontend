@@ -42,7 +42,7 @@ const assignMdCollumnsHandler = (
 
 <template>
   <div class="layout-builder">
-    <div
+    <section
       v-for="section in sections"
       :key="section.id"
       :class="[
@@ -98,7 +98,7 @@ const assignMdCollumnsHandler = (
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -115,7 +115,7 @@ const assignMdCollumnsHandler = (
     background-color: #fff;
   }
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     padding-top: var(--section-spacing);
     padding-bottom: var(--section-spacing);
   }
@@ -124,11 +124,11 @@ const assignMdCollumnsHandler = (
     .col-xs-12:first-child {
       margin-bottom: 40px;
 
-      @media (--viewport-sm-min) {
+      @media (min-width: 768px) {
         margin-bottom: 44px;
       }
 
-      @media (--viewport-md-min) {
+      @media (min-width: 992px) {
         margin-bottom: 0;
       }
     }
@@ -139,11 +139,11 @@ const assignMdCollumnsHandler = (
     .col-xs-12:nth-child(2) {
       margin-bottom: 20px;
 
-      @media (--viewport-sm-min) {
+      @media (min-width: 768px) {
         margin-bottom: 44px;
       }
 
-      @media (--viewport-md-min) {
+      @media (min-width: 992px) {
         margin-bottom: 0;
       }
     }
@@ -165,7 +165,7 @@ const assignMdCollumnsHandler = (
   &--spacing-top-small {
     padding-top: var(--section-spacing-mobile);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-top: var(--section-spacing);
     }
   }
@@ -173,7 +173,7 @@ const assignMdCollumnsHandler = (
   &--spacing-top-medium {
     padding-top: calc(var(--section-spacing-mobile) * 1.5);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-top: calc(var(--section-spacing) * 1.5);
     }
   }
@@ -181,7 +181,7 @@ const assignMdCollumnsHandler = (
   &--spacing-top-large {
     padding-top: calc(var(--section-spacing) * 1.5);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-top: calc(var(--section-spacing) * 2);
     }
   }
@@ -189,7 +189,7 @@ const assignMdCollumnsHandler = (
   &--spacing-bottom-small {
     padding-bottom: var(--section-spacing-mobile);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-bottom: var(--section-spacing);
     }
   }
@@ -197,7 +197,7 @@ const assignMdCollumnsHandler = (
   &--spacing-bottom-medium {
     padding-bottom: calc(var(--section-spacing-mobile) * 1.5);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-bottom: calc(var(--section-spacing) * 1.5);
     }
   }
@@ -205,7 +205,7 @@ const assignMdCollumnsHandler = (
   &--spacing-bottom-large {
     padding-bottom: calc(var(--section-spacing) * 1.5);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-bottom: calc(var(--section-spacing) * 2);
     }
   }
@@ -213,7 +213,7 @@ const assignMdCollumnsHandler = (
   &__inner {
     padding-top: calc(var(--section-spacing-mobile) * 0.5);
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       padding-top: calc(var(--section-spacing) * 0.5);
     }
   }

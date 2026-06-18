@@ -73,7 +73,7 @@ const computedItems = computed(() => {
     margin-bottom: 14px;
     word-break: break-word;
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       margin-bottom: 28px;
     }
   }
@@ -99,7 +99,7 @@ const computedItems = computed(() => {
     border: none;
     transition: opacity 0.2s;
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       padding: 25px 28px;
     }
 
@@ -138,7 +138,7 @@ const computedItems = computed(() => {
   &__inner {
     padding: 0 18px 18px;
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       padding: 0 28px 28px;
     }
   }
@@ -148,7 +148,7 @@ const computedItems = computed(() => {
     justify-content: center;
     padding-top: 14px;
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       padding-top: 28px;
     }
   }

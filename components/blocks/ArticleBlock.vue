@@ -13,7 +13,7 @@ const props = defineProps({
 
 <style lang="postcss" scoped>
 .layout-block--article {
-  @media (--viewport-sm-max) {
+  @media (max-width: 991px) {
     .col-md-4 & {
       .article {
         flex-direction: row;

@@ -325,6 +325,12 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
+      const searchBlockResults = document.querySelector('.search-block-provider__result-items')
+
+      if (searchBlockResults) {
+        searchBlockResults.setAttribute('tabindex', '-1')
+        searchBlockResults.focus({ preventScroll: true })
+      }
     }
   });
 };
@@ -411,7 +417,7 @@ const leafletMarkers = computed(() =>
           <div class="${innerWrapperClass}">
             ${imageHtml}
             <div class="leaflet-popup-content__content">
-              <h4><a href="${item.link}">${item.field_name}</a></h4>
+              <h2 class="h4"><a href="${item.link}">${item.field_name}</a></h2>
               <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle_label)}</a>
             </div>
           </div>
@@ -590,7 +596,7 @@ onMounted(async() => {
           >
             <div class="search-block-provider__extra-filters-bar" v-if="showListView">
               <div class="search-block-provider__results-found">
-                <h4>Viser {{ totalItemsFound }} {{ searchResultSuffix }}</h4>
+                <div class="h4">Viser {{ totalItemsFound }} {{ searchResultSuffix }}</div>
               </div>
               <div class="search-block-provider__sorting">
                 <ClientOnly>
@@ -647,9 +653,9 @@ onMounted(async() => {
                           class="search-block-provider__card-label"
                           v-if="item?.field_name"
                         >
-                          <h4 v-if="item?.field_name">
+                          <h2 class="h4" v-if="item?.field_name">
                             {{ item?.field_name }}
-                          </h4>
+                          </h2>
                           <p
                             v-if="item?.field_presentation"
                             class="search-block-provider__card-description"
@@ -695,7 +701,7 @@ onMounted(async() => {
             v-else
           >
             <div class="search-block-provider__no-result-item">
-              <h4>Ingen resultater</h4>
+              <div class="h4">Ingen resultater</div>
 
               <div
                 v-if="isLoadingPageResults"
@@ -717,17 +723,26 @@ onMounted(async() => {
 
 <style lang="postcss">
 .search-block-provider {
-  &__label {
-    color: var(--theme-color);
-    margin-bottom: 24px @(--sm) 64px;
-    font-size: var(--font-size-h1);
-    font-weight: 700;
-  }
-
-  padding-top: 48px @(--sm) 96px;
-  margin-bottom: 48px @(--sm) 96px;
+  margin-bottom: 48px;
+  padding-top: 48px;
   background-color: transparent;
   color: var(--theme-color);
+
+  @media (min-width: 768px) {
+    margin-bottom: 96px;
+    padding-top: 96px;
+  }
+
+  &__label {
+    margin-bottom: 24px;
+    color: var(--theme-color);
+    font-size: var(--font-size-h1);
+    font-weight: 700;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
+  }
 
   &__skeleton {
     height: 100%;
@@ -750,7 +765,11 @@ onMounted(async() => {
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
-    min-height: auto @(--sm) 88px;
+    min-height: auto;
+
+    @media (min-width: 768px) {
+      min-height: 88px;
+    }
 
     &-container {
       &__inner {
@@ -771,7 +790,7 @@ onMounted(async() => {
       font-weight: 400;
       white-space: nowrap;
 
-      @media (--viewport-ms-max) {
+      @media (max-width: 767px) {
         .nuxt-icon {
           padding-right: 0;
         }
@@ -783,25 +802,37 @@ onMounted(async() => {
   }
 
   &__search-keyword {
-    width: 100% @(--sm) 500px;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: 500px;
+    }
   }
 
   &__extra-filters-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px @(--sm) 64px;
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
   }
 
   &__dropdown {
-    width: 100% @(--sm) auto;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: auto;
+    }
 
     &--is-hidden {
       display: none;
     }
 
     &--is-hidden-mobile {
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -825,7 +856,7 @@ onMounted(async() => {
     &--mobile {
       display: none;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: flex;
       }
     }
@@ -833,7 +864,7 @@ onMounted(async() => {
     &--desktop {
       display: flex;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -841,7 +872,7 @@ onMounted(async() => {
     &:hover {
       background-color: var(--color-primary-lighten-3);
       border: 1px solid var(--color-primary);
-      box-shadow: 0px 0px 0px 4px #297f781a;
+      box-shadow: 0 0 0 4px #297f781a;
     }
 
     &__counter {
@@ -857,17 +888,25 @@ onMounted(async() => {
       align-items: center;
       font-size: 14px;
       font-weight: 600;
-      display: block @(--sm) none;
+      display: block;
+
+      @media (min-width: 768px) {
+        display: none;
+      }
     }
   }
 
   /* chips */
   &__chips {
-    padding-top: 24px @(--sm) 32px;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     align-items: center;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__chip {
@@ -898,7 +937,7 @@ onMounted(async() => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    font-size: 500;
+    font-weight: 500;
     font-size: 14px;
     letter-spacing: 1px;
     color: var(--color-primary-darken-3);
@@ -914,7 +953,11 @@ onMounted(async() => {
   &__results-container {
     position: relative;
     z-index: 1;
-    padding-top: 24px @(--sm) 96px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 96px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -935,7 +978,7 @@ onMounted(async() => {
     display: flex;
     align-items: center;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -951,7 +994,7 @@ onMounted(async() => {
   }
 
   &__results-found {
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -959,7 +1002,11 @@ onMounted(async() => {
   &__result-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 0 @(--sm) 48px 24px;
+    gap: 24px 0;
+
+    @media (min-width: 768px) {
+      gap: 48px 24px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -968,7 +1015,11 @@ onMounted(async() => {
   }
 
   &__result-item {
-    width: 100% @(--sm) calc(50% - 12px);
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(50% - 12px);
+    }
   }
 
   &__card-item {
@@ -982,12 +1033,16 @@ onMounted(async() => {
     text-decoration: none;
     width: 100%;
     height: 100%;
+    padding: 24px;
     background: var(--color-white);
     border: 2px solid var(--color-primary-lighten-4);
     border-radius: 4px;
     box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
-    padding: 24px @(--sm) 32px;
     transition: all 0.3s ease-in-out;
+
+    @media (min-width: 768px) {
+      padding: 32px;
+    }
 
     &:hover {
       box-shadow: 0 4px 10px 10px rgba(var(--color-primary-rgb), 0.15);
@@ -1009,26 +1064,49 @@ onMounted(async() => {
 
   &__card {
     display: flex;
-    flex-direction: column @(--md) row;
-    gap: 0 @(--sm) 24px;
+    flex-direction: column;
+    gap: 0;
+
+    @media (min-width: 768px) {
+      gap: 24px;
+    }
+
+    @media (min-width: 992px) {
+      flex-direction: row;
+    }
   }
 
   &__card-label {
     color: var(--color-text);
     transition: color 0.3s ease-in-out;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
 
   &__card-image-container {
     position: relative;
-    flex: auto @(--md) 0 0 129px @(--lg) 0 0 188px;
-    width: 180px @(--sm) 160px @(--md) 129px @(--lg) 188px;
-    margin-bottom: 24px @(--sm) 0;
+    flex: auto;
+    width: 180px;
+    margin-bottom: 24px;
     border-radius: 4px;
     overflow: hidden;
+
+    @media (min-width: 768px) {
+      width: 160px;
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 992px) {
+      flex: 0 0 129px;
+      width: 129px;
+    }
+
+    @media (max-width: 1399px) {
+      flex: 0 0 188px;
+      width: 188px;
+    }
   }
 
   &__card-description {
@@ -1078,7 +1156,11 @@ onMounted(async() => {
   }
 
   &__pager {
-    padding-top: 32px @(--sm) 64px;
+    padding-top: 32px;
+
+    @media (min-width: 768px) {
+      padding-top: 64px;
+    }
   }
 
   .card {

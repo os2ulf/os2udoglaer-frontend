@@ -459,6 +459,12 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
+      const searchBlockResults = document.querySelector('.search-block__result-items')
+
+      if (searchBlockResults) {
+        searchBlockResults.setAttribute('tabindex', '-1')
+        searchBlockResults.focus({ preventScroll: true })
+      }
     }
   });
 };
@@ -682,7 +688,7 @@ const leafletMarkers = computed(() =>
         <div class="${innerWrapperClass}">
           ${imageHtml}
           <div class="leaflet-popup-content__content">
-            <h4><a href="${item.link}">${item.label}</a></h4>
+            <h2 class="h4"><a href="${item.link}">${item.label}</a></h2>
             ${providerHtml}
             <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle)}</a>
           </div>
@@ -897,7 +903,7 @@ onMounted(() => {
               v-if="selectedFiltersData.length > 0"
             >
               <TransitionGroup name="pan-right">
-                <div
+                <button
                   class="search-block__chip"
                   v-for="item in selectedFiltersData"
                   :key="item"
@@ -908,7 +914,7 @@ onMounted(() => {
                     name="close"
                   ></NuxtIcon>
                   <span>{{ item?.label }}</span>
-                </div>
+                </button>
               </TransitionGroup>
               <button
                 @click="handleClearAllFilters"
@@ -927,7 +933,7 @@ onMounted(() => {
           >
             <div class="search-block__extra-filters-bar" v-if="showListView">
               <div class="search-block__results-found">
-                <h4>{{ searchResultString }}</h4>
+                <div class="h4">{{ searchResultString }}</div>
               </div>
               <div class="search-block__sorting">
                 <ClientOnly>
@@ -954,9 +960,9 @@ onMounted(() => {
                   v-for="item in dynamicContent"
                   :key="item"
                 >
-                  <div class="search-block__card-item">
+                  <article class="search-block__card-item">
                     <BaseCard :data="item" />
-                  </div>
+                  </article>
                 </div>
               </TransitionGroup>
             </div>
@@ -987,7 +993,7 @@ onMounted(() => {
             v-else
           >
             <div class="search-block__no-result-item">
-              <h4>Ingen resultater</h4>
+              <div class="h4">Ingen resultater</div>
 
               <div
                 v-if="isLoadingPageResults"
@@ -1009,25 +1015,30 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .search-block {
-  &__label {
-    color: var(--theme-color);
-    margin-bottom: 24px @(--sm) 64px;
-    font-size: var(--font-size-h1);
-    font-weight: 700;
-  }
-
-  padding-top: 48px @(--sm) 96px;
-  margin-bottom: 48px @(--sm) 96px;
+  margin-bottom: 48px;
+  padding-top: 48px;
   background-color: transparent;
   color: var(--theme-color);
+
+  @media (min-width: 768px) {
+    margin-bottom: 96px;
+    padding-top: 96px;
+  }
+
+  &__label {
+    margin-bottom: 24px;
+    color: var(--theme-color);
+    font-size: var(--font-size-h1);
+    font-weight: 700;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
+  }
 
   &__skeleton {
     height: 100%;
   }
-
-  /* removes overflow to the side, if the
-  rightest nav option clips to the side of the page */
-  overflow-x: clip;
 
   &__heading {
     margin-bottom: 0;
@@ -1042,7 +1053,11 @@ onMounted(() => {
     padding-top: 32px;
     gap: 24px;
     flex-wrap: wrap;
-    min-height: auto @(--sm) 88px;
+    min-height: auto;
+
+    @media (min-width: 768px) {
+      min-height: 88px;
+    }
 
     &-container {
       &__inner {
@@ -1063,7 +1078,17 @@ onMounted(() => {
       font-weight: 400;
       white-space: nowrap;
 
-      @media (--viewport-ms-max) {
+      &:focus {
+        border: 1px solid var(--color-primary);
+        box-shadow: 0 0 0 4px #297f781a;
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+
+      @media (max-width: 767px) {
         .nuxt-icon {
           padding-right: 0;
         }
@@ -1075,25 +1100,37 @@ onMounted(() => {
   }
 
   &__search-keyword {
-    width: 100% @(--sm) 500px;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: 500px;
+    }
   }
 
   &__extra-filters-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px @(--sm) 64px;
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+      margin-bottom: 64px;
+    }
   }
 
   &__dropdown {
-    width: 100% @(--sm) auto;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: auto;
+    }
 
     &--is-hidden {
       display: none;
     }
 
     &--is-hidden-mobile {
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -1117,7 +1154,7 @@ onMounted(() => {
     &--mobile {
       display: none;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: flex;
       }
     }
@@ -1125,7 +1162,7 @@ onMounted(() => {
     &--desktop {
       display: flex;
 
-      @media (--viewport-sm-max) {
+      @media (max-width: 991px) {
         display: none;
       }
     }
@@ -1137,7 +1174,7 @@ onMounted(() => {
     }
 
     &__counter {
-      display: block @(--sm) none;
+      display: block;
       position: absolute;
       top: -3px;
       right: 0;
@@ -1150,6 +1187,10 @@ onMounted(() => {
       align-items: center;
       font-size: 14px;
       font-weight: 600;
+
+      @media (min-width: 768px) {
+        display: none;
+      }
     }
   }
 
@@ -1173,7 +1214,6 @@ onMounted(() => {
       border: 2px solid var(--color-border);
       border-radius: 50%;
       position: relative;
-      outline: none;
       cursor: pointer;
       transition: border 0.2s ease-in-out;
       display: inline-block;
@@ -1199,6 +1239,11 @@ onMounted(() => {
 
       &:focus {
         box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.3);
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
       }
     }
 
@@ -1216,11 +1261,15 @@ onMounted(() => {
 
   /* chips */
   &__chips {
-    padding-top: 24px @(--sm) 32px;
+    padding-top: 24px;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     align-items: center;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__chip {
@@ -1266,7 +1315,11 @@ onMounted(() => {
   &__results-container {
     position: relative;
     z-index: 1;
-    padding-top: 24px @(--sm) 96px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      padding-top: 96px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -1287,7 +1340,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
 
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -1303,7 +1356,7 @@ onMounted(() => {
   }
 
   &__results-found {
-    h4 {
+    .h4 {
       margin: 0;
     }
   }
@@ -1311,7 +1364,11 @@ onMounted(() => {
   &__result-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 0 @(--sm) 48px 24px;
+    gap: 24px 0;
+
+    @media (min-width: 768px) {
+      gap: 48px 24px;
+    }
 
     &--loading {
       opacity: 0.5;
@@ -1320,7 +1377,11 @@ onMounted(() => {
   }
 
   &__result-item {
-    width: 100% @(--sm) calc(50% - 12px);
+    width: 100%;
+
+    @media (min-width: 768px) {
+      width: calc(50% - 12px);
+    }
   }
 
   &__card-item {
@@ -1343,7 +1404,11 @@ onMounted(() => {
   }
 
   &__pager {
-    padding-top: 32px @(--sm) 64px;
+    padding-top: 32px;
+
+    @media (min-width: 768px) {
+      padding-top: 64px;
+    }
   }
 
   .card {

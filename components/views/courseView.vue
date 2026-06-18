@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
-import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { useSettingsDataStore } from '~/stores/settingsData';
-const settingsDataStore = useSettingsDataStore();
+import { useSettingsData } from '~/composables/useSettingsData';
 const { hasPrimaryButtonColors, hasSecondaryButtonColors } = useButtonColors()
-
-if (settingsDataStore.settingsData === null) {
-  settingsDataStore.getSettingsData();
-}
+const settings = useSettingsData();
+await settings.getSettingsData();
 
 const props = defineProps({
   data: {
@@ -19,28 +16,25 @@ const props = defineProps({
   },
 });
 
-let freeCourseApplicationUrl = computed(
-  () => settingsDataStore.settingsData?.free_course_application_reference,
-);
+const freeCourseApplicationUrl = computed(() => {
+  const base = settings.settingsData.value?.free_course_application_reference
+  if (!base) return null
 
-if (freeCourseApplicationUrl.value) {
-  freeCourseApplicationUrl =
-    freeCourseApplicationUrl.value + '?course=' + props.data.id;
+  let url = base + '?course=' + props.data.id
 
   if (props.data?.provider) {
-    freeCourseApplicationUrl =
-      freeCourseApplicationUrl + '&provider=' + props.data.provider.id;
+    url += '&provider=' + props.data.provider.id
   }
-}
 
-let transportApplicationUrl = computed(
-  () => settingsDataStore.settingsData?.transport_pool_application_reference,
-);
+  return url
+})
 
-if (transportApplicationUrl.value) {
-  transportApplicationUrl =
-    transportApplicationUrl.value + '?course=' + props.data.id;
-}
+const transportApplicationUrl = computed(() => {
+  const base = settings.settingsData.value?.transport_pool_application_reference
+  if (!base) return null
+
+  return base + '?course=' + props.data.id
+})
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
 const breakpoints = {
@@ -305,7 +299,7 @@ const currentUrl = computed(() => {
 
 <template>
   <div class="course">
-    <div class="course__top-section">
+    <section class="course__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -399,35 +393,35 @@ const currentUrl = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container course__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_activities">
-            <h4>Aktiviteter</h4>
+          <section class="course__paragraph-item" v-if="data.field_activities">
+            <h2 class="h4">Aktiviteter</h2>
             <BaseRte :content="data.field_activities" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_preparation">
-            <h4>Forberedelse</h4>
+          <section class="course__paragraph-item" v-if="data.field_preparation">
+            <h2 class="h4">Forberedelse</h2>
             <BaseRte :content="data.field_preparation" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_post_processing">
-            <h4>Efterbehandling</h4>
+          <section class="course__paragraph-item" v-if="data.field_post_processing">
+            <h2 class="h4">Efterbehandling</h2>
             <BaseRte :content="data.field_post_processing" />
-          </div>
+          </section>
 
-          <div class="course__paragraph-item" v-if="data.field_purpose">
-            <h4>Formål</h4>
+          <section class="course__paragraph-item" v-if="data.field_purpose">
+            <h2 class="h4">Formål</h2>
             <BaseRte :content="data.field_purpose" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -520,7 +514,7 @@ const currentUrl = computed(() => {
           </div>
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 course__section-video"
           v-if="
             data.field_video_title ||
@@ -544,10 +538,10 @@ const currentUrl = computed(() => {
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section cards -->
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 course__section-cards"
           v-if="
             data.field_materials.length > 1 ||
@@ -565,7 +559,7 @@ const currentUrl = computed(() => {
               }"
             />
           </div>
-        </div>
+        </section>
 
         <!-- Section registration -->
         <div
@@ -585,7 +579,7 @@ const currentUrl = computed(() => {
         </div>
 
         <!-- Section related articles -->
-        <div
+        <section
           v-if="props.data.field_related_courses.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 course__section-related-articles"
         >
@@ -608,7 +602,7 @@ const currentUrl = computed(() => {
               </Swiper>
             </ClientOnly>
           </div>
-        </div>
+        </section>
       </div>
     </div>
     <Transition name="fade">
@@ -645,17 +639,27 @@ const currentUrl = computed(() => {
   }
 
   &__tags-wrapper {
-    padding-top: 24px;
-    display: grid @(--sm) flex;
-    gap: 12px @(--sm) 16px;
+    display: grid;
+    gap: 12px;
     margin-bottom: 32px;
+    padding-top: 24px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-heading-wrapper {
-    display: grid @(--md) flex;
+    display: grid;
     justify-content: space-between;
     margin-bottom: 48px;
     align-items: center;
+
+    @media (min-width: 992px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-title {
@@ -664,13 +668,30 @@ const currentUrl = computed(() => {
   }
 
   &__page-heading-button-container {
-    margin-top: 10px @(--md) 0;
-    display: grid @(--sm) flex;
-    gap: 10px @(--sm) 0;
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
 
     .button {
-      margin-left: 0 @(--md) 12px;
-      white-space: normal @(--sm) nowrap;
+      margin-left: 0;
+      white-space: normal;
+
+      @media (min-width: 768px) {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 992px) {
+        margin-left: 12px;
+      }
     }
   }
 
@@ -687,27 +708,51 @@ const currentUrl = computed(() => {
   }
 
   &__second-section {
-    padding-top: 48px @(--md) 96px;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+    }
   }
 
   &__section-registration {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-cards {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-video {
-    padding-top: 48px @(--md) 96px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 48px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-related-articles {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 48px @(--md) 96px;
+    padding-top: 24px;
+    padding-bottom: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 96px;
+    }
   }
 
   &__related-articles {
@@ -717,16 +762,25 @@ const currentUrl = computed(() => {
     }
 
     :deep(.swiper) {
-      padding-top: 24px @(--sm) 44px;
-      padding-bottom: 44px @(--sm) 70px;
+      padding-top: 24px;
+      padding-bottom: 44px;
       overflow: clip;
       overflow-y: visible;
+
+      @media (min-width: 768px) {
+        padding-top: 44px;
+        padding-bottom: 70px;
+      }
     }
 
     :deep(.swiper-button-next),
     :deep(.swiper-button-prev) {
-      top: -32px @(--sm) -36px;
+      top: -32px;
       margin-bottom: 0;
+
+      @media (min-width: 768px) {
+        top: -36px;
+      }
     }
 
     :deep(.swiper-horizontal > .swiper-scrollbar) {

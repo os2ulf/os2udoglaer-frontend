@@ -67,11 +67,15 @@ const handleVideo = (videoItem: VideoItem) => {
 
 <style lang="postcss" scoped>
 .video {
-  padding-top: 20px @(--md) 0;
+  padding-top: 20px;
   position: relative;
   width: 100%;
   height: 0;
   padding-bottom: 56.25%;
+
+  @media (min-width: 992px) {
+    padding-top: 0;
+  }
 
   :deep(svg) {
     position: absolute;
@@ -91,13 +95,18 @@ const handleVideo = (videoItem: VideoItem) => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 48px @(--sm) 64px;
-    height: 48px @(--sm) 64px;
+    width: 48px;
+    height: 48px;
     color: var(--color-white);
     border: 2px solid var(--color-white);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
+
+    @media (min-width: 768px) {
+      width: 64px;
+      height: 64px;
+    }
   }
 
   &__thumbnail {

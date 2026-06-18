@@ -1,20 +1,31 @@
 <script setup lang="ts">
-import { useHeaderDataStore } from '~/stores/headerData';
-const headerDataStore = useHeaderDataStore();
+import { useHeaderData } from '~/composables/useHeaderData'
+
+const { headerData, getHeaderData } = useHeaderData()
+
+await getHeaderData()
 
 const navigationMenuData = computed(() => {
-  const mainKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+  const data = headerData.value
+  if (!data) return null
+
+  const mainKey = Object.keys(data).find((key) =>
     key.includes('main'),
-  );
-  return mainKey ? headerDataStore?.headerData?.[mainKey] : null;
-});
+  )
+
+  return mainKey ? data[mainKey] : null
+})
 
 const metaMenuData = computed(() => {
-  const metaKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+  const data = headerData.value
+  if (!data) return null
+
+  const metaKey = Object.keys(data).find((key) =>
     key.includes('meta'),
-  );
-  return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
-});
+  )
+
+  return metaKey ? data[metaKey] : null
+})
 
 const showSubItems = ref(false);
 const subItems = ref([]);

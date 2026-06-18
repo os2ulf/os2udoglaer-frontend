@@ -1,6 +1,6 @@
 import * as VeeValidate from 'vee-validate';
 import { setLocale, localize } from '@vee-validate/i18n';
-import rules from '@vee-validate/rules';
+import * as rules from '@vee-validate/rules'
 import da from '@vee-validate/i18n/dist/locale/da.json';
 
 const includedRules = [

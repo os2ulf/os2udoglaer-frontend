@@ -225,11 +225,19 @@ function showHelperText() {
   }
 
   :deep(.form-input-wrapper) {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__textarea-wrapper {
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__textarea-container {
@@ -240,12 +248,16 @@ function showHelperText() {
   &__checkbox {
     display: flex;
     width: fit-content;
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
     color: var(--color-text);
     font-weight: 400;
     font-size: 16px;
     align-items: center;
     cursor: pointer;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
 
     &--invalid {
       border: 1px solid var(--color-error) !important;
@@ -303,7 +315,7 @@ function showHelperText() {
 
   &__styled-textarea:focus {
     border: var(--form-input-border-focus);
-    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), 0.1);
+    box-shadow: 0 4px 10px 4px rgba(var(--color-primary-rgb), .1);
     outline: none;
   }
 
@@ -322,13 +334,21 @@ function showHelperText() {
   }
 
   &__error-message {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
     color: var(--color-error);
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__success {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
     text-align: center;
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__spinner {

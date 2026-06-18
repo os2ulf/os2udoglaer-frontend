@@ -5,25 +5,27 @@ import { v4 as uuidv4 } from 'uuid';
 const props = defineProps({
   sortingFilterData: {
     type: Object,
+    default: () => ({}),
   },
-
   isLoading: {
     type: Boolean,
     default: false,
   },
-
   defaultSelectedOption: {
     type: String,
     default: null,
   },
 });
 
+
 const id = `sorting-${uuidv4()}`;
 const emit = defineEmits(['sortingValue']);
 const visible = ref(false);
-const sortingFilterData = ref(props.sortingFilterData);
+const sortingFilterData = computed(() => props.sortingFilterData || {});
 
-const defaultFilterLabel = ref(sortingFilterData.value.sort_by.label);
+const defaultFilterLabel = computed(() =>
+  sortingFilterData.value?.sort_by?.label ?? ''
+);
 const selectedFilterLabel = ref(null);
 const computedDefaultSelectedOption = computed(() => {
   return props.defaultSelectedOption;
@@ -74,8 +76,12 @@ const handleClickOutside = (e) => {
 
 // Select default sorting option
 const selectDefaultSortingOption = () => {
+  const options = sortingFilterData.value?.sort_by?.options;
+
+  if (!Array.isArray(options)) return;
+
   if (props.defaultSelectedOption) {
-    for (const option of sortingFilterData.value.sort_by.options) {
+    for (const option of options) {
       if (option.value == computedDefaultSelectedOption.value) {
         selectWithoutEmit(option.label);
       }
@@ -140,10 +146,10 @@ onUnmounted(() => {
         <ul :class="isLoading ? 'sorting__list--loading' : ''">
           <li
             class="sorting__item"
-            v-for="item in sortingFilterData.sort_by.options"
-            :key="item"
+            v-for="item in sortingFilterData?.sort_by?.options || []"
+            :key="item.value"
           >
-            <label
+            <button
               class="sorting__list-item"
               :class="
                 computedLabel === item.value
@@ -153,13 +159,14 @@ onUnmounted(() => {
               @click="select(item)"
             >
               {{ item.label }}
-            </label>
+            </button>
           </li>
         </ul>
       </div>
     </TransitionGroup>
   </div>
 </template>
+
 <style lang="postcss" scoped>
 .sorting {
   width: inherit;
@@ -168,7 +175,6 @@ onUnmounted(() => {
   color: #444444;
   font-weight: 500;
   font-size: var(--font-size-paragraph-sm);
-  cursor: pointer;
   transition: all 0.3s ease-in-out;
 
   :deep(svg) {
@@ -196,10 +202,19 @@ onUnmounted(() => {
 
   &__selector {
     width: inherit;
-    border: none;
-    outline: none;
+    border: 1px solid transparent;
     background-color: transparent;
     padding: 0;
+
+    &:focus {
+      border: 1px solid var(--color-primary);
+      box-shadow: 0 0 0 4px #297f781a;
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
+    }
   }
 
   &__label {
@@ -255,9 +270,9 @@ onUnmounted(() => {
     z-index: 8;
     width: 100%;
     background: var(--color-white);
-    box-shadow: 0px 4px 30px 0px #0000001a;
+    box-shadow: 0 4px 30px 0 #0000001a;
     border-radius: 4px;
-    padding: 32px 24px;
+    padding: 24px 20px;
     cursor: default;
 
     &__visible {
@@ -279,20 +294,31 @@ onUnmounted(() => {
   }
 
   &__list-item {
-    display: flex;
-    width: fit-content;
-    color: var(--color-text);
-    font-weight: 400;
-    font-size: 16px;
-    align-items: center;
+    display: block;
+    width: 100%;
+    padding: 4px;
     cursor: pointer;
-    font-size: var(--font-size-paragraph-sm);
-    line-height: 1.125;
     color: #212121;
+    line-height: 1.125;
+    font-weight: 400;
+    font-size: var(--font-size-paragraph-sm);
+    text-align: left;
+    background-color: transparent;
+    border: 1px solid transparent;
 
     &:hover {
       opacity: 0.7;
       color: var(--color-primary);
+    }
+
+    &:focus {
+      border: 1px solid var(--color-primary);
+      box-shadow: 0 0 0 4px #297f781a;
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
     }
 
     &--selected {
@@ -309,7 +335,7 @@ onUnmounted(() => {
   li {
     text-align: left;
     color: var(--color-gray-62);
-    margin-top: 24px;
+    margin-top: 16px;
 
     &:first-child {
       margin-top: 0;

@@ -1,84 +1,92 @@
 <script setup lang="ts">
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useHead } from '#imports';
+import { useSettingsData } from '~/composables/useSettingsData'
+import { computed } from 'vue'
 
-const settingsDataStore = useSettingsDataStore();
-await settingsDataStore.getSettingsData();
+const settings = useSettingsData();
 
-// Grab scripts (non-reactive)
-const cookieScript = settingsDataStore.getCookieScript();
-const trackingScript = settingsDataStore.getTrackingScript();
+await settings.getSettingsData();
 
-const headScripts: Array<Record<string, any>> = [];
+function parseScripts(html: string | null) {
+  if (!html) return [];
 
-/**
- * Parse a <script> string from CMS and extract:
- * - attrs (like src, id, type)
- * - inlineCode
- */
-function parseScript(script: string | null) {
-  if (!script) return null;
+  const matches = [
+    ...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi),
+  ];
 
-  const match = script.match(/<script\b([^>]*)>([\s\S]*?)<\/script>/i);
-  if (!match) return null;
+  return matches.map((match) => {
+    const attrString = match[1];
+    const inlineCode = match[2].trim();
 
-  const attrString = match[1];
-  const inlineCode = match[2].trim();
+    const attrs: Record<string, any> = {};
 
-  const attrs: Record<string, string> = {};
-  attrString.replace(/(\w+(?:-\w+)*)=["']([^"']*)["']/g, (_, key, val) => {
-    attrs[key] = val;
-    return '';
+    attrString.replace(/(\w+(?:-\w+)*)(?:=["']([^"']*)["'])?/g, (_, key, val) => {
+      attrs[key] = val ?? true;
+      return '';
+    });
+
+    return {
+      attrs,
+      inlineCode,
+    };
   });
-
-  return { attrs, inlineCode };
 }
 
-// ----- Cookie Script -----
-const cookieParsed = parseScript(cookieScript);
-if (cookieParsed) {
-  if (cookieParsed.attrs.src) {
-    headScripts.push({
-      src: cookieParsed.attrs.src,
-      async: true,
-      id: cookieParsed.attrs.id,
-      type: cookieParsed.attrs.type || 'text/javascript',
-    });
-  } else if (cookieParsed.inlineCode) {
-    headScripts.push({
-      children: cookieParsed.inlineCode,
-      type: cookieParsed.attrs.type || 'text/javascript',
-      async: true,
-      id: cookieParsed.attrs.id,
-    });
-  }
+function getScriptConfigs(
+  scripts: ReturnType<typeof parseScripts>,
+  defaults: { async?: boolean; defer?: boolean } = {},
+  keyPrefix = 'settings-script'
+) {
+  return scripts.map((parsed, index) => {
+    const scriptConfig: Record<string, any> = {
+      key: parsed.attrs.id || parsed.attrs.src || `${keyPrefix}-${index}`,
+      type: parsed.attrs.type || 'text/javascript',
+    };
+
+    if (parsed.attrs.id) scriptConfig.id = parsed.attrs.id;
+
+    if (parsed.attrs.async !== undefined) {
+      scriptConfig.async = parsed.attrs.async;
+    } else if (defaults.async !== undefined) {
+      scriptConfig.async = defaults.async;
+    }
+
+    if (parsed.attrs.defer !== undefined) {
+      scriptConfig.defer = parsed.attrs.defer;
+    } else if (defaults.defer !== undefined) {
+      scriptConfig.defer = defaults.defer;
+    }
+
+    if (parsed.attrs.src) {
+      scriptConfig.src = parsed.attrs.src;
+    }
+
+    if (parsed.inlineCode) {
+      scriptConfig.children = parsed.inlineCode;
+    }
+
+    return scriptConfig;
+  });
 }
 
-// ----- Tracking Script -----
-const trackingParsed = parseScript(trackingScript);
-if (trackingParsed) {
-  if (trackingParsed.attrs.src) {
-    headScripts.push({
-      src: trackingParsed.attrs.src,
-      defer: true,
-      id: trackingParsed.attrs.id,
-      type: trackingParsed.attrs.type || 'text/javascript',
-    });
-  } else if (trackingParsed.inlineCode) {
-    headScripts.push({
-      children: trackingParsed.inlineCode,
-      type: trackingParsed.attrs.type || 'text/javascript',
-      defer: true,
-      id: trackingParsed.attrs.id,
-    });
-  }
-}
+const headScripts = computed(() => [
+  ...getScriptConfigs(
+    parseScripts(settings.cookieScript.value),
+    { async: true },
+    'cookie-script'
+  ),
+  ...getScriptConfigs(
+    parseScripts(settings.trackingScript.value),
+    { defer: true },
+    'tracking-script'
+  ),
+]);
 
-// Inject into <head> SSR-safe
-useHead({
-  script: headScripts,
-});
+useHead(() => ({
+  script: headScripts.value,
+}));
 </script>
 
 <template>
-  <!-- No template needed; all scripts handled via useHead -->
+  <!-- injected via useHead -->
 </template>

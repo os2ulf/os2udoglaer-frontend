@@ -72,8 +72,12 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .course__registration {
   text-align: center;
-  padding: 48px var(--grid-gutter-half) @(--md) 96px var(--grid-gutter-half);
+  padding: 48px var(--grid-gutter-half);
   background: var(--color-secondary-lighten-5);
+
+  @media (min-width: 992px) {
+    padding: 96px var(--grid-gutter-half);
+  }
 
   &__prices {
     margin-bottom: 16px;
@@ -85,12 +89,20 @@ const props = defineProps({
 
   &__price-item {
     margin-bottom: 16px;
-    font-size: 16px @(--md) 22px;
+    font-size: 16px ;
+
+    @media (min-width: 992px) {
+      font-size: 22px;
+    }
   }
 
   &__url {
     margin-top: 16px;
-    font-size: 16px @(--md) 22px;
+    font-size: 16px ;
+
+    @media (min-width: 992px) {
+      font-size: 22px;
+    }
   }
 }
 </style>

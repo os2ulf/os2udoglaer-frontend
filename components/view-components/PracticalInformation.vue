@@ -23,7 +23,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="practical-information">
+  <section class="practical-information">
     <div
       class="practical-information__user-provider-logo"
       v-if="userProfilePage?.logo?.src"
@@ -272,7 +272,7 @@ const props = defineProps({
         :class="{'button--course' : hasPrimaryButtonColors}"
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="postcss" scoped>
@@ -415,8 +415,28 @@ const props = defineProps({
   }
 
   &__sdgs {
-    width: 25% @(--ms) 20% @(--sm) 15% @(--md) 50% @(--lg) 33% @(--xl) 25%;
+    width: 25%;
     padding: 12px;
+
+    @media (min-width: 481px) {
+      width: 20%;
+    }
+
+    @media (min-width: 768px) {
+      width: 15%;
+    }
+
+    @media (min-width: 992px) {
+      width: 50%;
+    }
+
+    @media (max-width: 1399px) {
+      width: 33%;
+    }
+
+    @media (min-width: 1400px) {
+      width: 25%;
+    }
 
     &:last-child {
       margin-right: 0;

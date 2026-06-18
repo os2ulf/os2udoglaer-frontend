@@ -1,67 +1,68 @@
 <script setup>
-import { useHeaderDataStore } from '~/stores/headerData';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useHeaderData } from '~/composables/useHeaderData'
+import { useSettingsData } from '~/composables/useSettingsData'
 
-const headerDataStore = useHeaderDataStore();
-const settingsDataStore = useSettingsDataStore();
+const { headerData, getHeaderData } = useHeaderData()
+const { isHeaderFixed } = useSettingsData()
 
-if (headerDataStore.headerData === null) {
-  headerDataStore.getHeaderData();
-}
+await getHeaderData()
 
 const metaMenuData = computed(() => {
-  const metaKey = Object.keys(headerDataStore?.headerData || {}).find((key) =>
+  const data = headerData.value
+  if (!data) return null
+
+  const metaKey = Object.keys(data).find((key) =>
     key.includes('meta'),
-  );
-  return metaKey ? headerDataStore?.headerData?.[metaKey] : null;
-});
+  )
 
-const isHeaderFixed = computed(() => settingsDataStore?.isHeaderFixed);
-
-// Close the meta-menu offcanvas if the header is fixed (off screen)
-watch(isHeaderFixed, () => {
-  closeOffCanvas();
-});
-
-const route = useRoute();
-watch(
-  () => route.path,
-  () => {
-    closeOffCanvas();
-  },
-);
+  return metaKey ? data[metaKey] : null
+})
 
 const isOpen = ref(false);
 const activeNavItem = ref(null);
-const handleNavigationItemClick = (metaItem) => {
-  if (metaItem.below.length > 0) {
-    if (isOpen.value && activeNavItem.value === metaItem) {
-      // Close the canvas if the same metaItem is clicked again
-      closeOffCanvas();
-    } else {
-      openOffCanvas(metaItem);
-    }
-  } else {
-    if (isOpen.value) {
-      closeOffCanvas();
-    }
-    // Closing the canvas if the metaItem has no children
-    closeOffCanvas();
-  }
-};
-const openOffCanvas = (metaItem) => {
-  isOpen.value = true;
-  activeNavItem.value = metaItem;
-};
 
 const closeOffCanvas = () => {
   isOpen.value = false;
   activeNavItem.value = null;
 };
+
+const openOffCanvas = (metaItem) => {
+  isOpen.value = true;
+  activeNavItem.value = metaItem;
+};
+
+const handleNavigationItemClick = (metaItem) => {
+  const hasChildren = metaItem?.below?.length > 0;
+
+  if (!hasChildren) {
+    closeOffCanvas();
+    return;
+  }
+
+  if (isOpen.value && activeNavItem.value === metaItem) {
+    closeOffCanvas();
+  } else {
+    openOffCanvas(metaItem);
+  }
+};
+
+watch(
+  isHeaderFixed,
+  (val) => {
+    if (val) closeOffCanvas();
+  }
+);
+
+const route = useRoute();
+
+watch(
+  () => route.path,
+  () => closeOffCanvas()
+);
 </script>
 
 <template>
-  <div class="meta-menu">
+  <nav class="meta-menu" aria-label="meta-menu">
     <div class="container">
       <div class="row">
         <div class="col-sm-12 col-xs-12 col-md-12">
@@ -109,16 +110,20 @@ const closeOffCanvas = () => {
         </div>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <style lang="postcss" scoped>
 .meta-menu {
   position: relative;
-  display: none @(--md) flex;
+  display: none;
   align-items: center;
   background: var(--color-gray-8);
   z-index: 11;
+
+  @media (min-width: 992px) {
+    display: flex;
+  }
 
   .meta-menu__items-wrapper {
     height: var(--meta-navigation-bar-height);

@@ -41,13 +41,18 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 80px @(--md) 100px;
-  padding: 20px 15px 20px 45px @(--md) 30px 30px 30px 90px;
+  min-height: 80px;
+  padding: 20px 15px 20px 45px;
   border: var(--form-input-border);
   border-radius: var(--form-input-border-radius);
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   user-select: none;
+
+  @media (min-width: 992px) {
+    min-height: 100px;
+    padding: 30px 30px 30px 90px;
+  }
 
   &::before {
     position: absolute;
@@ -62,7 +67,7 @@
     transition: all 0.15s ease-in-out;
     content: '';
 
-    @media (--md) {
+    @media (min-width: 992px) {
       left: 33px;
       width: 28px;
       height: 28px;
@@ -89,7 +94,7 @@
     transition: opacity 0.1s ease-in-out;
     content: '';
 
-    @media (--md) {
+    @media (min-width: 992px) {
       left: 40px;
       width: 14px;
       height: 14px;
@@ -115,7 +120,7 @@
 .enhanced-radio-label {
   font-weight: var(--font-weight-bold);
 
-  @media (--md) {
+  @media (min-width: 992px) {
     font-size: var(--font-size-large);
   }
 }
@@ -123,7 +128,7 @@
 .enhanced-radio-description {
   font-size: var(--font-size-small);
 
-  @media (--md) {
+  @media (min-width: 992px) {
     font-size: var(--font-size-base);
   }
 }

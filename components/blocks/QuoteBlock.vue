@@ -24,7 +24,7 @@ const props = defineProps({
   display: inline;
 }
 
-@media (--viewport-md-min) {
+@media (min-width: 992px) {
   .quote {
     font-weight: 500;
     font-size: 17px;
@@ -38,7 +38,7 @@ const props = defineProps({
   opacity: 0.5;
 }
 
-@media (--viewport-md-min) {
+@media (min-width: 992px) {
   .quote .icon--quote {
     width: 20px;
     height: 24px;

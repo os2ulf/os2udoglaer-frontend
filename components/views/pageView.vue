@@ -40,8 +40,13 @@ const props = defineProps({
 }
 
 .page-title {
-  padding-top: 48px @(--md) 96px;
-  margin-bottom: 32px @(--md) 64px;
+  padding-top: 48px;
+  margin-bottom: 32px;
   word-break: break-word;
+
+  @media (min-width: 992px) {
+    padding-top: 96px;
+    margin-bottom: 64px;
+  }
 }
 </style>

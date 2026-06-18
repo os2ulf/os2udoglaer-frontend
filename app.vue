@@ -1,229 +1,58 @@
 <script setup lang="ts">
-import { useSettingsDataStore } from '~/stores/settingsData';
-const settingsDataStore = useSettingsDataStore();
+import { computed } from 'vue'
+import { useSettingsData } from '~/composables/useSettingsData'
 
-const fontFamily = computed(() => settingsDataStore.settingsData?.font);
-const favIcon = computed(() => settingsDataStore.settingsData?.favicon);
+const settings = useSettingsData()
 
-const primaryBgColor = computed(
-  () => settingsDataStore.settingsData?.primary_background_color,
-);
-const primaryBgTextColor = computed(
-  () => settingsDataStore.settingsData?.primary_background_text_color,
-);
-const secondaryBgColor = computed(
-  () => settingsDataStore.settingsData?.secondary_background_color,
-);
-const secondaryBgTextColor = computed(
-  () => settingsDataStore.settingsData?.secondary_background_text_color,
-);
-const tertiaryBgColor = computed(
-  () => settingsDataStore.settingsData?.tertiary_background_color,
-);
-const tertiaryBgTextColor = computed(
-  () => settingsDataStore.settingsData?.tertiary_background_text_color,
-);
+await settings.getSettingsData(import.meta.server ? { force: true } : {})
 
-const positiveFontColor = computed(
-  () => settingsDataStore.settingsData?.text_positive_color,
-);
+function getImageUrl(value: any): string | null {
+  if (!value) return null
+  if (typeof value === 'string') return value
 
-const primaryButtonColor = computed(
-  () => settingsDataStore.settingsData?.primary_button_color,
-);
-const primaryButtonTextColor = computed(
-  () => settingsDataStore.settingsData?.primary_button_text_color,
-);
-const primaryButtonHoverColor = computed(
-  () => settingsDataStore.settingsData?.primary_button_hover_color,
-);
-const primaryButtonHoverTextColor = computed(
-  () => settingsDataStore.settingsData?.primary_button_hover_text_color,
-);
-
-const secondaryButtonColor = computed(
-  () => settingsDataStore.settingsData?.secondary_button_color,
-);
-const secondaryButtonTextColor = computed(
-  () => settingsDataStore.settingsData?.secondary_button_text_color,
-);
-const secondaryButtonHoverColor = computed(
-  () => settingsDataStore.settingsData?.secondary_button_hover_color,
-);
-const secondaryButtonHoverTextColor = computed(
-  () => settingsDataStore.settingsData?.secondary_button_hover_text_color,
-);
-
-// Function to convert hex to RGB
-function hexToRgb(hex: string) {
-  try {
-    let bigint = parseInt(hex.slice(1), 16);
-    let r = (bigint >> 16) & 255;
-    let g = (bigint >> 8) & 255;
-    let b = bigint & 255;
-
-    return `${r}, ${g}, ${b}`;
-  } catch (error) {
-    return '255, 255, 255';
-  }
+  return (
+    value.src ??
+    value.url ??
+    value.uri ??
+    value.href ??
+    value.img_element?.uri ??
+    null
+  )
 }
 
-const textPositiveColor = ref(positiveFontColor);
-let primaryColor = '#297F78';
-let primaryColorRgb = hexToRgb(primaryColor);
-let primaryTextColor = '#fff';
+function getFaviconType(href: string) {
+  const path = href.split('?')[0].toLowerCase()
 
-let secondaryColor = '#FBD800';
-let secondaryTextColor = '#000';
+  if (path.endsWith('.svg')) return 'image/svg+xml'
+  if (path.endsWith('.png')) return 'image/png'
+  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg'
+  if (path.endsWith('.webp')) return 'image/webp'
+  if (path.endsWith('.ico')) return 'image/x-icon'
 
-let tertiaryColor = '#40362E';
-let tertiaryTextColor = '#fff';
+  return undefined
+}
 
-useHead({
-  link: [{ rel: 'icon', type: 'image/x-icon', href: favIcon?.value }],
-});
+const faviconHref = computed(() => {
+  const data = settings.settingsData.value
+  return getImageUrl(data?.favicon) ?? '/favicon.ico'
+})
 
-onBeforeMount(() => {
-  if (settingsDataStore.settingsData === null) {
-    settingsDataStore.getSettingsData();
-  }
-
-  if (fontFamily.value) {
-    const fontValue = fontFamily.value;
-
-    if (fontValue === 'Roboto') {
-      document.documentElement.style.setProperty(
-        '--body-font-family',
-        "'Roboto Slab', sans-serif",
-      );
-      document.documentElement.style.setProperty(
-        '--heading-font-family',
-        "'Roboto', sans-serif",
-      );
-      document.documentElement.style.setProperty('--body-font-weight', '300');
-    } else {
-      document.documentElement.style.setProperty(
-        '--body-font-family',
-        "'" + fontValue + "', sans-serif",
-      );
-      document.documentElement.style.setProperty(
-        '--heading-font-family',
-        "'" + fontValue + "', sans-serif",
-      );
-    }
-  }
-
-  if (primaryBgColor.value) {
-    primaryColor = primaryBgColor.value;
-    primaryColorRgb = hexToRgb(primaryColor);
-  }
-
-  if (primaryBgTextColor.value) {
-    primaryTextColor = primaryBgTextColor.value;
-  }
-
-  if (secondaryBgColor.value) {
-    secondaryColor = secondaryBgColor.value;
-  }
-
-  if (secondaryBgTextColor.value) {
-    secondaryTextColor = secondaryBgTextColor.value;
-  }
-
-  if (tertiaryBgColor.value) {
-    tertiaryColor = tertiaryBgColor.value;
-  }
-
-  if (tertiaryBgTextColor.value) {
-    tertiaryTextColor = tertiaryBgTextColor.value;
-  }
-
-  if (primaryButtonColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-primary-button-color',
-      primaryButtonColor.value,
-    );
-  }
-
-  if (primaryButtonTextColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-primary-button-text-color',
-      primaryButtonTextColor.value,
-    );
-  }
-
-  if (primaryButtonHoverColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-primary-button-hover-color',
-      primaryButtonHoverColor.value,
-    );
-  }
-
-  if (primaryButtonHoverTextColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-primary-button-hover-text-color',
-      primaryButtonHoverTextColor.value,
-    );
-  }
-
-  if (secondaryButtonColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-secondary-button-color',
-      secondaryButtonColor.value,
-    );
-  }
-
-  if (secondaryButtonTextColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-secondary-button-text-color',
-      secondaryButtonTextColor.value,
-    );
-  }
-
-  if (secondaryButtonHoverColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-secondary-button-hover-color',
-      secondaryButtonHoverColor.value,
-    );
-  }
-
-  if (secondaryButtonHoverTextColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-secondary-button-hover-text-color',
-      secondaryButtonHoverTextColor.value,
-    );
-  }
-
-  document.documentElement.style.setProperty('--color-primary', primaryColor);
-  document.documentElement.style.setProperty(
-    '--color-primary-rgb',
-    primaryColorRgb,
-  );
-  document.documentElement.style.setProperty(
-    '--color-primary-text',
-    primaryTextColor,
-  );
-  document.documentElement.style.setProperty(
-    '--color-secondary',
-    secondaryColor,
-  );
-  document.documentElement.style.setProperty(
-    '--color-secondary-text',
-    secondaryTextColor,
-  );
-  document.documentElement.style.setProperty('--color-tertiary', tertiaryColor);
-  document.documentElement.style.setProperty(
-    '--color-tertiary-text',
-    tertiaryTextColor,
-  );
-
-  if (textPositiveColor.value) {
-    document.documentElement.style.setProperty(
-      '--color-text',
-      textPositiveColor.value,
-    );
-  }
-});
+useHead(() => ({
+  link: [
+    {
+      key: 'icon',
+      rel: 'icon',
+      href: faviconHref.value,
+      type: getFaviconType(faviconHref.value),
+    },
+    {
+      key: 'shortcut-icon',
+      rel: 'shortcut icon',
+      href: faviconHref.value,
+      type: getFaviconType(faviconHref.value),
+    },
+  ],
+}))
 </script>
 
 <template>
@@ -233,7 +62,6 @@ onBeforeMount(() => {
 </template>
 
 <style>
-/* Page transition when routing */
 .page-enter-active,
 .page-leave-active {
   transition: all 0.3s;

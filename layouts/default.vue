@@ -1,30 +1,26 @@
 <script setup lang="ts">
-const skipLink = ref(null)
-const mainContent = ref(null)
-
-function scrollToContent() {
-  if (mainContent.value) {
-    mainContent.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    skipLink.value.blur() // hide link after activation
-  }
-}
 </script>
 <template>
-  <a
-    href="#"
-    aria-label="Skip to main content"
-    class="skip-link"
-    @click.prevent="scrollToContent"
-    ref="skipLink"
-  >
-    Hop til primært indhold
-  </a>
-  <TheMetaMenu />
-  <TheHeaderParent />
-  <div class="app" ref="mainContent">
+  <header>
+    <a
+      href="#main-content"
+      class="skip-link"
+    >
+      Hop til primært indhold
+    </a>
+
+    <TheMetaMenu />
+    <TheHeaderParent />
+  </header>
+
+  <main id="main-content" class="app" tabindex="-1">
     <slot></slot>
-  </div>
-  <TheFooterParent />
+  </main>
+
+  <footer>
+    <TheFooterParent />
+  </footer>
+
   <TheModal />
   <GlobalScriptInjections />
 </template>

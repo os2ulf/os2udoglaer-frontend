@@ -39,18 +39,23 @@ const props = defineProps({
 <style lang="postcss" scoped>
 .article-recommendations {
   &__heading {
-    display: grid @(--sm) flex;
+    display: grid;
     align-items: center;
-    justify-content: center @(--sm) space-between;
+    justify-content: center;
     margin-bottom: 20px;
 
-    @media (--viewport-sm-max) {
+    @media (min-width: 768px) {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 991px) {
       text-align: center;
     }
   }
 
   &__headline {
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       margin-bottom: 20px;
     }
   }
@@ -58,18 +63,18 @@ const props = defineProps({
   .article-recommendations__wrapper {
     display: block;
 
-    @media (--viewport-ms-min) {
+    @media (min-width: 481px) {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
 
-    @media (--viewport-sm-min) {
+    @media (min-width: 768px) {
       grid-template-columns: 1fr 1fr;
       gap: 44px;
     }
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       grid-template-columns: 1fr 1fr 1fr;
 
       .column-widths--50-50 & {
@@ -79,14 +84,18 @@ const props = defineProps({
   }
 
   :deep(.article) {
-    @media (--viewport-ms-min) {
+    @media (min-width: 481px) {
       margin-bottom: 0;
     }
 
     &__title {
-      font-size: 16px @(--sm) 20px;
+      font-size: 16px;
       text-align: start;
       word-break: break-word;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
     }
   }
 }

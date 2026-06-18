@@ -4,12 +4,12 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData';
 
 const $route = useRoute();
 
 // Stores
-const settingsDataStore = useSettingsDataStore();
+const settings = useSettingsData();
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
 
@@ -19,30 +19,18 @@ const props = defineProps({
 
 // Set arrays of site messages to use in validation
 const formSettings = {
-  free_choice: computed(
-    () => settingsDataStore.settingsData?.free_choice.value,
-  ),
-  course_not_found: computed(
-    () => settingsDataStore.settingsData?.course_not_found.value,
-  ),
-  district_1: computed(() => settingsDataStore.settingsData?.district_1.value),
-  district_2: computed(() => settingsDataStore.settingsData?.district_2.value),
-  district_3: computed(() => settingsDataStore.settingsData?.district_3.value),
-  district_4: computed(() => settingsDataStore.settingsData?.district_4.value),
-  district_5: computed(() => settingsDataStore.settingsData?.district_5.value),
-  no_district: computed(
-    () => settingsDataStore.settingsData?.no_district.value,
-  ),
-  denied_distance: computed(
-    () => settingsDataStore.settingsData?.denied_distance.value,
-  ),
-  denied_private: computed(
-    () => settingsDataStore.settingsData?.denied_private.value,
-  ),
-  confirmation: computed(
-    () => settingsDataStore.settingsData?.confirmation.value,
-  ),
-};
+  free_choice: computed(() => settings.settingsData.value?.free_choice.value),
+  course_not_found: computed(() => settings.settingsData.value?.course_not_found.value),
+  district_1: computed(() => settings.settingsData.value?.district_1.value),
+  district_2: computed(() => settings.settingsData.value?.district_2.value),
+  district_3: computed(() => settings.settingsData.value?.district_3.value),
+  district_4: computed(() => settings.settingsData.value?.district_4.value),
+  district_5: computed(() => settings.settingsData.value?.district_5.value),
+  no_district: computed(() => settings.settingsData.value?.no_district.value),
+  denied_distance: computed(() => settings.settingsData.value?.denied_distance.value),
+  denied_private: computed(() => settings.settingsData.value?.denied_private.value),
+  confirmation: computed(() => settings.settingsData.value?.confirmation.value),
+}
 
 // Set arrays for select options
 const courses = ref([]);
@@ -892,7 +880,7 @@ onMounted(async () => {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Forløb</h3>
+        <h2 class="h3">Forløb</h2>
         <BaseSelect
           v-if="!courseNotInList"
           v-model="selectedCourse"
@@ -930,7 +918,7 @@ onMounted(async () => {
       </div>
 
       <div class="field-group">
-        <h3>Forløbsadresse</h3>
+        <h2 class="h3">Forløbsadresse</h2>
         <BaseDawaAutocomplete
           class="application-form__label"
           v-model="courseAddress"
@@ -942,7 +930,7 @@ onMounted(async () => {
       </div>
 
       <div class="field-group">
-        <h3>Vælg institution</h3>
+        <h2 class="h3">Vælg institution</h2>
         <BaseSelect
           v-model="selectedType"
           :options="typeSelect"
@@ -998,7 +986,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="validated" class="field-group">
-        <h3>Transport information</h3>
+        <h2 class="h3">Transport information</h2>
         <BaseInputFloatingLabel
           class="application-form__label"
           v-model="requestedAmount"
@@ -1041,7 +1029,7 @@ onMounted(async () => {
 
       <div v-if="validated">
         <div class="field-group">
-          <h3>Kontaktinformation</h3>
+          <h2 class="h3">Kontaktinformation</h2>
           <BaseInputFloatingLabel
             class="application-form__label"
             v-model="email"
@@ -1076,7 +1064,7 @@ onMounted(async () => {
           />
         </div>
         <div class="field-group">
-          <h3>Besked</h3>
+          <h2 class="h3">Besked</h2>
           <BaseTextareaFloatingLabel
             v-model="message"
             name="Evt. besked"
@@ -1087,9 +1075,9 @@ onMounted(async () => {
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
+        <h2 class="h3" v-if="props.blockData.field_information_text_title">
           {{ props.blockData.field_information_text_title }}
-        </h3>
+        </h2>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"
@@ -1163,12 +1151,20 @@ onMounted(async () => {
   }
 
   :deep(.form-input-wrapper) {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
 
     &--inline {
       display: flex;
-      gap: 16px @(--sm) 24px;
+      gap: 16px;
       margin-top: 0 !important;
+
+      @media (min-width: 768px) {
+        gap: 24px;
+      }
 
       .form-label {
         padding-right: 26px;
@@ -1177,7 +1173,11 @@ onMounted(async () => {
   }
 
   &__textarea-wrapper {
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__textarea-container {
@@ -1188,12 +1188,16 @@ onMounted(async () => {
   &__checkbox {
     display: flex;
     width: fit-content;
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
     color: var(--color-text);
     font-weight: 400;
     font-size: 16px;
     align-items: center;
     cursor: pointer;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
 
     &--invalid {
       border: 1px solid var(--color-error) !important;
@@ -1269,8 +1273,12 @@ onMounted(async () => {
   }
 
   &__error-message {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
     color: var(--color-error);
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__success {

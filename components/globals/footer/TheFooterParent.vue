@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { useFooterDataStore } from '~/stores/footerData';
-const footerDataStore = useFooterDataStore();
-
-if (footerDataStore.footerData === null) {
-  footerDataStore.getFooterData();
-}
+const { footerData } = useFooterData();
 </script>
 
 <template>
-  <div class="footer-parent" v-if="footerDataStore.footerData">
-    <TheFooter :data="footerDataStore.footerData" />
+  <div class="footer-parent" v-if="footerData">
+    <TheFooter :data="footerData" />
   </div>
 </template>

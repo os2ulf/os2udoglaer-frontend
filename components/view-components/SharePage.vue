@@ -70,8 +70,12 @@ const handleShareOnSome = (value: string) => {
 
   &__divider {
     color: var(--color-border);
-    width: 300px @(--md) 56px;
+    width: 300px;
     margin: 0 16px;
+
+    @media (min-width: 992px) {
+      width: 56px;
+    }
   }
 
   &__links-wrapper {

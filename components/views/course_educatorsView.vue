@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { filterGroups } from '~/utils/dataFilter';
 import { scrollTo } from '~/utils/scrollTo';
-import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 const { hasPrimaryButtonColors } = useButtonColors()
 
@@ -266,7 +266,7 @@ const currentUrl = computed(() => {
 
 <template>
   <div class="educators">
-    <div class="educators__top-section">
+    <section class="educators__top-section">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12">
@@ -358,15 +358,15 @@ const currentUrl = computed(() => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="container educators__second-section">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-7 col-xl-6">
-          <div v-if="data.body">
+          <section v-if="data.body">
             <h2>Beskrivelse</h2>
             <BaseRte :content="data.body" />
-          </div>
+          </section>
         </div>
         <div
           class="col-xs-12 col-sm-12 col-md-4 col-md-offset-1 col-xl-offset-2"
@@ -421,7 +421,7 @@ const currentUrl = computed(() => {
           </div>
         </div>
 
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 educators__section-video"
           v-if="
             data.field_video_title ||
@@ -445,10 +445,10 @@ const currentUrl = computed(() => {
               :layoutType="data.field_video.length > 1 ? 'carousel' : 'flex'"
             />
           </ClientOnly>
-        </div>
+        </section>
 
         <!-- Section cards -->
-        <div
+        <section
           class="col-xs-12 col-sm-12 col-md-12 educators__section-cards"
           v-if="
             data.field_materials.length > 1 ||
@@ -466,7 +466,7 @@ const currentUrl = computed(() => {
               }"
             />
           </div>
-        </div>
+        </section>
 
         <!-- Section registration -->
         <div
@@ -486,7 +486,7 @@ const currentUrl = computed(() => {
         </div>
 
         <!-- Section related articles -->
-        <div
+        <section
           v-if="props.data.field_related_courses.length > 0"
           class="col-xs-12 col-sm-12 col-md-12 educators__section-related-articles"
         >
@@ -509,7 +509,7 @@ const currentUrl = computed(() => {
               </Swiper>
             </ClientOnly>
           </div>
-        </div>
+        </section>
       </div>
     </div>
 
@@ -547,16 +547,25 @@ const currentUrl = computed(() => {
 
   &__tags-wrapper {
     padding-top: 24px;
-    display: grid @(--sm) flex;
-    gap: 12px @(--sm) 16px;
+    display: grid;
+    gap: 12px;
     margin-bottom: 32px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      gap: 16px;
+    }
   }
 
   &__page-heading-wrapper {
-    display: grid @(--md) flex;
+    display: grid;
     justify-content: space-between;
     margin-bottom: 48px;
     align-items: center;
+
+    @media (min-width: 992px) {
+      display: flex;
+    }
   }
 
   &__page-title {
@@ -565,13 +574,30 @@ const currentUrl = computed(() => {
   }
 
   &__page-heading-button-container {
-    margin-top: 10px @(--md) 0;
-    display: grid @(--sm) flex;
-    gap: 10px @(--sm) 0;
+    margin-top: 10px;
+    display: grid;
+    gap: 10px;
+
+    @media (min-width: 767px) {
+      display: flex;
+      gap: 0;
+    }
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
 
     .button {
-      margin-left: 0 @(--md) 12px;
-      white-space: normal @(--sm) nowrap;
+      margin-left: 0;
+      white-space: normal;
+
+      @media (min-width: 767px) {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 992px) {
+        margin-left: 12px;
+      }
     }
   }
 
@@ -588,27 +614,51 @@ const currentUrl = computed(() => {
   }
 
   &__second-section {
-    padding-top: 48px @(--md) 96px;
+    padding-top: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+    }
   }
 
   &__section-registration {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-cards {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-video {
-    padding-top: 48px @(--md) 96px;
-    padding-bottom: 24px @(--md) 48px;
+    padding-top: 96px;
+    padding-bottom: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 96px;
+      padding-bottom: 48px;
+    }
   }
 
   &__section-related-articles {
-    padding-top: 24px @(--md) 48px;
-    padding-bottom: 48px @(--md) 96px;
+    padding-top: 24px;
+    padding-bottom: 48px;
+
+    @media (min-width: 992px) {
+      padding-top: 48px;
+      padding-bottom: 96px;
+    }
   }
 
   &__related-articles {
@@ -618,16 +668,25 @@ const currentUrl = computed(() => {
     }
 
     :deep(.swiper) {
-      padding-top: 24px @(--sm) 44px;
-      padding-bottom: 44px @(--sm) 70px;
+      padding-top: 24px;
+      padding-bottom: 44px;
       overflow: clip;
       overflow-y: visible;
+
+      @media (min-width: 767px) {
+        padding-top: 44px;
+        padding-bottom: 70px;
+      }
     }
 
     :deep(.swiper-button-next),
     :deep(.swiper-button-prev) {
-      top: -32px @(--sm) -36px;
+      top: -32px;
       margin-bottom: 0;
+
+      @media (min-width: 767px) {
+        top: -36px;
+      }
     }
 
     :deep(.swiper-horizontal > .swiper-scrollbar) {

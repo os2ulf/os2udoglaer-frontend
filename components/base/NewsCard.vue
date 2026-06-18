@@ -34,7 +34,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
             {{ dateConversion(data?.created) }}
           </div>
 
-          <h4 class="news-card__title">{{ data?.label }}</h4>
+          <h3 class="h4 news-card__title">{{ data?.label }}</h3>
           <div class="news-card__description" v-if="data?.body">
             {{ truncateString(cardBodyText, 85) }}
           </div>
@@ -63,7 +63,7 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   border-radius: 4px;
   height: 100%;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0px 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
+  box-shadow: 0 4px 10px 7px rgba(var(--color-primary-rgb), 0.1);
   cursor: pointer;
 
   &:hover {
@@ -91,9 +91,13 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   }
 
   &__wrapper {
-    padding: 24px @(--sm) 32px;
+    padding: 24px;
     flex-direction: column;
     flex-grow: 1;
+
+    @media (min-width: 768px) {
+      padding: 32px;
+    }
   }
 
   &__link {
@@ -181,12 +185,16 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
   }
 
   &__footer-button {
-    padding-top: 22px @(--sm) 32px;
+    padding-top: 22px;
     display: flex;
     align-items: center;
     border-bottom: 2px solid var(--color-primary);
     width: fit-content;
     margin-top: auto;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__button {

@@ -81,13 +81,17 @@ const appetizerContent = ref(props.blockData?.field_appetizer_text || null);
     color: var(--theme-color);
 
     :deep(p) {
-      font-size: 16px @(--sm) 22px;
+      font-size: 16px;
       font-weight: 400;
+
+      @media (min-width: 768px) {
+        font-size: 22px;
+      }
     }
   }
 
   &__cta {
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       a {
         width: 100%;
       }
@@ -98,10 +102,20 @@ const appetizerContent = ref(props.blockData?.field_appetizer_text || null);
     display: flex;
     width: 100%;
     height: 100%;
-    padding-top: 32px @(--sm) 64px @(--md) 162px;
-    padding-bottom: 32px @(--sm) 64px @(--md) 162px;
+    padding-top: 32px;
+    padding-bottom: 32px;
     align-items: center;
     color: var(--theme-color);
+
+    @media (min-width: 768px) {
+      padding-top: 64px;
+      padding-bottom: 64px;
+    }
+
+    @media (min-width: 992px) {
+      padding-top: 162px;
+      padding-bottom: 162px;
+    }
   }
 
   &__image {
@@ -116,7 +130,7 @@ const appetizerContent = ref(props.blockData?.field_appetizer_text || null);
       height: 100%;
     }
 
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       position: absolute;
       top: 0;
       bottom: 0;

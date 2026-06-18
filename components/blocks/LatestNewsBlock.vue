@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper';
+import { Navigation, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 const modules = [Navigation, Scrollbar, A11y, Autoplay];
@@ -96,7 +96,7 @@ const smartLabel = computed(() => {
 
 .latest-news {
   &--width-full {
-    @media (--viewport-md-min) {
+    @media (min-width: 992px) {
       position: relative;
       margin-right: calc(var(--grid-gutter-half) * -1);
     }
@@ -108,8 +108,12 @@ const smartLabel = computed(() => {
 
   &__title {
     color: var(--theme-color);
-    margin-bottom: 24px @(--sm) 44px;
+    margin-bottom: 24px;
     word-break: break-word;
+
+    @media (min-width: 768px) {
+      margin-bottom: 44px;
+    }
   }
 
   &__card {
@@ -130,10 +134,14 @@ const smartLabel = computed(() => {
 
   /* Filthy Swiper styling for this component */
   &__swiper {
-    padding: 0 0 80px @(--md) 0 0 140px;
+    padding: 0 0 80px;
+
+    @media (min-width: 992px) {
+      padding: 0 0 140px;
+    }
 
     &.swiper-no-pagination {
-      @media (--viewport-xl-min) {
+      @media (min-width: 1400px) {
         padding: 0;
       }
     }
@@ -161,10 +169,6 @@ const smartLabel = computed(() => {
     &:hover {
       border-color: var(--theme-swiper-primary-color);
     }
-
-    &:after {
-      color: var(--theme-swiper-primary-color);
-    }
   }
 
   :deep(.swiper-button-prev) {
@@ -173,10 +177,6 @@ const smartLabel = computed(() => {
 
     &:hover {
       border-color: var(--theme-swiper-primary-color);
-    }
-
-    &:after {
-      color: var(--theme-swiper-primary-color);
     }
   }
 
@@ -188,7 +188,7 @@ const smartLabel = computed(() => {
     height: 4px;
     margin-bottom: 0;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       bottom: 16px;
     }
   }
@@ -200,13 +200,35 @@ const smartLabel = computed(() => {
     margin-bottom: 0;
     border-width: 2px;
 
-    @media (--viewport-sm-max) {
+    @media (max-width: 991px) {
       bottom: 0;
+    }
+
+    svg {
+      width: 15px;
+      height: 15px;
+
+      path {
+        fill: var(--theme-swiper-primary-color);
+      }
+    }
+  }
+
+  :deep(.swiper-button-next) {
+    right: 0;
+
+    svg {
+      margin-left: 3px;
     }
   }
 
   :deep(.swiper-button-prev) {
     right: 56px;
+    left: auto;
+
+    svg {
+      margin-right: 3px;
+    }
   }
 }
 </style>

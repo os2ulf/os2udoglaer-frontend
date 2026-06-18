@@ -101,7 +101,7 @@ const handleChange = (event) => {
     transform: translateY(15px);
     transition-duration: 300ms;
 
-    @media (--viewport-ms-max) {
+    @media (max-width: 767px) {
       transform: translateY(17px);
     }
   }

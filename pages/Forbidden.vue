@@ -42,20 +42,30 @@ useHead({
   }
 
   &__heading {
-    min-height: 55px @(--sm) 144px;
-    font-size: 48px @(--sm) 128px;
+    min-height: 55px;
+    font-size: 48px;
     font-weight: 200;
     font-family: var(--heading-font-family);
     text-align: center;
+
+    @media (min-width: 768px) {
+      min-height: 144px;
+      font-size: 128px;
+    }
   }
 
   &__subtext {
-    margin-top: 40px @(--sm) 50px;
-    font-size: 21px @(--sm) 32px;
+    margin-top: 40px;
+    font-size: 21px;
     font-weight: 200;
     font-family: var(--heading-font-family);
     padding-bottom: 20px;
     text-align: center;
+
+    @media (min-width: 768px) {
+      margin-top: 50px;
+      font-size: 32px;
+    }
   }
 }
 </style>

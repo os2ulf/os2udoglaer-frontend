@@ -12,7 +12,7 @@
   --container-wide-width: 1600px;
   --grid-gutter: 24px;
 
-  @media (--viewport-md-min) {
+  @media (min-width: 992px) {
     --grid-gutter: 48px;
   }
 

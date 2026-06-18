@@ -4,12 +4,12 @@ import { useModalStore } from '~/stores/modal';
 import { truncateString } from '~/utils/truncateString';
 import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 import { stripHtmlFromString } from '~/utils/stripHtml';
-import { useSettingsDataStore } from '~/stores/settingsData';
+import { useSettingsData } from '~/composables/useSettingsData';
 
 const $route = useRoute();
 
 // Stores
-const settingsDataStore = useSettingsDataStore();
+const settings = useSettingsData();
 const apiRouteStore = useApiRouteStore();
 const modalStore = useModalStore();
 
@@ -20,7 +20,7 @@ const props = defineProps({
 // Set arrays of site messages to use in validation
 const formSettings = {
   confirmation: computed(
-    () => settingsDataStore.settingsData?.ufcr_receipt.value,
+    () => settings.settingsData.value?.ufcr_receipt.value,
   ),
 };
 
@@ -496,7 +496,7 @@ onBeforeMount(() => {
   <div class="application-form" v-if="!isSuccess">
     <Form @submit="handleSubmit()">
       <div class="field-group">
-        <h3>Skole</h3>
+        <h2 class="h3">Skole</h2>
         <BaseSelect
           v-model="selectedSchool"
           :options="schoolsSelect"
@@ -548,7 +548,7 @@ onBeforeMount(() => {
         />
       </div>
       <div class="field-group">
-        <h3>Forløb</h3>
+        <h2 class="h3">Forløb</h2>
         <BaseSelect
           v-model="selectedProvider"
           :options="providersSelect"
@@ -650,9 +650,9 @@ onBeforeMount(() => {
       </div>
 
       <div v-if="props.blockData.field_information_text" class="field-group">
-        <h3 v-if="props.blockData.field_information_text_title">
+        <h2 class="h3" v-if="props.blockData.field_information_text_title">
           {{ props.blockData.field_information_text_title }}
-        </h3>
+        </h2>
         <div
           v-if="!props.blockData.field_show_in_modal"
           v-html="props.blockData.field_information_text"
@@ -726,11 +726,19 @@ onBeforeMount(() => {
   }
 
   :deep(.form-input-wrapper) {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__textarea-wrapper {
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
   }
 
   &__textarea-container {
@@ -741,12 +749,16 @@ onBeforeMount(() => {
   &__checkbox {
     display: flex;
     width: fit-content;
-    padding-top: 18px @(--sm) 32px;
+    padding-top: 18px;
     color: var(--color-text);
     font-weight: 400;
     font-size: 16px;
     align-items: center;
     cursor: pointer;
+
+    @media (min-width: 768px) {
+      padding-top: 32px;
+    }
 
     &--invalid {
       border: 1px solid var(--color-error) !important;
@@ -822,8 +834,12 @@ onBeforeMount(() => {
   }
 
   &__error-message {
-    margin-top: 18px @(--sm) 32px;
+    margin-top: 18px;
     color: var(--color-error);
+
+    @media (min-width: 768px) {
+      margin-top: 32px;
+    }
   }
 
   &__success {

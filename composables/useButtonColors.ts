@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useSettingsDataStore } from '@/stores/settingsData'
+import { useSettingsData } from '@/composables/useSettingsData'
 
 function hasValue(v: unknown): boolean {
   return typeof v === 'string'
@@ -8,10 +8,10 @@ function hasValue(v: unknown): boolean {
 }
 
 export function useButtonColors() {
-  const store = useSettingsDataStore()
+  const settings = useSettingsData()
 
   const hasPrimaryButtonColors = computed(() => {
-    const s = store.settingsData || {}
+    const s = settings.settingsData.value || {}
 
     return (
       hasValue(s.primary_button_color) &&
@@ -22,7 +22,7 @@ export function useButtonColors() {
   })
 
   const hasSecondaryButtonColors = computed(() => {
-    const s = store.settingsData || {}
+    const s = settings.settingsData.value || {}
 
     return (
       hasValue(s.secondary_button_color) &&
@@ -34,6 +34,6 @@ export function useButtonColors() {
 
   return {
     hasPrimaryButtonColors,
-    hasSecondaryButtonColors
+    hasSecondaryButtonColors,
   }
 }
