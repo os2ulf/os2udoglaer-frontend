@@ -1,22 +1,26 @@
-import { ref } from 'vue'
-
-const headerData = ref<any>(null)
-let promise: Promise<any> | null = null
-
 export function useHeaderData() {
   const { useRegion } = useRegionApi()
+  const nuxtApp = useNuxtApp() as ReturnType<typeof useNuxtApp> & {
+    _headerPromise?: Promise<any> | null
+  }
+
+  const headerData = useState<any>('header-data', () => null)
 
   const getHeaderData = async () => {
     if (headerData.value) return headerData.value
-    if (promise) return promise
+    if (nuxtApp._headerPromise) return nuxtApp._headerPromise
 
-    promise = (async () => {
+    nuxtApp._headerPromise = (async () => {
       const data = await useRegion('header')
       headerData.value = data
       return headerData.value
     })()
 
-    return promise
+    try {
+      return await nuxtApp._headerPromise
+    } finally {
+      nuxtApp._headerPromise = null
+    }
   }
 
   return {

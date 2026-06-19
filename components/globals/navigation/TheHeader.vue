@@ -22,8 +22,25 @@ const siteLogo = computed(() => settingsData.value?.logo)
 const isOpen = ref(false)
 const activeNavItem = ref(null)
 
-const handleNavigationItemClick = (item) => {
-  if (item.below.length > 0) {
+const hasMenuChildren = (item) => {
+  if (Array.isArray(item?.below)) return item.below.length > 0
+  if (item?.below && typeof item.below === 'object') {
+    return Object.keys(item.below).length > 0
+  }
+
+  return Boolean(item?.expanded)
+}
+
+const getMenuItemLink = (item) => {
+  return item?.link?.url && !hasMenuChildren(item)
+    ? item.link.url
+    : 'javascript:void(0)'
+}
+
+const handleNavigationItemClick = (item, event) => {
+  if (hasMenuChildren(item)) {
+    event?.preventDefault()
+
     if (isOpen.value && activeNavItem.value === item) {
       closeOffCanvas()
     } else {
@@ -155,18 +172,14 @@ onBeforeUnmount(() => {
             <NuxtLink
               v-for="(item, index) in data?.items"
               :key="index"
-              :to="
-                item?.link?.url && item?.below?.length === 0
-                  ? item?.link?.url
-                  : 'javascript:void(0)'
-              "
+              :to="getMenuItemLink(item)"
               class="header__button header__button--left"
               :class="{
                 'header__button--active-text': activeNavItem === item,
               }"
-              @click="handleNavigationItemClick(item)"
+              @click="handleNavigationItemClick(item, $event)"
               :aria-label="'Link til ' + item.title"
-              :role="!item?.link?.url ? 'button' : ''"
+              :role="hasMenuChildren(item) || !item?.link?.url ? 'button' : ''"
             >
               <span class="header__link-text">
                 {{ item.title }}
@@ -175,7 +188,7 @@ onBeforeUnmount(() => {
                   :class="{
                     'header__button--rotate-arrow': activeNavItem === item,
                   }"
-                  v-if="item.below.length > 0"
+                  v-if="hasMenuChildren(item)"
                 >
                   <NuxtIcon filled name="chevron-down" />
                 </span>
@@ -187,7 +200,7 @@ onBeforeUnmount(() => {
                       class="header__offcanvas"
                       v-if="isOpen && activeNavItem === item"
                       :isMetaMenuHidden="isMetaMenuHidden"
-                      :nested-items-data="item?.below"
+                      :nested-items-data="item?.below ?? []"
                     />
                   </Transition>
                 </Teleport>
