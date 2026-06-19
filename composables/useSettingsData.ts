@@ -1,25 +1,23 @@
-import { ref } from 'vue'
-
 type GetSettingsDataOptions = {
   force?: boolean
 }
 
-let _settingsPromise: Promise<any> | null = null
-
-const settingsData = ref<any>(null)
-const isHeaderFixed = ref(false)
-
-const cookieScript = ref<string | null>(null)
-const trackingScript = ref<string | null>(null)
-
 export function useSettingsData() {
   const { useRegion } = useRegionApi()
+  const nuxtApp = useNuxtApp() as ReturnType<typeof useNuxtApp> & {
+    _settingsPromise?: Promise<any> | null
+  }
+
+  const settingsData = useState<any>('settings-data', () => null)
+  const isHeaderFixed = useState('is-header-fixed', () => false)
+  const cookieScript = useState<string | null>('settings-cookie-script', () => null)
+  const trackingScript = useState<string | null>('settings-tracking-script', () => null)
 
   const getSettingsData = async (options: GetSettingsDataOptions = {}) => {
-    if (_settingsPromise) return _settingsPromise
+    if (nuxtApp._settingsPromise) return nuxtApp._settingsPromise
     if (!options.force && settingsData.value) return settingsData.value
 
-    _settingsPromise = (async () => {
+    nuxtApp._settingsPromise = (async () => {
       const data = await useRegion('settings')
       const raw = data?.settings
       if (!raw) return settingsData.value
@@ -35,9 +33,9 @@ export function useSettingsData() {
     })()
 
     try {
-      return await _settingsPromise
+      return await nuxtApp._settingsPromise
     } finally {
-      _settingsPromise = null
+      nuxtApp._settingsPromise = null
     }
   }
 
