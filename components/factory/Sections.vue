@@ -45,6 +45,7 @@ const assignMdCollumnsHandler = (
     <section
       v-for="section in sections"
       :key="section.id"
+      :id="section.layout_settings.anchor_id"
       :class="[
         'section',
         section.layout_id,
