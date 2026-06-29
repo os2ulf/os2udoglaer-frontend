@@ -1,7 +1,7 @@
 <script setup>
-import { v4 as uuidv4 } from 'uuid';
+import { computed, useId } from 'vue';
 
-const id = uuidv4();
+const generatedId = useId();
 const props = defineProps({
   id: String,
   type: {
@@ -16,6 +16,7 @@ const props = defineProps({
   maxlength: Number,
 });
 const emit = defineEmits(['update:modelValue']);
+const id = computed(() => props.id || generatedId);
 
 const handleChange = (event) => {
   emit('update:modelValue', event.target.checked);

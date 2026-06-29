@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 
 const props = defineProps({
   sortingFilterData: {
@@ -18,7 +18,7 @@ const props = defineProps({
 });
 
 
-const id = `sorting-${uuidv4()}`;
+const id = `sorting-${useId()}`;
 const emit = defineEmits(['sortingValue']);
 const visible = ref(false);
 const sortingFilterData = computed(() => props.sortingFilterData || {});

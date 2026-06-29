@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 
 const props = defineProps({
   allFilters: {
@@ -16,7 +16,7 @@ const props = defineProps({
   },
 });
 
-const id = `dropdown-${uuidv4()}`;
+const id = `dropdown-${useId()}`;
 const emit = defineEmits(['dropdownValue']);
 const visible = ref(false);
 const filterLabel = ref(props.allFilters.label);

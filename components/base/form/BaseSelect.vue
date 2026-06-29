@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 import { Field, ErrorMessage } from 'vee-validate';
 import { openDropdownId } from '~/stores/dropdownStore';
 
@@ -22,10 +22,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['update:modelValue']);
-const id = ref(uuidv4());
+const id = useId();
 const searchQuery = ref('');
 const dropdownOptions = computed(() => props.options);
-const dropdownOpen = computed(() => openDropdownId.value === id.value); // Use the global openDropdownId
+const dropdownOpen = computed(() => openDropdownId.value === id); // Use the global openDropdownId
 const selectLabel = computed(() => props.selectLabel || 'Select');
 
 const filteredOptions = computed(() =>
@@ -52,7 +52,7 @@ const toggleDropdown = () => {
   if (dropdownOpen.value) {
     openDropdownId.value = null;
   } else {
-    openDropdownId.value = id.value;
+    openDropdownId.value = id;
   }
 
   searchQuery.value = '';

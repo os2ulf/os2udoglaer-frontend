@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 import { Field, ErrorMessage, useFieldError } from 'vee-validate';
 
 const props = withDefaults(
@@ -38,7 +38,7 @@ const props = withDefaults(
 const autofilled = ref(false);
 const input = ref(null);
 const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus']);
-const id = ref(uuidv4());
+const id = useId();
 
 const value = computed({
   get: () => props.modelValue,
