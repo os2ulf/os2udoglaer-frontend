@@ -1,6 +1,30 @@
 <script setup lang="ts">
 import { scrollTo } from '~/utils/scrollTo';
-const { hasPrimaryButtonColors } = useButtonColors()
+const { hasPrimaryButtonColors } = useButtonColors();
+
+const hasContent = (value: unknown): boolean => {
+  if (Array.isArray(value)) {
+    return value.some((content) => hasContent(content));
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+
+  return value != null;
+};
+
+const showLocationDescriptionWithoutToggle = (item: {
+  type?: unknown;
+  content?: unknown;
+  description?: unknown;
+}): boolean => {
+  return (
+    item?.type === 'location' &&
+    !hasContent(item?.content) &&
+    hasContent(item?.description)
+  );
+};
 
 const props = defineProps({
   data: {
@@ -188,7 +212,10 @@ const props = defineProps({
           >
             <!-- IF All elements inside the array are null -->
             <div
-              v-if="item.content.every((content: string) => content === null)"
+              v-if="
+                item.type !== 'location' &&
+                item.content.every((content: string) => content === null)
+              "
             >
               Ikke angivet
             </div>
@@ -203,7 +230,13 @@ const props = defineProps({
 
           <!-- Basic element content string -->
           <div v-else class="practical-information__item-value">
-            <div v-if="item?.content == null && !item.description">
+            <div
+              v-if="
+                item.type !== 'location' &&
+                item?.content == null &&
+                !item.description
+              "
+            >
               Ikke angivet
             </div>
             <div v-else-if="!item?.content"></div>
@@ -224,10 +257,18 @@ const props = defineProps({
           </div>
         </div>
 
+        <!-- Location description without details toggle when no location content exists -->
+        <div
+          v-if="showLocationDescriptionWithoutToggle(item)"
+          class="practical-information__accordion-content"
+        >
+          <span v-html="item.description"></span>
+        </div>
+
         <!-- Basic description element -->
         <details
           class="practical-information__accordion-container"
-          v-if="item.description"
+          v-if="item.description && !showLocationDescriptionWithoutToggle(item)"
           :open="item.expanded"
         >
           <summary class="practical-information__accordion-container--cta">
@@ -269,7 +310,7 @@ const props = defineProps({
         @click="scrollTo('contact__section')"
         @keydown.enter="scrollTo('contact__section')"
         class="button button--ghost"
-        :class="{'button--course' : hasPrimaryButtonColors}"
+        :class="{ 'button--course': hasPrimaryButtonColors }"
       />
     </div>
   </section>
