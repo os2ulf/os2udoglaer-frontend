@@ -1,54 +1,15 @@
-<template>
-  <div class="accordion">
-    <h2 class="accordion__title">{{ blockData.field_accordion_headline }}</h2>
-    <div v-for="item in computedItems" :key="item.id" class="accordion__item">
-      <button
-        class="accordion__trigger"
-        :class="{ 'accordion__trigger--active': item.id === active }"
-        type="button"
-        @click="toggle(item.id)"
-      >
-        {{ item.field_accordion_item_headline }}
-
-        <NuxtIcon name="chevron-down" fill />
-      </button>
-
-      <div
-        :class="{ 'accordion__content--active': item.id === active }"
-        class="accordion__content"
-      >
-        <div
-          v-if="item.field_accordion_item_text !== null"
-          class="accordion__inner"
-          v-html="item.field_accordion_item_text"
-        ></div>
-      </div>
-    </div>
-
-    <div
-      v-if="blockData.field_accordion_items.length > 5 && !showingAll"
-      class="accordion__footer"
-    >
-      <BaseButton
-        type="button"
-        :button-data="{
-          title: blockData.field_accordion_show_more || 'Vis mere',
-        }"
-        @click="showAll"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup>
 const props = defineProps({
   blockData: Object,
 });
 
+const accordionId = `accordion-${useId()}`;
 const active = ref(-1);
 
+const isItemActive = (id) => active.value === id;
+
 const toggle = (id) => {
-  if (active.value === id) {
+  if (isItemActive(id)) {
     active.value = -1;
   } else {
     active.value = id;
@@ -65,13 +26,79 @@ const computedItems = computed(() => {
   }
   return props.blockData.field_accordion_items.slice(0, 5);
 });
+
+const getTriggerId = (index) => `${accordionId}-trigger-${index}`;
+const getContentId = (index) => `${accordionId}-content-${index}`;
+const getToggleLabel = (item) => {
+  const action = isItemActive(item.id) ? 'Luk' : 'Åbn';
+  return `${action} ${item.field_accordion_item_headline}`;
+};
 </script>
+
+<template>
+  <div class="accordion">
+    <h2 class="accordion__title">{{ blockData.field_accordion_headline }}</h2>
+    <div
+      v-for="(item, index) in computedItems"
+      :key="item.id"
+      class="accordion__item"
+    >
+      <h3 class="accordion__heading">
+        <button
+          :id="getTriggerId(index)"
+          class="accordion__trigger"
+          :class="{ 'accordion__trigger--active': isItemActive(item.id) }"
+          type="button"
+          :aria-expanded="isItemActive(item.id)"
+          :aria-controls="getContentId(index)"
+          :aria-label="getToggleLabel(item)"
+          @click="toggle(item.id)"
+        >
+          {{ item.field_accordion_item_headline }}
+
+          <NuxtIcon name="chevron-down" filled aria-hidden="true" />
+        </button>
+      </h3>
+
+      <div
+        :id="getContentId(index)"
+        :class="{ 'accordion__content--active': isItemActive(item.id) }"
+        class="accordion__content"
+        role="region"
+        :aria-labelledby="getTriggerId(index)"
+        :aria-hidden="!isItemActive(item.id)"
+        :inert="!isItemActive(item.id)"
+      >
+        <div
+          v-if="item.field_accordion_item_text !== null"
+          class="accordion__inner"
+          v-html="item.field_accordion_item_text"
+        ></div>
+      </div>
+    </div>
+
+    <div
+      v-if="blockData.field_accordion_items.length > 5 && !showingAll"
+      class="accordion__footer"
+    >
+      <BaseButton
+        type="button"
+        :aria-label="blockData.field_accordion_show_more || 'Vis flere punkter'"
+        :button-data="{
+          title: blockData.field_accordion_show_more || 'Vis mere',
+        }"
+        @click="showAll"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="postcss" scoped>
 .accordion {
   &__title {
     margin-bottom: 14px;
     word-break: break-word;
+    color: var(--theme-color);
 
     @media (min-width: 768px) {
       margin-bottom: 28px;
@@ -81,7 +108,11 @@ const computedItems = computed(() => {
   &__item {
     overflow: hidden;
     background: var(--color-white);
-    border-top: 1px solid var(--site-background-color);
+    margin-bottom: 2px;
+  }
+
+  &__heading {
+    margin: 0;
   }
 
   &__trigger {
@@ -122,7 +153,7 @@ const computedItems = computed(() => {
   &__content {
     height: 0;
     overflow: hidden;
-    transform: translateY(100px);
+    transform: translateY(30px);
     transition: transform 0.3s;
 
     :deep(p) {
