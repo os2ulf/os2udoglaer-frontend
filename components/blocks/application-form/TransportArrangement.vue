@@ -98,6 +98,7 @@ const courseNotInList = ref(false);
 const courseDescription = ref('');
 const coursePurpose = ref('');
 const courseDawaAddress = ref([]);
+const courseAddressInput = ref('');
 const courseAddress = ref('');
 const isCourseAddressValid = ref(false);
 const requestedAmount = ref('');
@@ -176,7 +177,6 @@ const fetchCourseContent = async (nid: any) => {
     courseContent.value.content.field_view_on_map === 'show_alternative_address'
   ) {
     handleCourseAddressChange(courseContent.value.content.field_dawa_address);
-    courseAddress.value = courseContent.value.content.field_dawa_address.value;
   } else if (
     courseContent.value.content.provider?.field_dawa_address &&
     courseContent.value.content.field_view_on_map === 'show_vendor_address'
@@ -184,8 +184,6 @@ const fetchCourseContent = async (nid: any) => {
     handleCourseAddressChange(
       courseContent.value.content.provider?.field_dawa_address,
     );
-    courseAddress.value =
-      courseContent.value.content.provider?.field_dawa_address.value;
   } else if (
     courseContent.value.content.corporation?.field_dawa_address &&
     courseContent.value.content.field_view_on_map === 'show_vendor_address'
@@ -193,8 +191,6 @@ const fetchCourseContent = async (nid: any) => {
     handleCourseAddressChange(
       courseContent.value.content.corporation?.field_dawa_address,
     );
-    courseAddress.value =
-      courseContent.value.content.corporation?.field_dawa_address.value;
   }
   courseWhoCanApply.value =
     courseContent.value.content?.field_tpf_who_get_support;
@@ -330,8 +326,10 @@ const distanceBetween = (
 // Handle course change.
 const handleCourseChange = async (value: string) => {
   courseDawaAddress.value = [];
+  courseAddressInput.value = '';
   courseAddress.value = '';
   courseLatLon.value = [];
+  isCourseAddressValid.value = false;
   checkDistance.value = true;
   validated.value = false;
   validationMessage.value = '';
@@ -342,8 +340,10 @@ const handleCourseChange = async (value: string) => {
 const handleHideCourseSelect = async () => {
   if (courseNotInList.value) {
     courseDawaAddress.value = [];
+    courseAddressInput.value = '';
     courseAddress.value = '';
     courseLatLon.value = [];
+    isCourseAddressValid.value = false;
     selectedCourse.value = '';
     coursesSelect.value = [];
     checkDistance.value = true;
@@ -371,22 +371,230 @@ const handleTypeChange = async (value: string) => {
   }
 };
 
-function handleCourseAddressChange(newValue) {
+function normalizeAddressSelection(newValue: any) {
+  if (!newValue) return null;
+
+  const source =
+    newValue.data && typeof newValue.data === 'object'
+      ? newValue.data
+      : newValue;
+  const darAddress = source.adresse;
+  const houseNumber = darAddress?.husnummer;
+  const postCode = houseNumber?.postnummer;
+  const namedRoadMunicipality = houseNumber?.navngivenvejkommunedel;
+  const supplementaryCity = houseNumber?.supplerendebynavn;
+  const label =
+    newValue.tekst ||
+    newValue.value ||
+    newValue.betegnelse ||
+    newValue.titel ||
+    source.betegnelse ||
+    source.adressebetegnelse ||
+    darAddress?.adressebetegnelse ||
+    houseNumber?.adgangsadressebetegnelse ||
+    '';
+  const addressId =
+    source.id ??
+    source.adresse?.id ??
+    source.id_lokalid ??
+    darAddress?.id_lokalid;
+  const accessAddressId =
+    source.adgangsadresseid ??
+    source.adgangsadresse?.id ??
+    houseNumber?.id_lokalid;
+  const coordinates = normalizeAddressCoordinates(source, darAddress);
+
+  if (!source || !label || !addressId || !coordinates) return null;
+
+  const data = {
+    id: addressId,
+    status: source.status === 'ok' ? null : source.status ?? null,
+    darstatus: source.darstatus ?? darAddress?.status ?? houseNumber?.status,
+    vejkode: source.vejkode ?? namedRoadMunicipality?.vejkode,
+    vejnavn:
+      source.vejnavn ?? houseNumber?.vejnavn ?? houseNumber?.navngivenvej?.vejnavn,
+    adresseringsvejnavn:
+      source.adresseringsvejnavn ??
+      source.vejnavn ??
+      houseNumber?.vejnavn ??
+      houseNumber?.navngivenvej?.vejnavn,
+    husnr: source.husnr ?? houseNumber?.husnummertekst,
+    etage: source.etage ?? darAddress?.etagebetegnelse,
+    dør: source.dør ?? darAddress?.doerbetegnelse,
+    supplerendebynavn:
+      source.supplerendebynavn ??
+      supplementaryCity?.navn ??
+      supplementaryCity?.supplerendebynavn,
+    postnr: source.postnr ?? postCode?.postnr,
+    postnrnavn: source.postnrnavn ?? postCode?.navn,
+    stormodtagerpostnr: source.stormodtagerpostnr ?? null,
+    stormodtagerpostnrnavn: source.stormodtagerpostnrnavn ?? null,
+    kommunekode: source.kommunekode ?? namedRoadMunicipality?.kommune,
+    adgangsadresseid: accessAddressId,
+    x: coordinates.x,
+    y: coordinates.y,
+    href:
+      source.href || `https://adressevaelger.dk/adresser/${addressId}`,
+    betegnelse: label,
+    adressebetegnelse: source.adressebetegnelse ?? label,
+  };
+
+  return {
+    ...newValue,
+    id: data.id,
+    tekst: label,
+    value: label,
+    data,
+  };
+}
+
+function normalizeAddressCoordinates(source: any, darAddress: any) {
+  const x = source.x ?? source.longitude ?? source.lng;
+  const y = source.y ?? source.latitude ?? source.lat;
+
+  if (x && y) return { x, y };
+
+  const projectedCoordinates =
+    source.koordinater ||
+    source.adgangsadresse?.adgangspunkt?.koordinater ||
+    darAddress?.husnummer?.adgangspunkt?.koordinater;
+  const projectedGeometryCoordinates =
+    source.geometri?.coordinates ||
+    source.adgangsadresse?.adgangspunkt?.geometri?.coordinates ||
+    darAddress?.husnummer?.adgangspunkt?.geometri?.coordinates;
+
+  if (projectedCoordinates?.x && projectedCoordinates?.y) {
+    return utmZone32ToWgs84(projectedCoordinates.x, projectedCoordinates.y);
+  }
+
+  if (projectedGeometryCoordinates?.length >= 2) {
+    return utmZone32ToWgs84(
+      projectedGeometryCoordinates[0],
+      projectedGeometryCoordinates[1],
+    );
+  }
+
+  return null;
+}
+
+function utmZone32ToWgs84(easting: number, northing: number) {
+  const a = 6378137;
+  const eccSquared = 0.00669438;
+  const k0 = 0.9996;
+  const zoneNumber = 32;
+  const x = easting - 500000;
+  const y = northing;
+  const eccPrimeSquared = eccSquared / (1 - eccSquared);
+  const e1 =
+    (1 - Math.sqrt(1 - eccSquared)) /
+    (1 + Math.sqrt(1 - eccSquared));
+  const m = y / k0;
+  const mu =
+    m /
+    (a *
+      (1 -
+        eccSquared / 4 -
+        (3 * eccSquared * eccSquared) / 64 -
+        (5 * eccSquared * eccSquared * eccSquared) / 256));
+  const phi1Rad =
+    mu +
+    ((3 * e1) / 2 - (27 * e1 * e1 * e1) / 32) *
+      Math.sin(2 * mu) +
+    ((21 * e1 * e1) / 16 - (55 * e1 * e1 * e1 * e1) / 32) *
+      Math.sin(4 * mu) +
+    ((151 * e1 * e1 * e1) / 96) * Math.sin(6 * mu);
+  const n1 =
+    a / Math.sqrt(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
+  const t1 = Math.tan(phi1Rad) * Math.tan(phi1Rad);
+  const c1 = eccPrimeSquared * Math.cos(phi1Rad) * Math.cos(phi1Rad);
+  const r1 =
+    (a * (1 - eccSquared)) /
+    Math.pow(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad), 1.5);
+  const d = x / (n1 * k0);
+  const longitudeOrigin = (zoneNumber - 1) * 6 - 180 + 3;
+  const latitude =
+    phi1Rad -
+    ((n1 * Math.tan(phi1Rad)) / r1) *
+      ((d * d) / 2 -
+        ((5 + 3 * t1 + 10 * c1 - 4 * c1 * c1 - 9 * eccPrimeSquared) *
+          d *
+          d *
+          d *
+          d) /
+          24 +
+        ((61 +
+          90 * t1 +
+          298 * c1 +
+          45 * t1 * t1 -
+          252 * eccPrimeSquared -
+          3 * c1 * c1) *
+          d *
+          d *
+          d *
+          d *
+          d *
+          d) /
+          720);
+  const longitudeRad =
+    (d -
+      ((1 + 2 * t1 + c1) * d * d * d) / 6 +
+      ((5 -
+        2 * c1 +
+        28 * t1 -
+        3 * c1 * c1 +
+        8 * eccPrimeSquared +
+        24 * t1 * t1) *
+        d *
+        d *
+        d *
+        d *
+        d) /
+        120) /
+    Math.cos(phi1Rad);
+  const longitude =
+    (longitudeRad * 180) / Math.PI +
+    longitudeOrigin;
+
+  return {
+    x: longitude,
+    y: (latitude * 180) / Math.PI,
+  };
+}
+
+function handleCourseAddressChange(newValue: any) {
   if (newValue) {
-    errorMessage.value = '';
-    courseDawaAddress.value = newValue;
-    if (newValue.tekst) {
-      courseAddress.value = newValue.tekst;
-    } else {
-      courseAddress.value = newValue.value;
+    const selectedAddress = normalizeAddressSelection(newValue);
+
+    if (!selectedAddress?.data?.x || !selectedAddress?.data?.y) {
+      courseDawaAddress.value = [];
+      courseAddress.value = '';
+      courseLatLon.value = [];
+      isCourseAddressValid.value = false;
+      return;
     }
-    courseLatLon.value['latitude'] = newValue.data.y;
-    courseLatLon.value['longitude'] = newValue.data.x;
+    errorMessage.value = '';
+    courseDawaAddress.value = selectedAddress;
+    courseAddressInput.value = selectedAddress.tekst;
+    courseAddress.value = selectedAddress.tekst;
+    courseLatLon.value['latitude'] = selectedAddress.data.y;
+    courseLatLon.value['longitude'] = selectedAddress.data.x;
     checkDistance.value = true;
     validated.value = false;
     validationMessage.value = '';
     isCourseAddressValid.value = true;
   }
+}
+
+function handleCourseAddressSelectedState(isSelected: boolean) {
+  if (isSelected) return;
+
+  courseDawaAddress.value = [];
+  courseAddress.value = '';
+  courseLatLon.value = [];
+  isCourseAddressValid.value = false;
+  checkDistance.value = true;
+  validated.value = false;
+  validationMessage.value = '';
 }
 
 // Watch for isCourseAddressValid changes.
@@ -417,6 +625,7 @@ const handleSchoolGradeChange = async () => {
 const handleValidation = async (event: any) => {
   event.preventDefault();
   validationMessage.value = '';
+  console.log('courseAddress.value', courseAddress.value);
 
   // Validation for course
   if (selectedCourse.value === '' && !courseNotInList.value) {
@@ -593,8 +802,11 @@ const resetForm = async () => {
   courseNotInList.value = false;
   courseDescription.value = '';
   coursePurpose.value = '';
+  courseAddressInput.value = '';
   courseAddress.value = '';
   courseDawaAddress.value = [];
+  courseLatLon.value = [];
+  isCourseAddressValid.value = false;
   validated.value = false;
   validationMessage.value = '';
   requestedAmount.value = '';
@@ -703,6 +915,26 @@ const handleSubmit = async () => {
     return course?.title || '';
   });
 
+  const selectedCourseAddress = normalizeAddressSelection(
+    courseDawaAddress.value,
+  );
+  const selectedCourseAddressData = selectedCourseAddress?.data;
+  const selectedCourseAddressLabel =
+    selectedCourseAddress?.tekst || selectedCourseAddress?.value || '';
+
+  if (
+    !selectedCourseAddressData?.id ||
+    !selectedCourseAddressData?.x ||
+    !selectedCourseAddressData?.y ||
+    !selectedCourseAddressLabel
+  ) {
+    isLoading.value = false;
+    isCourseAddressValid.value = false;
+    errorMessage.value =
+      'Forløbsadresse mangler eller er ikke korrekt udfyldt.';
+    return;
+  }
+
   // Payload
   const payload = {
     type: [
@@ -752,34 +984,30 @@ const handleSubmit = async () => {
     ],
     field_dawa_address: [
       {
-        id: courseDawaAddress.value.data.id,
-        value: courseDawaAddress.value.tekst
-          ? courseDawaAddress.value.tekst
-          : courseDawaAddress.value.value,
+        id: selectedCourseAddressData.id,
+        value: selectedCourseAddressLabel,
         data: {
-          id: courseDawaAddress.value.data.id,
-          status: courseDawaAddress.value.data.status,
-          darstatus: courseDawaAddress.value.data.darstatus,
-          vejkode: courseDawaAddress.value.data.vejkode,
-          vejnavn: courseDawaAddress.value.data.vejnavn,
-          adresseringsvejnavn: courseDawaAddress.value.data.adresseringsvejnavn,
-          husnr: courseDawaAddress.value.data.husnr,
-          etage: courseDawaAddress.value.data.etage,
-          dør: courseDawaAddress.value.data.dør,
-          supplerendebynavn: courseDawaAddress.value.data.supplerendebynavn,
-          postnr: courseDawaAddress.value.data.postnr,
-          postnrnavn: courseDawaAddress.value.data.postnrnavn,
-          stormodtagerpostnr: courseDawaAddress.value.data.stormodtagerpostnr,
+          id: selectedCourseAddressData.id,
+          status: selectedCourseAddressData.status,
+          darstatus: selectedCourseAddressData.darstatus,
+          vejkode: selectedCourseAddressData.vejkode,
+          vejnavn: selectedCourseAddressData.vejnavn,
+          adresseringsvejnavn: selectedCourseAddressData.adresseringsvejnavn,
+          husnr: selectedCourseAddressData.husnr,
+          etage: selectedCourseAddressData.etage,
+          dør: selectedCourseAddressData.dør,
+          supplerendebynavn: selectedCourseAddressData.supplerendebynavn,
+          postnr: selectedCourseAddressData.postnr,
+          postnrnavn: selectedCourseAddressData.postnrnavn,
+          stormodtagerpostnr: selectedCourseAddressData.stormodtagerpostnr,
           stormodtagerpostnrnavn:
-            courseDawaAddress.value.data.stormodtagerpostnrnavn,
-          kommunekode: courseDawaAddress.value.data.kommunekode,
-          adgangsadresseid: courseDawaAddress.value.data.adgangsadresseid,
-          x: courseDawaAddress.value.data.x,
-          y: courseDawaAddress.value.data.y,
-          href: courseDawaAddress.value.data.href,
-          betegnelse: courseDawaAddress.value.tekst
-            ? courseDawaAddress.value.tekst
-            : courseDawaAddress.value.value,
+            selectedCourseAddressData.stormodtagerpostnrnavn,
+          kommunekode: selectedCourseAddressData.kommunekode,
+          adgangsadresseid: selectedCourseAddressData.adgangsadresseid,
+          x: selectedCourseAddressData.x,
+          y: selectedCourseAddressData.y,
+          href: selectedCourseAddressData.href,
+          betegnelse: selectedCourseAddressLabel,
         },
       },
     ],
@@ -919,11 +1147,11 @@ onMounted(async () => {
 
       <div class="field-group">
         <h2 class="h3">Forløbsadresse</h2>
-        <BaseDawaAutocomplete
+        <BaseAdressevaelgerAutocomplete
           class="application-form__label"
-          v-model="courseAddress"
-          @update:model-value="handleCourseAddressChange"
-          @address-selected="isCourseAddressValid = $event"
+          v-model="courseAddressInput"
+          @address-select="handleCourseAddressChange"
+          @address-selected="handleCourseAddressSelectedState"
           name="Adresse"
           label="Adresse"
         />

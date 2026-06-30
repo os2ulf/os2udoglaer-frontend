@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useId } from 'vue';
-import { useDawaAutocomplete } from '~/composables/useDawaAutocomplete';
+import { useAdressevaelger } from '~/composables/useAdressevaelger';
 
 const props = withDefaults(
   defineProps<{
@@ -18,11 +18,37 @@ const props = withDefaults(
 );
 
 const autofilled = ref(false);
-const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus', 'address-selected']);
+const emit = defineEmits([
+  'update:modelValue',
+  'blur',
+  'input',
+  'focus',
+  'address-selected',
+  'address-select',
+]);
 const id = useId();
 
+const getAddressLabel = (address: any) => {
+  return (
+    address?.tekst ||
+    address?.value ||
+    address?.betegnelse ||
+    address?.titel ||
+    address?.adressebetegnelse ||
+    address?.adresse?.betegnelse ||
+    address?.data?.betegnelse ||
+    ''
+  );
+};
+
 const value = computed({
-  get: () => props.modelValue,
+  get: () => {
+    if (props.modelValue && typeof props.modelValue === 'object') {
+      return getAddressLabel(props.modelValue);
+    }
+
+    return props.modelValue;
+  },
   set: (newValue) => emit('update:modelValue', newValue),
 });
 
@@ -32,13 +58,20 @@ const inputClass = computed(() => {
     : '';
 });
 
-const autocompleteInput = ref(null)
+const autocompleteInput = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
   if (autocompleteInput.value) {
-    useDawaAutocomplete(autocompleteInput.value, (selected) => {
-      emit('update:modelValue', selected);
-      emit('address-selected', true);
+    useAdressevaelger(autocompleteInput.value, (selected) => {
+      const displayValue =
+        getAddressLabel(selected) || autocompleteInput.value?.value || '';
+
+      emit('update:modelValue', displayValue);
+      emit('address-select', {
+        ...selected,
+        tekst: displayValue,
+        value: displayValue,
+      });
     });
   }
 });
@@ -51,7 +84,10 @@ const checkAnimation = (e: any) => {
   }
 };
 
-const checkInput = (e: any) => {
+const checkInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+
+  emit('update:modelValue', target.value);
   // Emit address-selected to false when user types in the input.
   emit('address-selected', false);
 };
@@ -62,7 +98,7 @@ const checkInput = (e: any) => {
     <input
       :id="id"
       ref="autocompleteInput"
-      :value="modelValue || ''"
+      :value="value || ''"
       type="search"
       :class="`form-input form-input--floating-label ${inputClass}`"
       :name="name"
@@ -131,7 +167,7 @@ const checkInput = (e: any) => {
   box-sizing: border-box;
 }
 
-:deep(.dawa-autocomplete-suggestions) {
+:deep(.adressevaelger-suggestions) {
   margin: -1px 0 0;
   padding: 0;
   text-align: left;
@@ -147,7 +183,7 @@ const checkInput = (e: any) => {
   box-sizing: border-box;
 }
 
-:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion) {
+:deep(.adressevaelger-suggestions .adressevaelger-suggestion) {
   margin: 0;
   list-style: none;
   cursor: pointer;
@@ -156,17 +192,17 @@ const checkInput = (e: any) => {
   border-bottom: 1px solid #f0f0f0;
 }
 
-:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child) {
+:deep(.adressevaelger-suggestions .adressevaelger-suggestion:first-child) {
   padding-top: 15px;
 }
 
-:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child) {
+:deep(.adressevaelger-suggestions .adressevaelger-suggestion:last-child) {
   padding-bottom: 15px;
   border-bottom: 0 solid #f0f0f0;
 }
 
-:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion.dawa-selected),
-:deep(.dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:hover) {
+:deep(.adressevaelger-suggestions .adressevaelger-suggestion.dawa-selected),
+:deep(.adressevaelger-suggestions .adressevaelger-suggestion:hover) {
   background: #f0f0f0;
 }
 </style>
