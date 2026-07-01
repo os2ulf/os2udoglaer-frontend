@@ -282,16 +282,7 @@ onBeforeUnmount(() => {
       flex: 1;
     }
   }
-
-  &__logo {
-    max-width: 170px;
-    width: max-content;
-
-    @media (min-width: 768px) {
-      max-width: 300px;
-    }
-  }
-
+  
   &__right-content {
     padding-top: 14px;
     display: none;
