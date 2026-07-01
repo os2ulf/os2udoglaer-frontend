@@ -4,15 +4,28 @@ const props = defineProps({
 });
 
 const accordionId = `accordion-${useId()}`;
-const active = ref(-1);
+const openItemIds = ref([]);
 
-const isItemActive = (id) => active.value === id;
+const getExpandedItemIds = (items = []) =>
+  items
+    .filter((item) => item?.field_accordion_expanded === true)
+    .map((item) => item.id);
+
+watch(
+  () => props.blockData?.field_accordion_items,
+  (items) => {
+    openItemIds.value = getExpandedItemIds(items);
+  },
+  { immediate: true },
+);
+
+const isItemActive = (id) => openItemIds.value.includes(id);
 
 const toggle = (id) => {
   if (isItemActive(id)) {
-    active.value = -1;
+    openItemIds.value = openItemIds.value.filter((itemId) => itemId !== id);
   } else {
-    active.value = id;
+    openItemIds.value = [...openItemIds.value, id];
   }
 };
 
@@ -109,6 +122,10 @@ const getToggleLabel = (item) => {
     overflow: hidden;
     background: var(--color-white);
     margin-bottom: 2px;
+
+    .theme-none & {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
   }
 
   &__heading {
