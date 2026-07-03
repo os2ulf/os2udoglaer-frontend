@@ -20,10 +20,12 @@ function parseScripts(html: string | null) {
 
     const attrs: Record<string, any> = {};
 
-    attrString.replace(/(\w+(?:-\w+)*)(?:=["']([^"']*)["'])?/g, (_, key, val) => {
-      attrs[key] = val ?? true;
-      return '';
-    });
+    for (const attrMatch of attrString.matchAll(
+      /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'<>`=]+)))?/g
+    )) {
+      const [, key, doubleQuotedValue, singleQuotedValue, unquotedValue] = attrMatch;
+      attrs[key] = doubleQuotedValue ?? singleQuotedValue ?? unquotedValue ?? true;
+    }
 
     return {
       attrs,
@@ -62,7 +64,7 @@ function getScriptConfigs(
     }
 
     if (parsed.inlineCode) {
-      scriptConfig.children = parsed.inlineCode;
+      scriptConfig.innerHTML = parsed.inlineCode;
     }
 
     return scriptConfig;
