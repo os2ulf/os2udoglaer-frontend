@@ -59,6 +59,15 @@ const checkAnimation = (e: any) => {
   }
 };
 
+const preventNumberArrowKeys = (event: KeyboardEvent) => {
+  if (
+    props.type === 'number' &&
+    (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+  ) {
+    event.preventDefault();
+  }
+};
+
 const hasErrors = useFieldError(props.name);
 </script>
 
@@ -84,6 +93,7 @@ const hasErrors = useFieldError(props.name);
       @blur="$emit('blur', value)"
       @focus="$emit('focus', value)"
       @input="$emit('input', value)"
+      @keydown="preventNumberArrowKeys"
       @animationstart="checkAnimation"
     />
     <label
