@@ -68,6 +68,15 @@ const preventNumberArrowKeys = (event: KeyboardEvent) => {
   }
 };
 
+const preventFocusedNumberScroll = (event: WheelEvent) => {
+  if (
+    props.type === 'number' &&
+    event.currentTarget === document.activeElement
+  ) {
+    event.preventDefault();
+  }
+};
+
 const hasErrors = useFieldError(props.name);
 </script>
 
@@ -94,6 +103,7 @@ const hasErrors = useFieldError(props.name);
       @focus="$emit('focus', value)"
       @input="$emit('input', value)"
       @keydown="preventNumberArrowKeys"
+      @wheel="preventFocusedNumberScroll"
       @animationstart="checkAnimation"
     />
     <label
