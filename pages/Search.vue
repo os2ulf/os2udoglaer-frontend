@@ -446,13 +446,13 @@ const cleanEmptyFilters = () => {
                         <BaseReadMore
                           v-if="item?.body"
                           :text="item?.body"
-                          :maxLength="300"
+                          :maxLength="155"
                           :searchKeyword="searchKeyword"
                         />
                         <BaseReadMore
                           v-else
                           :text="item?.field_description"
-                          :maxLength="300"
+                          :maxLength="155"
                           :searchKeyword="searchKeyword"
                         />
                       </div>
