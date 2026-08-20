@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 import { Field, ErrorMessage, useFieldError } from 'vee-validate';
 
 const props = withDefaults(
@@ -38,7 +38,7 @@ const props = withDefaults(
 const autofilled = ref(false);
 const input = ref(null);
 const emit = defineEmits(['update:modelValue', 'blur', 'input', 'focus']);
-const id = ref(uuidv4());
+const id = useId();
 
 const value = computed({
   get: () => props.modelValue,
@@ -56,6 +56,24 @@ const checkAnimation = (e: any) => {
     autofilled.value = true;
   } else if (e.animationName === 'onAutoFillCancel') {
     autofilled.value = false;
+  }
+};
+
+const preventNumberArrowKeys = (event: KeyboardEvent) => {
+  if (
+    props.type === 'number' &&
+    (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+  ) {
+    event.preventDefault();
+  }
+};
+
+const preventFocusedNumberScroll = (event: WheelEvent) => {
+  if (
+    props.type === 'number' &&
+    event.currentTarget === document.activeElement
+  ) {
+    event.preventDefault();
   }
 };
 
@@ -92,6 +110,8 @@ const hasErrors = useFieldError(props.name);
       @blur="$emit('blur', value)"
       @focus="$emit('focus', value)"
       @input="$emit('input', value)"
+      @keydown="preventNumberArrowKeys"
+      @wheel="preventFocusedNumberScroll"
       @animationstart="checkAnimation"
     />
     <div v-if="description" class="form-description">

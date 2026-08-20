@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { stripHtmlFromString } from '~/utils/stripHtml';
+import { truncateString } from '~/utils/truncateString';
 
 const props = defineProps({
   data: {
@@ -214,7 +215,9 @@ const processedSubjectOrThemeString = ref(
   limitCharLengthAndConvertToString(allSubjectOrThemeArr.value, 85),
 );
 
-const cardBodyText: any = ref(stripHtmlFromString(props.data?.body) || '');
+const cardBodyText: any = ref(
+  truncateString(stripHtmlFromString(props.data?.body) || '', 200) || '',
+);
 
 // Card labels
 const getStatusLabel = (data: any) => {

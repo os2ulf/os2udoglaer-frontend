@@ -27,6 +27,10 @@ export default defineNuxtConfig({
     public: {
       API_BASE_URL: process.env.API_BASE_URL || '',
       LOCAL_API_BASE_URL: process.env.LOCAL_API_BASE_URL || '',
+      ADRESSEVAELGER_TOKEN:
+        process.env.NUXT_PUBLIC_ADRESSEVAELGER_TOKEN ||
+        process.env.ADRESSEVAELGER_TOKEN ||
+        '',
     },
     REST_API_USER: process.env.REST_API_USER || '',
     REST_API_USER_PASS: process.env.REST_API_USER_PASS || '',
@@ -48,6 +52,7 @@ export default defineNuxtConfig({
   ],
 
   css: [
+    '~/assets/vendor/adressevaelger/adressevaelger.css',
     '~/assets/css/app.css'
   ],
 

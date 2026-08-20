@@ -50,3 +50,9 @@ p {
     font-size: var(--font-size-paragraph-lg);
   }
 }
+
+:deep(a) {
+  &.ck-anchor {
+    text-decoration: none;
+  }
+}

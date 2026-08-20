@@ -115,6 +115,7 @@ const practicalInfoData = computed(() => {
     {
       group: [
         {
+          type: 'location',
           title: 'Sted',
           content:
             props.data?.field_view_on_map !== 'hidden_on_map'
@@ -131,6 +132,7 @@ const practicalInfoData = computed(() => {
           description: props.data?.field_location_description
             ? props.data?.field_location_description
             : '',
+          expanded: props.data?.field_location_desc_expanded
         },
       ],
     },

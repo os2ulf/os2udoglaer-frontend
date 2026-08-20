@@ -61,6 +61,10 @@ if (alteredData !== null) {
   :deep(a) {
     color: var(--theme-color);
     text-decoration: underline;
+
+    &.ck-anchor {
+      text-decoration: none;
+    }
   }
 
   :deep(.text-align-right) {
