@@ -23,4 +23,6 @@ export const productionDomains = [
   'www.klcviborg.dk',
   'taetpaadig.roskilde.dk',
   'www.taetpaadig.roskilde.dk',
+  'udoglærsyddjurs.dk',
+  'www.udoglærsyddjurs.dk',
 ];
