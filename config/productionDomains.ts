@@ -25,4 +25,6 @@ export const productionDomains = [
   'www.taetpaadig.roskilde.dk',
   'udoglærsyddjurs.dk',
   'www.udoglærsyddjurs.dk',
+  'xn--udoglrsyddjurs-4ib.dk',
+  'www.xn--udoglrsyddjurs-4ib.dk',
 ];
