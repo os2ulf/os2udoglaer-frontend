@@ -184,7 +184,6 @@ const footerData = ref(filterFooterData[0]);
                 class="button button--link button--link--white footer__contact-button"
                 to="https://www.os2.eu/os2udoglaer"
                 target="_blank"
-                aria-label="link to os2udoglaer"
               >
                 Bliv en del af OS2udoglær
                 <NuxtIcon class="footer__button-icon" filled name="ext-link" />
