@@ -121,7 +121,7 @@ const props = defineProps({
     width: fit-content;
     text-decoration: none;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--theme-color);
 
     &--icon {
       margin-right: 12px;
