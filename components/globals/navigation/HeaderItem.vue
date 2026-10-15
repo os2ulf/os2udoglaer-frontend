@@ -1,4 +1,6 @@
 <script setup>
+import { getMenuItemUrl, hasMenuChildren } from '~/utils/navigation';
+
 const props = defineProps({
   node: {
     type: Object,
@@ -6,25 +8,17 @@ const props = defineProps({
   },
 });
 
-const hasChildren = computed(() => {
-  const { below } = props.node;
-
-  if (below.length === 0) {
-    return false;
-  } else if (below.length > 0) {
-    return true;
-  }
-});
+const hasChildren = computed(() => hasMenuChildren(props.node));
 </script>
 
 <template>
   <li class="header-item">
     <NuxtLink
-      v-if="node?.link?.url && !hasChildren"
-      :to="node?.link?.url"
+      v-if="getMenuItemUrl(node) && !hasChildren"
+      :to="getMenuItemUrl(node)"
       :target="node?.url_options?.attributes?.target"
       class="header-item__link"
-      :aria-label="'Gå til' + node?.title"
+      :aria-label="'Gå til ' + node?.title"
     >
       <div class="header-item__item">
         <div class="header-item__icon" v-if="node.field_icon">
@@ -70,11 +64,18 @@ const hasChildren = computed(() => {
   }
 
   &__link {
+    display: block;
+    height: 100%;
     color: var(--color-text);
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
     text-decoration: none;
+
+    &:focus-visible {
+      outline: -webkit-focus-ring-color auto 1px;
+      outline-offset: 2px;
+    }
   }
 
   &__description {
