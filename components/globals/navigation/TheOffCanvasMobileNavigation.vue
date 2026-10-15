@@ -1,195 +1,245 @@
 <script setup lang="ts">
-import { useHeaderData } from '~/composables/useHeaderData'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { NuxtLink } from '#components';
+import { useHeaderData } from '~/composables/useHeaderData';
+import {
+  getFocusableElements,
+  getMenuChildren,
+  getMenuItems,
+  getMenuItemUrl,
+  hasMenuChildren,
+} from '~/utils/navigation';
+import type { NavigationItem } from '~/utils/navigation';
 
-const { headerData, getHeaderData } = useHeaderData()
+const emit = defineEmits<{
+  close: [restoreFocus: boolean];
+  exit: [];
+}>();
+const { headerData, getHeaderData } = useHeaderData();
+await getHeaderData();
 
-await getHeaderData()
-
-const navigationMenuData = computed(() => {
-  const data = headerData.value
-  if (!data) return null
-
-  const mainKey = Object.keys(data).find((key) =>
-    key.includes('main'),
-  )
-
-  return mainKey ? data[mainKey] : null
-})
-
-const metaMenuData = computed(() => {
-  const data = headerData.value
-  if (!data) return null
-
-  const metaKey = Object.keys(data).find((key) =>
-    key.includes('meta'),
-  )
-
-  return metaKey ? data[metaKey] : null
-})
-
-const showSubItems = ref(false);
-const subItems = ref([]);
-const selectedParentItem = ref(null);
-
-const handleItemClick = (node: any) => {
-  if (node.below.length > 0) {
-    subItems.value = node.below;
-
-    selectedParentItem.value = node;
-    showSubItems.value = true;
-
-    if (showSubItems.value) {
-      const offcanvasMobileMenuWrapper = document.querySelector(
-        '.offcanvas-mobile__menu-wrapper',
-      );
-      offcanvasMobileMenuWrapper?.classList.add(
-        'offcanvas-mobile__menu-wrapper--white-bg',
-      );
-    }
-  }
-};
-
-const goBack = () => {
-  showSubItems.value = false;
-  subItems.value = [];
-  selectedParentItem.value = null;
-
-  if (!showSubItems.value) {
-    const offcanvasMobileMenuWrapper = document.querySelector(
-      '.offcanvas-mobile__menu-wrapper',
-    );
-    offcanvasMobileMenuWrapper?.classList.remove(
-      'offcanvas-mobile__menu-wrapper--white-bg',
-    );
-  }
-};
-
-const backButtonLabel = computed(() => {
-  return `${selectedParentItem?.value?.title}`;
+const menuEntries = computed(() => {
+  const data = headerData.value;
+  const keys = Object.keys(data ?? {});
+  const mainKey = keys.find((key) => key.includes('main'));
+  const metaKey = keys.find((key) => key.includes('meta'));
+  return [
+    ...getMenuItems(mainKey ? data[mainKey]?.items : null).map((item) => ({
+      item,
+      isMeta: false,
+    })),
+    ...getMenuItems(metaKey ? data[metaKey]?.items : null).map((item) => ({
+      item,
+      isMeta: true,
+    })),
+  ];
 });
 
-onMounted(() => {
+const mobileMenu = ref<HTMLElement | null>(null);
+const topLevel = ref<HTMLElement | null>(null);
+const submenu = ref<HTMLElement | null>(null);
+const selectedIndex = ref<number | null>(null);
+const showSubItems = computed(() => selectedIndex.value !== null);
+const selectedParent = computed(() =>
+  selectedIndex.value === null
+    ? null
+    : menuEntries.value[selectedIndex.value]?.item,
+);
+const subItems = computed(() => getMenuChildren(selectedParent.value));
+let previousBodyOverflow = '';
+
+const handleItemClick = async (item: NavigationItem, index: number) => {
+  if (!hasMenuChildren(item)) return;
+  selectedIndex.value = index;
+  await nextTick();
+  getFocusableElements(submenu.value)[0]?.focus();
+};
+
+const goBack = async (index = selectedIndex.value) => {
+  selectedIndex.value = null;
+  await nextTick();
+  topLevel.value
+    ?.querySelector<HTMLElement>('[data-mobile-menu-index="' + index + '"]')
+    ?.focus();
+};
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    event.stopPropagation();
+    if (showSubItems.value) goBack();
+    else emit('close', true);
+    return;
+  }
+
+  if (event.key !== 'Tab') return;
+  const focusable = getFocusableElements(mobileMenu.value);
+  const target = document.activeElement;
+
+  if (event.shiftKey && target === focusable[0]) {
+    event.preventDefault();
+    if (showSubItems.value) goBack();
+    else emit('close', true);
+  } else if (!event.shiftKey && target === focusable[focusable.length - 1]) {
+    event.preventDefault();
+    const parentIndex = selectedIndex.value;
+    const nextIndex =
+      parentIndex === null
+        ? -1
+        : menuEntries.value.findIndex(
+            ({ item }, index) =>
+              index > parentIndex &&
+              (hasMenuChildren(item) || getMenuItemUrl(item)),
+          );
+    if (nextIndex !== -1) goBack(nextIndex);
+    else emit('exit');
+  }
+};
+
+onMounted(async () => {
+  previousBodyOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
+  await nextTick();
+  (getFocusableElements(topLevel.value)[0] ?? mobileMenu.value)?.focus();
 });
 
-onUnmounted(() => {
-  // enable scroll on body
-  document.body.style.overflow = 'auto';
+onBeforeUnmount(() => {
+  document.body.style.overflow = previousBodyOverflow;
+  // The slide-out transition keeps the DOM briefly after the menu is closed.
+  mobileMenu.value?.setAttribute('inert', '');
 });
 </script>
 
 <template>
-  <div class="offcanvas-mobile">
-    <div class="offcanvas-mobile__menu-wrapper">
+  <nav
+    id="mobile-menu"
+    ref="mobileMenu"
+    class="offcanvas-mobile"
+    aria-label="Menu"
+    tabindex="-1"
+    @keydown="handleKeydown"
+  >
+    <div
+      class="offcanvas-mobile__menu-wrapper"
+      :class="{ 'offcanvas-mobile__menu-wrapper--white-bg': showSubItems }"
+    >
       <div class="container">
         <div class="row">
-          <!-- primary nav -->
-          <Transition name="slide-right">
-            <div v-if="!showSubItems" class="offcanvas-mobile__menu-wrapper">
-              <li class="offcanvas-mobile__items-wrapper">
-                <NuxtLink
-                  v-for="node in navigationMenuData.items"
-                  :key="node.id"
-                  class="offcanvas-mobile__item-link"
-                  @click="handleItemClick(node)"
-                  :to="
-                    node.link.url && node.below.length === 0
-                      ? node.link.url
-                      : 'javascript:void(0)'
-                  "
-                  :aria-label="'Link til ' + node?.title"
-                >
-                  {{ node?.title }}
-                  <span v-if="node.below.length > 0">
-                    <NuxtIcon filled name="chevron-right"
-                  /></span>
-                </NuxtLink>
-              </li>
-
-              <!-- Meta menu mobile -->
-              <li
-                class="offcanvas-mobile__items-wrapper offcanvas-mobile__items-wrapper--meta-menu"
-              >
-                <NuxtLink
-                  v-for="metaItem in metaMenuData.items"
-                  :key="metaItem.title"
-                  class="offcanvas-mobile__item-link offcanvas-mobile__item-link--meta-menu"
-                  @click="handleItemClick(metaItem)"
-                  :to="metaItem?.link?.url"
-                  :aria-label="'Link til ' + metaItem?.title"
-                >
-                  {{ metaItem?.title }}
-                  <span v-if="metaItem.below.length > 0">
-                    <NuxtIcon filled name="chevron-right" />
-                  </span>
-                </NuxtLink>
-              </li>
-            </div>
-          </Transition>
-
-          <!-- level 2 -->
-          <Transition name="slide">
-            <div
-              v-if="showSubItems"
-              class="offcanvas-mobile__menu-wrapper--subitems"
+          <ul
+            v-if="!showSubItems"
+            ref="topLevel"
+            class="offcanvas-mobile__top-level"
+          >
+            <li
+              v-for="({ item, isMeta }, index) in menuEntries"
+              :key="index"
+              class="offcanvas-mobile__items-wrapper"
+              :class="{ 'offcanvas-mobile__items-wrapper--meta-menu': isMeta }"
             >
-              <NuxtLink
-                class="offcanvas-mobile__back-button"
-                @click="goBack"
-                aria-label="Tilbage"
+              <component
+                :is="
+                  hasMenuChildren(item)
+                    ? 'button'
+                    : getMenuItemUrl(item)
+                      ? NuxtLink
+                      : 'span'
+                "
+                :type="hasMenuChildren(item) ? 'button' : undefined"
+                :to="hasMenuChildren(item) ? undefined : getMenuItemUrl(item)"
+                :data-mobile-menu-index="index"
+                class="offcanvas-mobile__item-link"
+                :class="{ 'offcanvas-mobile__item-link--meta-menu': isMeta }"
+                :aria-expanded="hasMenuChildren(item) ? false : undefined"
+                :aria-controls="
+                  hasMenuChildren(item)
+                    ? 'mobile-menu-submenu-' + index
+                    : undefined
+                "
+                @click="handleItemClick(item, index)"
               >
-                <span class="offcanvas-movile__back-button--icon">
-                  <NuxtIcon filled name="chevron-left" />
+                {{ item.title }}
+                <span v-if="hasMenuChildren(item)" aria-hidden="true">
+                  <NuxtIcon filled name="chevron-right" />
                 </span>
-                <span class="offcanvas-mobile__back-button--text">
-                  {{ backButtonLabel }}
-                </span>
-              </NuxtLink>
-
-              <ul class="offcanvas-mobile__menu-items--subitems">
-                <li
-                  v-for="subNode in subItems"
-                  :key="subNode.id"
-                  class="offcanvas-mobile__items-wrapper--subitems"
+              </component>
+            </li>
+          </ul>
+          <div
+            v-else
+            :id="'mobile-menu-submenu-' + selectedIndex"
+            ref="submenu"
+            class="offcanvas-mobile__menu-wrapper--subitems"
+          >
+            <button
+              type="button"
+              class="offcanvas-mobile__back-button"
+              aria-label="Tilbage til menuen"
+              @click="goBack()"
+            >
+              <span
+                class="offcanvas-mobile__back-button--icon"
+                aria-hidden="true"
+              >
+                <NuxtIcon filled name="chevron-left" />
+              </span>
+              <span class="offcanvas-mobile__back-button--text">
+                {{ selectedParent?.title }}
+              </span>
+            </button>
+            <ul
+              class="offcanvas-mobile__menu-items--subitems"
+              :aria-label="selectedParent?.title"
+            >
+              <li
+                v-for="(item, index) in subItems"
+                :key="item.id ?? index"
+                class="offcanvas-mobile__items-wrapper--subitems"
+              >
+                <NuxtLink
+                  v-if="getMenuItemUrl(item)"
+                  :to="getMenuItemUrl(item)"
+                  class="offcanvas-mobile__item-link--subitems"
                 >
-                  <NuxtLink
-                    v-if="subNode.url"
-                    :to="subNode?.url"
-                    class="offcanvas-mobile__item-link--subitems"
-                    :aria-label="'Link til ' + subNode?.title"
-                  >
-                    {{ subNode?.title }}
-                  </NuxtLink>
-
-                  <NuxtLink
-                    v-else
-                    :to="subNode?.link?.url"
-                    class="offcanvas-mobile__item-link--subitems"
-                    :aria-label="'Link til ' + subNode?.title"
-                  >
-                    {{ subNode?.title }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div>
-          </Transition>
+                  {{ item.title }}
+                </NuxtLink>
+                <span v-else>{{ item.title }}</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <style lang="postcss" scoped>
 .offcanvas-mobile {
   position: fixed;
-  margin-top: var(--navigation-bar-height);
-  top: 0;
+  top: var(--navigation-bar-height);
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
   z-index: 999;
   background-color: var(--color-white);
   text-transform: uppercase;
+
+  &__top-level {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item-link:focus-visible,
+  &__item-link--subitems:focus-visible,
+  &__back-button:focus-visible {
+    outline: -webkit-focus-ring-color auto 1px;
+    outline-offset: -2px;
+  }
+
+  &__item-link--subitems:focus-visible {
+    outline-offset: 2px;
+  }
 
   &__menu-wrapper {
     width: 100%;
@@ -213,30 +263,41 @@ onUnmounted(() => {
   }
 
   &__back-button {
+    border: none;
+    background: var(--color-white);
+    text-transform: inherit;
     color: var(--color-text);
     font-family: var(--body-font-family);
     text-decoration: none;
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
-    width: fit-content;
     cursor: pointer;
     padding: 16px 24px;
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    column-gap: 8px;
     align-items: center;
-    justify-content: center;
 
     :deep(svg) {
+      width: 24px;
+      height: 24px;
       font-size: 24px;
     }
 
     &--icon {
-      margin-right: auto;
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
     }
 
     &--text {
-      margin: 0 auto;
+      grid-column: 2;
+      min-width: 0;
+      text-align: center;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -267,6 +328,10 @@ onUnmounted(() => {
   &__items-wrapper {
     display: grid;
 
+    & + & .offcanvas-mobile__item-link {
+      border-top: 1px solid var(--color-gray-20);
+    }
+
     &--meta-menu {
       background: var(--color-gray-8);
       text-transform: none;
@@ -279,6 +344,9 @@ onUnmounted(() => {
   }
 
   &__item-link {
+    border: none;
+    text-align: left;
+    text-transform: inherit;
     color: var(--color-text);
     background-color: var(--color-white);
     font-family: var(--body-font-family);
@@ -296,10 +364,6 @@ onUnmounted(() => {
 
     :deep(svg) {
       font-size: 24px;
-    }
-
-    &:not(:first-child) {
-      border-top: 1px solid var(--color-gray-20);
     }
 
     &--meta-menu {
