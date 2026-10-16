@@ -46,7 +46,6 @@ const props = defineProps({
                 v-else-if="
                   card.field_material_file || card?.field_material_url?.url
                 "
-                aria-label="Link til download"
                 class="educational-materials__card-link"
                 :to="
                   card.field_material_file
@@ -56,13 +55,24 @@ const props = defineProps({
                 target="_blank"
               >
                 <span class="educational-materials__card-link-text">
-                  {{ card?.field_material_download_text }}
+                  <span
+                    v-if="!card.field_material_download_text?.trim()"
+                    class="sr-only"
+                    >{{
+                      card.field_material_file ? 'Hent: ' : 'Gå til: '
+                    }}</span
+                  >
+                  {{
+                    card.field_material_download_text?.trim() ||
+                    card.field_material_title
+                  }}
                 </span>
                 <NuxtIcon
                   class="educational-materials__card-item-button--icon"
                   :name="
                     card.field_material_file ? 'link-download' : 'ext-link'
                   "
+                  aria-hidden="true"
                   filled
                 />
               </NuxtLink>
