@@ -31,7 +31,6 @@ const props = defineProps({
         <NuxtLink
           v-if="item.field_material_file || item.field_material_url?.url"
           class="document-list__card-item-button"
-          aria-label="Link til download"
           :to="
             item.field_material_file
               ? item.field_material_file
@@ -42,11 +41,21 @@ const props = defineProps({
           <NuxtIcon
             class="document-list__card-item-button--icon"
             :name="item.field_material_file ? 'link-download' : item.field_literature_suggestion ? 'book-opened' : 'ext-link'"
+            aria-hidden="true"
             filled
           />
           <div>
             <div class="document-list__card-link">
-              <span class="document-list__card-link-text" v-text="item.field_literature_suggestion ? item.field_literature_suggestion : item.field_material_download_text ? item.field_material_download_text : item.field_material_title">
+              <span class="document-list__card-link-text">
+                <span
+                  v-if="!item.field_material_download_text?.trim()"
+                  class="sr-only"
+                  >{{ item.field_material_file ? 'Hent: ' : 'Gå til: ' }}</span
+                >
+                {{
+                  item.field_material_download_text?.trim() ||
+                  item.field_material_title
+                }}
               </span>
             </div>
             <div
