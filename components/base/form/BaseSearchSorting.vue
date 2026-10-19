@@ -110,7 +110,7 @@ onUnmounted(() => {
     <button
       class="sorting__selector"
       :class="{ 'sorting__selector--border': visible }"
-      aria-label="Filter dropdown"
+      aria-label="Vend rækkefølge"
     >
       <div class="sorting__label">
         <span
@@ -128,7 +128,7 @@ onUnmounted(() => {
             'sorting__arrow--active': computedLabel !== defaultFilterLabel,
           }"
         >
-          <NuxtIcon name="swap-vertical" filled />
+          <NuxtIcon name="swap-vertical" filled aria-hidden="true" />
         </div>
       </div>
     </button>
