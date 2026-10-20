@@ -48,6 +48,7 @@ const visible = ref(false);
 const activeIndex = ref(-1);
 const keyboardNavigation = ref(false);
 const selectedValue = ref(props.defaultSelectedOption);
+const hasSelectedOption = ref(false);
 // CMS options may be keyed objects; normalize before indexing or navigating them.
 const options = computed(() =>
   Object.values(props.sortingFilterData?.sort_by?.options ?? {}),
@@ -62,6 +63,11 @@ const selectedIndex = computed(() => {
   return index >= 0 ? index : options.value.length ? 0 : -1;
 });
 const selectedOption = computed(() => options.value[selectedIndex.value]);
+const triggerLabel = computed(() =>
+  hasSelectedOption.value
+    ? selectedOption.value?.label || label.value
+    : label.value,
+);
 const disabled = computed(() => props.isLoading || !options.value.length);
 const optionId = (index: number) => `${id}-option-${index}`;
 let searchText = '';
@@ -71,6 +77,7 @@ watch(
   () => props.defaultSelectedOption,
   (value) => {
     selectedValue.value = value;
+    hasSelectedOption.value = value != null;
   },
 );
 watch([selectedIndex, options], ([index]) => {
@@ -113,6 +120,7 @@ function select(index: number, restoreFocus = true) {
   if (disabled.value || !item) return;
   const changed = item.value !== selectedOption.value?.value;
   selectedValue.value = item.value;
+  if (changed) hasSelectedOption.value = true;
   close();
   if (restoreFocus) selector.value?.focus();
   if (changed) {
@@ -232,7 +240,7 @@ onUnmounted(() =>
     @pointerdown="keyboardNavigation = false"
     @pointermove="keyboardNavigation = false"
   >
-    <span :id="`${id}-label`" class="sorting__field-label">{{ label }}</span>
+    <span :id="`${id}-label`" class="sr-only">{{ label }}</span>
     <div
       ref="selector"
       class="sorting__selector"
@@ -256,16 +264,16 @@ onUnmounted(() =>
           class="sorting__title"
           :class="{
             'sorting__title--focus': visible,
-            'sorting__title--active': selectedOption?.label !== label,
+            'sorting__title--active': triggerLabel !== label,
           }"
         >
-          {{ selectedOption?.label }}
+          {{ triggerLabel }}
         </span>
         <div
           class="sorting__arrow"
           :class="{
             sorting__arrow__rotate: visible,
-            'sorting__arrow--active': selectedOption?.label !== label,
+            'sorting__arrow--active': triggerLabel !== label,
           }"
         >
           <NuxtIcon name="swap-vertical" filled aria-hidden="true" />
@@ -341,12 +349,6 @@ onUnmounted(() =>
         opacity: 0.7;
       }
     }
-  }
-
-  &__field-label {
-    display: block;
-    padding: 0 24px;
-    color: var(--color-gray-62);
   }
 
   &__selector {
