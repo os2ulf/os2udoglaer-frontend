@@ -1,6 +1,4 @@
 <script setup>
-import { getMenuItemUrl } from '~/utils/navigation';
-
 const props = defineProps({
   nestedItems: {
     type: Array,
@@ -10,24 +8,22 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="meta-offcanvas" role="group">
-    <ul class="meta-offcanvas__item-wrapper">
-      <li
+  <div class="meta-offcanvas">
+    <div class="meta-offcanvas__item-wrapper">
+      <div
         class="meta-offcanvas__item"
-        v-for="(item, index) in props.nestedItems"
-        :key="item.id ?? index"
+        v-for="item in props.nestedItems"
+        :key="item"
       >
         <NuxtLink
-          v-if="getMenuItemUrl(item)"
           :aria-label="'Link til ' + item.title"
-          :to="getMenuItemUrl(item)"
+          :to="item.link.url"
           class="meta-offcanvas__item-link"
         >
           {{ item.title }}
         </NuxtLink>
-        <span v-else class="meta-offcanvas__item-link">{{ item.title }}</span>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,20 +35,12 @@ const props = defineProps({
   right: 0;
   width: 100%;
   box-shadow: 0 4px 30px 0 #0000001a;
-  animation: slide-top 0.3s;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 
   @media (min-width: 768px) {
     width: 340px;
   }
 
   &__item-wrapper {
-    margin: 0;
-    padding: 0;
-    list-style: none;
     text-align: left;
     background-color: var(--color-white);
   }
@@ -79,11 +67,6 @@ const props = defineProps({
 
     &:hover {
       color: var(--color-primary);
-    }
-
-    &:focus-visible {
-      outline: -webkit-focus-ring-color auto 1px;
-      outline-offset: -2px;
     }
   }
 }
