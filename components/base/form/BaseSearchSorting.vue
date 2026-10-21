@@ -1,169 +1,320 @@
 <script setup lang="ts">
-// @ts-nocheck
-import { useId } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  useId,
+  watch,
+} from 'vue';
 
-const props = defineProps({
-  sortingFilterData: {
-    type: Object,
-    default: () => ({}),
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
-  defaultSelectedOption: {
-    type: String,
-    default: null,
-  },
-});
+type SortingOption = {
+  label: string;
+  value: string;
+  [key: string]: unknown;
+};
 
+const props = withDefaults(
+  defineProps<{
+    sortingFilterData?: {
+      sort_by?: {
+        label?: string;
+        options?: SortingOption[] | Record<string, SortingOption> | null;
+      };
+    };
+    isLoading?: boolean;
+    defaultSelectedOption?: string | null;
+  }>(),
+  {
+    sortingFilterData: () => ({}),
+    isLoading: false,
+    defaultSelectedOption: null,
+  },
+);
 
 const id = `sorting-${useId()}`;
-const emit = defineEmits(['sortingValue']);
+const emit = defineEmits<{
+  sortingValue: [
+    item: SortingOption & {
+      searchQueryUrlAlias: string;
+      isDropdownOpen: boolean;
+    },
+  ];
+}>();
+const root = ref<HTMLElement | null>(null);
+const selector = ref<HTMLElement | null>(null);
 const visible = ref(false);
-const sortingFilterData = computed(() => props.sortingFilterData || {});
-
-const defaultFilterLabel = computed(() =>
-  sortingFilterData.value?.sort_by?.label ?? ''
+const activeIndex = ref(-1);
+const keyboardNavigation = ref(false);
+const selectedValue = ref(props.defaultSelectedOption);
+const hasSelectedOption = ref(false);
+// CMS options may be keyed objects; normalize before indexing or navigating them.
+const options = computed(() =>
+  Object.values(props.sortingFilterData?.sort_by?.options ?? {}),
 );
-const selectedFilterLabel = ref(null);
-const computedDefaultSelectedOption = computed(() => {
-  return props.defaultSelectedOption;
+const label = computed(
+  () => props.sortingFilterData?.sort_by?.label || 'Sortér efter',
+);
+const selectedIndex = computed(() => {
+  const index = options.value.findIndex(
+    (item) => item.value === selectedValue.value,
+  );
+  return index >= 0 ? index : options.value.length ? 0 : -1;
+});
+const selectedOption = computed(() => options.value[selectedIndex.value]);
+const triggerLabel = computed(() =>
+  hasSelectedOption.value
+    ? selectedOption.value?.label || label.value
+    : label.value,
+);
+const disabled = computed(() => props.isLoading || !options.value.length);
+const optionId = (index: number) => `${id}-option-${index}`;
+let searchText = '';
+let lastSearchTime = 0;
+
+watch(
+  () => props.defaultSelectedOption,
+  (value) => {
+    selectedValue.value = value;
+    hasSelectedOption.value = value != null;
+  },
+);
+watch([selectedIndex, options], ([index]) => {
+  if (visible.value) setActive(index);
+});
+watch(disabled, (value) => {
+  if (value) close();
 });
 
-const computedLabel = computed(() => {
-  return selectedFilterLabel.value
-    ? selectedFilterLabel.value
-    : defaultFilterLabel.value;
-});
+function close() {
+  visible.value = false;
+  keyboardNavigation.value = false;
+  searchText = '';
+}
 
-const computedIsLoading = computed(() => {
-  return props.isLoading;
-});
+function setActive(index: number) {
+  activeIndex.value = Math.max(0, Math.min(index, options.value.length - 1));
+  nextTick(() => {
+    if (visible.value) {
+      document
+        .getElementById(optionId(activeIndex.value))
+        ?.scrollIntoView({ block: 'nearest' });
+    }
+  });
+}
 
-const toggleDropdown = () => {
-  visible.value = !visible.value;
-};
+function open() {
+  if (disabled.value) return;
+  visible.value = true;
+  setActive(selectedIndex.value);
+}
 
-const select = (item) => {
-  if (item.label === selectedFilterLabel.value) {
-    visible.value = false;
+function toggleDropdown() {
+  if (visible.value) close();
+  else open();
+}
+
+function select(index: number, restoreFocus = true) {
+  const item = options.value[index];
+  if (disabled.value || !item) return;
+  const changed = item.value !== selectedOption.value?.value;
+  selectedValue.value = item.value;
+  if (changed) hasSelectedOption.value = true;
+  close();
+  if (restoreFocus) selector.value?.focus();
+  if (changed) {
+    emit('sortingValue', {
+      ...item,
+      searchQueryUrlAlias: 'sort_by',
+      isDropdownOpen: false,
+    });
+  }
+}
+
+function commitOnBlur() {
+  if (visible.value) select(activeIndex.value, false);
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  // Tab commits the pending option without preventing normal focus movement.
+  if (event.key === 'Tab') {
+    commitOnBlur();
     return;
   }
-
-  selectedFilterLabel.value = item.label;
-
-  item = {
-    ...item,
-    searchQueryUrlAlias: 'sort_by',
-    isDropdownOpen: false,
-  };
-
-  visible.value = false;
-  emit('sortingValue', item);
-};
-
-// select without emitting
-const selectWithoutEmit = (filterOption) => {
-  selectedFilterLabel.value = filterOption;
-};
-
-const handleClickOutside = (e) => {
-  if (!e.target.closest(`#${id}`)) {
-    visible.value = false;
+  if (event.key === 'Escape') {
+    if (visible.value) {
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+    }
+    return;
   }
-};
+  if (disabled.value || event.ctrlKey || event.metaKey) return;
+  if (event.altKey && event.key !== 'ArrowDown' && event.key !== 'ArrowUp')
+    return;
 
-// Select default sorting option
-const selectDefaultSortingOption = () => {
-  const options = sortingFilterData.value?.sort_by?.options;
-
-  if (!Array.isArray(options)) return;
-
-  if (props.defaultSelectedOption) {
-    for (const option of options) {
-      if (option.value == computedDefaultSelectedOption.value) {
-        selectWithoutEmit(option.label);
+  // Keep DOM focus on the combobox; active descendants only preview options.
+  const wasOpen = visible.value;
+  switch (event.key) {
+    case 'Enter':
+    case ' ':
+      event.preventDefault();
+      keyboardNavigation.value = true;
+      if (wasOpen) select(activeIndex.value);
+      else open();
+      return;
+    case 'ArrowDown':
+    case 'ArrowUp':
+      event.preventDefault();
+      keyboardNavigation.value = true;
+      if (event.altKey && event.key === 'ArrowUp') {
+        if (wasOpen) select(activeIndex.value);
+      } else if (!wasOpen) {
+        open();
+      } else if (!event.altKey) {
+        setActive(activeIndex.value + (event.key === 'ArrowDown' ? 1 : -1));
       }
+      return;
+    case 'Home':
+    case 'End':
+    case 'PageUp':
+    case 'PageDown':
+      event.preventDefault();
+      keyboardNavigation.value = true;
+      if (!wasOpen) open();
+      setActive(
+        event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? options.value.length - 1
+            : activeIndex.value + (event.key === 'PageDown' ? 10 : -10),
+      );
+      return;
+  }
+
+  if (event.key.length !== 1 || event.altKey) return;
+  event.preventDefault();
+  keyboardNavigation.value = true;
+  if (!wasOpen) open();
+  const now = Date.now();
+  searchText =
+    (now - lastSearchTime < 700 ? searchText : '') +
+    event.key.toLocaleLowerCase('da');
+  lastSearchTime = now;
+  const repeated = [...searchText].every(
+    (character) => character === searchText[0],
+  );
+  const query = repeated ? searchText[0] : searchText;
+  const start =
+    searchText.length === 1 || repeated
+      ? activeIndex.value + 1
+      : activeIndex.value;
+  for (let offset = 0; offset < options.value.length; offset++) {
+    const index = (start + offset) % options.value.length;
+    if (options.value[index].label.toLocaleLowerCase('da').startsWith(query)) {
+      setActive(index);
+      break;
     }
   }
-};
+}
 
-onMounted(() => {
-  selectDefaultSortingOption();
-  document.addEventListener('click', handleClickOutside);
-});
+function handlePointerOutside(event: PointerEvent) {
+  if (event.target instanceof Node && !root.value?.contains(event.target)) {
+    commitOnBlur();
+  }
+}
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
+onMounted(() => document.addEventListener('pointerdown', handlePointerOutside));
+onUnmounted(() =>
+  document.removeEventListener('pointerdown', handlePointerOutside),
+);
 </script>
 
 <template>
   <div
+    ref="root"
     :id="id"
     class="sorting"
     :class="{ 'sorting--focus': visible }"
-    @click="toggleDropdown"
-    aria-label="Sorting dropdown"
+    @pointerdown="keyboardNavigation = false"
+    @pointermove="keyboardNavigation = false"
   >
-    <button
+    <span :id="`${id}-label`" class="sr-only">{{ label }}</span>
+    <div
+      ref="selector"
       class="sorting__selector"
       :class="{ 'sorting__selector--border': visible }"
-      aria-label="Vend rækkefølge"
+      role="combobox"
+      tabindex="0"
+      aria-haspopup="listbox"
+      :aria-labelledby="`${id}-label`"
+      :aria-expanded="visible"
+      :aria-controls="`${id}-listbox`"
+      :aria-activedescendant="
+        visible && activeIndex >= 0 ? optionId(activeIndex) : undefined
+      "
+      :aria-disabled="disabled"
+      @click="toggleDropdown"
+      @keydown="handleKeydown"
+      @blur="commitOnBlur"
     >
       <div class="sorting__label">
         <span
           class="sorting__title"
           :class="{
             'sorting__title--focus': visible,
-            'sorting__title--active': computedLabel !== defaultFilterLabel,
+            'sorting__title--active': triggerLabel !== label,
           }"
-          >{{ computedLabel }}</span
         >
+          {{ triggerLabel }}
+        </span>
         <div
           class="sorting__arrow"
           :class="{
             sorting__arrow__rotate: visible,
-            'sorting__arrow--active': computedLabel !== defaultFilterLabel,
+            'sorting__arrow--active': triggerLabel !== label,
           }"
         >
           <NuxtIcon name="swap-vertical" filled aria-hidden="true" />
         </div>
       </div>
-    </button>
+    </div>
 
-    <TransitionGroup name="pan-top">
+    <Transition name="pan-top">
       <div
-        class="sorting__list"
-        :class="{
-          sorting__list__visible: visible,
-          sorting__list__hidden: !visible,
-        }"
-        v-if="visible"
-        @click.stop
+        v-show="visible"
+        :id="`${id}-listbox`"
+        class="sorting__list sorting__list__visible"
+        role="listbox"
+        :aria-labelledby="`${id}-label`"
+        :aria-hidden="!visible"
       >
-        <ul :class="isLoading ? 'sorting__list--loading' : ''">
+        <ul role="presentation">
           <li
-            class="sorting__item"
-            v-for="item in sortingFilterData?.sort_by?.options || []"
+            v-for="(item, index) in options"
+            :id="optionId(index)"
             :key="item.value"
+            class="sorting__item"
+            role="option"
+            :aria-selected="item.value === selectedOption?.value"
+            @mousedown.prevent
+            @click="select(index)"
           >
-            <button
+            <span
               class="sorting__list-item"
-              :class="
-                computedLabel === item.value
-                  ? 'sorting__list-item--selected'
-                  : ''
-              "
-              @click="select(item)"
+              :class="{
+                'sorting__list-item--selected':
+                  item.value === selectedOption?.value,
+                'sorting__list-item--active':
+                  visible && keyboardNavigation && index === activeIndex,
+              }"
+              >{{ item.label }}</span
             >
-              {{ item.label }}
-            </button>
           </li>
         </ul>
       </div>
-    </TransitionGroup>
+    </Transition>
   </div>
 </template>
 
@@ -201,19 +352,20 @@ onUnmounted(() => {
   }
 
   &__selector {
+    display: inline-block;
     width: inherit;
+    margin: 0;
     border: 1px solid transparent;
     background-color: transparent;
     padding: 0;
+    font-weight: var(--body-font-weight);
+    text-align: center;
+    vertical-align: baseline;
 
     &:focus {
       border: 1px solid var(--color-primary);
       box-shadow: 0 0 0 4px #297f781a;
       outline: none;
-    }
-
-    &:focus-visible {
-      outline: -webkit-focus-ring-color auto 1px;
     }
   }
 
@@ -317,8 +469,9 @@ onUnmounted(() => {
       outline: none;
     }
 
-    &:focus-visible {
-      outline: -webkit-focus-ring-color auto 1px;
+    &--active {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
     }
 
     &--selected {
