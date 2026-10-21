@@ -63,6 +63,11 @@ const selectedIndex = computed(() => {
   return index >= 0 ? index : options.value.length ? 0 : -1;
 });
 const selectedOption = computed(() => options.value[selectedIndex.value]);
+const accessibleTriggerLabel = computed(() =>
+  selectedOption.value?.label
+    ? `${label.value} ${selectedOption.value.label}`
+    : label.value,
+);
 const triggerLabel = computed(() =>
   hasSelectedOption.value
     ? selectedOption.value?.label || label.value
@@ -248,7 +253,7 @@ onUnmounted(() =>
       role="combobox"
       tabindex="0"
       aria-haspopup="listbox"
-      :aria-labelledby="`${id}-label`"
+      :aria-label="accessibleTriggerLabel"
       :aria-expanded="visible"
       :aria-controls="`${id}-listbox`"
       :aria-activedescendant="
