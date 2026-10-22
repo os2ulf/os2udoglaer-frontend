@@ -1,7 +1,11 @@
 <script setup>
+import { useId } from 'vue';
+
 const props = defineProps({
   blockData: Object,
 });
+
+const listId = `document-list-${useId()}`;
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const props = defineProps({
     >
       <div
         class="document-list__card-item"
-        v-for="item in props.blockData.field_material_paragraph"
+        v-for="(item, index) in props.blockData.field_material_paragraph"
       >
         <NuxtLink
           v-if="item.field_material_file || item.field_material_url?.url"
@@ -37,6 +41,12 @@ const props = defineProps({
               : item?.field_material_url?.url
           "
           :target="!item?.field_material_file ? '_blank' : ''"
+          :aria-labelledby="`${listId}-link-${index}`"
+          :aria-describedby="
+            item.field_material_description
+              ? `${listId}-description-${index}`
+              : null
+          "
         >
           <NuxtIcon
             class="document-list__card-item-button--icon"
@@ -46,7 +56,11 @@ const props = defineProps({
           />
           <div>
             <div class="document-list__card-link">
-              <span class="document-list__card-link-text">
+              <!-- Include the hidden action prefix in the referenced link name. -->
+              <span
+                :id="`${listId}-link-${index}`"
+                class="document-list__card-link-text"
+              >
                 <span
                   v-if="!item.field_material_download_text?.trim()"
                   class="sr-only"
@@ -60,6 +74,7 @@ const props = defineProps({
             </div>
             <div
               v-if="item.field_material_description"
+              :id="`${listId}-description-${index}`"
               class="document-list__card-item-description"
               v-html="item.field_material_description"
             ></div>
