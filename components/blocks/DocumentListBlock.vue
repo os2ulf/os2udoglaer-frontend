@@ -6,6 +6,10 @@ const props = defineProps({
 });
 
 const listId = `document-list-${useId()}`;
+
+const getLinkLabel = (item) =>
+  item.field_material_download_text?.trim() ||
+  `${item.field_material_file ? 'Hent' : 'Gå til'}: ${item.field_material_title}`;
 </script>
 
 <template>
@@ -41,7 +45,7 @@ const listId = `document-list-${useId()}`;
               : item?.field_material_url?.url
           "
           :target="!item?.field_material_file ? '_blank' : ''"
-          :aria-labelledby="`${listId}-link-${index}`"
+          :aria-label="getLinkLabel(item)"
           :aria-describedby="
             item.field_material_description
               ? `${listId}-description-${index}`
@@ -54,18 +58,10 @@ const listId = `document-list-${useId()}`;
             aria-hidden="true"
             filled
           />
-          <div>
+          <!-- Expose one named link, without separate VoiceOver stops inside it. -->
+          <div aria-hidden="true">
             <div class="document-list__card-link">
-              <!-- Include the hidden action prefix in the referenced link name. -->
-              <span
-                :id="`${listId}-link-${index}`"
-                class="document-list__card-link-text"
-              >
-                <span
-                  v-if="!item.field_material_download_text?.trim()"
-                  class="sr-only"
-                  >{{ item.field_material_file ? 'Hent: ' : 'Gå til: ' }}</span
-                >
+              <span class="document-list__card-link-text">
                 {{
                   item.field_material_download_text?.trim() ||
                   item.field_material_title
