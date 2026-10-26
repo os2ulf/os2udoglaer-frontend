@@ -4,15 +4,6 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 ## Setup
 
-Use Node.js 24.22.1 or a newer Node.js 24 release. Version 24.22.1 includes the
-[Brotli security fix for CVE-2026-111497](https://nodejs.org/en/blog/release/v24.22.1).
-The minimum version is enforced during npm installs.
-
-```bash
-nvm install
-nvm use
-```
-
 Make sure to install the dependencies:
 Dev environment should be: https://localhost:3000 or change it in useBaseApi.ts file.
 
@@ -43,12 +34,6 @@ yarn dev
 ```
 
 ## Production
-
-Platform.sh uses the managed `nodejs:24` runtime. Rebuild and redeploy to receive
-the provider's latest runtime patches, then verify `node --version` in the running
-container reports 24.22.1 or later within Node.js 24. The build will fail if the
-provider's runtime is older; contact Platform.sh support if a patched runtime is
-not yet available.
 
 Build the application for production:
 
