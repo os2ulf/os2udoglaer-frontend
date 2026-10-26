@@ -1,4 +1,10 @@
 export default defineNuxtConfig({
+  // Keep the existing app structure and Nuxt 3 defaults during the security upgrade.
+  srcDir: '.',
+  future: {
+    compatibilityVersion: 3,
+  },
+
   nitro: {
     compressPublicAssets: true,
   },

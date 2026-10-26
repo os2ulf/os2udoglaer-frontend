@@ -22,8 +22,8 @@
     "@types/leaflet": "^1.9.20",
     "cross-env": "^7.0.3",
     "eslint": "^9.0.0",
-    "eslint-plugin-vue": "^9.25.0",
-    "nuxt": "^3.21.11",
+    "eslint-plugin-vue": "^10.11.1",
+    "nuxt": "^4.6.2",
     "postcss-calc": "^10.1.1",
     "postcss-custom-media": "^12.0.1",
     "postcss-import": "^16.1.1",
@@ -33,7 +33,8 @@
     "postcss-reporter": "^7.1.0",
     "prettier": "3.2.5",
     "stylelint": "^16.3.1",
-    "vite-plugin-compression": "^0.5.1"
+    "vite-plugin-compression": "^0.5.1",
+    "vue-eslint-parser": "^10.4.1"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -46,7 +47,7 @@
     "fast-xml-parser": "^5.8.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
-    "nuxt-icons": "^3.2.1",
+    "nuxt-icons": "^4.0.0",
     "pinia": "^2.1.7",
     "sitemap": "^7.1.1",
     "swiper": "^12.1.4",
@@ -54,6 +55,6 @@
     "vee-validate": "^4.7.3"
   },
   "overrides": {
-    "vue": "latest"
+    "vue": "^3.5.44"
   }
 }

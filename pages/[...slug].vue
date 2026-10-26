@@ -55,7 +55,7 @@ const viewData = data.value.content;
 
 const isPreview = ref(false);
 
-if (route.params.slug[0] == 'transform' && route.params.slug[1] == 'preview' && viewData.bundle) {
+if (route.params.slug?.[0] == 'transform' && route.params.slug?.[1] == 'preview' && viewData.bundle) {
   isPreview.value = true;
 }
 
