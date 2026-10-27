@@ -16,10 +16,10 @@ const compiled = compileScript(descriptor, {
   inlineTemplate: true,
 });
 const vueUrl = import.meta.resolve('vue');
-const source = compiled.content.replaceAll(
-  /from (["'])vue\1/g,
-  `from '${vueUrl}'`,
-);
+const stripHtmlUrl = new URL('../utils/stripHtml.ts', import.meta.url).href;
+const source = compiled.content
+  .replaceAll(/from (["'])vue\1/g, `from '${vueUrl}'`)
+  .replaceAll(/from (["'])~\/utils\/stripHtml\1/g, `from '${stripHtmlUrl}'`);
 const { default: DocumentList } = await import(
   `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 );
@@ -83,11 +83,13 @@ for (const file of [false, true]) {
         (node) => node.type === 1 && attr(node, 'class') === 'sr-only',
       );
       const detail = nodes.find(
-        (node) => attr(node, 'id') === attr(link, 'aria-describedby'),
+        (node) =>
+          attr(node, 'class') === 'document-list__card-item-description',
       );
       assert.ok(label, 'the link must contain its spoken text directly');
-      const expected =
+      const expectedLabel =
         custom?.trim() || `${file ? 'Hent' : 'Gå til'}: ${title}`;
+      const expected = `${expectedLabel}. Beskrivelse af materialet.`;
       assert.equal(normalizedText(label), expected);
       assert.equal(accessibleText(link).replace(/\s+/g, ' ').trim(), expected);
       assert.equal(
@@ -102,6 +104,12 @@ for (const file of [false, true]) {
         false,
       );
       assert.equal(normalizedText(detail), 'Beskrivelse af materialet.');
+      assert.equal(attr(detail, 'aria-hidden'), 'true');
+      assert.equal(
+        attr(link, 'aria-describedby'),
+        undefined,
+        'the description must not be announced twice',
+      );
       assert.equal(
         attr(link, 'aria-label'),
         undefined,
@@ -117,6 +125,7 @@ for (const file of [false, true]) {
         (node) => attr(node, 'class') === 'document-list__card-link-text',
       );
       assert.equal(normalizedText(visibleLabel), custom?.trim() || title);
+      assert.equal(attr(visibleLabel, 'aria-hidden'), 'true');
       for (const child of link.children.filter(
         (node) => node.type === 1 && node !== label,
       )) {
@@ -130,7 +139,7 @@ for (const file of [false, true]) {
   }
 }
 
-test('multiple lists have unique, deterministic description IDs', async () => {
+test('each link in multiple lists includes its description exactly once', async () => {
   const item = {
     field_material_title: title,
     field_material_description: description,
@@ -141,17 +150,15 @@ test('multiple lists have unique, deterministic description IDs', async () => {
     [item, item],
   ];
   const nodes = elements(await render(lists));
-  const ids = nodes.map((node) => attr(node, 'id')).filter(Boolean);
-  assert.equal(new Set(ids).size, ids.length);
-  for (const link of nodes.filter((node) => node.tag === 'a')) {
-    assert.ok(ids.includes(attr(link, 'aria-describedby')));
+  const links = nodes.filter((node) => node.tag === 'a');
+  assert.equal(links.length, 4);
+  for (const link of links) {
+    assert.equal(
+      accessibleText(link).replace(/\s+/g, ' ').trim(),
+      `Gå til: ${title}. Beskrivelse af materialet.`,
+    );
+    assert.equal(attr(link, 'aria-describedby'), undefined);
   }
-  assert.deepEqual(
-    elements(await render(lists))
-      .map((node) => attr(node, 'id'))
-      .filter(Boolean),
-    ids,
-  );
 });
 
 test('a link without a description has no dangling description reference', async () => {
@@ -167,10 +174,14 @@ test('a link without a description has no dangling description reference', async
   );
   const link = nodes.find((node) => node.tag === 'a');
   assert.equal(attr(link, 'aria-describedby'), undefined);
+  assert.equal(accessibleText(link).trim(), `Gå til: ${title}.`);
 });
 
 test('a material without a destination remains plain text', async () => {
-  const nodes = elements(await render([[{ field_material_title: title }]]));
+  const root = await render([
+    [{ field_material_title: title, field_material_description: description }],
+  ]);
+  const nodes = elements(root);
   assert.equal(
     nodes.some((node) => node.tag === 'a'),
     false,
@@ -179,7 +190,13 @@ test('a material without a destination remains plain text', async () => {
     nodes.some(
       (node) =>
         attr(node, 'class') === 'document-list__card-link-text' &&
+        attr(node, 'aria-hidden') === undefined &&
         normalizedText(node) === title,
     ),
   );
+  const visibleDescription = nodes.find(
+    (node) => attr(node, 'class') === 'document-list__card-item-description',
+  );
+  assert.equal(attr(visibleDescription, 'aria-hidden'), undefined);
+  assert.equal(normalizedText(visibleDescription), 'Beskrivelse af materialet.');
 });
