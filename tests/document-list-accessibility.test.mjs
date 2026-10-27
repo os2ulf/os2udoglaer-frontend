@@ -58,6 +58,12 @@ const attr = (node, name) =>
 const text = (node) =>
   node.type === 2 ? node.content : (node.children || []).map(text).join('');
 const normalizedText = (node) => text(node).replace(/\s+/g, ' ').trim();
+const accessibleText = (node) =>
+  node.type === 1 && attr(node, 'aria-hidden') === 'true'
+    ? ''
+    : node.type === 2
+      ? node.content
+      : (node.children || []).map(accessibleText).join('');
 const title = 'Vikingerne sejler ud';
 const description = '<p>Beskrivelse af materialet.</p>';
 
@@ -73,16 +79,27 @@ for (const file of [false, true]) {
       };
       const nodes = elements(await render([[item]]));
       const link = nodes.find((node) => node.tag === 'a');
-      const label = nodes.find(
-        (node) => attr(node, 'id') === attr(link, 'aria-labelledby'),
+      const label = link.children.find(
+        (node) => node.type === 1 && attr(node, 'class') === 'sr-only',
       );
       const detail = nodes.find(
         (node) => attr(node, 'id') === attr(link, 'aria-describedby'),
       );
-      assert.ok(label, 'the link must reference an existing label');
+      assert.ok(label, 'the link must contain its spoken text directly');
+      const expected =
+        custom?.trim() || `${file ? 'Hent' : 'Gå til'}: ${title}`;
+      assert.equal(normalizedText(label), expected);
+      assert.equal(accessibleText(link).replace(/\s+/g, ' ').trim(), expected);
       assert.equal(
-        normalizedText(label),
-        custom?.trim() || `${file ? 'Hent' : 'Gå til'}: ${title}`,
+        label.children.length,
+        1,
+        'the complete name must be one text node',
+      );
+      assert.equal(label.children[0].type, 2);
+      assert.equal(attr(label, 'aria-hidden'), undefined);
+      assert.equal(
+        label.props.some((prop) => prop.name === 'hidden'),
+        false,
       );
       assert.equal(normalizedText(detail), 'Beskrivelse af materialet.');
       assert.equal(
@@ -90,37 +107,33 @@ for (const file of [false, true]) {
         undefined,
         'no aria-label may replace the label content',
       );
+      assert.equal(attr(link, 'aria-labelledby'), undefined);
+      assert.equal(attr(link, 'aria-hidden'), undefined);
       assert.equal(
         attr(link, 'href'),
         file ? item.field_material_file : item.field_material_url.url,
       );
-      const prefix = elements(label).find(
-        (node) => attr(node, 'class') === 'sr-only',
+      const visibleLabel = nodes.find(
+        (node) => attr(node, 'class') === 'document-list__card-link-text',
       );
-      if (custom?.trim()) {
+      assert.equal(normalizedText(visibleLabel), custom?.trim() || title);
+      for (const child of link.children.filter(
+        (node) => node.type === 1 && node !== label,
+      )) {
         assert.equal(
-          prefix,
-          undefined,
-          'custom text must not receive an action prefix',
-        );
-      } else {
-        assert.ok(
-          prefix,
-          'the action prefix must stay inside the referenced label',
-        );
-        assert.equal(attr(prefix, 'aria-hidden'), undefined);
-        assert.equal(
-          prefix.props.some((prop) => prop.name === 'hidden'),
-          false,
+          attr(child, 'aria-hidden'),
+          'true',
+          'visual duplicates must not be read twice',
         );
       }
     });
   }
 }
 
-test('multiple lists have unique, deterministic label IDs and no dangling descriptions', async () => {
+test('multiple lists have unique, deterministic description IDs', async () => {
   const item = {
     field_material_title: title,
+    field_material_description: description,
     field_material_url: { url: 'https://example.com' },
   };
   const lists = [
@@ -131,8 +144,7 @@ test('multiple lists have unique, deterministic label IDs and no dangling descri
   const ids = nodes.map((node) => attr(node, 'id')).filter(Boolean);
   assert.equal(new Set(ids).size, ids.length);
   for (const link of nodes.filter((node) => node.tag === 'a')) {
-    assert.ok(ids.includes(attr(link, 'aria-labelledby')));
-    assert.equal(attr(link, 'aria-describedby'), undefined);
+    assert.ok(ids.includes(attr(link, 'aria-describedby')));
   }
   assert.deepEqual(
     elements(await render(lists))
@@ -140,6 +152,21 @@ test('multiple lists have unique, deterministic label IDs and no dangling descri
       .filter(Boolean),
     ids,
   );
+});
+
+test('a link without a description has no dangling description reference', async () => {
+  const nodes = elements(
+    await render([
+      [
+        {
+          field_material_title: title,
+          field_material_url: { url: 'https://example.com' },
+        },
+      ],
+    ]),
+  );
+  const link = nodes.find((node) => node.tag === 'a');
+  assert.equal(attr(link, 'aria-describedby'), undefined);
 });
 
 test('a material without a destination remains plain text', async () => {

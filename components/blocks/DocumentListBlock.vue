@@ -45,20 +45,21 @@ const getLinkLabel = (item) =>
               : item?.field_material_url?.url
           "
           :target="!item?.field_material_file ? '_blank' : ''"
-          :aria-label="getLinkLabel(item)"
           :aria-describedby="
             item.field_material_description
               ? `${listId}-description-${index}`
               : null
           "
         >
+          <!-- One text node provides the native link name without ARIA overrides. -->
+          <span class="sr-only">{{ getLinkLabel(item) }}</span>
           <NuxtIcon
             class="document-list__card-item-button--icon"
             :name="item.field_material_file ? 'link-download' : item.field_literature_suggestion ? 'book-opened' : 'ext-link'"
             aria-hidden="true"
             filled
           />
-          <!-- Expose one named link, without separate VoiceOver stops inside it. -->
+          <!-- Hide only the visual duplicate, including its layout wrappers. -->
           <div aria-hidden="true">
             <div class="document-list__card-link">
               <span class="document-list__card-link-text">
