@@ -1,15 +1,21 @@
 <script setup>
-import { useId } from 'vue';
+import { stripHtmlFromString } from '~/utils/stripHtml';
 
 const props = defineProps({
   blockData: Object,
 });
 
-const listId = `document-list-${useId()}`;
+const getLinkLabel = (item) => {
+  const label =
+    item.field_material_download_text?.trim() ||
+    `${item.field_material_file ? 'Hent' : 'Gå til'}: ${item.field_material_title}`;
+  const description = stripHtmlFromString(item.field_material_description)
+    ?.replace(/\s+/g, ' ')
+    .trim();
+  const spokenLabel = label.endsWith('.') ? label : `${label}.`;
 
-const getLinkLabel = (item) =>
-  item.field_material_download_text?.trim() ||
-  `${item.field_material_file ? 'Hent' : 'Gå til'}: ${item.field_material_title}`;
+  return description ? `${spokenLabel} ${description}` : spokenLabel;
+};
 </script>
 
 <template>
@@ -34,7 +40,7 @@ const getLinkLabel = (item) =>
     >
       <div
         class="document-list__card-item"
-        v-for="(item, index) in props.blockData.field_material_paragraph"
+        v-for="item in props.blockData.field_material_paragraph"
       >
         <NuxtLink
           v-if="item.field_material_file || item.field_material_url?.url"
@@ -45,23 +51,17 @@ const getLinkLabel = (item) =>
               : item?.field_material_url?.url
           "
           :target="!item?.field_material_file ? '_blank' : ''"
-          :aria-label="getLinkLabel(item)"
-          :aria-describedby="
-            item.field_material_description
-              ? `${listId}-description-${index}`
-              : null
-          "
         >
+          <span class="sr-only">{{ getLinkLabel(item) }}</span>
           <NuxtIcon
             class="document-list__card-item-button--icon"
             :name="item.field_material_file ? 'link-download' : item.field_literature_suggestion ? 'book-opened' : 'ext-link'"
             aria-hidden="true"
             filled
           />
-          <!-- Expose one named link, without separate VoiceOver stops inside it. -->
           <div aria-hidden="true">
             <div class="document-list__card-link">
-              <span class="document-list__card-link-text">
+              <span class="document-list__card-link-text" aria-hidden="true">
                 {{
                   item.field_material_download_text?.trim() ||
                   item.field_material_title
@@ -70,8 +70,8 @@ const getLinkLabel = (item) =>
             </div>
             <div
               v-if="item.field_material_description"
-              :id="`${listId}-description-${index}`"
               class="document-list__card-item-description"
+              aria-hidden="true"
               v-html="item.field_material_description"
             ></div>
           </div>
