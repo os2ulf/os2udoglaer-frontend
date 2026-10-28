@@ -9,11 +9,7 @@ const props = defineProps({
 const hasChildren = computed(() => {
   const { below } = props.node;
 
-  if (below.length === 0) {
-    return false;
-  } else if (below.length > 0) {
-    return true;
-  }
+  return below.length > 0;
 });
 </script>
 

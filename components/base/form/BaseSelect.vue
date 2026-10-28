@@ -97,13 +97,7 @@ onBeforeUnmount(() => {
 
 const focusedOptionIndex = ref(0);
 
-const selectFocusedOption = () => {
-  const option = filteredOptions[focusedIndex.value];
-  if (option) {
-    $emit('update:modelValue', option.value);
-    closeDropdown();
-  }
-};
+
 
 const selectOption = (index: number) => {
   value.value = filteredOptions.value[index].value;

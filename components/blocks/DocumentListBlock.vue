@@ -40,7 +40,8 @@ const getLinkLabel = (item) => {
     >
       <div
         class="document-list__card-item"
-        v-for="item in props.blockData.field_material_paragraph"
+        v-for="(item, index) in props.blockData.field_material_paragraph"
+        :key="item.id ?? index"
       >
         <NuxtLink
           v-if="item.field_material_file || item.field_material_url?.url"

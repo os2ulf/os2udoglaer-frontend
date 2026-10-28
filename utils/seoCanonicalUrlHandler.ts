@@ -1,11 +1,7 @@
-import useGetCurrentDomain from '~/composables/useGetCurrentDomain';
-
-export const seoCanonicalUrlHandler = (url: string, isFrontPage: boolean) => {
+export const seoCanonicalUrlHandler = (url: string, isFrontPage: boolean, currentDomain: string) => {
   if (!url) {
     return;
   }
-
-  const currentDomain = useGetCurrentDomain();
 
   if (isFrontPage) {
     return currentDomain;

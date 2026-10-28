@@ -48,7 +48,7 @@ const visible = ref(false);
 const activeIndex = ref(-1);
 const keyboardNavigation = ref(false);
 const selectedValue = ref(props.defaultSelectedOption);
-const hasSelectedOption = ref(false);
+const hasSelectedOption = ref(props.defaultSelectedOption != null);
 // CMS options may be keyed objects; normalize before indexing or navigating them.
 const options = computed(() =>
   Object.values(props.sortingFilterData?.sort_by?.options ?? {}),

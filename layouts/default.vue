@@ -1,28 +1,24 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 <template>
-  <header>
-    <a
-      href="#main-content"
-      class="skip-link"
-    >
-      Hop til primært indhold
-    </a>
+  <div>
+    <header>
+      <a href="#main-content" class="skip-link"> Hop til primært indhold </a>
 
-    <TheMetaMenu />
-    <TheHeaderParent />
-  </header>
+      <TheMetaMenu />
+      <TheHeaderParent />
+    </header>
 
-  <main id="main-content" class="app" tabindex="-1">
-    <slot></slot>
-  </main>
+    <main id="main-content" class="app" tabindex="-1">
+      <slot></slot>
+    </main>
 
-  <footer>
-    <TheFooterParent />
-  </footer>
+    <footer>
+      <TheFooterParent />
+    </footer>
 
-  <TheModal />
-  <GlobalScriptInjections />
+    <TheModal />
+    <GlobalScriptInjections />
+  </div>
 </template>
 
 <style lang="postcss">

@@ -140,7 +140,7 @@ const contactPersonEmail = ref(
 
 // Get the complete URL for the current page.
 const currentUrl = computed(() => {
-  return process.client ? window.location.href : '';
+  return import.meta.client ? window.location.href : '';
 });
 </script>
 

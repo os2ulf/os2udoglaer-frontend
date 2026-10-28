@@ -38,20 +38,21 @@ const handleVideo = (videoItem: VideoItem) => {
 
 <template>
   <div class="video">
-    <div
-      v-if="Array.isArray(props.videoArr)"
-      v-for="videoItem in props.videoArr"
-      :key="videoItem.id"
-      class="video__wrapper"
-      @click="handleVideo(videoItem)"
-    >
-      <BaseImage
-        v-if="videoItem?.field_video_thumbnail"
-        :image="videoItem?.field_video_thumbnail"
-        class="video__thumbnail"
-      />
-      <NuxtIcon class="video__play-icon" name="play" />
-    </div>
+    <template v-if="Array.isArray(props.videoArr)">
+      <div
+        v-for="videoItem in props.videoArr"
+        :key="videoItem.id"
+        class="video__wrapper"
+        @click="handleVideo(videoItem)"
+      >
+        <BaseImage
+          v-if="videoItem?.field_video_thumbnail"
+          :image="videoItem?.field_video_thumbnail"
+          class="video__thumbnail"
+        />
+        <NuxtIcon class="video__play-icon" name="play" />
+      </div>
+    </template>
 
     <!-- Here its an object -->
     <div v-else @click="handleVideo(props.videoArr)">

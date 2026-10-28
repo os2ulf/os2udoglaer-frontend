@@ -25,9 +25,7 @@ const allFilterOptions = ref(Object.values(props.allFilters.items));
 const filteredOptions = ref([...allFilterOptions.value]);
 const searchFilterOptionKeyword = ref('');
 
-const computedIsLoading = computed(() => {
-  return props.isLoading;
-});
+
 
 const computedLastInteractedFilterData = computed(() => {
   return props.lastInteractedFilterData;
@@ -138,7 +136,7 @@ onUnmounted(() => {
           <TransitionGroup name="list">
             <li
               class="dropdown__item"
-              v-for="(item, index) in filteredOptions"
+              v-for="item in filteredOptions"
               :key="item"
             >
               <label

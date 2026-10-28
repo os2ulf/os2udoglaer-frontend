@@ -609,7 +609,8 @@ onBeforeMount(() => {
           </div>
           <div
             class="price-info-item"
-            v-for="coursePriceInfoItem in coursePriceInfo"
+            v-for="(coursePriceInfoItem, index) in coursePriceInfo"
+            :key="index"
           >
             {{ coursePriceInfoItem?.price ? coursePriceInfoItem?.price : '' }}
             {{ coursePriceInfoItem?.unit ? coursePriceInfoItem?.unit : '' }}

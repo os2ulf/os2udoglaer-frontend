@@ -6,7 +6,7 @@ import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
 export function useGetBackendDomain() {
   let allRoutes: Record<string, any> | null = null;
   let beEndpoint: string | null = null;
-  const devEnv = 'https://localhost:3000';
+  const hostname = new URL(useGetCurrentDomain()).hostname;
 
   if (process.env.PLATFORM_ROUTES) {
     try {
@@ -60,7 +60,7 @@ export function useGetBackendDomain() {
       : selectedBackend;
   };
 
-  if (currentFrontendDomain === devEnv) {
+  if (['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname)) {
     const config = useRuntimeConfig().public;
     beEndpoint = config.LOCAL_API_BASE_URL;
   } else {

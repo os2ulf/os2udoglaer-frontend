@@ -7,7 +7,7 @@ export default function () {
     const beEndpoint = useGetBackendDomain();
 
     apiRouteStore.setApiRouteEndpoint(beEndpoint);
-    return UseBaseApi(apiRouteStore.apiRouteEndpoint, {
+    return UseBaseApi('/', {
       params: {
         format: 'json',
         region,

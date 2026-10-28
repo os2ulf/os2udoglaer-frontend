@@ -1,10 +1,4 @@
 export default defineNuxtConfig({
-  // Keep the existing app structure and Nuxt 3 defaults during the security upgrade.
-  srcDir: '.',
-  future: {
-    compatibilityVersion: 3,
-  },
-
   nitro: {
     compressPublicAssets: true,
   },
@@ -72,7 +66,13 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@pinia/nuxt', 'nuxt-icons'],
+  modules: ['@pinia/nuxt', 'nuxt-icons', '@nuxt/eslint'],
+
+  eslint: {
+    config: {
+      typescript: { strict: false },
+    },
+  },
 
   vue: {
     compilerOptions: {

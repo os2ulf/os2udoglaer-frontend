@@ -3,7 +3,7 @@ import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSettingsData } from '~/composables/useSettingsData'
 
-const props = defineProps({
+defineProps({
   data: {
     type: Object,
     required: true,
@@ -314,6 +314,7 @@ onBeforeUnmount(() => {
     line-height: 24px;
     transition: all 0.3s;
     border-bottom: 2px solid transparent;
+    cursor: pointer;
 
     &--active-text {
       border-bottom: 2px solid var(--color-primary);

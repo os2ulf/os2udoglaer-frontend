@@ -5,26 +5,16 @@ export async function UseBaseApi<T>(
   path: string,
   opt: Record<string, any> = {},
 ) {
-  const attachHostParam = {
-    params: {
-      ...opt.params,
-    },
-  };
-
-  const mergedParamOptions = {
-    ...opt,
-    ...attachHostParam,
-  };
-
   const beEndpoint = useGetBackendDomain();
   const apiRouteStore = useApiRouteStore();
 
   apiRouteStore.setApiRouteEndpoint(beEndpoint);
 
-  return await $fetch<T>(path, {
-    baseURL: apiRouteStore.apiRouteEndpoint,
+  const { params, query, ...requestOptions } = opt;
+  const requestFetch = useRequestFetch();
+  return await requestFetch<T>('/api/content', {
     cache: 'no-cache',
-    keepalive: true,
-    ...mergedParamOptions,
+    ...requestOptions,
+    query: { ...params, ...query, path },
   });
 }

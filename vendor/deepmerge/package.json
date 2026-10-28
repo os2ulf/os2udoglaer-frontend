@@ -1,0 +1,13 @@
+{
+  "name": "@os2udoglaer/deepmerge",
+  "version": "4.3.1-os2.1",
+  "private": true,
+  "description": "Security-patched deepmerge 4.3.1 for the build dependency tree",
+  "type": "commonjs",
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  }
+}
