@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const config = useRuntimeConfig().public;
 
-const props = defineProps({
+
+defineProps({
   data: {
     type: Object,
     required: true,
@@ -15,7 +15,8 @@ const props = defineProps({
     <div class="educational-materials__card-wrapper">
       <div class="row">
         <div
-          v-for="card in data.field_materials"
+          v-for="(card, index) in data.field_materials"
+          :key="card.id ?? index"
           class="col-xs-12 col-sm-6 col-md-4 educational-materials__card-item-container"
         >
           <div class="educational-materials__card-item">

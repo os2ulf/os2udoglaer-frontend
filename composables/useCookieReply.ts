@@ -10,7 +10,7 @@ export default function useCookieReply() {
   const cookieMarketingConsent = cookieStore.checkCookieMarketingConsent();
   const hasMarketingConsent = ref(cookieMarketingConsent);
 
-  if (process.client) {
+  if (import.meta.client) {
     (window as any).addEventListener('CookiebotOnLoad', () => {
       const cookiebot = (window as any).Cookiebot || {};
       const consent = cookiebot.consent;

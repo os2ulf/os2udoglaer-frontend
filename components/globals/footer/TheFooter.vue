@@ -6,11 +6,7 @@ const props = defineProps({
   },
 });
 
-const handleUpdateCookieConsent = () => {
-  const cookiebot = ((window as any) && (window as any).Cookiebot) || {};
 
-  cookiebot.show();
-};
 
 // There can be multiple footer bundles / components coming from the CMS so we do some mental gymnastics below to check
 const allPossibleFooterData = ref(props.data);
@@ -132,7 +128,7 @@ const footerData = ref(filterFooterData[0]);
 
         <div class="col-xs-12 col-sm-12 col-md-6 footer__section">
           <div class="footer__big-icons-container">
-            <div v-for="item in footerData?.field_logos_and_links">
+            <div v-for="(item, index) in footerData?.field_logos_and_links" :key="item.id ?? index">
               <NuxtLink
                 v-if="item?.field_internal_link !== null"
                 class="footer__big-icon-item"
@@ -163,7 +159,7 @@ const footerData = ref(filterFooterData[0]);
               class="footer__privacy-buttons"
               v-if="footerData?.field_paragraph_links?.length > 0"
             >
-              <div v-for="item in footerData?.field_paragraph_links">
+              <div v-for="(item, index) in footerData?.field_paragraph_links" :key="item.key ?? index">
                 <NuxtLink
                   v-if="item?.field_internal_link !== null && item?.field_link_text !== null"
                   class="footer__privacy-button-item"

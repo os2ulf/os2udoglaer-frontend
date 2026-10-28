@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   blockData: Object,
 });
 </script>

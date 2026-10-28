@@ -219,7 +219,6 @@ onUnmounted(() => {
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
-    width: fit-content;
     cursor: pointer;
     padding: 16px 24px;
     width: 100%;
@@ -254,7 +253,6 @@ onUnmounted(() => {
         text-decoration: none;
         font-weight: 600;
         font-size: 14px;
-        width: fit-content;
         line-height: 18px;
         letter-spacing: 1px;
         text-transform: none;
@@ -286,7 +284,6 @@ onUnmounted(() => {
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
-    width: fit-content;
     cursor: pointer;
     padding: 16px 24px;
     width: 100%;
