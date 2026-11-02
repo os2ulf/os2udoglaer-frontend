@@ -79,32 +79,33 @@ for (const file of [false, true]) {
       };
       const nodes = elements(await render([[item]]));
       const link = nodes.find((node) => node.tag === 'a');
-      const label = link.children.find(
-        (node) => node.type === 1 && attr(node, 'class') === 'sr-only',
+      const label = nodes.find(
+        (node) => attr(node, 'class') === 'document-list__card-link-text',
       );
       const detail = nodes.find(
         (node) =>
           attr(node, 'class') === 'document-list__card-item-description',
       );
-      assert.ok(label, 'the link must contain its spoken text directly');
+      assert.ok(label, 'the visible title must provide the link text');
       const expectedLabel =
         custom?.trim() || `${file ? 'Hent' : 'Gå til'}: ${title}`;
       const expected = `${expectedLabel}. Beskrivelse af materialet.`;
-      assert.equal(normalizedText(label), expected);
+      assert.equal(normalizedText(label), `${expectedLabel}.`);
       assert.equal(accessibleText(link).replace(/\s+/g, ' ').trim(), expected);
-      assert.equal(
-        label.children.length,
-        1,
-        'the complete name must be one text node',
+      const hiddenText = elements(link).filter(
+        (node) => attr(node, 'class') === 'sr-only',
       );
-      assert.equal(label.children[0].type, 2);
+      assert.deepEqual(
+        hiddenText.map(normalizedText),
+        custom?.trim() ? ['.'] : [file ? 'Hent:' : 'Gå til:', '.'],
+      );
       assert.equal(attr(label, 'aria-hidden'), undefined);
       assert.equal(
         label.props.some((prop) => prop.name === 'hidden'),
         false,
       );
       assert.equal(normalizedText(detail), 'Beskrivelse af materialet.');
-      assert.equal(attr(detail, 'aria-hidden'), 'true');
+      assert.equal(attr(detail, 'aria-hidden'), undefined);
       assert.equal(
         attr(link, 'aria-describedby'),
         undefined,
@@ -121,19 +122,26 @@ for (const file of [false, true]) {
         attr(link, 'href'),
         file ? item.field_material_file : item.field_material_url.url,
       );
-      const visibleLabel = nodes.find(
-        (node) => attr(node, 'class') === 'document-list__card-link-text',
-      );
-      assert.equal(normalizedText(visibleLabel), custom?.trim() || title);
-      assert.equal(attr(visibleLabel, 'aria-hidden'), 'true');
-      for (const child of link.children.filter(
-        (node) => node.type === 1 && node !== label,
-      )) {
+      for (const child of elements(link).slice(1)) {
         assert.equal(
-          attr(child, 'aria-hidden'),
-          'true',
-          'visual duplicates must not be read twice',
+          child.tag,
+          'span',
+          'only spans may be rendered inside the anchor',
         );
+        if (attr(child, 'class')?.includes('--icon-link')) {
+          assert.equal(attr(child, 'aria-hidden'), 'true');
+          assert.ok(
+            attr(child, 'class').includes(
+              file ? '--icon-download' : '--icon-external',
+            ),
+          );
+        } else {
+          assert.equal(
+            attr(child, 'aria-hidden'),
+            undefined,
+            'visible title and description must remain exposed for mouse reading',
+          );
+        }
       }
     });
   }
@@ -198,5 +206,33 @@ test('a material without a destination remains plain text', async () => {
     (node) => attr(node, 'class') === 'document-list__card-item-description',
   );
   assert.equal(attr(visibleDescription, 'aria-hidden'), undefined);
-  assert.equal(normalizedText(visibleDescription), 'Beskrivelse af materialet.');
+  assert.equal(
+    normalizedText(visibleDescription),
+    'Beskrivelse af materialet.',
+  );
+});
+
+test('rich descriptions remain readable without HTML elements inside the link', async () => {
+  const nodes = elements(
+    await render([
+      [
+        {
+          field_material_title: 'Lærervejledning.',
+          field_material_url: { url: 'https://example.com' },
+          field_material_description:
+            '<p>Første <strong>afsnit</strong>.</p><p>Anden<br>linje.</p>',
+        },
+      ],
+    ]),
+  );
+  const link = nodes.find((node) => node.tag === 'a');
+  assert.equal(
+    accessibleText(link).replace(/\s+/g, ' ').trim(),
+    'Gå til: Lærervejledning. Første afsnit. Anden linje.',
+  );
+  assert.ok(
+    elements(link)
+      .slice(1)
+      .every((node) => node.tag === 'span'),
+  );
 });
