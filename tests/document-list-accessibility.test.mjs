@@ -58,6 +58,12 @@ const attr = (node, name) =>
 const text = (node) =>
   node.type === 2 ? node.content : (node.children || []).map(text).join('');
 const normalizedText = (node) => text(node).replace(/\s+/g, ' ').trim();
+const visibleText = (node) =>
+  node.type === 1 && attr(node, 'class') === 'sr-only'
+    ? ''
+    : node.type === 2
+      ? node.content
+      : (node.children || []).map(visibleText).join('');
 const accessibleText = (node) =>
   node.type === 1 && attr(node, 'aria-hidden') === 'true'
     ? ''
@@ -91,13 +97,18 @@ for (const file of [false, true]) {
         custom?.trim() || `${file ? 'Hent' : 'Gå til'}: ${title}`;
       const expected = `${expectedLabel}. Beskrivelse af materialet.`;
       assert.equal(normalizedText(label), `${expectedLabel}.`);
+      assert.equal(
+        visibleText(label).replace(/\s+/g, ' ').trim(),
+        expectedLabel,
+        'the action prefix and title must be visible together unless custom text is provided',
+      );
       assert.equal(accessibleText(link).replace(/\s+/g, ' ').trim(), expected);
       const hiddenText = elements(link).filter(
         (node) => attr(node, 'class') === 'sr-only',
       );
       assert.deepEqual(
         hiddenText.map(normalizedText),
-        custom?.trim() ? ['.'] : [file ? 'Hent:' : 'Gå til:', '.'],
+        ['.'],
       );
       assert.equal(attr(label, 'aria-hidden'), undefined);
       assert.equal(

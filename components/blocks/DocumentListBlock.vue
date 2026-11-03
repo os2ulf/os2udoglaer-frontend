@@ -6,7 +6,8 @@ const props = defineProps({
 });
 
 const getLinkText = (item) =>
-  item.field_material_download_text?.trim() || item.field_material_title;
+  item.field_material_download_text?.trim() ||
+  `${item.field_material_file ? 'Hent' : 'Gå til'}: ${item.field_material_title}`;
 
 const getDescriptionText = (description) =>
   stripHtmlFromString(description?.replace(/<br\s*\/?>/gi, ' '))
@@ -62,11 +63,7 @@ const getDescriptionText = (description) =>
           ></span>
           <span class="document-list__card-link">
             <span class="document-list__card-link-text">
-              <span
-                v-if="!item.field_material_download_text?.trim()"
-                class="sr-only"
-                >{{ item.field_material_file ? 'Hent: ' : 'Gå til: ' }}</span
-              >{{ getLinkText(item)
+              {{ getLinkText(item)
               }}<span v-if="!getLinkText(item)?.endsWith('.')" class="sr-only"
                 >.</span
               >
