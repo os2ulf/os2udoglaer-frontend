@@ -1,4 +1,4 @@
-export default function ({ path, query, hash }) {
+export default defineNuxtRouteMiddleware(({ path, query, hash }) => {
   if (path === '/') return;
 
   // Remove trailing slashes and lowercase the URL
@@ -10,4 +10,4 @@ export default function ({ path, query, hash }) {
   if (path !== nextPath) {
     return navigateTo(nextRoute, { redirectCode: 301 });
   }
-}
+});

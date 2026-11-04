@@ -51,7 +51,7 @@ p {
   }
 }
 
-:deep(a) {
+a {
   &.ck-anchor {
     text-decoration: none;
   }

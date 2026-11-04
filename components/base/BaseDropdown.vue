@@ -1,6 +1,6 @@
 <script setup>
-import { v4 as uuidv4 } from 'uuid';
-const id = uuidv4();
+import { useId } from 'vue';
+const id = useId();
 
 const props = defineProps({
   value: {

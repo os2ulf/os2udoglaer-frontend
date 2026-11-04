@@ -12,7 +12,7 @@ const renderApplicationForm = (componentName: string) => {
       `@/components/blocks/application-form/${pascalCase(componentName)}.vue`
     )
       // If component doesnt exist, render a placeholder instead
-      .catch((err) => {
+      .catch(() => {
         return import('~~/components/blocks/UnknownBlock.vue');
       }),
   );
@@ -28,5 +28,3 @@ const renderApplicationForm = (componentName: string) => {
     />
   </div>
 </template>
-
-<style lang="postcss" scoped></style>

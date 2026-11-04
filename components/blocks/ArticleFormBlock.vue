@@ -84,11 +84,7 @@ const handlePager = (page) => {
   updateContent();
 };
 
-const handleInput = () => {
-  state.value.page = 0;
 
-  updateContent();
-};
 
 const updateContent = async () => {
   loading.value = true;

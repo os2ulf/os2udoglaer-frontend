@@ -145,7 +145,12 @@ const practicalInfoData = computed(() => {
         },
         {
           title: 'Branche',
-          content: props.data?.field_industry,
+          content: [
+            ...(props.data?.field_industry ?? []),
+            ...(props.data?.field_sub_industry ?? []),
+          ].filter(
+            (value) => typeof value === 'string' && value.trim().length > 0,
+          ),
         },
         {
           title: 'Uddannelsesvej',
@@ -191,7 +196,7 @@ const contactPersonEmail = ref(
 
 // Get the complete URL for the current page.
 const currentUrl = computed(() => {
-  return process.client ? window.location.href : '';
+  return import.meta.client ? window.location.href : '';
 });
 </script>
 

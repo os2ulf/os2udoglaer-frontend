@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { buildSearchParams, readSearchParams } from '~/utils/searchParams';
+
+definePageMeta({ key: (route) => route.path });
+
 const { sharedSearchKeyword } = useSharedSearchKeyword();
 
-const apiRouteStore = useApiRouteStore();
-const router = useRouter();
+const searchApi = useSearchApi();
+const { readParams, writeParams, onParamsChange } = useSearchUrlState();
+let restoringUrl = false;
+let restoreVersion = 0;
+let requestVersion = 0;
+const searchError = ref<string | null>(null);
 
 useHead({
   title: 'Søg',
@@ -19,7 +26,6 @@ useHead({
   ],
 });
 
-const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
 const isLoading = ref(true);
 const searchKeyword = computed({
   get: () => sharedSearchKeyword.value,
@@ -32,23 +38,6 @@ const pager = ref(null);
 const allSortingOptions = ref(null);
 const selectedPage = ref(0);
 const isLoadingPageResults = ref(false);
-
-const getInitialSearchResults = async () => {
-  try {
-    const response: any = await $fetch(
-      `${backEndDomain.value}/search?format=json&region=content`,
-    );
-
-    dynamicContent.value = response.content.results;
-    totalItemsFound.value = response.content.pager.items;
-    pager.value = response.content.pager;
-    allSortingOptions.value = response.content.facets;
-  } catch (error) {
-    console.error('Error fetching search results:', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
 
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
@@ -72,7 +61,10 @@ const handleFilterChange = (
   if (selectedFilterOption) {
     // Check if selectedFilterOption already exists in selectedFiltersData
     const index = selectedFiltersData.findIndex(
-      (option) => option.value === selectedFilterOption.value,
+      (option) =>
+        option.searchQueryUrlAlias ===
+          selectedFilterOption.searchQueryUrlAlias &&
+        String(option.value) === String(selectedFilterOption.value),
     );
 
     if (index !== -1) {
@@ -88,6 +80,8 @@ const getFilteredPageResults = async (
   clearCurrentPage = false,
   hideFilterDropdown = false,
 ) => {
+  const version = ++requestVersion;
+  searchError.value = null;
   try {
     isLoadingPageResults.value = true;
 
@@ -101,30 +95,35 @@ const getFilteredPageResults = async (
       selectedPage.value = 0;
     }
 
-    let filterString = '';
-    selectedFiltersData.forEach((filter, index) => {
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-    });
-
-    const response: any = await fetch(
-      `${backEndDomain.value}/search?format=json&region=content${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}`,
+    const data = await searchApi(
+      Object.fromEntries(
+        buildSearchParams({
+          search: searchKeyword.value,
+          page: selectedPage.value,
+          filters: selectedFiltersData,
+        }),
+      ),
     );
-    const data = await response.json();
+    if (!data) return;
 
     dynamicContent.value = data.content.results;
     totalItemsFound.value = data.content.pager.items;
     pager.value = data.content.pager;
     allSortingOptions.value = data.content.facets;
   } catch (error) {
+    searchError.value = 'Søgningen kunne ikke hentes. Prøv igen.';
     console.error('Error fetching filtered results:', error);
   } finally {
-    isLoadingPageResults.value = false;
+    if (version === requestVersion) {
+      isLoadingPageResults.value = false;
+      isLoading.value = false;
+    }
   }
 };
 
 watch(selectedFiltersData, () => {
-  getFilteredPageResults(true);
+  if (restoringUrl) return;
+  void getFilteredPageResults(true);
   updateURLParameters();
 });
 
@@ -134,6 +133,7 @@ watch(allSortingOptions, () => {
 
 const debounce = (func, delay) => {
   let timeoutId;
+  onScopeDispose(() => clearTimeout(timeoutId));
   return (...args) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
@@ -142,15 +142,14 @@ const debounce = (func, delay) => {
   };
 };
 
-const handleSearchByKeyword = computed(() => {
-  return debounce(() => {
-    updateURLParameters();
-    getFilteredPageResults(true, true);
-  }, 800);
-});
+const handleSearchByKeyword = debounce(() => {
+  if (restoringUrl) return;
+  void getFilteredPageResults(true, true);
+  updateURLParameters();
+}, 800);
 
 watch(searchKeyword, () => {
-  handleSearchByKeyword.value();
+  if (!restoringUrl) handleSearchByKeyword();
 });
 
 const handlePager = (page: number) => {
@@ -162,14 +161,15 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
-      const searchBlockResults = document.querySelector('.search__result-items')
+      const searchBlockResults = document.querySelector(
+        '.search__result-items',
+      );
 
       if (searchBlockResults) {
-        searchBlockResults.setAttribute('tabindex', '-1')
-        searchBlockResults.focus({ preventScroll: true })
+        searchBlockResults.setAttribute('tabindex', '-1');
+        searchBlockResults.focus({ preventScroll: true });
       }
     }
-
   });
 };
 
@@ -182,132 +182,53 @@ const handleClearAllFilters = () => {
 };
 
 const updateURLParameters = () => {
-  const params = new URLSearchParams();
-
-  // Add search keyword to URL parameters
-  if (searchKeyword.value) {
-    params.set('search_string', searchKeyword.value);
-  }
-
-  // Add selected filters to URL parameters
-  selectedFiltersData.forEach((filter, index) => {
-    params.append(
-      `f[${index}]`,
-      `${filter.searchQueryUrlAlias}:${filter.value}`,
-    );
-  });
-
-  // Add selected page to URL parameters
-  params.set('page', selectedPage.value.toString());
-
-  // Update the URL using Vue Router's replace method
-  const newQuery = Object.fromEntries(params.entries());
-  router.replace({ query: newQuery });
+  if (restoringUrl) return;
+  void writeParams(
+    buildSearchParams({
+      search: searchKeyword.value,
+      page: selectedPage.value,
+      filters: selectedFiltersData,
+    }),
+  );
 };
 
-// Parse URL parameters
-const extractedFilters = reactive([]);
-const parseUrlParameters = () => {
-  const params = new URLSearchParams(window.location.search);
-  extractedFilters.value = [];
-
-  // Extract filters 'f[''
-  params.forEach((value, key) => {
-    if (key.startsWith('f[')) {
-      const [searchQueryUrlAlias, filterValue] = value.split(':');
-      extractedFilters.value.push({
-        searchQueryUrlAlias,
-        value: filterValue,
-      });
-    }
-  });
-
-  // extract page
-  const page = params.get('page');
-  if (page) {
-    selectedPage.value = parseInt(page, 10);
-  }
-
-  // extract search keyword
-  const search = params.get('search_string');
-  if (search) {
-    searchKeyword.value = search;
-  }
-
-  // if finds anything - fetches data.
-  if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
-    handleExtractedFilters();
-  }
-};
-
-// populates selectedFiltersData with extracted filters
-const setSelectedFiltersDataWithExtractedFilters = () => {
-  // Clear previous selections
-  selectedFiltersData.splice(0, selectedFiltersData.length);
-
-  // Iterate through extractedFilters
-  extractedFilters.value.forEach((filter) => {
-    // Find the matching facet in allSortingOptions
-    const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => {
-        return facet.url_alias === filter.searchQueryUrlAlias;
-      },
-    );
-
-    if (matchingFacet) {
-      // Find the specific item in the matching facet's items array
-      const selectedItem = matchingFacet.items.find(
-        (item) => item.value === filter.value,
-      );
-
-      if (selectedItem) {
-        // Push the filter object with necessary properties
-        selectedFiltersData.push({
-          searchQueryUrlAlias: filter.searchQueryUrlAlias,
-          value: filter.value,
-          label: selectedItem.label,
-        });
-      }
-    }
-  });
-};
-
-const handleExtractedFilters = async () => {
+const restoreFromUrl = async () => {
+  const version = ++restoreVersion;
+  restoringUrl = true;
   try {
-    let queryString = '';
-    extractedFilters.value.forEach((filter, index) => {
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-    });
-
-    const response: any = await fetch(
-      `${backEndDomain.value}/search?format=json&region=content${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}`,
+    const state = readSearchParams(readParams());
+    searchKeyword.value = state.search;
+    selectedPage.value = state.page;
+    selectedFiltersData.splice(
+      0,
+      selectedFiltersData.length,
+      ...state.filters.map((filter) => ({
+        ...filter,
+        label: String(filter.value),
+      })),
     );
-
-    const data = await response.json();
-    dynamicContent.value = data.content.results;
-
-    totalItemsFound.value = data.content.pager.items;
-    pager.value = data.content.pager;
-    allSortingOptions.value = data.content.facets;
-    isLoading.value = false;
-
-    setSelectedFiltersDataWithExtractedFilters();
-  } catch (error) {
-    console.error('Error fetching filtered results:', error);
+    await getFilteredPageResults(false);
+    selectedFiltersData.forEach((filter) => {
+      const facet = Object.values(allSortingOptions.value || {}).find(
+        (facet) => facet.url_alias === filter.searchQueryUrlAlias,
+      );
+      filter.label =
+        facet?.items?.find(
+          (item) => String(item.value) === String(filter.value),
+        )?.label || String(filter.value);
+    });
+  } finally {
+    await nextTick();
+    if (version === restoreVersion) restoringUrl = false;
   }
 };
 
-onBeforeMount(() => {
-  if (window.location.search) {
-    parseUrlParameters();
-  } else {
-    getInitialSearchResults();
+onParamsChange(restoreFromUrl);
+onMounted(async () => {
+  if (!readParams().has('search_string') && sharedSearchKeyword.value) {
+    await writeParams(buildSearchParams({ search: sharedSearchKeyword.value }));
   }
-});
-
-onBeforeUnmount(() => {
-  searchKeyword.value = '';
+  await restoreFromUrl();
 });
 
 const cleanEmptyFilters = () => {
@@ -334,6 +255,7 @@ const cleanEmptyFilters = () => {
 
 <template>
   <div class="search">
+    <p v-if="searchError" role="alert">{{ searchError }}</p>
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12" v-if="!isLoading">
@@ -351,8 +273,8 @@ const cleanEmptyFilters = () => {
             <div class="search__filters" v-if="!isLoadingPageResults">
               <div
                 class="search__dropdown"
-                v-for="(item, name, idx) in allSortingOptions"
-                :key="item"
+                v-for="item in allSortingOptions"
+                :key="item.facet_id || item.url_alias"
               >
                 <BaseSearchDropdown
                   @dropdown-value="handleFilterChange"
@@ -372,7 +294,7 @@ const cleanEmptyFilters = () => {
                 <button
                   class="search__chip"
                   v-for="item in selectedFiltersData"
-                  :key="item"
+                  :key="`${item.searchQueryUrlAlias}:${item.value}`"
                   @click="handleFilterChange(item, true)"
                 >
                   <NuxtIcon class="search__chip-close" name="close"></NuxtIcon>
@@ -408,7 +330,7 @@ const cleanEmptyFilters = () => {
                 <div
                   class="search__result-item"
                   v-for="item in dynamicContent"
-                  :key="item"
+                  :key="item.id || item.link"
                 >
                   <NuxtLink class="search__card-link" :to="item?.link">
                     <div class="search__card-item">
@@ -573,8 +495,6 @@ const cleanEmptyFilters = () => {
   &__show-all-filters {
     display: flex;
     background: transparent;
-    border: none;
-    padding: 0;
     cursor: pointer;
     height: 56px;
     border-radius: 56px;
@@ -656,8 +576,6 @@ const cleanEmptyFilters = () => {
     text-transform: uppercase;
     background: transparent;
     border: none;
-    padding: 0;
-    font-size: 500;
     font-size: 14px;
     letter-spacing: 1px;
     color: var(--color-primary-darken-3);
@@ -783,7 +701,7 @@ const cleanEmptyFilters = () => {
       font-size: 16px;
     }
 
-    :deep(p) {
+    p {
       &:last-child {
         margin-bottom: 0;
       }

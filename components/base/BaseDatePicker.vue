@@ -1,9 +1,10 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
 import { createPopper } from '@popperjs/core';
+import { da } from 'date-fns/locale/da';
 
-const id = `datepicker-${uuidv4()}`;
+const id = `datepicker-${useId()}`;
 
 const props = defineProps({
   startAndEndDates: {
@@ -22,7 +23,15 @@ let popperInstance = null;
 
 const emit = defineEmits(['datepickerValue']);
 
-const handleDateChange = (newDate: object) => {
+const handleDateChange = (newDate: (Date | null)[] | null) => {
+  if (
+    !Array.isArray(newDate) ||
+    newDate.length !== 2 ||
+    newDate.some((value) => !value)
+  ) {
+    return;
+  }
+
   emit('datepickerValue', newDate);
   setTimeout(() => {
     showDatepicker.value = false;
@@ -146,13 +155,12 @@ onUnmounted(() => {
       class="datepicker__component"
       ref="datepicker"
       v-model="date"
-      locale="da-dk"
-      :enable-time-picker="false"
-      month-name-format="long"
-      range
-      select-text="Select"
+      :locale="da"
+      :time-config="{ enableTimePicker: false }"
+      :formats="{ month: 'MMMM' }"
+      :range="{ partialRange: false }"
       auto-apply
-      utc
+      timezone="UTC"
       inline
       multi-calendars
       :week-numbers="{ type: 'iso' }"

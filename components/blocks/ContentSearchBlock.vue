@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { v4 as uuidv4 } from 'uuid';
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { useId } from 'vue';
+import type { MapViewport } from '~/utils/mapViewport';
+import { matchingMapMarkerId } from '~/utils/mapMarker';
+import { buildSearchParams, readSearchParams } from '~/utils/searchParams';
 import LeafletMap from '~/components/globals/map/LeafletMap.client.vue';
 
-const apiRouteStore = useApiRouteStore();
-
-const id = `search-block-${uuidv4()}`;
+const id = `search-block-${useId()}`;
 
 const props = defineProps({
   blockData: {
@@ -16,7 +16,12 @@ const props = defineProps({
 });
 
 const searchBlockData = ref(props.blockData);
-const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
+const searchApi = useSearchApi();
+const { readParams, writeParams, onParamsChange } = useSearchUrlState();
+const searchError = ref<string | null>(null);
+let restoringUrl = false;
+let restoreVersion = 0;
+let listRequestVersion = 0;
 const isLoading = ref(true);
 const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');
@@ -24,8 +29,10 @@ const dynamicContent = ref(searchBlockData?.value?.results);
 const searchResultString = ref(searchBlockData?.value?.result_string);
 const pager = ref(searchBlockData?.value?.pager);
 const defaultSortingOptions = ref(searchBlockData?.value?.facets);
-const showListView = ref(true);
 const showMapView = ref(false);
+const mapViewport = shallowRef<MapViewport>();
+const selectedMapMarkerId = ref<string>();
+const showListView = computed(() => !showMapView.value);
 
 const isClient = ref(false);
 
@@ -75,6 +82,30 @@ const datePickerLabel = ref(props.blockData?.exposed_filters?.period?.label);
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
 
+const fetchViewResults = (map = false) => {
+  const params = buildSearchParams({
+    search: searchKeyword.value,
+    page: selectedPage.value,
+    sort: sortingString.value,
+    filters: selectedFiltersData,
+    startDate: datePickerStartDate.value,
+    endDate: datePickerEndDate.value,
+  });
+  if (map) {
+    params.delete('page');
+  } else if (pager.value?.limit) {
+    params.set('items_per_page', String(pager.value.limit));
+  }
+  return searchApi(
+    {
+      ...Object.fromEntries(params),
+      view: searchBlockData.value.view_id,
+      display: searchBlockData.value.display_id + (map ? '_map' : ''),
+    },
+    map ? 'map' : 'list',
+  );
+};
+
 const handleFilterChange = (
   selectedFilterOption: any,
   hideFilterDropdown = false,
@@ -117,7 +148,10 @@ const handleFilterChange = (
 
     // Check if selectedFilterOption already exists in selectedFiltersData
     const index = selectedFiltersData.findIndex(
-      (option) => option.value === selectedFilterOption.value,
+      (option) =>
+        option.searchQueryUrlAlias ===
+          selectedFilterOption.searchQueryUrlAlias &&
+        String(option.value) === String(selectedFilterOption.value),
     );
 
     if (index !== -1) {
@@ -133,6 +167,8 @@ const getFilteredPageResults = async (
   clearCurrentPage = false,
   hideFilterDropdown = false,
 ) => {
+  const requestVersion = ++listRequestVersion;
+  searchError.value = null;
   try {
     isLoadingPageResults.value = true;
 
@@ -146,28 +182,11 @@ const getFilteredPageResults = async (
       selectedPage.value = 0;
     }
 
-    let filterString = '';
-    selectedFiltersData.forEach((filter, index) => {
-      // Exclude date from filters - different format
-      if (filter.searchQueryUrlAlias === 'period') {
-        return;
-      }
-
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-    });
-
-    const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-    );
-    const data = await response.json();
-
+    const data = await fetchViewResults();
+    if (!data) return;
     if (showMapView.value) {
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
-      dynamicMapContent.value = dataForMapMarkers.results;
+      const mapData = await fetchViewResults(true);
+      if (mapData) dynamicMapContent.value = mapData.results || [];
     }
 
     dynamicContent.value = data.results;
@@ -175,14 +194,17 @@ const getFilteredPageResults = async (
     pager.value = data.pager;
     defaultSortingOptions.value = data.facets;
   } catch (error) {
+    searchError.value = 'Søgningen kunne ikke hentes. Prøv igen.';
     console.error('Error fetching filtered results:', error);
   } finally {
-    isLoadingPageResults.value = false;
+    if (requestVersion === listRequestVersion)
+      isLoadingPageResults.value = false;
   }
 };
 
 const debounce = (func, delay) => {
   let timeoutId;
+  onScopeDispose(() => clearTimeout(timeoutId));
   return (...args) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
@@ -191,248 +213,119 @@ const debounce = (func, delay) => {
   };
 };
 
-const handleSearchByKeyword = computed(() => {
-  return debounce(() => {
-    updateURLParameters();
-    getFilteredPageResults(true, true);
-  }, 800);
-});
+const handleSearchByKeyword = debounce(() => {
+  if (restoringUrl) return;
+  void getFilteredPageResults(true, true);
+  updateURLParameters();
+}, 800);
 
 const updateURLParameters = () => {
-  const params = new URLSearchParams();
-
-  // Add search keyword to URL parameters
-  if (searchKeyword.value) {
-    params.set('search_string', searchKeyword.value);
-  }
-
-  // Add sorting
-  if (sortingString.value) {
-    params.set('sort_by', sortingString.value);
-  }
-
-  // Add date range
-  if (datePickerStartDate.value && datePickerEndDate.value) {
-    params.set('period[min]', datePickerStartDate.value);
-    params.set('period[max]', datePickerEndDate.value);
-  }
-
-  // Add selected filters to URL parameters
-  selectedFiltersData.forEach((filter, index) => {
-    // Remove date from filters
-    if (filter.searchQueryUrlAlias === 'period') {
-      return;
-    }
-
-    params.append(
-      `f[${index}]`,
-      `${filter.searchQueryUrlAlias}:${filter.value}`,
-    );
-  });
-
-  // Add selected page to URL parameters
-  params.set('page', selectedPage.value.toString());
-
-  const newURL = `${window.location.pathname}?${params.toString()}`;
-
-  // Convert reactive objects to plain objects
-  const plainState = {
-    searchKeyword: searchKeyword.value,
-    sortingString: sortingString.value,
-    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)),
-    selectedPage: selectedPage.value,
-  };
-
-  history.replaceState(plainState, '', newURL);
+  if (restoringUrl) return;
+  void writeParams(
+    buildSearchParams({
+      mode: showMapView.value ? 'map' : 'list',
+      mapViewport: mapViewport.value,
+      mapMarker: selectedMapMarkerId.value,
+      search: searchKeyword.value,
+      page: selectedPage.value,
+      sort: sortingString.value,
+      filters: selectedFiltersData,
+      startDate: datePickerStartDate.value,
+      endDate: datePickerEndDate.value,
+    }),
+  );
 };
 
-if (process.client) {
-  window.onpopstate = (event) => {
-    if (event.state) {
-      searchKeyword.value = event.state.searchKeyword || '';
-      sortingString.value = event.state.sortingString || '';
-      selectedPage.value = event.state.selectedPage || 0;
-
-      selectedFiltersData.splice(
-        0,
-        selectedFiltersData.length,
-        ...(event.state.selectedFiltersData || []),
-      );
-
-      updateURLParameters();
-    }
-  };
-}
-
-// Parse URL parameters
-const extractedFilters = reactive([]);
-const parseUrlParameters = () => {
-  const params = new URLSearchParams(window.location.search);
-  extractedFilters.value = [];
-
-  // Extract filters 'f[''
-  params.forEach((value, key) => {
-    if (key.startsWith('f[')) {
-      const [searchQueryUrlAlias, filterValue] = value.split(':');
-
-      extractedFilters.value.push({
-        searchQueryUrlAlias,
-        value: filterValue,
-      });
-    }
-
-    const isFreeFilter = extractedFilters.value.find(
-      (filter) => filter.searchQueryUrlAlias === isFreeUrlAlias.value,
-    );
-
-    const guaranteePartnerFilter = extractedFilters.value.find(
-      (filter) => filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value,
-    );
-
-    if (isFreeFilter) {
-      selectedPriceFilter.value = isFreeFilter.value;
-    }
-
-    if (guaranteePartnerFilter) {
-      selectedGuaranteePartnerFilter.value = guaranteePartnerFilter.value;
-    }
-  });
-
-  // extract page
-  const page = params.get('page');
-  if (page) {
-    selectedPage.value = parseInt(page, 10);
-  }
-
-  // extract search keyword
-  const search = params.get('search_string');
-  if (search) {
-    searchKeyword.value = search;
-  }
-
-  // extract sorting
-  const sort = params.get('sort_by');
-  if (sort) {
-    sortingString.value = sort;
-  }
-
-  // extract date range
-  const minDate = params.get('period[min]');
-  const maxDate = params.get('period[max]');
-
-  // sets date to chips & datepicker component
-  if (minDate && maxDate) {
-    datePickerStartDate.value = minDate;
-    datePickerEndDate.value = maxDate;
-
-    // Add the calendar filter back to selected filters
-    const index = selectedFiltersData.findIndex(
-      (filter) => filter.searchQueryUrlAlias === 'period',
-    );
-
-    if (index !== -1) {
-      selectedFiltersData.splice(index, 1);
-    } else {
-      selectedFiltersData.push({
-        searchQueryUrlAlias: 'period',
-        value: `period[min]=${minDate}&period[max]=${maxDate}`,
-        label: `Fra ${minDate} til ${maxDate}`,
-      });
-    }
-  }
-
-  // if finds anything - fetches data.
-  if (
-    extractedFilters.value.length > 0 ||
-    searchKeyword.value ||
-    page ||
-    (minDate && maxDate)
-  ) {
-    handleExtractedFilters();
-  }
-};
-
-// populates selectedFiltersData with extracted filters
-const setSelectedFiltersDataWithExtractedFilters = () => {
-  // Iterate through extractedFilters
-  extractedFilters.value.forEach((filter) => {
-    // Find the matching facet in allSortingOptions
-    const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => {
-        return facet.url_alias === filter.searchQueryUrlAlias;
-      },
-    );
-
-    if (matchingFacet) {
-      // Find the specific item in the matching facet's items array
-      const selectedItem = matchingFacet.items.find(
-        (item) => item.value === filter.value,
-      );
-
-      if (selectedItem) {
-        // Push the filter object with necessary properties
-        selectedFiltersData.push({
-          searchQueryUrlAlias: filter.searchQueryUrlAlias,
-          value: filter.value,
-          label: selectedItem.label,
-        });
-      }
-    }
-  });
-};
-
-const handleExtractedFilters = async () => {
-  try {
-    let queryString = '';
-
-    extractedFilters.value.forEach((filter, index) => {
-      // exclude date from extractedFilters
-      extractedFilters.value = extractedFilters.value.filter(
-        (filter) => filter.searchQueryUrlAlias !== 'period',
-      );
-
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-    });
-
-    // add date back to extractedFilters
-    if (datePickerStartDate.value && datePickerEndDate.value) {
-      extractedFilters.value.push({
-        searchQueryUrlAlias: 'period',
-        value: `${datePickerStartDate.value}/${datePickerEndDate.value}`,
-        label: `Fra ${datePickerStartDate.value} til ${datePickerEndDate.value}`,
-      });
-    }
-
-    const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-    );
-    const data = await response.json();
-
-    if (showMapView.value) {
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}&period[min]=${datePickerStartDate.value}&period[max]=${datePickerEndDate.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
-      dynamicMapContent.value = dataForMapMarkers.results;
-    }
-
-    dynamicContent.value = data.results;
-    searchResultString.value = data.result_string;
-    pager.value = data.pager;
-    defaultSortingOptions.value = data.facets;
-    isLoading.value = false;
-
-    setSelectedFiltersDataWithExtractedFilters();
-  } catch (error) {
-    console.error('Error fetching filtered results:', error);
-  }
-};
-
-watch(selectedFiltersData, () => {
-  getFilteredPageResults(true);
+const handleMapViewportChange = (viewport: MapViewport) => {
+  if (restoringUrl) return;
+  mapViewport.value = viewport;
   updateURLParameters();
-});
+};
+
+const handleMapMarkerChange = (id: string | undefined) => {
+  if (restoringUrl) return;
+  selectedMapMarkerId.value = id;
+  updateURLParameters();
+};
+
+const restoreFromUrl = async () => {
+  const version = ++restoreVersion;
+  searchError.value = null;
+  restoringUrl = true;
+  try {
+    const params = readParams();
+    const state = readSearchParams(params);
+    mapViewport.value = state.mapViewport;
+    selectedMapMarkerId.value = state.mapMarker;
+    showMapView.value = state.mode === 'map';
+    selectedPage.value = state.page;
+    searchKeyword.value = state.search;
+    sortingString.value =
+      state.sort ||
+      searchBlockData.value.exposed_filters?.sort_by?.default_value ||
+      null;
+    const filters = state.filters.map((filter) => {
+      const facet = Object.values(searchBlockData.value.facets || {}).find(
+        (item) => item.url_alias === filter.searchQueryUrlAlias,
+      );
+      const item = facet?.items?.find(
+        (item) => String(item.value) === String(filter.value),
+      );
+      return {
+        ...filter,
+        label: item?.label || String(filter.value),
+        source:
+          filter.searchQueryUrlAlias === isFreeUrlAlias.value
+            ? 'isFreeFilter'
+            : filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value
+              ? 'guaranteePartnerFilter'
+              : undefined,
+      };
+    });
+    datePickerStartDate.value = state.startDate;
+    datePickerEndDate.value = state.endDate;
+    selectedPriceFilter.value =
+      state.filters.find(
+        (filter) => filter.searchQueryUrlAlias === isFreeUrlAlias.value,
+      )?.value || 'all';
+    selectedGuaranteePartnerFilter.value =
+      state.filters.find(
+        (filter) =>
+          filter.searchQueryUrlAlias === guaranteePartnerUrlAlias.value,
+      )?.value || 'all';
+    if (state.startDate && state.endDate) {
+      filters.push({
+        searchQueryUrlAlias: 'period',
+        value: state.startDate + '/' + state.endDate,
+        label: 'Fra ' + state.startDate + ' til ' + state.endDate,
+      });
+    }
+    selectedFiltersData.splice(0, selectedFiltersData.length, ...filters);
+    if (params.size > 0) {
+      await getFilteredPageResults(false);
+    } else {
+      dynamicContent.value = searchBlockData.value.results || [];
+      pager.value = searchBlockData.value.pager;
+      searchResultString.value = searchBlockData.value.result_string;
+      defaultSortingOptions.value = searchBlockData.value.facets;
+    }
+  } finally {
+    await nextTick();
+    if (version === restoreVersion) restoringUrl = false;
+  }
+};
+
+onParamsChange(restoreFromUrl);
+
+watch(
+  selectedFiltersData,
+  () => {
+    if (restoringUrl) return;
+    void getFilteredPageResults(true);
+    updateURLParameters();
+  },
+  { flush: 'post' },
+);
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
@@ -459,11 +352,13 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
-      const searchBlockResults = document.querySelector('.search-block__result-items')
+      const searchBlockResults = document.querySelector(
+        '.search-block__result-items',
+      );
 
       if (searchBlockResults) {
-        searchBlockResults.setAttribute('tabindex', '-1')
-        searchBlockResults.focus({ preventScroll: true })
+        searchBlockResults.setAttribute('tabindex', '-1');
+        searchBlockResults.focus({ preventScroll: true });
       }
     }
   });
@@ -537,6 +432,7 @@ const selectedPriceFilter = ref('all');
 const isFreeUrlAlias = ref(isFreeFilterData?.value[0]?.url_alias || '');
 
 watch(selectedPriceFilter, () => {
+  if (restoringUrl) return;
   const matchedItem = isFreeFilterData.value[0]?.items.find(
     (item) => item.value === selectedPriceFilter.value,
   );
@@ -550,6 +446,7 @@ watch(selectedPriceFilter, () => {
       selectedFiltersData.splice(existingFilterIndex, 1);
     }
 
+    if (selectedPriceFilter.value === 'all') return;
     selectedFiltersData.push({
       searchQueryUrlAlias: isFreeUrlAlias.value,
       value: selectedPriceFilter.value,
@@ -571,6 +468,7 @@ const guaranteePartnerUrlAlias = ref(
 );
 
 watch(selectedGuaranteePartnerFilter, () => {
+  if (restoringUrl) return;
   const matchedItem = guaranteePartnerFilterData.value[0]?.items.find(
     (item) => item.value === selectedGuaranteePartnerFilter.value,
   );
@@ -584,6 +482,7 @@ watch(selectedGuaranteePartnerFilter, () => {
       selectedFiltersData.splice(existingFilterIndex, 1);
     }
 
+    if (selectedGuaranteePartnerFilter.value === 'all') return;
     selectedFiltersData.push({
       searchQueryUrlAlias: guaranteePartnerUrlAlias.value,
       value: selectedGuaranteePartnerFilter.value,
@@ -594,19 +493,13 @@ watch(selectedGuaranteePartnerFilter, () => {
 });
 
 watch(showMapView, async (newVal) => {
+  if (restoringUrl) return;
+  updateURLParameters();
   if (newVal) {
     try {
       loadingMap.value = true;
-      let filterString = '';
-      selectedFiltersData.forEach((filter, index) => {
-        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-      });
-
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
-
+      const dataForMapMarkers = await fetchViewResults(true);
+      if (!dataForMapMarkers) return;
       dynamicMapContent.value = dataForMapMarkers.results;
     } catch (error) {
       console.error('Error fetching map results:', error);
@@ -641,21 +534,21 @@ const leafletMarkers = computed(() =>
         (item.field_view_on_map === 'show_vendor_address' &&
           item.corporation?.field_dawa_address?.data?.y &&
           item.corporation?.field_dawa_address?.data?.x) ||
-        ('show_alternative_address' &&
+        (item.field_view_on_map === 'show_alternative_address' &&
           item.field_dawa_address?.lat &&
           item.field_dawa_address?.lng),
     )
     .map((item) => {
       let imageHtml = '';
       let innerWrapperClass = 'leaflet-popup-content__inner';
-      if (item.field_image.img_element) {
+      if (item.field_image?.img_element) {
         imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="${item.field_image.img_element.alt}" /></a></div>`;
       } else {
         innerWrapperClass += ' leaflet-popup-content__inner--no-image';
       }
 
-      let latitude = '';
-      let longitude = '';
+      let latitude;
+      let longitude;
       if (
         item.field_view_on_map === 'show_vendor_address' &&
         item.provider?.field_dawa_address?.data?.y &&
@@ -698,21 +591,27 @@ const leafletMarkers = computed(() =>
     }),
 );
 
-onBeforeMount(() => {
-  if (window.location.search) {
-    parseUrlParameters();
+watch(leafletMarkers, (markers) => {
+  if (
+    !restoringUrl &&
+    selectedMapMarkerId.value &&
+    !matchingMapMarkerId(selectedMapMarkerId.value, markers)
+  ) {
+    handleMapMarkerChange(undefined);
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
+  isClient.value = true;
+  await restoreFromUrl();
   isLoading.value = false;
   isLoadingPageResults.value = false;
-  isClient.value = true;
 });
 </script>
 
 <template>
   <div :id="id">
+    <p v-if="searchError" role="alert">{{ searchError }}</p>
     <div class="search-block">
       <div class="search-block__label" v-if="searchBlockData?.label">
         {{ searchBlockData?.label }}
@@ -738,7 +637,6 @@ onMounted(() => {
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showListView"
                     @click="
-                      showListView = false;
                       showMapView = true;
                     "
                   >
@@ -753,7 +651,6 @@ onMounted(() => {
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showMapView"
                     @click="
-                      showListView = true;
                       showMapView = false;
                     "
                   >
@@ -771,8 +668,8 @@ onMounted(() => {
             <div class="search-block__filters" v-if="!isLoadingPageResults">
               <div
                 class="search-block__dropdown"
-                v-for="(item, name, idx) in allSortingOptions"
-                :key="item || idx"
+                v-for="item in allSortingOptions"
+                :key="item.facet_id || item.url_alias"
                 :class="{
                   'search-block__dropdown--is-hidden':
                     item.hidden && !showAllFilters,
@@ -839,9 +736,8 @@ onMounted(() => {
               </button>
 
               <div
-                v-if="isFreeFilterData.length > 0"
                 v-for="item in isFreeFilterData"
-                :key="item"
+                :key="item.facet_id"
                 class="search-block__price-filter"
               >
                 <div
@@ -866,9 +762,8 @@ onMounted(() => {
               </div>
 
               <div
-                v-if="guaranteePartnerFilterData.length > 0"
                 v-for="item in guaranteePartnerFilterData"
-                :key="item"
+                :key="item.facet_id"
                 class="search-block__price-filter"
               >
                 <div
@@ -906,7 +801,7 @@ onMounted(() => {
                 <button
                   class="search-block__chip"
                   v-for="item in selectedFiltersData"
-                  :key="item"
+                  :key="`${item.searchQueryUrlAlias}:${item.value}`"
                   @click="handleFilterChange(item, true)"
                 >
                   <NuxtIcon
@@ -958,7 +853,7 @@ onMounted(() => {
                 <div
                   class="search-block__result-item"
                   v-for="item in dynamicContent"
-                  :key="item"
+                  :key="item.id || item.link"
                 >
                   <article class="search-block__card-item">
                     <BaseCard :data="item" />
@@ -973,6 +868,10 @@ onMounted(() => {
                 ref="leafletMapRef"
                 :markers="leafletMarkers"
                 :loading="loadingMap"
+                :viewport="mapViewport"
+                :selected-marker-id="selectedMapMarkerId"
+                @marker-change="handleMapMarkerChange"
+                @viewport-change="handleMapViewportChange"
               />
             </ClientOnly>
 

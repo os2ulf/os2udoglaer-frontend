@@ -20,6 +20,9 @@ export const dateConversion = (date: string) => {
 
   // Split the input date string by the dot separator
   const [day, month, year] = date.split('.');
+  if (!day || !month || !year) {
+    return;
+  }
 
   // Convert the month number to an integer and get the Danish month name
   const monthName = months[parseInt(month, 10) - 1];

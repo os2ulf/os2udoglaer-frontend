@@ -7,7 +7,7 @@ const props = defineProps({
 });
 
 // Must be executed on the client side only
-if (process.client) {
+if (import.meta.client) {
   const loadScript = (url: any) => {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
@@ -25,7 +25,7 @@ if (process.client) {
 
   if (codeData !== null) {
     const findUrls = codeData.match(
-      /\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi,
+      /\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]/gi,
     );
 
     // Finds JS script urls and injects them into the page
@@ -42,11 +42,11 @@ if (process.client) {
                 instagramUrls.push(instagramUrl);
               }
             })
-            .catch((error) => {
+            .catch(() => {
               console.error('Error loading Instagram script:', error);
             });
         } else if (url) {
-          loadScript(url).catch((error) => {
+          loadScript(url).catch(() => {
             // console.error('Error loading script:', error);
           });
         }

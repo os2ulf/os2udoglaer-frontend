@@ -2,7 +2,7 @@ import { decodeBase64 } from '~/utils/base64';
 import { excludeEndpoints } from '~/config/excludedEndpoints';
 
 // used for server side only.
-export function getBackendDomain(headers?: Record<string, string>) {
+export function getBackendDomain(headers?: Record<string, string | undefined>) {
   let allRoutes: Record<string, any> | null = null;
   let beEndpoint: string | null = null;
 
@@ -40,9 +40,7 @@ export function getBackendDomain(headers?: Record<string, string>) {
 
   const assignBackendEndpoint = () => {
     const currentDomain =
-      headers && (headers['x-forwarded-host'] || headers.host)
-        ? headers['x-forwarded-host'] || headers.host
-        : 'localhost';
+      headers?.['x-forwarded-host'] || headers?.host || 'localhost';
 
     let selectedBackend = null;
 

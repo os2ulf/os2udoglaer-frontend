@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const credentials = `${config.REST_API_USER}:${config.REST_API_USER_PASS}`;
   const encodedCredentials = btoa(credentials);
 
-  const normalizeDomain = (domain: string) => {
+  const normalizeDomain = (domain?: string) => {
     if (!domain) {
       return;
     }
@@ -18,16 +18,16 @@ export default defineEventHandler(async (event) => {
   const currentDomain = normalizeDomain(event.node.req.headers.host);
   const requestOrigin = normalizeDomain(event.node.req.headers.origin);
 
-  const beEndpoint = getBackendDomainServer(currentDomain);
-
   // BASIC ORIGIN HEADER CHECK
   // This is only a basic measure protection, real protection (if needed) should be implemented in the BE.
-  if (!requestOrigin || requestOrigin !== currentDomain) {
+  if (!currentDomain || !requestOrigin || requestOrigin !== currentDomain) {
     return {
       statusCode: 403,
       message: 'Forbidden: Not allowed to access.',
     };
   }
+
+  const beEndpoint = getBackendDomainServer(currentDomain);
 
   try {
     const response = await fetch(beEndpoint + '/node?_format=json', {
@@ -100,7 +100,7 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 500,
       message: 'Error on the external API level',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 });

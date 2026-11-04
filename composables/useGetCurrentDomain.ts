@@ -1,11 +1,11 @@
 export default function useGetCurrentDomain() {
   let currentDomain = '';
 
-  if (process.server) {
+  if (import.meta.server) {
     const hostHeader = useRequestHeaders();
     const rawDomain = hostHeader['x-forwarded-host'] || hostHeader.host || '';
     currentDomain = `https://${rawDomain}`;
-  } else if (process.client) {
+  } else if (import.meta.client) {
     const rawDomain = window.location.hostname;
     currentDomain = `https://${rawDomain}`;
   }

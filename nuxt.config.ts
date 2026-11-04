@@ -66,7 +66,13 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@pinia/nuxt', 'nuxt-icons'],
+  modules: ['@pinia/nuxt', 'nuxt-icons', '@nuxt/eslint'],
+
+  eslint: {
+    config: {
+      typescript: { strict: false },
+    },
+  },
 
   vue: {
     compilerOptions: {

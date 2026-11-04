@@ -74,7 +74,6 @@ const handleSearch = () => {
     width: 100%;
     height: 48px;
     outline: 0;
-    border: 0;
     display: none;
     border-radius: 24px;
     padding: 0 45px 0 20px;

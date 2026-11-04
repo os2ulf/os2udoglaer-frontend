@@ -3,7 +3,7 @@
   --dp-cell-padding: 15px !important; /* Padding in the cell */
   --dp-font-family: var(--body-font-family) !important;
   --dp-month-year-row-height: 55px !important; /* Height of the month-year select row */
-  --dp-row-maring: 2px 0 !important; /* Adjust the spacing between rows in the calendar */
+  --dp-row-margin: 2px 0 !important; /* Adjust the spacing between rows in the calendar */
   --dp-menu-padding: 6px 0 !important; /* Menu padding */
   --dp-font-size: 12px !important; /* Default font-size */
   --dp-menu-min-width: 900px !important; /* Adjust the min width of the menu */
@@ -16,7 +16,7 @@
   }
 }
 
-.dp__theme_light {
+.dp--theme-light {
   --dp-hover-color: var(--color-primary-lighten-2) !important;
   --dp-background-color: #fff !important;
   --dp-text-color: var(--color-black) !important;
@@ -34,17 +34,17 @@
   --dp-hover-icon-color: var(--color-white) !important;
 }
 
-.dp__calendar_header_item {
+.dp--calendar-header-item {
   text-transform: capitalize;
 }
 
-.dp__calendar {
-  .dp__calendar_header_item:first-child {
+.dp--calendar {
+  .dp--calendar-header-item:first-child {
     visibility: hidden;
   }
 }
 
-.dp__instance_calendar:first-child {
+.dp--instance-calendar:first-child {
   padding-right: 0;
 
   @media (min-width: 768px) {
@@ -52,23 +52,23 @@
   }
 }
 
-.dp__instance_calendar:last-child {
+.dp--instance-calendar:last-child {
   padding-right: 0 !important;
 }
 
-.dp__month_year_wrap {
+.dp--month-year-wrap {
   font-size: 16px;
   font-weight: 700;
 }
 
-.dp__range_end,
-.dp__range_start,
-.dp__week_num {
+.dp--range-border-start,
+.dp--range-border-end,
+.dp--week-num {
   font-weight: 700;
 }
 
-.dp__week_num {
-  .dp__cell_inner {
+.dp--week-num {
+  .dp--cell-inner {
     color: var(--color-primary);
   }
 }

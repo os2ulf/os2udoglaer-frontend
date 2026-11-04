@@ -140,7 +140,6 @@ const cardBodyText: any = ref(stripHtmlFromString(props.data.body) || '');
     padding: 4px 8px;
     background-color: var(--color-primary-lighten-4);
     color: var(--color-primary-darken-3);
-    font-weight: 500;
     font-size: 14px;
     line-height: 18px;
     text-transform: uppercase;

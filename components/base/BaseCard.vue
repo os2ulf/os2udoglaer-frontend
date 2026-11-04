@@ -71,6 +71,8 @@ const targetGroupFields = computed(() => {
 
     return null;
   }
+
+  return null;
 });
 
 const shortenClasses = (items) => {
@@ -79,7 +81,7 @@ const shortenClasses = (items) => {
   }
 
   // Initialize an empty array to store the final result.
-  let result = [];
+  const result = [];
 
   // Initialize an empty array to temporarily store a sequence of classes or years.
   let tempSequence = [];
@@ -216,7 +218,9 @@ const processedSubjectOrThemeString = ref(
 );
 
 const cardBodyText: any = ref(
-  truncateString(stripHtmlFromString(props.data?.body) || '', 200) || '',
+  typeof props.data?.card_body_text === 'string'
+    ? props.data.card_body_text
+    : truncateString(stripHtmlFromString(props.data?.body) || '', 200) || '',
 );
 
 // Card labels
@@ -258,39 +262,39 @@ const cardLabels = computed(() => {
   // Define label generators for different bundles
   const bundleLabelGenerators = {
     course: () => {
-      getBannerLabel(props.data) === null
-        ? labels.push(getThemeLabel(props.data))
-        : '';
+      if (getBannerLabel(props.data) === null) {
+        labels.push(getThemeLabel(props.data));
+      }
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     course_educators: () => {
-      getBannerLabel(props.data) === null
-        ? labels.push(getThemeLabel(props.data))
-        : '';
+      if (getBannerLabel(props.data) === null) {
+        labels.push(getThemeLabel(props.data));
+      }
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     exercise: () => {
-      getBannerLabel(props.data) === null
-        ? labels.push(getFocusLabel(props.data))
-        : '';
+      if (getBannerLabel(props.data) === null) {
+        labels.push(getFocusLabel(props.data));
+      }
       labels.push(getBannerLabel(props.data));
     },
     news: () => {
       labels.push(getBannerLabel(props.data));
     },
     internship: () => {
-      getBannerLabel(props.data) === null
-        ? labels.push(getIndustryLabel(props.data))
-        : '';
+      if (getBannerLabel(props.data) === null) {
+        labels.push(getIndustryLabel(props.data));
+      }
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
     junior_apprenticeship: () => {
-      getBannerLabel(props.data) === null
-        ? labels.push(getIndustryLabel(props.data))
-        : '';
+      if (getBannerLabel(props.data) === null) {
+        labels.push(getIndustryLabel(props.data));
+      }
       labels.push(getStatusLabel(props.data));
       labels.push(getBannerLabel(props.data));
     },
@@ -336,7 +340,7 @@ const cardLabels = computed(() => {
           <h2 class="h4">{{ data?.label }}</h2>
         </div>
 
-        <div v-if="data?.body" class="card__text">
+        <div v-if="data?.body || data?.has_body" class="card__text">
           {{ cardBodyText }}
         </div>
         <div class="card__icons" v-if="targetGroupFields || providerData">

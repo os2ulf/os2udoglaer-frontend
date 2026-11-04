@@ -5,7 +5,7 @@ export default defineEventHandler((event) => {
     return;
   }
 
-  let robotsTxt = '';
+  let robotsTxt;
   const host = event.node.req.headers.host;
 
   const prodRobotTxt = `

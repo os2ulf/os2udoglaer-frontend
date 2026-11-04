@@ -10,7 +10,7 @@
 
 <script setup>
 import { pascalCase } from '~/utils/pascalCase';
-const props = defineProps({
+defineProps({
   blockData: Object,
 });
 

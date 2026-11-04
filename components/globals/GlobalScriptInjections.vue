@@ -90,5 +90,5 @@ useHead(() => ({
 </script>
 
 <template>
-  <!-- injected via useHead -->
+  <span hidden aria-hidden="true"></span>
 </template>

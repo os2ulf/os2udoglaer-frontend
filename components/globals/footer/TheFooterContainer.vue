@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
   footerMenuData: {
     type: Object,
     required: true,
@@ -14,5 +14,3 @@ const props = defineProps({
     :node="footerItem"
   />
 </template>
-
-<style lang="postcss" scoped></style>

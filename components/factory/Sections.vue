@@ -2,7 +2,7 @@
 import { defineAsyncComponent } from 'vue';
 import { pascalCase } from '~/utils/pascalCase';
 
-const props = defineProps({
+defineProps({
   sections: {
     type: Object,
     required: true,
@@ -11,14 +11,20 @@ const props = defineProps({
 });
 
 // Dynamically import block components
+const blockComponents = new Map();
 const renderLayoutBlock = (componentName: string) => {
-  return defineAsyncComponent(() =>
-    import(`@/components/blocks/${pascalCase(componentName)}Block.vue`)
-      // If component doesnt exist, render a placeholder instead
-      .catch((err) => {
-        return import('~~/components/blocks/UnknownBlock.vue');
-      }),
-  );
+  if (!blockComponents.has(componentName))
+    blockComponents.set(
+      componentName,
+      defineAsyncComponent(() =>
+        import(`@/components/blocks/${pascalCase(componentName)}Block.vue`)
+          // If component doesnt exist, render a placeholder instead
+          .catch(() => {
+            return import('~~/components/blocks/UnknownBlock.vue');
+          }),
+      ),
+    );
+  return blockComponents.get(componentName);
 };
 
 // Assign the correct number of columns to the region based on the layout settings

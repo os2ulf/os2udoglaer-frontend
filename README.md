@@ -1,80 +1,95 @@
-# Nuxt 3 Minimal Starter
+# OS2udoglær frontend
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt 4 frontend for OS2udoglær.
 
-## Setup
+## Requirements
 
-Make sure to install the dependencies:
-Dev environment should be: https://localhost:3000 or change it in useBaseApi.ts file.
+- Node.js 24.22.1, specified in `.nvmrc`.
+- npm, using the committed `package-lock.json`.
+
+## Local setup
+
+Select the project Node.js version and install dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
+nvm install
+nvm use
+npm ci
 ```
 
-## Development Server
+Installation runs `nuxt prepare` to generate Nuxt types and the ESLint configuration.
+Keep the `vendor/` directory in the checkout; it contains a local build dependency.
 
-Start the development server on `http://localhost:3000`:
+Create a `.env` file in the project root and set the backend URLs:
 
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Environment Variables
-
-Add these to .env file
-
-```bash
-# A root endpoint to the API backend server
-API_BASE_URL = ""
-LOCAL_API_BASE_URL="" # BE staging endpooint
+```dotenv
+LOCAL_API_BASE_URL=""
+API_BASE_URL=""
 REST_API_USER=""
 REST_API_USER_PASS=""
 ```
 
-# Useless incrementor
+- `LOCAL_API_BASE_URL`: backend root URL used when running on localhost.
+- `API_BASE_URL`: backend root URL used by article-form requests.
+- `REST_API_USER` and `REST_API_USER_PASS`: server-side credentials for application submissions, when needed.
 
-Incremented 5 time(s)
+The `.env` file is ignored by Git. Use the backend URLs and credentials for your environment.
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+To use production content locally without editing `.env`:
+
+```bash
+NUXT_PUBLIC_LOCAL_API_BASE_URL=https://api.ulfiaarhus.dk npm run dev
+```
+
+Search pages available for local checks include `/grundskole-0` and `/udbydere`.
+
+## Checks
+
+```bash
+npm run eslint
+npm run stylelint
+npm run typecheck
+npm test
+```
+
+ESLint and Stylelint fail on warnings. To apply automatic fixes:
+
+```bash
+npm run eslint:fix
+npm run stylelint:fix
+```
+
+`npm run typecheck` regenerates Nuxt types and checks TypeScript files with the
+native compiler. It does not check Vue templates. The compatibility compiler
+can check the same files with `npx tsc6 --noEmit`.
+
+Vue tooling uses the TypeScript compatibility package. Editors requiring a
+workspace `tsserver` should use `node_modules/@typescript/old/lib` as the SDK path.
+
+## Production build and local preview
+
+```bash
+npm run build
+npm run preview
+```
+
+To start the built server directly:
+
+```bash
+npm start
+```
+
+Production runtime configuration can be supplied through `NUXT_PUBLIC_LOCAL_API_BASE_URL`,
+`NUXT_PUBLIC_API_BASE_URL`, `NUXT_REST_API_USER`, and `NUXT_REST_API_USER_PASS`.
+Hosted environments select the backend using `PLATFORM_ROUTES`.
+
+See the [Nuxt documentation](https://nuxt.com/docs/4.x/getting-started/introduction)
+for framework configuration and deployment guidance.

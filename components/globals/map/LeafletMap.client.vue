@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import * as L from 'leaflet';
+import L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { normalizeMapViewport } from '~/utils/mapViewport';
+import type { MapViewport } from '~/utils/mapViewport';
+import { matchingMapMarkerId, normalizeMapMarkerId } from '~/utils/mapMarker';
 
 type Marker = {
   id: string | number;
@@ -16,11 +19,133 @@ const props = defineProps<{
   markers: Marker[];
   loading?: boolean;
   heightClass?: string; // allow custom height if you want
+  viewport?: MapViewport;
+  selectedMarkerId?: string;
 }>();
 
+const emit = defineEmits<{
+  viewportChange: [viewport: MapViewport];
+  markerChange: [id: string | undefined];
+}>();
 const mapEl = ref<HTMLElement | null>(null);
+const renderedViewport = shallowRef<MapViewport>();
+const activeMarkerId = ref<string>();
+const markersById = new Map<string, { layer: L.Marker; data: Marker }>();
 let map: L.Map | null = null;
 let markersLayer: L.MarkerClusterGroup | null = null;
+let selectedPopup: L.Popup | null = null;
+let restoringSelection = false;
+let disposed = false;
+let programmaticMove = false;
+
+function updateMarkerSelection() {
+  mapEl.value
+    ?.querySelectorAll('.leaflet-marker-selected')
+    .forEach((el) => el.classList.remove('leaflet-marker-selected'));
+  for (const [id, marker] of markersById) {
+    marker.layer
+      .getElement()
+      ?.setAttribute('aria-pressed', String(id === activeMarkerId.value));
+  }
+  const selected =
+    activeMarkerId.value && markersById.get(activeMarkerId.value);
+  if (selected) {
+    markersLayer
+      ?.getVisibleParent(selected.layer)
+      ?.getElement()
+      ?.classList.add('leaflet-marker-selected');
+  }
+}
+
+function openMarkerPopup(id: string, restoring = false) {
+  const marker = markersById.get(id);
+  if (!map || !selectedPopup || !marker) return;
+  activeMarkerId.value = id;
+  // An independent popup can reopen a clustered marker without changing zoom.
+  selectedPopup.options.autoPan = !restoring;
+  selectedPopup
+    .setLatLng(marker.layer.getLatLng())
+    .setContent(marker.data.popupContent)
+    .openOn(map);
+  selectedPopup.options.autoPan = true;
+  updateMarkerSelection();
+}
+
+function handlePopupClose(event: L.PopupEvent) {
+  if (event.popup !== selectedPopup || restoringSelection || disposed) return;
+  activeMarkerId.value = undefined;
+  updateMarkerSelection();
+  emit('markerChange', undefined);
+}
+
+function restoreSelectedMarker(refreshContent = false) {
+  if (!map || !selectedPopup || props.loading) return;
+  const id = matchingMapMarkerId(props.selectedMarkerId, props.markers);
+  restoringSelection = true;
+  try {
+    if (id) {
+      if (
+        refreshContent ||
+        activeMarkerId.value !== id ||
+        !map.hasLayer(selectedPopup)
+      )
+        openMarkerPopup(id, true);
+    } else {
+      selectedPopup.remove();
+      activeMarkerId.value = undefined;
+      updateMarkerSelection();
+    }
+  } finally {
+    restoringSelection = false;
+  }
+  if (props.selectedMarkerId && !id) emit('markerChange', undefined);
+}
+
+function currentViewport() {
+  if (!map) return;
+  const center = map.getCenter().wrap();
+  return normalizeMapViewport({
+    lat: center.lat,
+    lng: center.lng,
+    zoom: map.getZoom(),
+  });
+}
+
+function handleMoveEnd() {
+  renderedViewport.value = currentViewport();
+  if (!programmaticMove && renderedViewport.value) {
+    emit('viewportChange', renderedViewport.value);
+  }
+}
+
+function moveWithoutSaving(action: () => void) {
+  programmaticMove = true;
+  try {
+    action();
+    renderedViewport.value = currentViewport();
+  } finally {
+    programmaticMove = false;
+  }
+}
+
+function restoreViewportOrFitMarkers() {
+  if (!map || !markersLayer) return;
+  moveWithoutSaving(() => {
+    const viewport = normalizeMapViewport(props.viewport);
+    if (viewport) {
+      // A full reset avoids Leaflet rounding a small restore to a whole-pixel pan.
+      const options = { animate: false, reset: true };
+      map!.setView([viewport.lat, viewport.lng], viewport.zoom, options);
+    } else if (markersLayer!.getLayers().length) {
+      map!.fitBounds(markersLayer!.getBounds(), {
+        padding: [50, 50],
+        animate: false,
+      });
+    } else {
+      map!.setView([20, 0], 2, { animate: false });
+    }
+  });
+}
 
 function createSvgMarker(size = 40) {
   const svg = `
@@ -48,46 +173,91 @@ function initMap() {
 
   markersLayer = L.markerClusterGroup();
   map.addLayer(markersLayer);
+  selectedPopup = L.popup({ maxWidth: 250, offset: L.point(0, -40) });
+  map.on('popupclose', handlePopupClose);
+  map.on('zoomend', updateMarkerSelection);
+  markersLayer.on('animationend', updateMarkerSelection);
 
   updateMarkers(props.markers);
+  map.on('moveend', handleMoveEnd);
 }
 
 function updateMarkers(markers: Marker[]) {
   if (!map || !markersLayer) return;
 
   markersLayer.clearLayers();
-
-  if (markers.length === 0) {
-    // Reset to default world view
-    map.setView([20, 0], 2);
-    return;
-  }
+  markersById.clear();
 
   markers.forEach((m) => {
-    L.marker(m.coords, { icon: createSvgMarker(40) })
-      .bindPopup(m.popupContent, { maxWidth: 250 })
-      .addTo(markersLayer as L.LayerGroup);
+    const id = normalizeMapMarkerId(m.id);
+    if (!id) return;
+    const layer = L.marker(m.coords, {
+      icon: createSvgMarker(40),
+      title: m.title,
+    });
+    markersById.set(id, { layer, data: m });
+    // Let the marker toggle its popup before the map handles the same click.
+    layer.on('preclick', (event) => {
+      L.DomEvent.stopPropagation(event as unknown as Event);
+    });
+    layer.on('click', () => {
+      if (
+        activeMarkerId.value === id &&
+        selectedPopup &&
+        map?.hasLayer(selectedPopup)
+      ) {
+        selectedPopup.remove();
+        return;
+      }
+      openMarkerPopup(id);
+      emit('markerChange', id);
+    });
+    layer.on('add', () => {
+      const element = layer.getElement();
+      element?.setAttribute('data-map-marker-id', id);
+      element?.setAttribute('aria-label', m.title);
+      element?.setAttribute(
+        'aria-pressed',
+        String(activeMarkerId.value === id),
+      );
+    });
+    layer.addTo(markersLayer as L.LayerGroup);
   });
 
-  const bounds = L.latLngBounds(markers.map((m) => m.coords));
-  map.fitBounds(bounds, { padding: [50, 50] });
+  restoreViewportOrFitMarkers();
+  restoreSelectedMarker(true);
 }
 
 function refreshMapAndFitBounds() {
   if (!map) return;
 
-  // First refresh layout
-  map.invalidateSize();
-
-  // Then refit bounds if markers exist
-  if (markersLayer && markersLayer.getLayers().length > 0) {
-    const bounds = L.latLngBounds(
-      (markersLayer.getLayers() as L.Marker[]).map((m: any) => m.getLatLng()),
-    );
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }
+  moveWithoutSaving(() => map!.invalidateSize({ pan: false }));
+  restoreViewportOrFitMarkers();
+  restoreSelectedMarker();
 }
 defineExpose({ refreshMapAndFitBounds });
+
+watch(
+  [() => props.selectedMarkerId, () => props.loading],
+  () => restoreSelectedMarker(),
+  { flush: 'post' },
+);
+
+watch(
+  () => props.viewport,
+  (viewport) => {
+    const current = currentViewport();
+    if (
+      viewport &&
+      current &&
+      Math.abs(viewport.lat - current.lat) < 0.000001 &&
+      Math.abs(viewport.lng - current.lng) < 0.000001 &&
+      viewport.zoom === current.zoom
+    )
+      return;
+    restoreViewportOrFitMarkers();
+  },
+);
 
 // keep markers in sync with filters/search
 watch(
@@ -129,11 +299,18 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  disposed = true;
+  restoringSelection = true;
   try {
+    map?.off('moveend', handleMoveEnd);
+    map?.off('popupclose', handlePopupClose);
+    map?.off('zoomend', updateMarkerSelection);
     map?.remove();
   } finally {
     map = null;
     markersLayer = null;
+    selectedPopup = null;
+    markersById.clear();
   }
 });
 </script>
@@ -145,6 +322,10 @@ onBeforeUnmount(() => {
     v-show="!props.loading && props.markers.length > 0"
     id="provider-map"
     class="provider-map"
+    :data-map-lat="renderedViewport?.lat"
+    :data-map-lng="renderedViewport?.lng"
+    :data-map-zoom="renderedViewport?.zoom"
+    :data-map-marker="activeMarkerId"
     ref="mapEl"
   ></div>
   <div
@@ -156,8 +337,13 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="postcss">
-.custom-leaflet-marker :deep(svg) {
+.custom-leaflet-marker svg {
   display: block;
+}
+
+.leaflet-marker-selected {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .provider-map {

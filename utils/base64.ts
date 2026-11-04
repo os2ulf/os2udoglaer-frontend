@@ -1,5 +1,5 @@
 export const encodeBase64 = (value: string): string => {
-  if (process.client) {
+  if (import.meta.client) {
     return window.btoa(value);
   } else {
     return Buffer.from(value, 'ascii').toString('base64');
@@ -8,7 +8,7 @@ export const encodeBase64 = (value: string): string => {
 
 export const decodeBase64 = (value: string): string => {
   try {
-    if (process.client) {
+    if (import.meta.client) {
       return window.atob(value);
     } else {
       return Buffer.from(value, 'base64').toString('ascii');

@@ -92,7 +92,6 @@
   &.form-input--up ~ .form-label,
   &:focus ~ .form-label {
     top: -11px;
-    font-size: 13px;
     background-color: var(--color-white);
     padding-inline: 4px;
     font-weight: 600;

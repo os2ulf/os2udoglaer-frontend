@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { v4 as uuidv4 } from 'uuid';
+import { useId } from 'vue';
+import type { MapViewport } from '~/utils/mapViewport';
+import { matchingMapMarkerId } from '~/utils/mapMarker';
 import { stripHtmlFromString } from '~/utils/stripHtml';
 import { truncateString } from '~/utils/truncateString';
-import { useApiRouteStore } from '~/stores/apiRouteEndpoint';
+import { buildSearchParams, readSearchParams } from '~/utils/searchParams';
 import LeafletMap from '~/components/globals/map/LeafletMap.client.vue';
 
-const apiRouteStore = useApiRouteStore();
-const id = `search-block-provider-${uuidv4()}`;
+const id = `search-block-provider-${useId()}`;
 
 const props = defineProps({
   blockData: {
@@ -20,7 +21,12 @@ const props = defineProps({
 });
 
 const searchBlockData = ref(props.blockData);
-const backEndDomain = ref(apiRouteStore.apiRouteEndpoint);
+const searchApi = useSearchApi();
+const { readParams, writeParams, onParamsChange } = useSearchUrlState();
+const searchError = ref<string | null>(null);
+let restoringUrl = false;
+let restoreVersion = 0;
+let listRequestVersion = 0;
 const isLoading = ref(true);
 const isLoadingPageResults = ref(true);
 const searchKeyword = ref('');
@@ -31,13 +37,15 @@ const allSortingOptions = ref(searchBlockData?.value?.facets);
 const pageSortingOptions = ref(searchBlockData?.value?.exposed_filters);
 const selectedPage = ref(0);
 const showAllFilters = ref(false);
-const showListView = ref(true);
 const showMapView = ref(false);
+const mapViewport = shallowRef<MapViewport>();
+const selectedMapMarkerId = ref<string>();
+const showListView = computed(() => !showMapView.value);
 const sortingString = ref(
   searchBlockData?.value?.exposed_filters.sort_by.default_value || null,
 );
 
-const isClient = ref(false)
+const isClient = ref(false);
 
 const leafletMapRef = ref(null);
 const dynamicMapContent = ref<any[]>([]);
@@ -46,6 +54,28 @@ const loadingMap = ref(false);
 // keeps track of filters and handles adding/removing selected filters
 const selectedFiltersData = reactive([]);
 const lastInteractedFilterReference = ref({});
+
+const fetchViewResults = (map = false) => {
+  const params = buildSearchParams({
+    search: searchKeyword.value,
+    page: selectedPage.value,
+    sort: sortingString.value,
+    filters: selectedFiltersData,
+  });
+  if (map) {
+    params.delete('page');
+  } else if (pager.value?.limit) {
+    params.set('items_per_page', String(pager.value.limit));
+  }
+  return searchApi(
+    {
+      ...Object.fromEntries(params),
+      view: searchBlockData.value.view_id,
+      display: searchBlockData.value.display_id + (map ? '_map' : ''),
+    },
+    map ? 'map' : 'list',
+  );
+};
 
 const handleFilterChange = (
   selectedFilterOption: any,
@@ -65,7 +95,10 @@ const handleFilterChange = (
   if (selectedFilterOption) {
     // Check if selectedFilterOption already exists in selectedFiltersData
     const index = selectedFiltersData.findIndex(
-      (option) => option.value === selectedFilterOption.value,
+      (option) =>
+        option.searchQueryUrlAlias ===
+          selectedFilterOption.searchQueryUrlAlias &&
+        String(option.value) === String(selectedFilterOption.value),
     );
 
     if (index !== -1) {
@@ -81,6 +114,8 @@ const getFilteredPageResults = async (
   clearCurrentPage = false,
   hideFilterDropdown = false,
 ) => {
+  const requestVersion = ++listRequestVersion;
+  searchError.value = null;
   try {
     isLoadingPageResults.value = true;
 
@@ -94,23 +129,11 @@ const getFilteredPageResults = async (
       selectedPage.value = 0;
     }
 
-    let filterString = '';
-    selectedFiltersData.forEach((filter, index) => {
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-    });
-
-    const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?filters=${filterString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
-    );
-    const data = await response.json();
-
+    const data = await fetchViewResults();
+    if (!data) return;
     if (showMapView.value) {
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
-      dynamicMapContent.value = dataForMapMarkers.results;
+      const mapData = await fetchViewResults(true);
+      if (mapData) dynamicMapContent.value = mapData.results || [];
     }
 
     dynamicContent.value = data.results;
@@ -118,14 +141,17 @@ const getFilteredPageResults = async (
     pager.value = data.pager;
     allSortingOptions.value = data.facets;
   } catch (error) {
+    searchError.value = 'Søgningen kunne ikke hentes. Prøv igen.';
     console.error('Error fetching filtered results:', error);
   } finally {
-    isLoadingPageResults.value = false;
+    if (requestVersion === listRequestVersion)
+      isLoadingPageResults.value = false;
   }
 };
 
 const debounce = (func, delay) => {
   let timeoutId;
+  onScopeDispose(() => clearTimeout(timeoutId));
   return (...args) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
@@ -134,179 +160,91 @@ const debounce = (func, delay) => {
   };
 };
 
-const handleSearchByKeyword = computed(() => {
-  return debounce(() => {
-    updateURLParameters();
-    getFilteredPageResults(true, true);
-  }, 800);
-});
+const handleSearchByKeyword = debounce(() => {
+  if (restoringUrl) return;
+  void getFilteredPageResults(true, true);
+  updateURLParameters();
+}, 800);
 
 const updateURLParameters = () => {
-  const params = new URLSearchParams();
-
-  // Add search keyword to URL parameters
-  if (searchKeyword.value) {
-    params.set('search_string', searchKeyword.value);
-  }
-
-  // Add sorting
-  if (sortingString.value) {
-    params.set('sort_by', sortingString.value);
-  }
-
-  // Add selected filters to URL parameters
-  selectedFiltersData.forEach((filter, index) => {
-    params.append(
-      `f[${index}]`,
-      `${filter.searchQueryUrlAlias}:${filter.value}`,
-    );
-  });
-
-  // Add selected page to URL parameters
-  params.set('page', selectedPage.value.toString());
-
-  // update state
-  const newURL = `${window.location.pathname}?${params.toString()}`;
-
-  // Convert reactive objects to plain objects
-  const plainState = {
-    searchKeyword: searchKeyword.value,
-    sortingString: sortingString.value,
-    selectedFiltersData: JSON.parse(JSON.stringify(selectedFiltersData)), // Clone as plain object
-    selectedPage: selectedPage.value,
-  };
-
-  history.replaceState(plainState, '', newURL);
+  if (restoringUrl) return;
+  void writeParams(
+    buildSearchParams({
+      mode: showMapView.value ? 'map' : 'list',
+      mapViewport: mapViewport.value,
+      mapMarker: selectedMapMarkerId.value,
+      search: searchKeyword.value,
+      page: selectedPage.value,
+      sort: sortingString.value,
+      filters: selectedFiltersData,
+    }),
+  );
 };
 
-if (process.client) {
-  window.onpopstate = (event) => {
-    if (event.state) {
-      searchKeyword.value = event.state.searchKeyword || '';
-      sortingString.value = event.state.sortingString || '';
-      selectedPage.value = event.state.selectedPage || 0;
-
-      selectedFiltersData.splice(
-        0,
-        selectedFiltersData.length,
-        ...(event.state.selectedFiltersData || []),
-      );
-
-      updateURLParameters();
-    }
-  };
-}
-
-// Parse URL parameters
-const extractedFilters = reactive([]);
-const parseUrlParameters = () => {
-  const params = new URLSearchParams(window.location.search);
-  extractedFilters.value = [];
-
-  // Extract filters 'f[''
-  params.forEach((value, key) => {
-    if (key.startsWith('f[')) {
-      const [searchQueryUrlAlias, filterValue] = value.split(':');
-      extractedFilters.value.push({
-        searchQueryUrlAlias,
-        value: filterValue,
-      });
-    }
-  });
-
-  // extract page
-  const page = params.get('page');
-  if (page) {
-    selectedPage.value = parseInt(page, 10);
-  }
-
-  // extract search keyword
-  const search = params.get('search_string');
-  if (search) {
-    searchKeyword.value = search;
-  }
-
-  // extract sorting
-  const sort = params.get('sort_by');
-  if (sort) {
-    sortingString.value = sort;
-  }
-
-  // if finds anything - fetches data.
-  if (extractedFilters.value.length > 0 || searchKeyword.value || page) {
-    handleExtractedFilters();
-  }
+const handleMapViewportChange = (viewport: MapViewport) => {
+  if (restoringUrl) return;
+  mapViewport.value = viewport;
+  updateURLParameters();
 };
 
-// populates selectedFiltersData with extracted filters
-const setSelectedFiltersDataWithExtractedFilters = () => {
-  // Clear previous selections
-  selectedFiltersData.splice(0, selectedFiltersData.length);
-
-  // Iterate through extractedFilters
-  extractedFilters.value.forEach((filter) => {
-    // Find the matching facet in allSortingOptions
-    const matchingFacet = Object.values(allSortingOptions.value).find(
-      (facet) => {
-        return facet.url_alias === filter.searchQueryUrlAlias;
-      },
-    );
-
-    if (matchingFacet) {
-      // Find the specific item in the matching facet's items array
-      const selectedItem = matchingFacet.items.find(
-        (item) => item.value === filter.value,
-      );
-
-      if (selectedItem) {
-        // Push the filter object with necessary properties
-        selectedFiltersData.push({
-          searchQueryUrlAlias: filter.searchQueryUrlAlias,
-          value: filter.value,
-          label: selectedItem.label,
-        });
-      }
-    }
-  });
+const handleMapMarkerChange = (id: string | undefined) => {
+  if (restoringUrl) return;
+  selectedMapMarkerId.value = id;
+  updateURLParameters();
 };
 
-const handleExtractedFilters = async () => {
+const restoreFromUrl = async () => {
+  const version = ++restoreVersion;
+  searchError.value = null;
+  restoringUrl = true;
   try {
-    let queryString = '';
-    extractedFilters.value.forEach((filter, index) => {
-      // Append each filter as &f[index]=<searchQueryUrlAlias>:<value> <- structure BE expects
-      queryString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
+    const params = readParams();
+    const state = readSearchParams(params);
+    mapViewport.value = state.mapViewport;
+    selectedMapMarkerId.value = state.mapMarker;
+    showMapView.value = state.mode === 'map';
+    selectedPage.value = state.page;
+    searchKeyword.value = state.search;
+    sortingString.value =
+      state.sort ||
+      searchBlockData.value.exposed_filters?.sort_by?.default_value ||
+      null;
+    const filters = state.filters.map((filter) => {
+      const facet = Object.values(searchBlockData.value.facets || {}).find(
+        (item) => item.url_alias === filter.searchQueryUrlAlias,
+      );
+      const item = facet?.items?.find(
+        (item) => String(item.value) === String(filter.value),
+      );
+      return { ...filter, label: item?.label || String(filter.value) };
     });
 
-    const response: any = await fetch(
-      `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}?${queryString}&search_string=${searchKeyword.value}&page=${selectedPage.value}&sort_by=${sortingString.value}&items_per_page=${pager.value.limit}`,
-    );
-    const data = await response.json();
-
-    if (showMapView.value) {
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?${queryString}&search_string=${searchKeyword.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
-      dynamicMapContent.value = dataForMapMarkers.results;
+    selectedFiltersData.splice(0, selectedFiltersData.length, ...filters);
+    if (params.size > 0) {
+      await getFilteredPageResults(false);
+    } else {
+      dynamicContent.value = searchBlockData.value.results || [];
+      pager.value = searchBlockData.value.pager;
+      totalItemsFound.value = searchBlockData.value.pager?.items;
+      allSortingOptions.value = searchBlockData.value.facets;
     }
-
-    dynamicContent.value = data.results;
-    totalItemsFound.value = data.pager.items;
-    pager.value = data.pager;
-    allSortingOptions.value = data.facets;
-    isLoading.value = false;
-
-    setSelectedFiltersDataWithExtractedFilters();
-  } catch (error) {
-    console.error('Error fetching filtered results:', error);
+  } finally {
+    await nextTick();
+    if (version === restoreVersion) restoringUrl = false;
   }
 };
 
-watch(selectedFiltersData, () => {
-  getFilteredPageResults(true);
-  updateURLParameters();
-});
+onParamsChange(restoreFromUrl);
+
+watch(
+  selectedFiltersData,
+  () => {
+    if (restoringUrl) return;
+    void getFilteredPageResults(true);
+    updateURLParameters();
+  },
+  { flush: 'post' },
+);
 
 const handleClearAllFilters = () => {
   selectedFiltersData.splice(0, selectedFiltersData.length);
@@ -325,11 +263,13 @@ const handlePager = (page: number) => {
 
     if (searchBlock) {
       searchBlock.scrollIntoView({ behavior: 'smooth' });
-      const searchBlockResults = document.querySelector('.search-block-provider__result-items')
+      const searchBlockResults = document.querySelector(
+        '.search-block-provider__result-items',
+      );
 
       if (searchBlockResults) {
-        searchBlockResults.setAttribute('tabindex', '-1')
-        searchBlockResults.focus({ preventScroll: true })
+        searchBlockResults.setAttribute('tabindex', '-1');
+        searchBlockResults.focus({ preventScroll: true });
       }
     }
   });
@@ -357,18 +297,13 @@ const searchResultSuffix = computed(() => {
 });
 
 watch(showMapView, async (newVal) => {
+  if (restoringUrl) return;
+  updateURLParameters();
   if (newVal) {
     try {
       loadingMap.value = true;
-      let filterString = '';
-      selectedFiltersData.forEach((filter, index) => {
-        filterString += `&f[${index}]=${filter.searchQueryUrlAlias}:${filter.value}`;
-      });
-
-      const responseForMap: any = await fetch(
-        `${backEndDomain.value}/transform/view-results/${searchBlockData.value.view_id}/${searchBlockData.value.display_id}_map?filters=${filterString}&search_string=${searchKeyword.value}`,
-      );
-      const dataForMapMarkers = await responseForMap.json();
+      const dataForMapMarkers = await fetchViewResults(true);
+      if (!dataForMapMarkers) return;
       dynamicMapContent.value = dataForMapMarkers.results;
     } catch (error) {
       console.error('Error fetching map results:', error);
@@ -393,23 +328,24 @@ const getBundleCTA = (bundle) => {
 // Transform dynamicMapContent into Leaflet-friendly marker data
 const leafletMarkers = computed(() =>
   dynamicMapContent.value
-    .filter(item =>
-      item.field_view_on_map === 'show_on_map' &&
-      item.field_dawa_address?.lat &&
-      item.field_dawa_address?.lng
+    .filter(
+      (item) =>
+        item.field_view_on_map === 'show_on_map' &&
+        item.field_dawa_address?.lat &&
+        item.field_dawa_address?.lng,
     )
     .map((item) => {
       let imageHtml = '';
       let innerWrapperClass = 'leaflet-popup-content__inner';
-      if (item.field_logo.img_element) {
-        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="${item.field_image.img_element.alt}" /></a></div>`;
+      if (item.field_logo?.img_element) {
+        imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--logo"><a href="${item.link}"><img src="${item.field_logo.img_element.uri}" alt="${item.field_image?.img_element.alt}" /></a></div>`;
       } else if (item.field_image.img_element) {
         imageHtml = `<div class="leaflet-popup-content__image leaflet-popup-content__image--image"><a href="${item.link}"><img src="${item.field_image.img_element.uri}" alt="${item.field_image.img_element.alt}" /></a></div>`;
       } else {
         innerWrapperClass += ' leaflet-popup-content__inner--no-image';
       }
 
-      return ({
+      return {
         id: item.id,
         title: item.field_name,
         coords: [item.field_dawa_address.lat, item.field_dawa_address.lng],
@@ -421,26 +357,32 @@ const leafletMarkers = computed(() =>
               <a href="${item.link}" class="leaflet-popup-content__link">${getBundleCTA(item.bundle_label)}</a>
             </div>
           </div>
-        `
-      });
-    })
+        `,
+      };
+    }),
 );
 
-onBeforeMount(() => {
-  if (window.location.search) {
-    parseUrlParameters();
+watch(leafletMarkers, (markers) => {
+  if (
+    !restoringUrl &&
+    selectedMapMarkerId.value &&
+    !matchingMapMarkerId(selectedMapMarkerId.value, markers)
+  ) {
+    handleMapMarkerChange(undefined);
   }
 });
 
-onMounted(async() => {
+onMounted(async () => {
+  isClient.value = true;
+  await restoreFromUrl();
   isLoading.value = false;
   isLoadingPageResults.value = false;
-  isClient.value = true;
 });
 </script>
 
 <template>
   <div :id="id">
+    <p v-if="searchError" role="alert">{{ searchError }}</p>
     <div class="search-block-provider">
       <div class="search-block-provider__label" v-if="searchBlockData?.label">
         {{ searchBlockData?.label }}
@@ -465,7 +407,7 @@ onMounted(async() => {
                   <button
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showListView"
-                    @click="showListView = false; showMapView = true;"
+                    @click="showMapView = true"
                   >
                     <NuxtIcon
                       class="search-block-provider__chip-close"
@@ -477,7 +419,7 @@ onMounted(async() => {
                   <button
                     class="button button--ghost"
                     v-if="dynamicContent.length > 0 && isClient && showMapView"
-                    @click="showListView = true; showMapView = false;"
+                    @click="showMapView = false"
                   >
                     <NuxtIcon
                       class="search-block-provider__chip-close"
@@ -500,8 +442,8 @@ onMounted(async() => {
             >
               <div
                 class="search-block-provider__dropdown"
-                v-for="(item, name, idx) in allSortingOptions"
-                :key="item"
+                v-for="item in allSortingOptions"
+                :key="item.facet_id || item.url_alias"
                 :class="{
                   'search-block-provider__dropdown--is-hidden-mobile':
                     !showAllFilters
@@ -569,7 +511,7 @@ onMounted(async() => {
                 <div
                   class="search-block-provider__chip"
                   v-for="item in selectedFiltersData"
-                  :key="item"
+                  :key="`${item.searchQueryUrlAlias}:${item.value}`"
                   @click="handleFilterChange(item, true)"
                 >
                   <NuxtIcon
@@ -622,7 +564,7 @@ onMounted(async() => {
                 <div
                   class="search-block-provider__result-item"
                   v-for="item in dynamicContent"
-                  :key="item"
+                  :key="item.id || item.link"
                 >
                   <div class="search-block-provider__card-item">
                     <NuxtLink
@@ -681,6 +623,10 @@ onMounted(async() => {
                 ref="leafletMapRef"
                 :markers="leafletMarkers"
                 :loading="loadingMap"
+                :viewport="mapViewport"
+                :selected-marker-id="selectedMapMarkerId"
+                @marker-change="handleMapMarkerChange"
+                @viewport-change="handleMapViewportChange"
               />
             </ClientOnly>
 
