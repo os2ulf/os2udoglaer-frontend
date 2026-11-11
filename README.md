@@ -4,7 +4,7 @@ Nuxt 4 frontend for OS2udoglær.
 
 ## Requirements
 
-- Node.js 24.22.1, specified in `.nvmrc`.
+- Node.js 24.22.2, specified in `.nvmrc`.
 - npm, using the committed `package-lock.json`.
 
 ## Local setup

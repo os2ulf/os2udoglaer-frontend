@@ -100,6 +100,11 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
   z-index: 10000;
   display: flex;
   align-items: center;
