@@ -5,9 +5,13 @@
 name: frontend
 
 # The runtime the application uses.
-# Platform.sh manages patch versions; npm enforces Node.js >=24.22.3 <25.
+# The build installs the exact patch from .nvmrc for both build and runtime.
 # Complete list of available runtimes: https://docs.platform.sh/create-apps/app-reference.html#types
 type: 'nodejs:24'
+
+dependencies:
+  nodejs:
+    n: '10.2.0'
 
 # The web key configures the web server running in front of your app.
 # More information: https://docs.platform.sh/create-apps/app-reference.html#web
@@ -16,7 +20,7 @@ web:
   # More information: https://docs.platform.sh/create-apps/app-reference.html#web-commands
   commands:
     # The command to launch your app. If it terminates, it’s restarted immediately.
-    start: 'node .output/server/index.mjs'
+    start: 'exec "$PLATFORM_APP_DIR/.node/bin/node" .output/server/index.mjs'
 
 # Variables to control the environment. More information: https://docs.platform.sh/create-apps/app-reference.html#variables
 variables:
@@ -43,7 +47,12 @@ hooks:
   # More information: https://docs.platform.sh/create-apps/hooks/hooks-comparison.html#build-hook
   build: |
     set -e
+    export N_PREFIX="$PLATFORM_APP_DIR/.node"
+    n install "$(cat .nvmrc)"
+    . ./.environment
+    hash -r
     node --version
+    test "$(node --version)" = "v$(cat .nvmrc)"
     npm --version
     npm ci --include=dev
     npm run build

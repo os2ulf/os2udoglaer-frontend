@@ -3,4 +3,5 @@
 node_modules
 .nuxt
 .output
+.node/
 .vscode/settings.json
