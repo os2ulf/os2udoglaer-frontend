@@ -1320,6 +1320,7 @@ onMounted(async () => {
             "
           ></p>
           <button
+            type="button"
             class="modal__trigger"
             @click="
               handleModal(
