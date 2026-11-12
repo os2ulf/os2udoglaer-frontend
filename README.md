@@ -4,7 +4,7 @@ Nuxt 4 frontend for OS2udoglær.
 
 ## Requirements
 
-- Node.js 24.22.2, specified in `.nvmrc`.
+- Node.js 24.22.3, specified in `.nvmrc`.
 - npm, using the committed `package-lock.json`.
 
 ## Local setup
@@ -43,14 +43,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-To use production content locally without editing `.env`:
-
-```bash
-NUXT_PUBLIC_LOCAL_API_BASE_URL=https://api.ulfiaarhus.dk npm run dev
-```
-
-Search pages available for local checks include `/grundskole-0` and `/udbydere`.
-
 ## Checks
 
 ```bash
@@ -66,13 +58,6 @@ ESLint and Stylelint fail on warnings. To apply automatic fixes:
 npm run eslint:fix
 npm run stylelint:fix
 ```
-
-`npm run typecheck` regenerates Nuxt types and checks TypeScript files with the
-native compiler. It does not check Vue templates. The compatibility compiler
-can check the same files with `npx tsc6 --noEmit`.
-
-Vue tooling uses the TypeScript compatibility package. Editors requiring a
-workspace `tsserver` should use `node_modules/@typescript/old/lib` as the SDK path.
 
 ## Production build and local preview
 
@@ -90,6 +75,9 @@ npm start
 Production runtime configuration can be supplied through `NUXT_PUBLIC_LOCAL_API_BASE_URL`,
 `NUXT_PUBLIC_API_BASE_URL`, `NUXT_REST_API_USER`, and `NUXT_REST_API_USER_PASS`.
 Hosted environments select the backend using `PLATFORM_ROUTES`.
+
+Upsun deployment is configured in `.platform.app.yaml` and uses the Node.js
+version specified in `.nvmrc` for both builds and the running server.
 
 See the [Nuxt documentation](https://nuxt.com/docs/4.x/getting-started/introduction)
 for framework configuration and deployment guidance.
