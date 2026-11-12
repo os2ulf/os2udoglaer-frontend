@@ -76,7 +76,8 @@ Production runtime configuration can be supplied through `NUXT_PUBLIC_LOCAL_API_
 `NUXT_PUBLIC_API_BASE_URL`, `NUXT_REST_API_USER`, and `NUXT_REST_API_USER_PASS`.
 Hosted environments select the backend using `PLATFORM_ROUTES`.
 
-Upsun deployment is configured in `.platform.app.yaml`.
+Upsun deployment is configured in `.platform.app.yaml` and uses the Node.js
+version specified in `.nvmrc` for both builds and the running server.
 
 See the [Nuxt documentation](https://nuxt.com/docs/4.x/getting-started/introduction)
 for framework configuration and deployment guidance.
