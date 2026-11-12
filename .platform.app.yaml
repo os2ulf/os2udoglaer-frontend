@@ -43,5 +43,7 @@ hooks:
   # More information: https://docs.platform.sh/create-apps/hooks/hooks-comparison.html#build-hook
   build: |
     set -e
-    corepack npm install
-    corepack npm run build
+    node --version
+    npm --version
+    npm ci --include=dev
+    npm run build
