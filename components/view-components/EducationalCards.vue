@@ -1,6 +1,4 @@
 <script setup lang="ts">
-
-
 defineProps({
   data: {
     type: Object,
@@ -8,6 +6,14 @@ defineProps({
     default: null,
   },
 });
+
+const getLinkText = (card: {
+  field_material_download_text?: string | null;
+  field_material_title?: string;
+  field_material_file?: string | null;
+}) =>
+  card.field_material_download_text?.trim() ||
+  `${card.field_material_file ? 'Hent' : 'Gå til'}: ${card.field_material_title}`;
 </script>
 
 <template>
@@ -56,29 +62,18 @@ defineProps({
                 target="_blank"
               >
                 <span class="educational-materials__card-link-text">
-                  <span
-                    v-if="!card.field_material_download_text?.trim()"
-                    class="sr-only"
-                    >{{
-                      card.field_material_file ? 'Hent: ' : 'Gå til: '
-                    }}</span
-                  >
-                  {{
-                    card.field_material_download_text?.trim() ||
-                    card.field_material_title
-                  }}
+                  {{ getLinkText(card) }}
                 </span>
-                <NuxtIcon
-                  class="educational-materials__card-item-button--icon"
-                  :name="
-                    card.field_material_file ? 'link-download' : 'ext-link'
+                <span
+                  class="educational-materials__card-item-button--icon educational-materials__card-item-button--icon-link"
+                  :class="
+                    card.field_material_file
+                      ? 'educational-materials__card-item-button--icon-download'
+                      : 'educational-materials__card-item-button--icon-external'
                   "
                   aria-hidden="true"
-                  filled
-                />
+                ></span>
               </NuxtLink>
-
-              <!-- icon -->
             </div>
           </div>
         </div>
@@ -153,6 +148,35 @@ defineProps({
           stroke: var(--color-secondary-text);
         }
       }
+    }
+
+    &--icon-link {
+      display: inline-flex;
+      vertical-align: middle;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--color-secondary);
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        content: '';
+        width: 24px;
+        height: 24px;
+        background-color: var(--color-secondary-text);
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-size: contain;
+      }
+    }
+
+    &--icon-download::before {
+      mask-image: url('~/assets/icons/link-download.svg');
+    }
+
+    &--icon-external::before {
+      mask-image: url('~/assets/icons/ext-link.svg');
     }
   }
 

@@ -63,10 +63,7 @@ const getDescriptionText = (description) =>
           ></span>
           <span class="document-list__card-link">
             <span class="document-list__card-link-text">
-              {{ getLinkText(item)
-              }}<span v-if="!getLinkText(item)?.endsWith('.')" class="sr-only"
-                >.</span
-              >
+              {{ getLinkText(item) }}
             </span>
             {{ ' ' }}
             <span
